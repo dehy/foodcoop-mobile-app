@@ -1214,6 +1214,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = fr.supercoop.Supercoopain;
 				PRODUCT_NAME = Supercoopain;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1231,6 +1232,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = fr.supercoop.Supercoopain;
 				PRODUCT_NAME = Supercoopain;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
