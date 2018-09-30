@@ -1,0 +1,3 @@
+rootProject.name = 'Supercoopain'
+
+include ':app'
