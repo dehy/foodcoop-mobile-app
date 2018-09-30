@@ -3,12 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "android": "cd ./android && ./gradlew app:assembleDebug && ./gradlew installDebug",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
   "dependencies": {
     "react": "16.4.1",
-    "react-native": "0.56.1"
+    "react-native": "0.56.1",
+    "react-native-navigation": "^2.0.2569"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
