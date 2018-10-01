@@ -4,22 +4,40 @@ import {
     Text,
     Button,
     StyleSheet,
-    AsyncStorage
+    AsyncStorage,
+    Alert
 } from 'react-native'
-import { goToAuth } from './navigation'
+import { goToAuth } from '../utils/navigation'
 import { Navigation } from 'react-native-navigation';
+import Drawer from '../utils/Drawer';
 
-import { USER_KEY } from './config'
+import { USER_KEY } from '../config'
 
 export default class Home extends React.Component {
     static get options() {
         return {
             topBar: {
                 title: {
-                    text: 'Home'
+                    text: 'Home',
+                    fontSize: 20,
                 },
+                leftButtons: [
+                    {
+                        id: 'leftDrawer',
+                        icon: require('../../assets/icons/menu.png')
+                    }
+                ]
             }
         };
+    }
+    constructor(props) {
+        super(props);
+        Navigation.events().bindComponent(this);
+    }
+    navigationButtonPressed({ buttonId }) {
+        if (buttonId == 'leftDrawer') {
+            Drawer.open('left')
+        }
     }
     logout = async () => {
         try {
