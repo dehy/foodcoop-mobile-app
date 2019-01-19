@@ -1,3 +1,63 @@
-PODFILE CHECKSUM: 2e8a47fd4be91413b142d714a581107f5e251ff4
+PODS:
+  - GoogleSignIn (4.2.0):
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
+    - GTMOAuth2 (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GoogleToolboxForMac/DebugUtils (2.1.4):
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
+    - GoogleToolboxForMac/DebugUtils (= 2.1.4)
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
+  - GTMOAuth2 (1.1.6):
+    - GTMSessionFetcher (~> 1.1)
+  - GTMSessionFetcher (1.2.0):
+    - GTMSessionFetcher/Full (= 1.2.0)
+  - GTMSessionFetcher/Core (1.2.0)
+  - GTMSessionFetcher/Full (1.2.0):
+    - GTMSessionFetcher/Core (= 1.2.0)
+  - React (0.56.1):
+    - React/Core (= 0.56.1)
+  - React/Core (0.56.1):
+    - yoga (= 0.56.1.React)
+  - RNGoogleSignin (1.0.0-rc6):
+    - GoogleSignIn
+    - React
+  - yoga (0.56.1.React)
+
+DEPENDENCIES:
+  - GoogleSignIn
+  - React (from `../node_modules/react-native`)
+  - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
+  - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - GoogleSignIn
+    - GoogleToolboxForMac
+    - GTMOAuth2
+    - GTMSessionFetcher
+
+EXTERNAL SOURCES:
+  React:
+    :path: "../node_modules/react-native"
+  RNGoogleSignin:
+    :path: "../node_modules/react-native-google-signin"
+  yoga:
+    :path: "../node_modules/react-native/ReactCommon/yoga"
+
+SPEC CHECKSUMS:
+  GoogleSignIn: 591e46382014e591269f862ba6e7bc0fbd793532
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
+  GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
+  React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
+  yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
+
+PODFILE CHECKSUM: 38ee5d74aab1e1f00509d56decd5522c057ec661
 
 COCOAPODS: 1.6.0.beta.1

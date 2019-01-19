@@ -1838,6 +1838,11 @@ cross-spawn@^5.0.1, cross-spawn@^5.1.0:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
+css-mediaquery@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/css-mediaquery/-/css-mediaquery-0.1.2.tgz#6a2c37344928618631c54bd33cedd301da18bea0"
+  integrity sha1-aiw3NEkoYYYxxUvTPO3TAdoYvqA=
+
 cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/cssom/-/cssom-0.3.4.tgz#8cd52e8a3acfd68d3aed38ee0a640177d2f9d797"
@@ -3703,7 +3708,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@4.x.x, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@^4.6.1:
+lodash@4.x.x, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -4285,6 +4290,11 @@ object-keys@^1.0.12:
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.0.12.tgz#09c53855377575310cca62f55bb334abff7b3ed2"
   integrity sha512-FTMyFUm2wBcGHnH2eXmz7tC6IwlqQZ6mVZ+6dm6vZ4IQIHjs6FdNsQBuKGPuUUUY6NfJw2PshC08Tn6LzLDOag==
 
+object-resolve-path@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/object-resolve-path/-/object-resolve-path-1.1.1.tgz#a7f8f93e8a20af80e44217ba7db54316d9d12232"
+  integrity sha1-p/j5Poogr4DkQhe6fbVDFtnRIjI=
+
 object-visit@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/object-visit/-/object-visit-1.0.1.tgz#f79c4493af0c5377b59fe39d395e41042dd045bb"
@@ -4637,7 +4647,7 @@ prompts@^0.1.9:
     kleur "^2.0.1"
     sisteransi "^0.1.1"
 
-prop-types@15.x.x, prop-types@^15.5.8, prop-types@^15.6.0:
+prop-types@15.x.x, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   integrity sha512-3pboPvLiWD7dkI3qf3KbUe6hKFKa52w+AE0VCqECtf+QHAKgOL37tTaNCnuX1nAAQ4ZhyP+kYVKf8rLmJ/feDQ==
@@ -4722,6 +4732,19 @@ react-lifecycles-compat@2.0.0:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-2.0.0.tgz#71d9c4cde47114c4102454f76da055c2bc48c948"
   integrity sha512-txfpPCQYiazVdcbMRhatqWKcAxJweUu2wDXvts5/7Wyp6+Y9cHojqXHsLPEckzutfHlxZhG8Oiundbmp8Fd6eQ==
 
+react-native-extended-stylesheet@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-extended-stylesheet/-/react-native-extended-stylesheet-0.10.0.tgz#bc77caf7494dcc67f681128dd8cb5e07dacef9dd"
+  integrity sha512-05eJLbTx0FEVjCzB6g8JVZbIUszVzizdNjGh6z4MD/LWI5sy+E6rA271XgX0Tllf3Jk/AZV7Z+TsH+VfSzwrmA==
+  dependencies:
+    css-mediaquery "^0.1.2"
+    object-resolve-path "^1.1.0"
+
+react-native-google-signin@^1.0.0-rc6:
+  version "1.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/react-native-google-signin/-/react-native-google-signin-1.0.0-rc6.tgz#13278e39551d127008e76a9c6caf532f04246f17"
+  integrity sha512-F2flFlSKAhQEISc6StUiQ9UzeK62IR+p8PO+UmIUCQKvfygiXJSHoHhCQh9nB6subJyJKub9TVnk207aLx+k9A==
+
 react-native-navigation@^2.0.2569:
   version "2.0.2569"
   resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-2.0.2569.tgz#ffe489bd3c28470fd6774859a0c0c400c0d4586f"
@@ -4731,6 +4754,15 @@ react-native-navigation@^2.0.2569:
     lodash "4.x.x"
     prop-types "15.x.x"
     react-lifecycles-compat "2.0.0"
+
+react-native-vector-icons@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-6.0.2.tgz#826252a72d648cf957d46ada8df890318dac53e1"
+  integrity sha512-Zo0Jo4pIGDVvSrtvgRtaphz77H1RUF3nPxJXbwS/HzUtfOpMzLmjmezYQceWcrAhVimP1VvXeGQ/sSwnl5TgEw==
+  dependencies:
+    lodash "^4.0.0"
+    prop-types "^15.6.2"
+    yargs "^8.0.2"
 
 react-native@0.56.1:
   version "0.56.1"
@@ -6074,6 +6106,25 @@ yargs@^11.0.0:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^9.0.2"
+
+yargs@^8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-8.0.2.tgz#6299a9055b1cefc969ff7e79c1d918dceb22c360"
+  integrity sha1-YpmpBVsc78lp/355wdkY3Osiw2A=
+  dependencies:
+    camelcase "^4.1.0"
+    cliui "^3.2.0"
+    decamelize "^1.1.1"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    read-pkg-up "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^7.0.0"
 
 yargs@^9.0.0:
   version "9.0.1"

@@ -10,7 +10,10 @@
   "dependencies": {
     "react": "16.4.1",
     "react-native": "0.56.1",
-    "react-native-navigation": "^2.0.2569"
+    "react-native-extended-stylesheet": "^0.10.0",
+    "react-native-google-signin": "^1.0.0-rc6",
+    "react-native-navigation": "^2.0.2569",
+    "react-native-vector-icons": "^6.0.2"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

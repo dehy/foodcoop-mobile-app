@@ -1,5 +1,8 @@
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/GoogleSignIn/Frameworks"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-OTHER_LDFLAGS = $(inherited) -ObjC
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/GTMOAuth2" "${PODS_ROOT}/Headers/Public/GTMSessionFetcher" "${PODS_ROOT}/Headers/Public/GoogleToolboxForMac" "${PODS_ROOT}/Headers/Public/RNGoogleSignin" "${PODS_ROOT}/Headers/Public/React" "${PODS_ROOT}/Headers/Public/yoga"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/GTMOAuth2" -isystem "${PODS_ROOT}/Headers/Public/GTMSessionFetcher" -isystem "${PODS_ROOT}/Headers/Public/GoogleToolboxForMac" -isystem "${PODS_ROOT}/Headers/Public/RNGoogleSignin" -isystem "${PODS_ROOT}/Headers/Public/React" -isystem "${PODS_ROOT}/Headers/Public/yoga"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"stdc++" -framework "CoreText" -framework "JavaScriptCore" -framework "LocalAuthentication" -framework "SafariServices" -framework "Security" -framework "SystemConfiguration"
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_PODFILE_DIR_PATH = ${SRCROOT}/.

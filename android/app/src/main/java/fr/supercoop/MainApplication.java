@@ -3,6 +3,10 @@ package fr.supercoop;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
+
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
+
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -17,62 +21,65 @@ import java.util.List;
 
 public class MainApplication extends NavigationApplication {
 
-  @Override
-  protected ReactGateway createReactGateway() {
-    ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
-      @Override
-      protected String getJSMainModuleName() {
-        return "index";
-      }
-    };
-    return new ReactGateway(this, isDebug(), host);
-  }
-
-  @Override
-  public boolean isDebug() {
-    return BuildConfig.DEBUG;
-  }
-
-  protected List<ReactPackage> getPackages() {
-    // Add additional packages you require here
-    // No need to add RnnPackage and MainReactPackage
-    return Arrays.<ReactPackage>asList(
-            // eg. new VectorIconsPackage()
-    );
-  }
-
-  @Override
-  public List<ReactPackage> createAdditionalReactPackages() {
-    return getPackages();
-  }
-
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+    protected ReactGateway createReactGateway() {
+        ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
+            @Override
+            protected String getJSMainModuleName() {
+                return "index";
+            }
+        };
+        return new ReactGateway(this, isDebug(), host);
     }
 
     @Override
+    public boolean isDebug() {
+        return BuildConfig.DEBUG;
+    }
+
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage()
-      );
+        // Add additional packages you require here
+        // No need to add RnnPackage and MainReactPackage
+        return Arrays.<ReactPackage>asList(
+                new MainReactPackage(),
+            new VectorIconsPackage(),
+                new RNGoogleSigninPackage()
+        );
     }
 
     @Override
-    protected String getJSMainModuleName() {
-      return "index";
+    public List<ReactPackage> createAdditionalReactPackages() {
+        return getPackages();
     }
-  };
 
-  @Override
-  public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
-  }
+    private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return BuildConfig.DEBUG;
+        }
 
-  @Override
-  public void onCreate() {
-    super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
-  }
+        @Override
+        protected List<ReactPackage> getPackages() {
+            return Arrays.<ReactPackage>asList(
+                    new MainReactPackage(),
+                    new RNGoogleSigninPackage()
+            );
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+            return "index";
+        }
+    };
+
+    @Override
+    public ReactNativeHost getReactNativeHost() {
+        return mReactNativeHost;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SoLoader.init(this, /* native exopackage */ false);
+    }
 }

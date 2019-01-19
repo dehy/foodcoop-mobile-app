@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006931B1A14143B08D30AA1B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F15FE77AC95C4AB0971B71E0 /* SimpleLineIcons.ttf */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -23,11 +24,26 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		154C1F74F5EBE349CD3DD782 /* libPods-Supercoopain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1053D64228A61DCCEB096F41 /* libPods-Supercoopain.a */; };
+		23322EBAA14E43399225D05F /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD4DFACEB6B04E2093A53A74 /* Foundation.ttf */; };
+		2934C2EB899E4FB4B1230634 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC9FF83CBB594978AF343FC8 /* FontAwesome5_Brands.ttf */; };
+		32D01F93B64C4D999D21BC7A /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78D38E014C4A495DB98F90AE /* EvilIcons.ttf */; };
+		42B16F00F7F94CFBA817F0D6 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A29017393B634968BCBAEC74 /* Zocial.ttf */; };
+		4C8968FDA1CB4E84A5A01751 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 90B9BB70F54A404F9872E815 /* FontAwesome5_Regular.ttf */; };
 		510A93422160F68400145E03 /* libReactNativeNavigation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 510A933F2160F67500145E03 /* libReactNativeNavigation.a */; };
-		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		5165F324216291AB000FED7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5165F2FC216291AA000FED7B /* GoogleService-Info.plist */; };
+		5165F33221629331000FED7B /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6E25FA7F014A43E191C29670 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F03004C2A46B4AFE8EB65E96 /* Entypo.ttf */; };
+		7EF3F8C2BF9B4E0C939027E2 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1495A22B186F4B929891DECA /* AntDesign.ttf */; };
 		823D2CE6133CEAF06728C3C5 /* libPods-SupercoopainTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D309AEC5EF63D646C1DE8B5 /* libPods-SupercoopainTests.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		95D1C178E65046319BF7980F /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB08DC8F38AB4E77B45C45C1 /* MaterialCommunityIcons.ttf */; };
+		A6D1668CB51940FF9E4CC80E /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 257565B6F76945808028270F /* MaterialIcons.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		C2A702CE4666485EA875DC58 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44771BC541E94467BDABCCFA /* FontAwesome.ttf */; };
+		DAA92F4A8229442F99268AE8 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 732B9C9BC26E4B4892E72A35 /* FontAwesome5_Solid.ttf */; };
+		DCE62E5B71344E189A2D085F /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94102540BD744B0B90E04486 /* Octicons.ttf */; };
+		DD6B15D8D5D446148574C4CA /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0C5888EF709947FA8FD22F2F /* Feather.ttf */; };
+		FBC43BFD32464D859A1D35C0 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38A44CDC97A943D3BBBCEA6C /* Ionicons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -323,6 +339,7 @@
 		00E356EE1AD99517003FC87E /* SupercoopainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SupercoopainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* SupercoopainTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SupercoopainTests.m; sourceTree = "<group>"; };
+		0C5888EF709947FA8FD22F2F /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		1053D64228A61DCCEB096F41 /* libPods-Supercoopain.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoopain.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
@@ -334,17 +351,32 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Supercoopain/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Supercoopain/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		1495A22B186F4B929891DECA /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		257565B6F76945808028270F /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3822437C37F3B0AEB10DACAF /* Pods-Supercoopain.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoopain.release.xcconfig"; path = "Target Support Files/Pods-Supercoopain/Pods-Supercoopain.release.xcconfig"; sourceTree = "<group>"; };
+		38A44CDC97A943D3BBBCEA6C /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		44771BC541E94467BDABCCFA /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		510A93142160F67500145E03 /* ReactNativeNavigation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeNavigation.xcodeproj; path = "../node_modules/react-native-navigation/lib/ios/ReactNativeNavigation.xcodeproj"; sourceTree = "<group>"; };
+		5165F2FC216291AA000FED7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		5F303D7F1C2BEF0A2ABF74B3 /* Pods-SupercoopainTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SupercoopainTests.debug.xcconfig"; path = "Target Support Files/Pods-SupercoopainTests/Pods-SupercoopainTests.debug.xcconfig"; sourceTree = "<group>"; };
+		732B9C9BC26E4B4892E72A35 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		78D38E014C4A495DB98F90AE /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		7D309AEC5EF63D646C1DE8B5 /* libPods-SupercoopainTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SupercoopainTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81A4CD3D5C2B9F6BFBEAB668 /* Pods-SupercoopainTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SupercoopainTests.release.xcconfig"; path = "Target Support Files/Pods-SupercoopainTests/Pods-SupercoopainTests.release.xcconfig"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		90B9BB70F54A404F9872E815 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
+		94102540BD744B0B90E04486 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		A29017393B634968BCBAEC74 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		AD4DFACEB6B04E2093A53A74 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		CC9FF83CBB594978AF343FC8 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		D69D0B04425ECDE7BA7AC8A4 /* Pods-Supercoopain.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoopain.debug.xcconfig"; path = "Target Support Files/Pods-Supercoopain/Pods-Supercoopain.debug.xcconfig"; sourceTree = "<group>"; };
+		F03004C2A46B4AFE8EB65E96 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		F15FE77AC95C4AB0971B71E0 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		FB08DC8F38AB4E77B45C45C1 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -363,9 +395,8 @@
 			files = (
 				510A93422160F68400145E03 /* libReactNativeNavigation.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
-				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+				5165F33221629331000FED7B /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
-				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
@@ -471,6 +502,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				5165F2FC216291AA000FED7B /* GoogleService-Info.plist */,
 			);
 			name = Supercoopain;
 			sourceTree = "<group>";
@@ -498,6 +530,28 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1AFB7105E4DD49E9A2015935 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1495A22B186F4B929891DECA /* AntDesign.ttf */,
+				F03004C2A46B4AFE8EB65E96 /* Entypo.ttf */,
+				78D38E014C4A495DB98F90AE /* EvilIcons.ttf */,
+				0C5888EF709947FA8FD22F2F /* Feather.ttf */,
+				44771BC541E94467BDABCCFA /* FontAwesome.ttf */,
+				CC9FF83CBB594978AF343FC8 /* FontAwesome5_Brands.ttf */,
+				90B9BB70F54A404F9872E815 /* FontAwesome5_Regular.ttf */,
+				732B9C9BC26E4B4892E72A35 /* FontAwesome5_Solid.ttf */,
+				AD4DFACEB6B04E2093A53A74 /* Foundation.ttf */,
+				38A44CDC97A943D3BBBCEA6C /* Ionicons.ttf */,
+				FB08DC8F38AB4E77B45C45C1 /* MaterialCommunityIcons.ttf */,
+				257565B6F76945808028270F /* MaterialIcons.ttf */,
+				94102540BD744B0B90E04486 /* Octicons.ttf */,
+				F15FE77AC95C4AB0971B71E0 /* SimpleLineIcons.ttf */,
+				A29017393B634968BCBAEC74 /* Zocial.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		283618B01C4436624889D53F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -506,7 +560,6 @@
 				5F303D7F1C2BEF0A2ABF74B3 /* Pods-SupercoopainTests.debug.xcconfig */,
 				81A4CD3D5C2B9F6BFBEAB668 /* Pods-SupercoopainTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -585,6 +638,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				283618B01C4436624889D53F /* Pods */,
+				1AFB7105E4DD49E9A2015935 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -640,6 +694,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				5BC3C9BF4C6EE78379F2D7EF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -656,8 +711,8 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
-				ORGANIZATIONNAME = Facebook;
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = Supercoop;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
@@ -666,7 +721,7 @@
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Supercoopain" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1028,6 +1083,22 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				5165F324216291AB000FED7B /* GoogleService-Info.plist in Resources */,
+				7EF3F8C2BF9B4E0C939027E2 /* AntDesign.ttf in Resources */,
+				6E25FA7F014A43E191C29670 /* Entypo.ttf in Resources */,
+				32D01F93B64C4D999D21BC7A /* EvilIcons.ttf in Resources */,
+				DD6B15D8D5D446148574C4CA /* Feather.ttf in Resources */,
+				C2A702CE4666485EA875DC58 /* FontAwesome.ttf in Resources */,
+				2934C2EB899E4FB4B1230634 /* FontAwesome5_Brands.ttf in Resources */,
+				4C8968FDA1CB4E84A5A01751 /* FontAwesome5_Regular.ttf in Resources */,
+				DAA92F4A8229442F99268AE8 /* FontAwesome5_Solid.ttf in Resources */,
+				23322EBAA14E43399225D05F /* Foundation.ttf in Resources */,
+				FBC43BFD32464D859A1D35C0 /* Ionicons.ttf in Resources */,
+				95D1C178E65046319BF7980F /* MaterialCommunityIcons.ttf in Resources */,
+				A6D1668CB51940FF9E4CC80E /* MaterialIcons.ttf in Resources */,
+				DCE62E5B71344E189A2D085F /* Octicons.ttf in Resources */,
+				006931B1A14143B08D30AA1B /* SimpleLineIcons.ttf in Resources */,
+				42B16F00F7F94CFBA817F0D6 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1046,7 +1117,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		0D095A408C2304076191B7D7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1068,6 +1139,30 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5BC3C9BF4C6EE78379F2D7EF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Supercoopain/Pods-Supercoopain-resources.sh",
+				"${PODS_ROOT}/GTMOAuth2/Source/Touch/GTMOAuth2ViewTouch.xib",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GTMOAuth2ViewTouch.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Supercoopain/Pods-Supercoopain-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FB5709A08C12493704D0CA12 /* [CP] Check Pods Manifest.lock */ = {
@@ -1146,11 +1241,12 @@
 				);
 				INFOPLIST_FILE = SupercoopainTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Supercoopain.app/Supercoopain";
 			};
@@ -1164,11 +1260,12 @@
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = SupercoopainTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Supercoopain.app/Supercoopain";
 			};
@@ -1181,8 +1278,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = NUX97B398T;
 				INFOPLIST_FILE = Supercoopain/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1200,8 +1301,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NUX97B398T;
 				INFOPLIST_FILE = Supercoopain/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

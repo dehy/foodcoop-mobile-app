@@ -3,6 +3,7 @@ import {
     View,
     Text,
     Button,
+    SafeAreaView,
     StyleSheet,
     AsyncStorage,
     Alert
@@ -23,7 +24,7 @@ export default class Home extends React.Component {
                 },
                 leftButtons: [
                     {
-                        id: 'leftDrawer',
+                        id: 'leftDrawerButton',
                         icon: require('../../assets/icons/menu.png')
                     }
                 ]
@@ -35,26 +36,14 @@ export default class Home extends React.Component {
         Navigation.events().bindComponent(this);
     }
     navigationButtonPressed({ buttonId }) {
-        if (buttonId == 'leftDrawer') {
+        if (buttonId == 'leftDrawerButton') {
             Drawer.open('left')
-        }
-    }
-    logout = async () => {
-        try {
-            await AsyncStorage.removeItem(USER_KEY)
-            goToAuth()
-        } catch (err) {
-            console.log('error signing out...: ', err)
         }
     }
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <Text>Hello from Home screen.</Text>
-                <Button
-                    onPress={this.logout}
-                    title="Sign Out"
-                />
                 <Button
                     onPress={() => {
                         Navigation.push(this.props.componentId, {
@@ -65,7 +54,7 @@ export default class Home extends React.Component {
                     }}
                     title="View next screen"
                 />
-            </View>
+            </SafeAreaView>
         )
     }
 }
