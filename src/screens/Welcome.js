@@ -14,43 +14,30 @@ export default class Welcome extends Component {
 
     googleSignIn = async () => {
         this.state.isSigninInProgress = true
-        try {
-            await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
-            //   this.setState({ userInfo });
-            await AsyncStorage.setItem(USER_KEY, JSON.stringify(userInfo));
-            console.log('user successfully signed in!', userInfo);
-            goHome();
-        } catch (error) {
-            if (error.code === StatusCodes.SIGN_IN_CANCELLED) {
-                // user cancelled the login flow
-            } else if (error.code === StatusCodes.IN_PROGRESS) {
-                // operation (f.e. sign in) is in progress already
-            } else if (error.code === StatusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                // play services not available or outdated
-            } else {
-                // some other error happened
-            }
-            this.state.isSigninInProgress = false;
-            console.error('Google Sign In failed', error);
-        }
+        await GoogleSignin.hasPlayServices();
+        await GoogleSignin.signOut();
+        GoogleSignin.signIn()
+            .then((user) => {
+                // await AsyncStorage.setItem(USER_KEY, JSON.stringify(userInfo));
+                console.log('user successfully signed in!', user);
+                this.state.isSigninInProgress = false;
+                goHome();
+            }, (reason) => {
+                this.state.isSigninInProgress = false;
+                console.error('Google Sign In rejected', reason);
+            })
+        ;
     };
 
     componentDidMount() {
-        try {
-            GoogleSignin.configure({
-                hostedDomain: 'supercoop.fr'
-            });
-        } catch (error) {
-            console.error('Google Signin configure error', error);
-        }
+        
     }
 
     render() {
         return (
             <View style={styles.container}>
                 <Image source={require('../../assets/images/welcome_supercoop.png')} />
-                <Text style={styles.welcome}>Bienvenue, Supercoopain•ine !</Text>
+                <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
                 <Text style={styles.instructions}>
                     Pour commencer à utiliser l'application, connectes-toi à ton compte Supercoop
                     grâce au bouton ci-dessous. Tu auras besoin de tes identifiants Google Supercoop.

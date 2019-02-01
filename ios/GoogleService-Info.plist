@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>971982986535-1caehdgu6r5qn6rvp8pibao57f98cl1e.apps.googleusercontent.com</string>
+	<string>640220756673-7mnd5lu00l03fpe7kplngvv0b6qoqkdm.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.971982986535-1caehdgu6r5qn6rvp8pibao57f98cl1e</string>
+	<string>com.googleusercontent.apps.640220756673-7mnd5lu00l03fpe7kplngvv0b6qoqkdm</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD2tbAPC-SvmF4EtLnjPYdLp5tvUtnN69I</string>
+	<string>AIzaSyBgVPX0a8F8u9D7tZMd_PtKPoS5kkKXZ-g</string>
 	<key>GCM_SENDER_ID</key>
-	<string>971982986535</string>
+	<string>640220756673</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>fr.supercoop.Supercoopain</string>
+	<string>fr.supercoop.supercoopain-ios</string>
 	<key>PROJECT_ID</key>
-	<string>supercoopain</string>
+	<string>supercoopain-230416</string>
 	<key>STORAGE_BUCKET</key>
-	<string>supercoopain.appspot.com</string>
+	<string>supercoopain-230416.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:971982986535:ios:400bb6a423690424</string>
+	<string>1:640220756673:ios:a088897a86a0ccfb</string>
 	<key>DATABASE_URL</key>
-	<string>https://supercoopain.firebaseio.com</string>
+	<string>https://supercoopain-230416.firebaseio.com</string>
 </dict>
 </plist>

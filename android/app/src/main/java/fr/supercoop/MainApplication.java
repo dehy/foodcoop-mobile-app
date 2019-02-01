@@ -3,9 +3,11 @@ package fr.supercoop;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.oblador.vectoricons.VectorIconsPackage;
-
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+import org.reactnative.camera.RNCameraPackage;
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -41,9 +43,12 @@ public class MainApplication extends NavigationApplication {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
         return Arrays.<ReactPackage>asList(
-                new MainReactPackage(),
+            new MainReactPackage(),
+            new RNGoogleSigninPackage(),
+            new RNGoogleSigninPackage(),
             new VectorIconsPackage(),
-                new RNGoogleSigninPackage()
+            new RNCWebViewPackage(),
+            new RNCameraPackage()
         );
     }
 
