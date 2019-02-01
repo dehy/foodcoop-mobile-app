@@ -8,10 +8,11 @@ import {
     StyleSheet,
     AsyncStorage
 } from 'react-native';
+import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { USER_KEY } from '../config';
 import { GoogleSignin } from 'react-native-google-signin';
-import { goToAuth } from '../utils/navigation';
+import { goToAuth, goToScreen } from '../utils/navigation';
 
 export default class Menu extends React.Component {
     googleSignOut = async () => {
@@ -31,8 +32,8 @@ export default class Menu extends React.Component {
                 <View>
                     <FlatList
                         data={[
-                            {icon: "newspaper", key: "Actualité"},
-                            {icon: "search", key: "Inventaire"}
+                            {icon: "newspaper", key: "Actualité", pushTo: "News"},
+                            {icon: "search", key: "Inventaire", pushTo: "Inventory"}
                         ]}
                         renderItem={({item}) => 
                             <Icon.Button
@@ -40,6 +41,9 @@ export default class Menu extends React.Component {
                                 color="#000000"
                                 borderRadio="0"
                                 name={item.icon}
+                                onPress={() => {
+                                    goToScreen(item.pushTo);
+                                }}
                             >
                                 {item.key}
                             </Icon.Button>}
@@ -59,6 +63,11 @@ export default class Menu extends React.Component {
                 </Icon.Button>
             </SafeAreaView>
         );
+    }
+
+    constructor(props) {
+        super(props);
+        Navigation.events().bindComponent(this);
     }
 }
 

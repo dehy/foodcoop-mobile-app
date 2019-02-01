@@ -1,63 +1,78 @@
 PODS:
-  - GoogleSignIn (4.2.0):
+  - GoogleSignIn (4.4.0):
     - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
-    - GTMOAuth2 (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleToolboxForMac/DebugUtils (2.1.4):
-    - GoogleToolboxForMac/Defines (= 2.1.4)
-  - GoogleToolboxForMac/Defines (2.1.4)
-  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
-    - GoogleToolboxForMac/DebugUtils (= 2.1.4)
-    - GoogleToolboxForMac/Defines (= 2.1.4)
-    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
-  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
-  - GTMOAuth2 (1.1.6):
-    - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.2.0):
-    - GTMSessionFetcher/Full (= 1.2.0)
-  - GTMSessionFetcher/Core (1.2.0)
-  - GTMSessionFetcher/Full (1.2.0):
-    - GTMSessionFetcher/Core (= 1.2.0)
-  - React (0.56.1):
-    - React/Core (= 0.56.1)
-  - React/Core (0.56.1):
-    - yoga (= 0.56.1.React)
-  - RNGoogleSignin (1.0.0-rc6):
+  - GoogleToolboxForMac/DebugUtils (2.2.0):
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+  - GoogleToolboxForMac/Defines (2.2.0)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.0)":
+    - GoogleToolboxForMac/DebugUtils (= 2.2.0)
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
+  - GTMSessionFetcher/Core (1.2.1)
+  - React (0.57.8):
+    - React/Core (= 0.57.8)
+  - react-native-camera (1.10.0):
+    - React
+    - react-native-camera/RCT (= 1.10.0)
+    - react-native-camera/RN (= 1.10.0)
+  - react-native-camera/RCT (1.10.0):
+    - React
+  - react-native-camera/RN (1.10.0):
+    - React
+  - react-native-webview (3.2.2):
+    - React
+  - React/Core (0.57.8):
+    - yoga (= 0.57.8.React)
+  - RNGoogleSignin (1.0.2):
     - GoogleSignIn
     - React
-  - yoga (0.56.1.React)
+  - RNVectorIcons (6.2.0):
+    - React
+  - yoga (0.57.8.React)
 
 DEPENDENCIES:
   - GoogleSignIn
   - React (from `../node_modules/react-native`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - GoogleSignIn
     - GoogleToolboxForMac
-    - GTMOAuth2
     - GTMSessionFetcher
 
 EXTERNAL SOURCES:
   React:
     :path: "../node_modules/react-native"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   RNGoogleSignin:
     :path: "../node_modules/react-native-google-signin"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  GoogleSignIn: 591e46382014e591269f862ba6e7bc0fbd793532
-  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
-  GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
-  GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
-  React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
-  RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
-  yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
+  GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
+  GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
+  GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
+  React: adbac0757ce35e92fbd447ab98c810209d27d9b0
+  react-native-camera: 88dd1bc79859134d0ff9719d4b06ef3668ff34b0
+  react-native-webview: 0914e81218b3e628d609f629674561b475dc9097
+  RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
+  RNVectorIcons: b6b131d2fdc2e240f7aba41296df869141443793
+  yoga: 74cdf036c30820443b25ade59916236b1e95ee93
 
-PODFILE CHECKSUM: 38ee5d74aab1e1f00509d56decd5522c057ec661
+PODFILE CHECKSUM: 8dba1a38ed72d34dc2bade001d295d2269f7d67b
 
-COCOAPODS: 1.6.0.beta.1
+COCOAPODS: 1.6.0.rc.2

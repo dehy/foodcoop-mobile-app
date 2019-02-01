@@ -6,4 +6,5 @@ export function registerScreens() {
     Navigation.registerComponent('Menu', () => require('../screens/Menu').default);
     Navigation.registerComponent('Welcome', () => require('../screens/Welcome').default);
     Navigation.registerComponent('Screen2', () => require('../screens/Screen2').default);
+    Navigation.registerComponent('Inventory', () => require('../screens/Inventory').default);
 }

@@ -5,31 +5,70 @@ import {
     StyleSheet,
     AsyncStorage
 } from 'react-native'
-import { goToAuth, goHome } from '../utils/navigation'
+import { goToAuth, goHome, goToScreen } from '../utils/navigation'
 import { USER_KEY } from '../config'
+import { GoogleSignin, statusCodes } from 'react-native-google-signin'
 
 export default class Initialising extends React.Component {
     async componentDidMount() {
         try {
-            const user = await AsyncStorage.getItem(USER_KEY, function (err, value) {
-                JSON.parse(value)
+            GoogleSignin.configure({
+                scopes: [
+                    'https://www.googleapis.com/auth/userinfo.email',
+                    'https://www.googleapis.com/auth/userinfo.profile',
+                    'https://www.googleapis.com/auth/gmail.compose'
+                ],
+                hostedDomain: 'supercoop.fr'
             });
-            console.log('user: ', user);
-            if (user) {
+        } catch (error) {
+            console.error('Google Signin configure error', error);
+        }
+
+        GoogleSignin.isSignedIn().then((isSignedIn) => {
+            if (isSignedIn) {
                 goHome();
-            } else {
+            }
+        })
+        GoogleSignin.signInSilently().then((user) => {
+            this.setState({ user });
+            goHome();
+        }, (error) => {
+            if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                 goToAuth();
             }
-        } catch (err) {
-            console.log('error: ', err);
-            goToAuth();
-        }
+            console.log(error);
+
+        });
+        // } catch (error) {
+        //     if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+        //         // user has not signed in yet
+        //     } else {
+        //         // some other error
+        //     }
+        //     goToAuth();
+        // }
+        // try {
+        //     const user = await AsyncStorage.getItem(USER_KEY, function (err, value) {
+        //         JSON.parse(value)
+        //     });
+        //     console.log('user: ', user);
+        //     if (user) {
+        //         goHome();
+        //     } else {
+        //         goToAuth();
+        //     }
+        // } catch (err) {
+        //     console.log('error: ', err);
+        //     goToAuth();
+        // }
     }
 
     getCurrentUserInfo = async () => {
         try {
-            const userInfo = await GoogleSignin.signInSilently();
-            this.setState({ userInfo });
+            GoogleSignin.signInSilently()
+                .then((user) => {
+                    this.setState({ user });
+                });
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_REQUIRED) {
                 // user has not signed in yet

@@ -94,11 +94,18 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('/Users/arnaud/.android/debug.keystore')
+            storePassword 'android'
+        }
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-
     defaultConfig {
-        applicationId "fr.supercoop.Supercoopain"
+        applicationId "fr.supercoop.supercoopain_android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative56"
@@ -131,7 +138,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -153,9 +160,12 @@ configurations.all {
 dependencies {
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-google-signin')
+    implementation project(':react-native-webview')
+    implementation project(':react-native-camera')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation 'com.facebook.react:react-native:+'
+    //implementation 'com.google.firebase:firebase-core:16.0.7'
     // From node_modules
     implementation project(':react-native-navigation')
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
