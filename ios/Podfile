@@ -8,13 +8,24 @@ target 'Supercoopain' do
   # Pods for Supercoopain
   pod 'React', :path => '../node_modules/react-native'
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-  
   pod 'GoogleSignIn'
-
   pod 'RNGoogleSignin', :path => '../node_modules/react-native-google-signin'
-
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
+  post_install do |installer|
+      installer.pods_project.targets.each do |target|
+          
+          targets_to_ignore = %w(React yoga)
+          
+          if targets_to_ignore.include? target.name
+              target.remove_from_project
+          end
+          
+      end
+  end
+  
   target 'SupercoopainTests' do
     inherit! :search_paths
     # Pods for testing
