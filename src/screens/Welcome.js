@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView } from 'react-native';
 import { goHome } from '../utils/navigation';
-import { USER_KEY } from '../config';
-import { GoogleSignin, GoogleSigninButton, StatusCodes } from 'react-native-google-signin';
+import { GoogleSigninButton } from 'react-native-google-signin';
+import Google from '../utils/Google';
 
 export default class Welcome extends Component {
     constructor(props) {
@@ -12,31 +12,14 @@ export default class Welcome extends Component {
         };
     }
 
-    googleSignIn = async () => {
-        this.state.isSigninInProgress = true
-        await GoogleSignin.hasPlayServices();
-        await GoogleSignin.signOut();
-        GoogleSignin.signIn()
-            .then((user) => {
-                // await AsyncStorage.setItem(USER_KEY, JSON.stringify(userInfo));
-                console.log('user successfully signed in!', user);
-                this.state.isSigninInProgress = false;
-                goHome();
-            }, (reason) => {
-                this.state.isSigninInProgress = false;
-                console.error('Google Sign In rejected', reason);
-            })
-        ;
-    };
-
-    componentDidMount() {
-        
-    }
-
     render() {
         return (
-            <View style={styles.container}>
-                <Image source={require('../../assets/images/welcome_supercoop.png')} />
+            <SafeAreaView style={styles.container}>
+                    <Image
+                        resizeMode='contain'
+                        source={require('../../assets/images/welcome_supercoop.png')}
+                        style={{height: '20%'}}
+                    />
                 <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
                 <Text style={styles.instructions}>
                     Pour commencer à utiliser l'application, connectes-toi à ton compte Supercoop
@@ -44,12 +27,18 @@ export default class Welcome extends Component {
                     On se retrouve juste après !
                 </Text>
                 <GoogleSigninButton
-                    style={{ width: 230, height: 48 }}
+                    style={{ width: 230, height: 48, margin: 12 }}
                     size={GoogleSigninButton.Size.Standard}
                     color={GoogleSigninButton.Color.Dark}
-                    onPress={this.googleSignIn}
+                    onPress={() => {
+                        this.state.isSigninInProgress = true;
+                        Google.getInstance().signIn(() => {
+                            this.state.isSigninInProgress = false;
+                            goHome();
+                        })
+                    }}
                     disabled={this.state.isSigninInProgress} />
-            </View>
+            </SafeAreaView>
         );
     }
 }
@@ -57,9 +46,10 @@ export default class Welcome extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
+        height: '100%'
     },
     welcome: {
         fontSize: 30,
