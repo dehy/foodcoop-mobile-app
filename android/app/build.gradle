@@ -105,15 +105,12 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        applicationId "fr.supercoop.supercoopain_android"
+        applicationId 'fr.supercoop.app_android'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative56"
+        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
         versionCode 1
         versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -124,7 +121,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a"
         }
     }
     buildTypes {
@@ -138,13 +135,15 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2]
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
         }
+    }
+    productFlavors {
     }
 }
 
@@ -158,17 +157,16 @@ configurations.all {
 }
 
 dependencies {
-    implementation project(':react-native-vector-icons')
-    implementation project(':react-native-google-signin')
     implementation project(':react-native-webview')
+    //implementation project(':react-native-vector-icons')
+    implementation project(':react-native-google-signin')
     implementation project(':react-native-camera')
+    implementation project(':react-native-navigation')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation 'com.facebook.react:react-native:+'
-    //implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation "com.google.android.gms:play-services-auth:${rootProject.ext.googlePlayServicesAuthVersion}"
     // From node_modules
-    implementation project(':react-native-navigation')
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 }
 
 // Run this once to be able to run the application with BUCK
@@ -178,9 +176,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-project.ext.vectoricons = [
-        iconFontNames: [ 'FontAwesome5_Regular.ttf' ] // Name of the font files you want to copy
-]
-
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 apply plugin: 'com.google.gms.google-services'

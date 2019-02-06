@@ -1,6 +1,7 @@
 import { Navigation } from 'react-native-navigation'
 import { LEFT_SIDE_MENU_ID } from '../config'
 import Drawer from './Drawer';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export const goToAuth = () => Navigation.setRoot({
     root: {
@@ -13,24 +14,60 @@ export const goToAuth = () => Navigation.setRoot({
 export function goHome() {
     Navigation.setRoot({
         root: {
-            sideMenu: {
-                left: {
-                    component: {
-                        id: LEFT_SIDE_MENU_ID,
-                        name: 'Menu'
-                    }
-                },
-                center: {
-                    stack: {
-                        id: 'App',
-                        children: [{
-                            component: {
-                                id: 'Home',
-                                name: 'Home',
+            bottomTabs: {
+                children: [
+                    {
+                        stack: {
+                            children: [
+                                {
+                                    component: {
+                                        name: 'News'
+                                    }
+                                }
+                            ],
+                            options: {
+                                bottomTab: {
+                                    text: 'News',
+                                    icon: require('../../assets/icons/newspaper-regular.png')
+                                }
                             }
-                        }],
+                        }
+                    },
+                    {
+                        stack: {
+                            children: [
+                                {
+                                    component: {
+                                        name: 'Inventory/List'
+                                    }
+                                }
+                            ],
+                            options: {
+                                bottomTab: {
+                                    text: 'Inventaire',
+                                    icon: require('../../assets/icons/clipboard-list-check-regular.png')
+                                }
+                            }
+                        }
+                    },
+                    {
+                        stack: {
+                            children: [
+                                {
+                                    component: {
+                                        name: 'Profile/Profile'
+                                    }
+                                }
+                            ],
+                            options: {
+                                bottomTab: {
+                                    text: 'Profil',
+                                    icon: require('../../assets/icons/user-regular.png')
+                                }
+                            }
+                        }
                     }
-                }
+                ]
             }
         }
     });
@@ -52,13 +89,8 @@ export function defaultScreenOptions(screenTitle) {
             title: {
                 text: screenTitle,
                 fontSize: 20,
-            },
-            leftButtons: [
-                {
-                    id: 'leftDrawerButton',
-                    icon: require('../../assets/icons/menu.png')
-                }
-            ]
+            }
         }
     }
+    return {};
 };

@@ -27,6 +27,7 @@ const odoo = new Odoo({
 
 export default class Home extends React.Component {
     static get options() {
+        console.log("options()");
         return defaultScreenOptions("Home");
     }
     constructor(props) {
@@ -34,6 +35,7 @@ export default class Home extends React.Component {
         Navigation.events().bindComponent(this);
     }
     navigationButtonPressed({ buttonId }) {
+        console.log(buttonId);
         if (buttonId == 'leftDrawerButton') {
             Drawer.open('left')
         }
@@ -81,12 +83,11 @@ export default class Home extends React.Component {
                 <Text>Hello from Home screen.</Text>
                 <Button
                     onPress={() => {
-                        this.callToOdoo();
-                        // Navigation.push(this.props.componentId, {
-                        //     component: {
-                        //         name: 'Screen2',
-                        //     }
-                        // });
+                        Navigation.push(this.props.componentId, {
+                            component: {
+                                name: 'Screen2',
+                            }
+                        });
                     }}
                     title="View next screen"
                 />

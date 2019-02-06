@@ -15,16 +15,6 @@ import { GoogleSignin } from 'react-native-google-signin';
 import { goToAuth, goToScreen } from '../utils/navigation';
 
 export default class Menu extends React.Component {
-    googleSignOut = async () => {
-        try {
-            // await GoogleSignin.revokeAccess();
-            await GoogleSignin.signOut();
-            await AsyncStorage.removeItem(USER_KEY);
-            goToAuth();
-        } catch (error) {
-            console.error(error);
-        }
-    };
     render() {
         return (
             <SafeAreaView style={styles.container}>
