@@ -12,32 +12,35 @@ PODS:
     - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
   - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
   - GTMSessionFetcher/Core (1.2.1)
-  - React (0.57.8):
-    - React/Core (= 0.57.8)
-  - react-native-camera (1.10.0):
+  - React (0.58.3):
+    - React/Core (= 0.58.3)
+  - react-native-camera (1.10.1):
     - React
-    - react-native-camera/RCT (= 1.10.0)
-    - react-native-camera/RN (= 1.10.0)
-  - react-native-camera/RCT (1.10.0):
+    - react-native-camera/RCT (= 1.10.1)
+    - react-native-camera/RN (= 1.10.1)
+  - react-native-camera/RCT (1.10.1):
     - React
-  - react-native-camera/RN (1.10.0):
+  - react-native-camera/RN (1.10.1):
     - React
-  - react-native-webview (3.2.2):
+  - react-native-webview (5.0.5):
     - React
-  - React/Core (0.57.8):
-    - yoga (= 0.57.8.React)
-  - RNGoogleSignin (1.0.2):
+  - React/Core (0.58.3):
+    - yoga (= 0.58.3.React)
+  - ReactNativeNavigation (2.9.0):
+    - React
+  - RNGoogleSignin (1.1.0):
     - GoogleSignIn
     - React
   - RNVectorIcons (6.2.0):
     - React
-  - yoga (0.57.8.React)
+  - yoga (0.58.3.React)
 
 DEPENDENCIES:
   - GoogleSignIn
   - React (from `../node_modules/react-native`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-webview (from `../node_modules/react-native-webview`)
+  - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -55,6 +58,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
+  ReactNativeNavigation:
+    :path: "../node_modules/react-native-navigation"
   RNGoogleSignin:
     :path: "../node_modules/react-native-google-signin"
   RNVectorIcons:
@@ -66,13 +71,14 @@ SPEC CHECKSUMS:
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  React: adbac0757ce35e92fbd447ab98c810209d27d9b0
-  react-native-camera: 88dd1bc79859134d0ff9719d4b06ef3668ff34b0
-  react-native-webview: 0914e81218b3e628d609f629674561b475dc9097
-  RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
+  React: d099597d6ba7001f0219dbc48532b63cfd8d0eca
+  react-native-camera: f9dd19453bdb0963cb65215829a78e001f310ce1
+  react-native-webview: da2f0abb4c86388f33cbc3fd91fa221f022d2242
+  ReactNativeNavigation: fba66682f78e52ebe339e26a176e2dbcaa4d5940
+  RNGoogleSignin: bd1b65d312b696ad5522c08b693aa1abf19b96f2
   RNVectorIcons: b6b131d2fdc2e240f7aba41296df869141443793
-  yoga: 74cdf036c30820443b25ade59916236b1e95ee93
+  yoga: 220e7595ec3cfe80c5ce02a0d0881be66b405e81
 
-PODFILE CHECKSUM: 8dba1a38ed72d34dc2bade001d295d2269f7d67b
+PODFILE CHECKSUM: d6ae2585f7e1af0739ce06f7aced9a788f96f0bb
 
 COCOAPODS: 1.6.0.rc.2

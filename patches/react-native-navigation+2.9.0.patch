@@ -1,0 +1,57 @@
+diff --git a/node_modules/react-native-navigation/lib/android/app/build.gradle b/node_modules/react-native-navigation/lib/android/app/build.gradle
+index 7367c52..85498ad 100644
+--- a/node_modules/react-native-navigation/lib/android/app/build.gradle
++++ b/node_modules/react-native-navigation/lib/android/app/build.gradle
+@@ -3,7 +3,7 @@ apply from: '../prepare-robolectric.gradle'
+ 
+ android {
+     compileSdkVersion 26
+-    buildToolsVersion '27.0.3'
++    buildToolsVersion '28.0.2'
+ 
+     defaultConfig {
+         minSdkVersion 19
+diff --git a/node_modules/react-native-navigation/lib/android/app/src/main/java/com/reactnativenavigation/utils/NoOpPromise.java b/node_modules/react-native-navigation/lib/android/app/src/main/java/com/reactnativenavigation/utils/NoOpPromise.java
+index 0a8f81a..f93509d 100644
+--- a/node_modules/react-native-navigation/lib/android/app/src/main/java/com/reactnativenavigation/utils/NoOpPromise.java
++++ b/node_modules/react-native-navigation/lib/android/app/src/main/java/com/reactnativenavigation/utils/NoOpPromise.java
+@@ -1,7 +1,9 @@
+ package com.reactnativenavigation.utils;
+ 
+ import com.facebook.react.bridge.Promise;
++import com.facebook.react.bridge.WritableMap;
+ 
++import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ 
+ public class NoOpPromise implements Promise {
+@@ -35,4 +37,29 @@ public class NoOpPromise implements Promise {
+     public void reject(Throwable reason) {
+ 
+     }
++
++    @Override
++    public void reject(Throwable throwable, WritableMap userInfo) {
++
++    }
++
++    @Override
++    public void reject(String code, @Nonnull WritableMap userInfo) {
++
++    }
++
++    @Override
++    public void reject(String code, Throwable throwable, WritableMap userInfo) {
++
++    }
++
++    @Override
++    public void reject(String code, String message, @Nonnull WritableMap userInfo) {
++
++    }
++
++    @Override
++    public void reject(String code, String message, Throwable throwable, WritableMap userInfo) {
++
++    }
+ }

@@ -1,9 +1,0 @@
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/GoogleSignIn/Frameworks"
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/GTMSessionFetcher" "${PODS_ROOT}/Headers/Public/GoogleToolboxForMac" "${PODS_ROOT}/Headers/Public/RNGoogleSignin" "${PODS_ROOT}/Headers/Public/RNVectorIcons" "${PODS_ROOT}/Headers/Public/React" "${PODS_ROOT}/Headers/Public/react-native-camera" "${PODS_ROOT}/Headers/Public/react-native-webview" "${PODS_ROOT}/Headers/Public/yoga"
-LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher" "${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac" "${PODS_CONFIGURATION_BUILD_DIR}/RNGoogleSignin" "${PODS_CONFIGURATION_BUILD_DIR}/RNVectorIcons" "${PODS_CONFIGURATION_BUILD_DIR}/React" "${PODS_CONFIGURATION_BUILD_DIR}/react-native-camera" "${PODS_CONFIGURATION_BUILD_DIR}/react-native-webview" "${PODS_CONFIGURATION_BUILD_DIR}/yoga"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"GTMSessionFetcher" -l"GoogleToolboxForMac" -l"RNGoogleSignin" -l"RNVectorIcons" -l"React" -l"react-native-camera" -l"react-native-webview" -l"stdc++" -l"yoga" -framework "CoreGraphics" -framework "CoreText" -framework "GoogleSignIn" -framework "JavaScriptCore" -framework "LocalAuthentication" -framework "SafariServices" -framework "Security" -framework "SystemConfiguration"
-PODS_BUILD_DIR = ${BUILD_DIR}
-PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
-PODS_PODFILE_DIR_PATH = ${SRCROOT}/.
-PODS_ROOT = ${SRCROOT}/Pods
