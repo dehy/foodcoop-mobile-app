@@ -6,14 +6,24 @@ target 'Supercoop' do
   # use_frameworks!
 
   # Pods for Supercoop
-  pod 'React', :path => '../node_modules/react-native'
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'RCTImage'
+  ]
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
   pod 'GoogleSignIn'
   pod 'RNGoogleSignin', :path => '../node_modules/react-native-google-signin'
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
   pod 'ReactNativeNavigation', :path => '../node_modules/react-native-navigation'
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+
+  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
+
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+
+  pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
 
   post_install do |installer|
       installer.pods_project.targets.each do |target|

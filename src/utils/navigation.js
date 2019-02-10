@@ -1,7 +1,5 @@
 import { Navigation } from 'react-native-navigation'
-import { LEFT_SIDE_MENU_ID } from '../config'
 import Drawer from './Drawer';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export const goToAuth = () => Navigation.setRoot({
     root: {
@@ -12,6 +10,20 @@ export const goToAuth = () => Navigation.setRoot({
 });
 
 export function goHome() {
+    // Navigation.setRoot({
+    //     root: {
+    //         stack: {
+    //             children: [
+    //                 {
+    //                     component: {
+    //                         name: 'Inventory/Scan'
+    //                     }
+    //                 }
+    //             ]
+    //         }
+    //     }
+    // });
+    // return;
     Navigation.setRoot({
         root: {
             bottomTabs: {

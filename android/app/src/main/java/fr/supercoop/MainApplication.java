@@ -63,7 +63,12 @@ public class MainApplication extends NavigationApplication {
         @Override
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
-                    new MainReactPackage()
+                    new MainReactPackage(),
+            new RNSentryPackage(),
+            new SvgPackage(),
+            new KeychainPackage(),
+            new RNSoundPackage(),
+            new VectorIconsPackage()
             );
         }
 
