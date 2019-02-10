@@ -1,196 +1,73 @@
 'use strict'
 
-var Odoo = function (config) {
-  config = config || {}
+import OdooApi from 'react-native-odoo-promise-based';
+import Article from '../entities/Article';
 
-  this.host = config.host
-  this.port = config.port || 80
-  this.database = config.database
-  this.username = config.username || null
-  this.password = config.password || null
-  this.sid = config.sid || null
-  this.protocol = config.protocol || 'http'
+export default class Odoo {
+
+    static UNIT_UNIT = 1;
+    static UNIT_KG = 2;
+
+    constructor() {
+        this.isConnected = false;
+
+        this.odooApi = new OdooApi({
+            host: 'labo.test.supercoop.fr',
+            port: 443,
+            protocol: 'https',
+            database: 'PROD',
+            username: 'fjg@supercoop.fr',
+            password: 'Supercoop18'
+        });
+    }
+
+    async fetchArticleFromBarcode(barcode) {
+        const isConnected = await this.assertConnect();
+        if (isConnected !== true) {
+            console.error(odooApi);
+            throw new Error("Odoo is not connected");
+        }
+    
+        var params = {
+            // ids: [1, 2, 3, 4, 5],
+            // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
+            domain: [['barcode', '=', barcode]],
+            fields: ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'standard_price', 'uom_po_id'],
+            // lst_price = prix de vente, standard_price = achat, uom_id = unité de vente, uom_po_id = unité d'achat
+            order: 'name DESC',
+            limit: 50,
+            offset: 0,
+        }; //params
+    
+        const response = await this.odooApi.search_read('product.product', params);
+        if (response.success !== true) {
+            console.error(response);
+        }
+        return new Article(response.data[0]);
+    }
+
+    async assertConnect() {
+        console.log("assertConnect");
+        var context = this;
+        return new Promise(function (resolve, reject) {
+            if (!context.isConnected) {
+                console.log("not connected");
+                context.odooApi.connect().then((response) => {
+                    if (Number.isInteger(response.data.uid) && response.data.uid > 0) {
+                        context.isConnected = true;
+                        resolve(true);
+                    } else {
+                        context.isConnected = false;
+                        reject(false);
+                    }
+                }).catch((reason) => {
+                    reject(reason);
+                });
+            } else {
+                resolve(true);
+            }
+        }).catch((e) => {
+            console.error(e);
+        });
+    }
 }
-
-// Connect
-Odoo.prototype.connect = function () {
-  var params = {
-    db: this.database,
-    login: this.username,
-    password: this.password
-  }
-
-  var json = JSON.stringify({ params: params })
-  var url = `${this.protocol}://${this.host}:${this.port}/web/session/authenticate`
-
-  var options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Content-Length': json.length
-    },
-    body: json
-  }
-
-  var context = this
-
-  return fetch(url, options)
-    .then(function (response) {
-      context.sid = response.headers.map['set-cookie'].split(';')[0].split('=')[1];
-      context.cookie = response.headers.map['set-cookie'];
-      return response.json()
-    })
-    .then(function (responseJson) {
-      if (responseJson.error) return { success: false, error: responseJson.error }
-      else {
-        context.uid = responseJson.result.uid
-        context.session_id = responseJson.result.session_id
-        context.context = responseJson.result.user_context
-        context.username = responseJson.result.username
-        return { success: true, data: responseJson.result }
-      }
-    })
-    .catch(function (error) {
-      return { success: false, error: error }
-    })
-}
-
-// Search records
-Odoo.prototype.search = function (model, params, context) {
-  return this._request('/web/dataset/call_kw', {
-    kwargs: {
-      context: {...this.context, ...context}
-    },
-    model: model,
-    method: 'search',
-    args: [
-      params.domain,
-    ],
-  })
-}
-
-// Search & Read records
-Odoo.prototype.search_read = function (model, params, context) {
-
-  return this._request('/web/dataset/call_kw', {
-    model: model,
-    method: 'search_read',
-    args: [],
-    kwargs: {
-      context: {...this.context, ...context},
-      domain: params.domain,
-      offset: params.offset,
-      limit: params.limit,
-      order: params.order,
-      fields: params.fields,
-    },
-  })
-}
-
-// Read records
-Odoo.prototype.get = function (model, params, context) {
-  return this._request('/web/dataset/call_kw', {
-    model: model,
-    method: 'read',
-    args: [
-      params.ids,
-    ],
-    kwargs: {
-      context: {...this.context, ...context},
-      fields: params.fields,
-    },
-  })
-}
-
-
-// Browse records by ID
-// Not a direct implementation of Odoo RPC 'browse' but rather a workaround based on 'search_read'
-Odoo.prototype.browse_by_id = function (model, params) {
-  params.domain = [['id', '>', '0']]
-  this.search_read(model, params)
-    .then(function (response) {
-      return response
-    })
-}
-
-
-// Create records
-Odoo.prototype.create = function (model, params, context) {
-  return this._request('/web/dataset/call_kw', {
-    kwargs: {
-      context: {...this.context, ...context}
-    },
-    model: model,
-    method: 'create',
-    args: [params]
-  })
-}
-
-// Update records
-Odoo.prototype.update = function (model, ids, params, context) {
-  if (ids) {
-    return this._request('/web/dataset/call_kw', {
-      kwargs: {
-        context: {...this.context, ...context}
-      },
-      model: model,
-      method: 'write',
-      args: [ids, params]
-    })
-  }
-}
-
-// Delete records
-Odoo.prototype.delete = function (model, ids, context) {
-  if (ids) {
-    return this._request('/web/dataset/call_kw', {
-      kwargs: {
-        context: {...this.context, ...context}
-      },
-      model: model,
-      method: 'unlink',
-      args: [ids]
-    })
-  }
-}
-
-// Generic RPC wrapper
-Odoo.prototype.rpc_call = function (endpoint, params) {
-  return this._request(endpoint, params)
-}
-
-// Private functions
-Odoo.prototype._request = function (path, params) {
-  params = params || {}
-
-  var url = `${this.protocol}://${this.host}:${this.port}${path || '/'}`
-  var options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Cookie': this.cookie
-    },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: new Date().getUTCMilliseconds(),
-      method: 'call',
-      params: params
-    })
-  }
-
-  return fetch(url, options)
-    .then(function (response) {
-      return response.json()
-    })
-    .then(function (responseJson) {
-      if (responseJson.error) return { success: false, error: responseJson.error }
-      else return { success: true, data: responseJson.result }
-    })
-    .catch(function (error) {
-      return { success: false, error: error }
-    })
-}
-
-module.exports = Odoo

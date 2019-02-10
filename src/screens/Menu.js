@@ -9,7 +9,6 @@ import {
     AsyncStorage
 } from 'react-native';
 import { Navigation } from 'react-native-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import { USER_KEY } from '../config';
 import { GoogleSignin } from 'react-native-google-signin';
 import { goToAuth, goToScreen } from '../utils/navigation';
@@ -20,7 +19,7 @@ export default class Menu extends React.Component {
             <SafeAreaView style={styles.container}>
                 <Text style={[styles.item, styles.profile]}>Prénom</Text>
                 <View>
-                    <FlatList
+                    {/* <FlatList
                         data={[
                             {icon: "newspaper", key: "Actualité", pushTo: "News"},
                             {icon: "search", key: "Inventaire", pushTo: "Inventory"}
@@ -37,7 +36,7 @@ export default class Menu extends React.Component {
                             >
                                 {item.key}
                             </Icon.Button>}
-                    />
+                    /> */}
                 </View>
                 <View style={styles.spaceItem}></View>
                 <Icon.Button

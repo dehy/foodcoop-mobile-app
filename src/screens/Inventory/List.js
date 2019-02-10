@@ -3,67 +3,125 @@ import {
     View,
     Text,
     Button,
-    StyleSheet,
-    TouchableOpacity,
+    TouchableHighlight,
     SafeAreaView,
     FlatList
 } from 'react-native'
+import EStyleSheet from 'react-native-extended-stylesheet';
 import { defaultScreenOptions } from '../../utils/navigation';
-import { RNCamera } from 'react-native-camera';
+import { Navigation } from 'react-native-navigation';
+import InventoryFactory from '../../factories/InventoryFactory';
 
 export default class InventoryList extends React.Component {
-    static get options() {
-        return defaultScreenOptions("Inventaire");
+    constructor(props) {
+        super(props);
+        Navigation.events().bindComponent(this);
+        this.state = {
+            inventoriesData: []
+        }
     }
+
+    static options(passProps) {
+        var options = defaultScreenOptions("Inventaires");
+        options.topBar.rightButtons = [
+            {
+                id: 'inventory-new',
+                text: 'Nouveau'
+                // icon: require('../../../assets/icons/plus-regular.png')
+            }
+        ]
+
+        return options;
+    }
+
+    componentDidMount() {
+        InventoryFactory.sharedInstance().findAll().then(inventories => {
+            const inventoriesData = [];
+            for (k in inventories) {
+                const inventory = inventories[k];
+                const inventoryData = {
+                    key: 'inventory-' + inventory.id,
+                    id: inventory.id,
+                    title: inventory.date.format('LL'),
+                    subtitle: String(inventory.zone)
+                }
+                inventoriesData.push(inventoryData);
+            }
+
+            console.log(inventoriesData);
+
+            this.setState({
+                inventoriesData: inventoriesData
+            })
+        });
+    }
+
+    navigationButtonPressed({ buttonId }) {
+        // will be called when "buttonOne" is clicked
+        if (buttonId === 'inventory-new') {
+            Navigation.showModal({
+                stack: {
+                    children: [{
+                        component: {
+                            name: 'Inventory/New'
+                        }
+                    }]
+                }
+            });
+        }
+    }
+
+    didTapInventoryEntry = (props) => {
+        Navigation.push(props.componentId, {
+            component: {
+                name: 'Inventory/Show',
+                passProps: {
+                    inventoryId: props.item.id
+                }
+            }
+        });
+    }
+
     render() {
         return (
             <SafeAreaView>
                 <FlatList
-                    data={[
-                        { key: 'inventory-xxxxxx', title: 'Inventaire du xx/xx/xxxx' },
-                        { key: 'inventory-yyyyyy', title: 'Inventaire du yy/yy/yyyy' }
-                    ]}
-                    renderItem={({ item }) => <Text>{item.title}</Text>}
+                    data={this.state.inventoriesData}
+                    renderItem={({ item }) =>
+                        <TouchableHighlight onPress={() => {
+                            this.didTapInventoryEntry({
+                                componentId: this.props.componentId,
+                                item: item
+                            })}
+                        }>
+                            <View style={styles.row}>
+                                <Text style={styles.rowTitle}>{item.title}</Text>
+                                <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
+                            </View>
+                        </TouchableHighlight>
+                    }
                 />
             </SafeAreaView>
-            // <View style={styles.container}>
-            //     <RNCamera
-            //         ref={ref => {
-            //             this.camera = ref;
-            //         }}
-            //         style={styles.preview}
-            //         type={RNCamera.Constants.Type.back}
-            //         flashMode={RNCamera.Constants.FlashMode.on}
-            //         captureAudio={false}
-            //         permissionDialogTitle={'Permission to use camera'}
-            //         permissionDialogMessage={'We need your permission to use your camera phone'}
-            //         onGoogleVisionBarcodesDetected={({ barcodes }) => {
-            //             console.log(barcodes);
-            //         }}
-            //     />
-            //     <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-            //         <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-            //             <Text style={{ fontSize: 14 }}> SNAP </Text>
-            //         </TouchableOpacity>
-            //     </View>
-            // </View>
         )
-    }
-
-    takePicture = async function () {
-        if (this.camera) {
-            const options = { quality: 0.5, base64: true };
-            const data = await this.camera.takePictureAsync(options);
-            console.log(data.uri);
-        }
     }
 }
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
         backgroundColor: 'black',
+    },
+    row: {
+        height: 44,
+        paddingTop: 5,
+        paddingLeft: 16
+    },
+    rowTitle: {
+        fontSize: 17
+    },
+    rowSubtitle: {
+        fontSize: 12,
     },
     preview: {
         flex: 1,
