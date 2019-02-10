@@ -157,8 +157,12 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':react-native-sentry')
+    implementation project(':react-native-svg')
+    implementation project(':react-native-keychain')
+    implementation project(':react-native-sound')
+    implementation project(':react-native-vector-icons')
     implementation project(':react-native-webview')
-    //implementation project(':react-native-vector-icons')
     implementation project(':react-native-google-signin')
     implementation project(':react-native-camera')
     implementation project(':react-native-navigation')

@@ -22,27 +22,51 @@ PODS:
     - React
   - react-native-camera/RN (1.10.1):
     - React
-  - react-native-webview (5.0.5):
+  - react-native-sqlite-storage (3.3.9):
+    - React
+  - react-native-webview (5.0.6):
     - React
   - React/Core (0.58.3):
     - yoga (= 0.58.3.React)
-  - ReactNativeNavigation (2.9.0):
+  - React/RCTImage (0.58.3):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTNetwork (0.58.3):
+    - React/Core
+  - ReactNativeNavigation (2.10.0):
     - React
   - RNGoogleSignin (1.1.0):
     - GoogleSignIn
     - React
-  - RNVectorIcons (6.2.0):
+  - RNKeychain (3.0.0):
     - React
+  - RNSound (0.10.12):
+    - React/Core
+    - RNSound/Core (= 0.10.12)
+  - RNSound/Core (0.10.12):
+    - React/Core
+  - RNSVG (9.2.4):
+    - React
+  - Sentry (4.1.3):
+    - Sentry/Core (= 4.1.3)
+  - Sentry/Core (4.1.3)
+  - SentryReactNative (0.41.1):
+    - React
+    - Sentry (~> 4.1.3)
   - yoga (0.58.3.React)
 
 DEPENDENCIES:
   - GoogleSignIn
-  - React (from `../node_modules/react-native`)
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - react-native-webview (from `../node_modules/react-native-webview`)
+  - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
-  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNSound (from `../node_modules/react-native-sound`)
+  - RNSVG (from `../node_modules/react-native-svg`)
+  - SentryReactNative (from `../node_modules/react-native-sentry`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -50,20 +74,29 @@ SPEC REPOS:
     - GoogleSignIn
     - GoogleToolboxForMac
     - GTMSessionFetcher
+    - Sentry
 
 EXTERNAL SOURCES:
   React:
     :path: "../node_modules/react-native"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-sqlite-storage:
+    :path: "../node_modules/react-native-sqlite-storage"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   ReactNativeNavigation:
     :path: "../node_modules/react-native-navigation"
   RNGoogleSignin:
     :path: "../node_modules/react-native-google-signin"
-  RNVectorIcons:
-    :path: "../node_modules/react-native-vector-icons"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
+  RNSound:
+    :path: "../node_modules/react-native-sound"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
+  SentryReactNative:
+    :path: "../node_modules/react-native-sentry"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -73,12 +106,17 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   React: d099597d6ba7001f0219dbc48532b63cfd8d0eca
   react-native-camera: f9dd19453bdb0963cb65215829a78e001f310ce1
-  react-native-webview: da2f0abb4c86388f33cbc3fd91fa221f022d2242
-  ReactNativeNavigation: fba66682f78e52ebe339e26a176e2dbcaa4d5940
+  react-native-sqlite-storage: 001a5a41f67f62df1f89a9680967292396c4ac31
+  react-native-webview: eeb56ef17ff358840b4f2ea062e02345187d4c78
+  ReactNativeNavigation: 48667d2448c45c8ba534e0d6f8152e85b87b6a58
   RNGoogleSignin: bd1b65d312b696ad5522c08b693aa1abf19b96f2
-  RNVectorIcons: b6b131d2fdc2e240f7aba41296df869141443793
+  RNKeychain: 3aa3cf891a09a0d18d306862ab2bb9e106079b24
+  RNSound: a1d01988e043aed5dbb476c2152b5ffb02446750
+  RNSVG: 6fec2b50e65b4a01ba54155e8e546e0a1eeb16f4
+  Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
+  SentryReactNative: 2c3cc5e3417a4e2cb3b9449f3ea99ac021fe6575
   yoga: 220e7595ec3cfe80c5ce02a0d0881be66b405e81
 
-PODFILE CHECKSUM: d6ae2585f7e1af0739ce06f7aced9a788f96f0bb
+PODFILE CHECKSUM: fd09229e579910709907dc9d82b973c05a08f0a7
 
 COCOAPODS: 1.6.0.rc.2

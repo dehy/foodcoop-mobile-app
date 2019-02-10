@@ -6,6 +6,7 @@ import {
 } from 'react-native'
 import Google from '../utils/Google';
 import { goHome, goToAuth } from '../utils/navigation';
+import Database from '../utils/Database';
 
 export default class Initialising extends React.Component {
     constructor(props) {
@@ -14,7 +15,18 @@ export default class Initialising extends React.Component {
             loggedUser: null
         };
     }
-    async componentDidMount() {
+    
+    componentDidMount() {
+        this.migrateDatabase().then(() => {
+            this.signInSilently();
+        });
+    }
+
+    async migrateDatabase() {
+        await Database.sharedInstance().migrate();
+    }
+
+    signInSilently() {
         Google.getInstance().signInSilently(goHome, goToAuth);
     }
 

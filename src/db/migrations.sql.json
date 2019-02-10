@@ -1,0 +1,10 @@
+{
+    "1": [
+        "DROP TABLE IF EXISTS `inventories`;",
+        "CREATE TABLE `inventories` (`id` integer NOT NULL, `date` text NOT NULL, `zone` integer NOT NULL, PRIMARY KEY (`id`));",
+        "DROP TABLE IF EXISTS `inventories_entries`;",
+        "CREATE TABLE `inventories_entries` ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id));",
+        "INSERT INTO `inventories` (`id`,`date`,`zone`) VALUES (1,'2019-02-07',1);",
+        "PRAGMA user_version = 1;"
+    ]
+}

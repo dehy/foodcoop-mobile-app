@@ -1,5 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { GoogleSignin, statusCodes } from 'react-native-google-signin'
+import { goToAuth } from './navigation';
+import Sentry from 'react-native-sentry';
 
 export default class Google extends React.Component {
 
@@ -33,6 +35,12 @@ export default class Google extends React.Component {
         }
     }
 
+    componentDidUpdate() {
+        Sentry.setUserContext({
+            email: this.state.currentUser ? this.state.currentUser.email : null
+        })
+    }
+
     signInSilently = async (signedInCallback, signedOutCallback) => {
         this.isSignedIn(signedInCallback, (signedInCallback) => {
             GoogleSignin.signInSilently().then((user) => {
@@ -48,12 +56,16 @@ export default class Google extends React.Component {
     }
 
     isSignedIn = async (signedInCallback, signedOutCallback) => {
-        GoogleSignin.isSignedIn().then((isSignedIn) => {
+        GoogleSignin.isSignedIn().then(async (isSignedIn) => {
             if (isSignedIn) {
                 GoogleSignin.getCurrentUser().then((user) => {
-                    this.state.currentUser = user;
+                    if (user === null) {
+                        this.signOut(goToAuth);
+                    } else {
+                        this.state.currentUser = user;
+                        signedInCallback();
+                    }
                 });
-                signedInCallback();
             } else {
                 signedOutCallback();
             }

@@ -8,6 +8,8 @@ export function registerScreens() {
     Navigation.registerComponent('Initializing', (sc) => require('../screens/Initializing').default);
     Navigation.registerComponent('Menu', () => require('../screens/Menu').default);
     Navigation.registerComponent('Welcome', () => require('../screens/Welcome').default);
-    Navigation.registerComponent('Screen2', () => require('../screens/Screen2').default);
     Navigation.registerComponent('Inventory/List', () => require('../screens/Inventory/List').default);
+    Navigation.registerComponent('Inventory/New', () => require('../screens/Inventory/New').default);
+    Navigation.registerComponent('Inventory/Show', () => require('../screens/Inventory/Show').default);
+    Navigation.registerComponent('Inventory/Scan', () => require('../screens/Inventory/Scan').default);
 }
