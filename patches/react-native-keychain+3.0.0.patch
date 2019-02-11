@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-keychain/android/build.gradle b/node_modules/react-native-keychain/android/build.gradle
+index 3f0446e..9d37854 100755
+--- a/node_modules/react-native-keychain/android/build.gradle
++++ b/node_modules/react-native-keychain/android/build.gradle
+@@ -34,6 +34,6 @@ repositories {
+ }
+ 
+ dependencies {
+-  compile 'com.facebook.react:react-native:+'
+-  compile 'com.facebook.conceal:conceal:1.1.3@aar'
++  implementation 'com.facebook.react:react-native:+'
++  implementation 'com.facebook.conceal:conceal:1.1.3@aar'
+ }
