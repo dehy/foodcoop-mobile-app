@@ -17,20 +17,24 @@ export default class Profile extends React.Component {
     constructor(props) {
         super(props);
         Navigation.events().bindComponent(this);
-        this.state = {
-            loggedUser: null
-        }
     }
     static get options() {
         console.log(this.state);
-        return defaultScreenOptions("Profil");
+        return defaultScreenOptions("Paramètres");
     }
     _onPress = (key) => {
         switch(key) {
             case 'about':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Profile/About',
+                        name: 'Settings/About',
+                    }
+                })
+                break;
+            case 'database':
+                Navigation.push(this.props.componentId, {
+                    component: {
+                        name: 'Settings/Database'
                     }
                 })
                 break;
@@ -61,6 +65,7 @@ export default class Profile extends React.Component {
                     )}
                     data={[
                         { title: "À propos", key: "about" },
+                        { title: "Base de données locale", key: "database" },
                         { title: "Se déconnecter", key: "logout", color: "red" }
                     ]}
                     renderItem={({ item, separators }) =>
