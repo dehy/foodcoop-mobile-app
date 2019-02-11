@@ -10,20 +10,16 @@ export const goToAuth = () => Navigation.setRoot({
 });
 
 export function goHome() {
-    // Navigation.setRoot({
-    //     root: {
-    //         stack: {
-    //             children: [
-    //                 {
-    //                     component: {
-    //                         name: 'Inventory/Scan'
-    //                     }
-    //                 }
-    //             ]
-    //         }
-    //     }
-    // });
-    // return;
+    
+    Navigation.setDefaultOptions({
+        bottomTab: {
+          iconColor: "black",
+          textColor: "black",
+          selectedIconColor: "blue",
+          selectedTextColor: "blue"
+        }
+    });
+
     Navigation.setRoot({
         root: {
             bottomTabs: {
@@ -41,6 +37,17 @@ export function goHome() {
                                 bottomTab: {
                                     text: 'News',
                                     icon: require('../../assets/icons/newspaper-regular.png')
+                                }
+                            }
+                        }
+                    },
+                    {
+                        component: {
+                            name: 'Scanner',
+                            options: {
+                                bottomTab: {
+                                    text: 'Scanette',
+                                    icon: require('../../assets/icons/barcode-read-regular.png')
                                 }
                             }
                         }
@@ -67,14 +74,14 @@ export function goHome() {
                             children: [
                                 {
                                     component: {
-                                        name: 'Profile/Profile'
+                                        name: 'Settings/Settings'
                                     }
                                 }
                             ],
                             options: {
                                 bottomTab: {
-                                    text: 'Profil',
-                                    icon: require('../../assets/icons/user-regular.png')
+                                    text: 'Paramètres',
+                                    icon: require('../../assets/icons/sliders-h-regular.png')
                                 }
                             }
                         }

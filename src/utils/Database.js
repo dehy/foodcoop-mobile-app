@@ -37,7 +37,8 @@ export default class Database {
     async migrate() {
         await this.connect();
         // Reset
-        await this.db.executeSql('PRAGMA user_version = 0;');
+        // await this.resetDatabase();
+        // await this.db.executeSql('PRAGMA user_version = 0;');
         let currentSchemaVersion = await this.getCurrentSchemaVersion();
 
         if (currentSchemaVersion >= Database.TARGET_SCHEMA_VERSION) {
@@ -81,6 +82,21 @@ export default class Database {
         }
 
         return currentSchemaVersion;
+    }
+
+    async resetDatabase() {
+        await this.connect();
+        const response = await this.executeQuery("SELECT `name` FROM `sqlite_master` WHERE `type` = 'table'");
+        const tablesToDelete = [];
+        for (let i = 0; i < response[0].rows.length; i++) {
+            tablesToDelete.push(response[0].rows.item(i).name);
+        }
+
+        for (key in tablesToDelete) {
+            const tableName = tablesToDelete[key];
+            const response = await this.executeQuery("DROP TABLE `" + tableName +"`");
+        }
+        await this.executeQuery("PRAGMA user_version = 0");
     }
 
     async executeQuery(statement, parameters) {

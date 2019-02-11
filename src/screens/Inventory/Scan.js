@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+    ActivityIndicator,
     Alert,
     Button,
     Dimensions,
@@ -16,10 +17,10 @@ import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation } from 'react-native-navigation';
 import { RNCamera } from 'react-native-camera';
 import Odoo from '../../utils/Odoo';
-import Article from '../../entities/Article';
 import InventoryEntry from '../../entities/InventoryEntry';
 import moment from 'moment';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
+import OdooProduct from '../../entities/OdooProduct';
 
 export default class InventoryScan extends React.Component {
     constructor(props) {
@@ -42,9 +43,13 @@ export default class InventoryScan extends React.Component {
         // Odoo
         this.odoo = new Odoo();
 
+        this.lastScannedBarcode = null;
+        this.scannedAt = null;
+
         this.state = {
+            displayCamera: false,
             odooProduct: null,
-            showArticle: false,
+            showProductCard: false,
             articleQuantityValue: "",
         }
     }
@@ -55,6 +60,7 @@ export default class InventoryScan extends React.Component {
     }
 
     componentDidMount() {
+        this.hideProductCard();
     }
 
     componentWillUnmount() {
@@ -84,15 +90,41 @@ export default class InventoryScan extends React.Component {
         return options;
     }
 
+    showProductCard() {
+        this.textInput.focus();
+        this.setState({
+            displayCamera: false,
+            showProductCard: true
+        })
+    }
+
+    hideProductCard() {
+        this.textInput.blur();
+        this.setState({
+            displayCamera: true,
+            showProductCard: false
+        })
+    }
+
+    resetOdooProduct() {
+        this.setState({
+            odooProduct: null
+        })
+    }
+
     closeModal() {
         this.beepSound.release();
         Navigation.dismissModal(this.props.componentId)
     }
 
     lookupForBarcode(camera, barcode) {
-        camera.pausePreview();
+        if (this.lastScannedBarcode === barcode) {
+            return;
+        }
+        this.lastScannedBarcode = barcode;
+
         this.beepSound.play(() => {
-            this.beepSound.stop();
+            this.beepSound.stop(); // Resets file for immediate play availability
         });
         Navigation.mergeOptions(this.props.componentId, {
             topBar: {
@@ -101,38 +133,23 @@ export default class InventoryScan extends React.Component {
                 }
             }
         })
-        this.odoo.fetchArticleFromBarcode(barcode).then((odooProduct) => {
-            console.log(odooProduct);
+        this.showProductCard();
+        this.textInput.clear();
+        this.textInput.focus();
+        this.odoo.fetchProductFromBarcode(barcode).then((odooProduct) => {
             this.setState({
-                showArticle: true
+                odooProduct: odooProduct,
             })
-            this.updateInformationView(odooProduct);
+            this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
+                const odooProduct = this.state.odooProduct;
+                odooProduct.image = OdooProduct.imageFromOdooBase64(image);
+                this.setState({
+                    odooProduct: odooProduct
+                })
+            });
         }, (reason) => {
             console.error(reason);
         });
-    }
-
-    updateInformationView(odooProduct) {
-        this.textInput.clear();
-        this.textInput.focus();
-        this.setState({
-            odooProduct: odooProduct,
-            showArticle: true
-        })
-    }
-
-    unitAsString(unit) {
-        var string = "";
-        switch (unit) {
-            case 1:
-                string = "unités";
-                break;
-            case 3:
-                string = "kg";
-                break;
-        }
-
-        return string;
     }
 
     didTapSaveButton() {
@@ -140,17 +157,18 @@ export default class InventoryScan extends React.Component {
         var quantity;
         try {
             quantity = this.state.articleQuantityValue.toNumber();
-        } catch(e) {
+        } catch (e) {
             Alert.alert("Valeur incorrecte", "Cela ne ressemble pas à un nombre.");
         }
         if (quantity >= 0) {
             if (unit === 1 && quantity.isInt() === false) { // Int only
-                    Alert.alert(
-                        "Valeur incorrecte",
-                        "Ce produit est compté en unité. Merci de ne pas entrer de nombre à virgule."
-                    );
+                Alert.alert(
+                    "Valeur incorrecte",
+                    "Ce produit est compté en unité. Merci de ne pas entrer de nombre à virgule."
+                );
+                return;
             }
-            if (unit === 2) { // Float authorized
+            if (unit === 3) { // Float authorized
 
             }
         }
@@ -166,18 +184,19 @@ export default class InventoryScan extends React.Component {
         newEntry.savedAt = moment();
 
         InventoryEntryFactory.sharedInstance().persist(newEntry).then(() => {
+            this.hideProductCard();
             this.setState({
                 odooProduct: null,
-                showArticle: false,
             })
+            this.scannedAt = null;
             this.textInput.blur()
-            this.camera.resumePreview();
         });
     }
 
     render() {
         return (
             <SafeAreaView style={styles.container}>
+                {this.state.displayCamera ? (
                 <RNCamera
                     ref={ref => {
                         this.camera = ref;
@@ -189,6 +208,7 @@ export default class InventoryScan extends React.Component {
                     permissionDialogMessage={'We need your permission to use your camera phone'}
                     onBarCodeRead={({ data, rawData, type, bounds }) => {
                         if (type === RNCamera.Constants.BarCodeType.ean13) {
+                            this.scannedAt = moment();
                             this.lookupForBarcode(this.camera, data);
                         }
                     }}
@@ -211,12 +231,21 @@ export default class InventoryScan extends React.Component {
                         );
                     }}
                 </RNCamera>
-                <View ref={ref => this.articleView = ref} style={[styles.information, { display: (this.state.showArticle ? 'flex' : 'none') }]}>
+                ) : (<View></View>)}
+                <View ref={ref => this.articleView = ref} style={[styles.information, { display: (this.state.showProductCard ? 'flex' : 'none') }]}>
                     <View style={{ height: 92, flexDirection: 'row' }}>
-                        <Image
-                            source={{ uri: '' }}
-                            style={styles.articleImage}
-                        />
+                        {(this.state.odooProduct && this.state.odooProduct.image) ? (
+                            <Image
+                                source={{ uri: this.state.odooProduct.image }}
+                                style={styles.articleImage}
+                            />
+                        ) : (
+                                <ActivityIndicator
+                                    size="small"
+                                    color="#999999"
+                                    style={styles.articleImage}
+                                />
+                        )}
                         <Text
                             ref={ref => this.articleTitle = ref}
                             numberOfLines={2}
@@ -230,16 +259,24 @@ export default class InventoryScan extends React.Component {
                             <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
                                 <TextInput
                                     ref={ref => this.textInput = ref}
-                                    onChangeText={articleQuantityValue => this.setState({articleQuantityValue})}
+                                    onChangeText={articleQuantityValue => this.setState({ articleQuantityValue })}
                                     style={styles.inputText}
                                     keyboardType='numeric'
                                 />
                                 <Text style={{ fontSize: 32, marginLeft: 8, marginTop: 40 }}>
-                                    {this.unitAsString(this.state.odooProduct ? this.state.odooProduct.unit : null)}
+                                    {this.state.odooProduct ? this.state.odooProduct.unitAsString() : null}
                                 </Text>
                             </View>
                         </View>
                         <View style={{ flex: 0, justifyContent: 'center' }}>
+                            <Button
+                                title="Annuler"
+                                style={[styles.saveButton, {color: 'red'}]}
+                                onPress={() => {
+                                    this.hideProductCard();
+                                    this.resetOdooProduct();
+                                }}
+                            />
                             <Button
                                 title="Enregister"
                                 style={styles.saveButton}
