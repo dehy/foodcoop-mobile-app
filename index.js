@@ -12,7 +12,9 @@ import momentFr from 'moment/locale/fr';
 import './src/utils/utils';
 
 moment.locale('fr');
-// Sentry.config('***REMOVED***').install();
+if (!__DEV__) {
+    Sentry.config('***REMOVED***').install();
+}
 
 registerScreens();
 
