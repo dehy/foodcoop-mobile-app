@@ -2,11 +2,16 @@ package fr.supercoop;
 
 import android.app.Application;
 
+import com.horcrux.svg.SvgPackage;
+import com.oblador.keychain.KeychainPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 //import com.oblador.vectoricons.VectorIconsPackage;
 
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import io.sentry.RNSentryPackage;
 
+import org.pgsqlite.SQLitePluginPackage;
 import org.reactnative.camera.RNCameraPackage;
 
 import com.facebook.react.ReactNativeHost;
@@ -16,6 +21,7 @@ import com.facebook.soloader.SoLoader;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativenavigation.react.ReactGateway;
+import com.zmxv.RNSound.RNSoundPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,8 +50,13 @@ public class MainApplication extends NavigationApplication {
         return Arrays.<ReactPackage>asList(
                 new RNGoogleSigninPackage(),
                 new RNCWebViewPackage(),
-                //new VectorIconsPackage(),
-                new RNCameraPackage()
+                new RNCameraPackage(),
+                new RNSentryPackage(),
+                new SvgPackage(),
+                new KeychainPackage(),
+                new RNSoundPackage(),
+                new VectorIconsPackage(),
+                new SQLitePluginPackage()
         );
     }
 
@@ -63,12 +74,7 @@ public class MainApplication extends NavigationApplication {
         @Override
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
-                    new MainReactPackage(),
-            new RNSentryPackage(),
-            new SvgPackage(),
-            new KeychainPackage(),
-            new RNSoundPackage(),
-            new VectorIconsPackage()
+                    new MainReactPackage()
             );
         }
 
