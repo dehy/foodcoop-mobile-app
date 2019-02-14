@@ -1,13 +1,14 @@
 import React from 'react'
 import {
-    View,
-    Text,
-    StyleSheet,
-    SafeAreaView,
+    Alert,
     FlatList,
-    TouchableHighlight,
     Image,
-    Alert
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableHighlight,
+    View
 } from 'react-native'
 import { defaultScreenOptions, goToAuth } from '../../utils/navigation'
 import Google from '../../utils/Google';
@@ -54,33 +55,36 @@ export default class Profile extends React.Component {
     render() {
         return (
             <SafeAreaView>
-                <View style={styles.profile}>
-                    <Image
-                        style={styles.profilePhoto}
-                        source={{uri: Google.getInstance().getUserPhoto() }}
+                <ScrollView style={{height: '100%'}}>
+                    <View style={styles.profile}>
+                        <Image
+                            style={styles.profilePhoto}
+                            source={{uri: Google.getInstance().getUserPhoto() }}
+                        />
+                        <Text style={styles.profileName}>{ Google.getInstance().getUsername() }</Text>
+                    </View>
+                    <FlatList
+                        scrollEnabled={false}
+                        ItemSeparatorComponent={({ highlighted }) => (
+                            <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                        )}
+                        data={[
+                            { title: "À propos", key: "about" },
+                            { title: "Base de données locale", key: "database" },
+                            { title: "Se déconnecter", key: "logout", color: "red" }
+                        ]}
+                        renderItem={({ item, separators }) =>
+                            <TouchableHighlight
+                                onPress={() => this._onPress(item.key)}
+                                onShowUnderlay={separators.highlight}
+                                onHideUnderlay={separators.unhighlight}>
+                                <View style={styles.listItem}>
+                                    <Text style={[styles.listItemText, {color: item.color?item.color:"black"}]}>{item.title}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        }
                     />
-                    <Text style={styles.profileName}>{ Google.getInstance().getUsername() }</Text>
-                </View>
-                <FlatList
-                    ItemSeparatorComponent={({ highlighted }) => (
-                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
-                    )}
-                    data={[
-                        { title: "À propos", key: "about" },
-                        { title: "Base de données locale", key: "database" },
-                        { title: "Se déconnecter", key: "logout", color: "red" }
-                    ]}
-                    renderItem={({ item, separators }) =>
-                        <TouchableHighlight
-                            onPress={() => this._onPress(item.key)}
-                            onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}>
-                            <View style={styles.listItem}>
-                                <Text style={[styles.listItemText, {color: item.color?item.color:"black"}]}>{item.title}</Text>
-                            </View>
-                        </TouchableHighlight>
-                    }
-                />
+                </ScrollView>
             </SafeAreaView>
         )
     }
@@ -97,9 +101,9 @@ const styles = StyleSheet.create({
         marginBottom: 24
     },
     profilePhoto: {
-        borderRadius: 90,
-        width: 180,
-        height: 180,
+        borderRadius: 64,
+        width: 128,
+        height: 128,
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: 12,
