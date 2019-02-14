@@ -107,6 +107,7 @@ export default class InventoryShow extends React.Component {
                     />
                 </View>
                 <FlatList
+                    style={{ height: '100%' }}
                     data={this.computeEntriesData()}
                     renderItem={({ item }) =>
                         <View>
