@@ -44,7 +44,9 @@ export default class Profile extends React.Component {
                         text: 'Annuler',
                         style: 'cancel',
                       },
-                    {text: 'Oui', onPress: () => Google.getInstance().signOut(goToAuth)}
+                    {text: 'Oui', onPress: () => Google.getInstance().signOut().then(() => {
+                        goToAuth();
+                    })}
                 ])
                 break;
         }

@@ -34,11 +34,16 @@ export default class Welcome extends Component {
                             this.setState({
                                 signinInProgress: true
                             })
-                            Google.getInstance().signIn(() => {
+                            Google.getInstance().signIn().then(() => {
                                 this.setState({
                                     signinInProgress: false
                                 })
                                 goHome();
+                            }, (reason) => {
+                                console.warn(reason);
+                                this.setState({
+                                    signinInProgress: false
+                                })
                             })
                         }}
                         disabled={this.state.signinInProgress} />
