@@ -86,6 +86,7 @@ export default class InventoryList extends React.Component {
         return (
             <SafeAreaView>
                 <FlatList
+                    style={{ height: '100%' }}
                     data={this.state.inventoriesData}
                     renderItem={({ item }) =>
                         <TouchableHighlight onPress={() => {
