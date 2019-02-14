@@ -3,7 +3,7 @@ import { GoogleSignin, statusCodes } from 'react-native-google-signin'
 import { goToAuth } from './navigation';
 import Sentry from 'react-native-sentry';
 
-export default class Google extends React.Component {
+export default class Google {
 
     static instance = null;
 
@@ -16,10 +16,7 @@ export default class Google extends React.Component {
     }
 
     constructor(props) {
-        super(props);
-        this.state = {
-            currentUser: null
-        }
+        this.currentUser = null;
 
         try {
             GoogleSignin.configure({
@@ -35,84 +32,72 @@ export default class Google extends React.Component {
         }
     }
 
-    componentDidUpdate() {
-        Sentry.setUserContext({
-            email: this.state.currentUser ? this.state.currentUser.email : null
-        })
+    setCurrentUser(user) {
+        this.currentUser = user;
+        // Sentry.setUserContext({
+        //     email: this.currentUser ? this.currentUser.email : null
+        // })
     }
 
-    signInSilently = async (signedInCallback, signedOutCallback) => {
-        this.isSignedIn(signedInCallback, (signedInCallback) => {
-            GoogleSignin.signInSilently().then((user) => {
-                this.state.currentUser = user;
-                signedInCallback();
-            }, (error) => {
-                if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-                    signedOutCallback();
-                }
-                console.log(error);
-            })
-        });
+    async signInSilently() {
+        const isSignedIn = await this.isSignedIn();
+        if (isSignedIn === true) {
+            return;
+        }
+        const user = await GoogleSignin.signInSilently();
+        if (user) {
+            this.setCurrentUser(user);
+            return;
+        }
     }
 
-    isSignedIn = async (signedInCallback, signedOutCallback) => {
-        GoogleSignin.isSignedIn().then(async (isSignedIn) => {
-            if (isSignedIn) {
-                GoogleSignin.getCurrentUser().then((user) => {
-                    if (user === null) {
-                        this.signOut(goToAuth);
-                    } else {
-                        this.state.currentUser = user;
-                        signedInCallback();
-                    }
-                });
+    async isSignedIn() {
+        const isSignedIn = await GoogleSignin.isSignedIn();
+        if (isSignedIn) {
+            const user = await GoogleSignin.getCurrentUser();
+            if (user === null) {
+                await this.signOut();
+                return false;
             } else {
-                signedOutCallback();
+                this.setCurrentUser(user);
+                return true;
             }
-        }, (reason) => {
-            console.error(reason);
-        })
+        }
+        return false;
     }
 
-    signIn = async (signedInCallback) => {
-        GoogleSignin.hasPlayServices().then((hasPlayServices) => {
-            console.log('hasPlayServices', hasPlayServices)
-            if (hasPlayServices) {
-                this.signOut(() => {
-                    GoogleSignin.signIn().then((user) => {
-                        this.state.currentUser = user;
-                        signedInCallback();
-                    }, (reason) => {
-                        console.error('Google Sign In rejected', reason);
-                    })
-                })
+    async signIn() {
+        const hasPlayServices = await GoogleSignin.hasPlayServices();
+        if (hasPlayServices) {
+            await this.signOut();
+            const user = await GoogleSignin.signIn();
+            if (user) {
+                this.setCurrentUser(user);
+                return;
             }
-        }, (reason) => {
-            console.error('Google Play Services error', reason)
-        });
+        }
     }
 
     getUsername() {
-        if (this.state.currentUser === null ||
-            this.state.currentUser.user.name === null) {
+        if (this.currentUser === null ||
+            !('user' in this.currentUser) ||
+            this.currentUser.user.name === null) {
             return "John Doe";
         }
-        return this.state.currentUser.user.name;
+        return this.currentUser.user.name;
     }
 
     getUserPhoto() {
-        if (this.state.currentUser === null ||
-            this.state.currentUser.user.photo === null) {
+        if (this.currentUser === null ||
+            !('user' in this.currentUser) ||
+            this.currentUser.user.photo === null) {
             return "";
         }
-        return this.state.currentUser.user.photo;
+        return this.currentUser.user.photo;
     }
 
-    signOut = async (signedOutCallback) => {
-        // await GoogleSignin.revokeAccess();
-        GoogleSignin.signOut().then(() => {
-            this.state.currentUser = null;
-            signedOutCallback();
-        });
+    async signOut() {
+        await GoogleSignin.signOut();
+        this.setCurrentUser(null);
     };
 }

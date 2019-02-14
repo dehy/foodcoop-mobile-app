@@ -27,7 +27,11 @@ export default class Initialising extends React.Component {
     }
 
     signInSilently() {
-        Google.getInstance().signInSilently(goHome, goToAuth);
+        Google.getInstance().signInSilently().then(() => {
+            goHome();
+        }, (reason) => {
+            goToAuth();
+        });
     }
 
     render() {
