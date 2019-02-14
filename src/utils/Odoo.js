@@ -12,12 +12,12 @@ export default class Odoo {
         this.isConnected = false;
 
         this.odooApi = new OdooApi({
-            host: 'labo.test.supercoop.fr',
+            host: 'labo.supercoop.fr',
             port: 443,
             protocol: 'https',
             database: 'PROD',
-            username: 'fjg@supercoop.fr',
-            password: 'Supercoop18'
+            username: '***REMOVED***',
+            password: '***REMOVED***'
         });
     }
 
