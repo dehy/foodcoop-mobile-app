@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-navigation/lib/android/app/build.gradle b/node_modules/react-native-navigation/lib/android/app/build.gradle
+index 7367c52..8407214 100644
+--- a/node_modules/react-native-navigation/lib/android/app/build.gradle
++++ b/node_modules/react-native-navigation/lib/android/app/build.gradle
+@@ -3,7 +3,7 @@ apply from: '../prepare-robolectric.gradle'
+ 
+ android {
+     compileSdkVersion 26
+-    buildToolsVersion '27.0.3'
++    buildToolsVersion '28.0.3'
+ 
+     defaultConfig {
+         minSdkVersion 19
