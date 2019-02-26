@@ -96,9 +96,9 @@ def enableProguardInReleaseBuilds = false
 android {
     signingConfigs {
         debug {
-            keyAlias 'androiddebugkey'
+            keyAlias 'sp_debug'
             keyPassword 'android'
-            storeFile file('/Users/arnaud/.android/debug.keystore')
+            storeFile file('../keystores/debug.keystore')
             storePassword 'android'
         }
     }
@@ -128,6 +128,9 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
     // applicationVariants are e.g. debug, release
