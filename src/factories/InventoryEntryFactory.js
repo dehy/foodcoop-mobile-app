@@ -1,7 +1,7 @@
 'use strict'
 
 import Database from '../utils/Database';
-import Inventory from '../entities/Inventory';
+import InventorySession from '../entities/InventorySession';
 import moment from 'moment';
 import InventoryEntry from '../entities/InventoryEntry';
 
@@ -19,8 +19,12 @@ export default class InventoryEntryFactory {
         this.db = Database.sharedInstance();
     }
 
-    async findForInventory(inventoryId) {
-        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ?', [inventoryId]);
+    async findForInventorySession(inventorySession) {
+        return await this.findForInventorySessionId(inventorySession.id);
+    }
+
+    async findForInventorySessionId(inventorySessionId) {
+        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ?', [inventorySessionId]);
         const entries = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             entries.push(this._rowToObject(response[0].rows.item(i)));
@@ -31,12 +35,12 @@ export default class InventoryEntryFactory {
 
     async findAll() {
         const response = await this.db.executeQuery('SELECT * FROM `inventories_entries`');
-        const inventories = [];
+        const inventorySessions = [];
         for (let i = 0; i < response[0].rows.length; i++) {
-            inventories.push(this._rowToObject(response[0].rows.item(i)));
+            inventorySessions.push(this._rowToObject(response[0].rows.item(i)));
         }
 
-        return inventories;
+        return inventorySessions;
     }
 
     async persist(object) {

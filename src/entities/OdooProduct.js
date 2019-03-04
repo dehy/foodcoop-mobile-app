@@ -21,9 +21,9 @@ export default class OdooProduct {
         return 'data:image/png;base64,' + imageBase64;
     }
 
-    unitAsString() {
+    static quantityUnitAsString(odooUnit) {
         let string = "";
-        switch (this.uom_id) {
+        switch (odooUnit) {
             case OdooProduct.UNIT_OF_MESUREMENT_UNITY:
                 string = "unités";
                 break;
@@ -33,6 +33,10 @@ export default class OdooProduct {
         }
 
         return string;
+    }
+
+    unitAsString() {
+        return OdooProduct.quantityUnitAsString(this.uom_id);
     }
 
     quantityAsString() {

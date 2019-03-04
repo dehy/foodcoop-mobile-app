@@ -5,6 +5,7 @@
         "DROP TABLE IF EXISTS `inventories_entries`;",
         "CREATE TABLE `inventories_entries` ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id));",
         "INSERT INTO `inventories` (`id`,`date`,`zone`) VALUES (1,'2019-02-07',1);",
+        "INSERT INTO `inventories_entries` (`id`,`inventory_id`,`article_barcode`, `article_name`, `article_image`, `article_unit`, `article_price`, `scanned_at`, `article_quantity`, `saved_at`) VALUES (1,1,'2600221000001','Jambon Cuit 2 Tranches/kg FVA', null, 3, 25.83, '2019-02-07 20:13:43', 12, '2019-02-07 20:13:50');",
         "PRAGMA user_version = 1;"
     ]
 }
