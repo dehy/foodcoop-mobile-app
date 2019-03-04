@@ -42,8 +42,14 @@ export function goHome() {
                         }
                     },
                     {
-                        component: {
-                            name: 'Scanner',
+                        stack: {
+                            children: [
+                                {
+                                    component: {
+                                        name: 'Scanner'
+                                    }
+                                }
+                            ],
                             options: {
                                 bottomTab: {
                                     text: 'Scanette',

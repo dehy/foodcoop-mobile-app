@@ -1,7 +1,7 @@
 'use strict'
 
 import Database from '../utils/Database';
-import Inventory from '../entities/Inventory';
+import InventorySession from '../entities/InventorySession';
 import moment from 'moment';
 
 export default class InventoryFactory {
@@ -34,11 +34,11 @@ export default class InventoryFactory {
     }
 
     _rowToObject(row) {
-        const inventory = new Inventory();
-        inventory.id = Number(row.id);
-        inventory.date = moment(row.date, 'YYYY-MM-DD');
-        inventory.zone = Number(row.zone);
+        const inventorySession = new InventorySession();
+        inventorySession.id = Number(row.id);
+        inventorySession.date = moment(row.date, 'YYYY-MM-DD');
+        inventorySession.zone = Number(row.zone);
 
-        return inventory;
+        return inventorySession;
     }
 }

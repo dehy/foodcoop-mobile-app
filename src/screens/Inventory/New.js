@@ -18,19 +18,19 @@ export default class InventoryNew extends React.Component {
     }
 
     static options(passProps) {
-        var options = defaultScreenOptions("Nouveau");
-        options.topBar.leftButtons = [
-            {
-                id: 'cancel',
-                text: 'Annuler'
-            }
-        ];
+        var options = defaultScreenOptions("Nouvel inventaire");
         options.topBar.rightButtons = [
             {
-                id: 'save',
-                text: 'Enregistrer'
+                id: 'cancel',
+                text: 'Fermer'
             }
         ];
+        // options.topBar.rightButtons = [
+        //     {
+        //         id: 'save',
+        //         text: 'Enregistrer'
+        //     }
+        // ];
 
         return options;
     }
@@ -55,38 +55,12 @@ export default class InventoryNew extends React.Component {
     render() {
         return (
             <SafeAreaView>
-                <Text>Fomulaire</Text>
+                <Text>TODO Fomulaire</Text>
             </SafeAreaView>
         )
-    }
-
-    takePicture = async function () {
-        if (this.camera) {
-            const options = { quality: 0.5, base64: true };
-            const data = await this.camera.takePictureAsync(options);
-            console.log(data.uri);
-        }
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: 'black',
-    },
-    preview: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    capture: {
-        flex: 0,
-        backgroundColor: '#fff',
-        borderRadius: 5,
-        padding: 15,
-        paddingHorizontal: 20,
-        alignSelf: 'center',
-        margin: 20,
-    },
+
 });

@@ -1,6 +1,6 @@
 'use strict'
 
-export default class Inventory {
+export default class InventorySession {
     constructor (json) {
         json = json || {}
     

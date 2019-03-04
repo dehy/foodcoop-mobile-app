@@ -1,6 +1,7 @@
 import React from 'react'
 import {
     ActivityIndicator,
+    Alert,
     Image,
     SafeAreaView,
     StyleSheet,
@@ -12,6 +13,7 @@ import { Navigation } from 'react-native-navigation';
 import { RNCamera } from 'react-native-camera';
 import Odoo from '../utils/Odoo';
 import OdooProduct from '../entities/OdooProduct';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default class Scanner extends React.Component {
     constructor(props) {
@@ -39,6 +41,7 @@ export default class Scanner extends React.Component {
 
         this.state = {
             displayCamera: false,
+            flashStatus: RNCamera.Constants.FlashMode.off,
             odooProduct: null,
             showProductCard: false,
         }
@@ -71,6 +74,26 @@ export default class Scanner extends React.Component {
         return options;
     }
 
+    toggleFlash() {
+        if (this.state.flashStatus == RNCamera.Constants.FlashMode.off) {
+            this.enableFlash();
+            return;
+        }
+        this.disableFlash();
+    }
+
+    enableFlash() {
+        this.setState({
+            flashStatus: RNCamera.Constants.FlashMode.torch
+        });
+    }
+
+    disableFlash() {
+        this.setState({
+            flashStatus: RNCamera.Constants.FlashMode.off
+        });
+    }
+
     lookupForBarcode(camera, barcode) {
         if (this.lastScannedBarcode === barcode) {
             return;
@@ -79,11 +102,25 @@ export default class Scanner extends React.Component {
         this.beepSound.play(() => {
             this.beepSound.stop(); // Resets file for immediate play availability
         });
+        Navigation.mergeOptions(this.props.componentId, {
+            topBar: {
+                title: {
+                    text: barcode
+                }
+            }
+        })
         this.setState({
             odooProduct: null,
             showProductCard: true
         })
         this.odoo.fetchProductFromBarcode(barcode).then((odooProduct) => {
+            if (!odooProduct) {
+                Alert.alert("Code barre inconnu", "Le code barre "+barcode+" est introuvable dans odoo.");
+                this.setState({
+                    showProductCard: false
+                });
+                return;
+            }
             this.setState({
                 odooProduct: new OdooProduct(odooProduct)
             })
@@ -112,12 +149,15 @@ export default class Scanner extends React.Component {
                         type={RNCamera.Constants.Type.back}
                         permissionDialogTitle={'Permission to use camera'}
                         permissionDialogMessage={'We need your permission to use your camera phone'}
+                        autoFocus={RNCamera.Constants.AutoFocus.on}
+                        flashMode={this.state.flashStatus}
                         onBarCodeRead={({ data, rawData, type, bounds }) => {
                             if (type === RNCamera.Constants.BarCodeType.ean13) {
                                 this.lookupForBarcode(this.camera, data);
+                                return;
                             }
+                            Alert.alert("Code barre incompatible", "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.");
                         }}
-                        barCodeTypes={[RNCamera.Constants.BarCodeType.ean13]}
                     >
                         {({ camera, status, recordAudioPermissionStatus }) => {
                             if (status !== 'READY') {
@@ -132,43 +172,66 @@ export default class Scanner extends React.Component {
                 ) : (<View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>Chargement de la caméra...</Text>
                 </View>)}
-                <View ref={ref => this.articleView = ref} style={[styles.information, { display: (this.state.showProductCard ? 'flex' : 'none') }]}>
-                    <View style={{ flexDirection: 'row' }}>
-                        {(this.state.odooProduct && this.state.odooProduct.image) ? (
-                            <Image
-                                source={{ uri: this.state.odooProduct.image }}
-                                style={styles.articleImage}
-                            />
-                        ) : (
-                                <ActivityIndicator
-                                    size="small"
-                                    color="#999999"
-                                    style={styles.articleImage}
-                                />
-                            )}
-                        <Text
-                            ref={ref => this.articleTitle = ref}
-                            numberOfLines={2}
-                            style={styles.articleName}
+                <View style={styles.actions}>
+                    <View style={styles.actionButton}>
+                        <Icon.Button
+                                name="bolt"
+                                backgroundColor={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#000000": "#FFFFFF"}
+                                color={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#FFFFFF": "#000000"}
+                                onPress={() => {this.toggleFlash()}}
+                            >
+                                Flash
+                            </Icon.Button>
+                        </View>
+                    <View style={styles.actionButton}>
+                        <Icon.Button
+                            name="keyboard"
+                            backgroundColor="#000000"
+                            onPress={() => {}}
                         >
-                            {this.state.odooProduct ? this.state.odooProduct.name : "Chargement..."}
-                        </Text>
-                    </View>
-                    <View style={{ flex: 1, flexDirection: 'row', marginTop: 8, marginBottom: 8 }}>
-                        <View style={{ flex: 1, flexDirection: 'column' }}>
-                            <Text style={styles.detailTitle}>Prix</Text>
-                            <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '...'}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.detailTitle}>Stock</Text>
-                            <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '...'}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                            <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '...'}</Text>
-                        </View>
+                            Clavier
+                        </Icon.Button>
                     </View>
                 </View>
+                {this.state.showProductCard ? (
+                    <View style={styles.information}>
+                        <View style={{ flexDirection: 'row' }}>
+                            {(this.state.odooProduct && this.state.odooProduct.image) ? (
+                                <Image
+                                    source={{ uri: this.state.odooProduct.image }}
+                                    style={styles.articleImage}
+                                />
+                            ) : (
+                                    <ActivityIndicator
+                                        size="small"
+                                        color="#999999"
+                                        style={styles.articleImage}
+                                    />
+                                )}
+                            <Text
+                                ref={ref => this.articleTitle = ref}
+                                numberOfLines={2}
+                                style={styles.articleName}
+                            >
+                                {this.state.odooProduct ? this.state.odooProduct.name : "Chargement..."}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1, flexDirection: 'row', marginTop: 8, marginBottom: 8 }}>
+                            <View style={{ flex: 1, flexDirection: 'column' }}>
+                                <Text style={styles.detailTitle}>Prix</Text>
+                                <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '...'}</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={styles.detailTitle}>Stock</Text>
+                                <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '...'}</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={styles.detailTitle}>Poid/Vol.</Text>
+                                <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '...'}</Text>
+                            </View>
+                        </View>
+                    </View>
+                ) : null}
             </SafeAreaView>
         )
     }
@@ -181,6 +244,18 @@ const styles = StyleSheet.create({
         position: 'relative',
         marginTop: 20,
         backgroundColor: 'black',
+    },
+    actions: {
+        position: 'absolute',
+        flexDirection: 'row',
+        left: 0,
+        bottom: 0,
+        marginLeft: 8,
+        marginBottom: 8,
+    },
+    actionButton: {
+        marginRight: 4,
+        marginLeft: 4
     },
     information: {
         flexDirection: 'column',
@@ -198,6 +273,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center',
+        width: '100%',
+        height: '100%'
     },
     capture: {
         flex: 0,
