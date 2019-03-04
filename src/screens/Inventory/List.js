@@ -10,7 +10,9 @@ import {
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation } from 'react-native-navigation';
-import InventoryFactory from '../../factories/InventoryFactory';
+import InventorySessionFactory from '../../factories/InventorySessionFactory';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import styles from '../../styles/material';
 
 export default class InventoryList extends React.Component {
     constructor(props) {
@@ -23,27 +25,27 @@ export default class InventoryList extends React.Component {
 
     static options(passProps) {
         var options = defaultScreenOptions("Inventaires");
-        options.topBar.rightButtons = [
-            {
-                id: 'inventory-new',
-                text: 'Nouveau'
-                // icon: require('../../../assets/icons/plus-regular.png')
-            }
-        ]
+        // options.topBar.rightButtons = [
+        //     {
+        //         id: 'inventory-new',
+        //         text: 'Nouveau'
+        //     }
+        // ]
 
         return options;
     }
 
     componentDidMount() {
-        InventoryFactory.sharedInstance().findAll().then(inventories => {
+        InventorySessionFactory.sharedInstance().findAll().then(inventories => {
             const inventoriesData = [];
             for (k in inventories) {
                 const inventory = inventories[k];
                 const inventoryData = {
                     key: 'inventory-' + inventory.id,
                     id: inventory.id,
-                    title: inventory.date.format('LL'),
-                    subtitle: String(inventory.zone)
+                    title: inventory.date.format('DD MMMM YYYY'),
+                    subtitle: "Zone "+String(inventory.zone),
+                    object: inventory
                 }
                 inventoriesData.push(inventoryData);
             }
@@ -56,18 +58,22 @@ export default class InventoryList extends React.Component {
         });
     }
 
+    openNewInventoryModal() {
+        Navigation.showModal({
+            stack: {
+                children: [{
+                    component: {
+                        name: 'Inventory/New'
+                    }
+                }]
+            }
+        });
+    }
+
     navigationButtonPressed({ buttonId }) {
         // will be called when "buttonOne" is clicked
         if (buttonId === 'inventory-new') {
-            Navigation.showModal({
-                stack: {
-                    children: [{
-                        component: {
-                            name: 'Inventory/New'
-                        }
-                    }]
-                }
-            });
+            this.openNewInventoryModal();
         }
     }
 
@@ -76,7 +82,7 @@ export default class InventoryList extends React.Component {
             component: {
                 name: 'Inventory/Show',
                 passProps: {
-                    inventoryId: props.item.id
+                    inventory: props.item.object
                 }
             }
         });
@@ -85,19 +91,33 @@ export default class InventoryList extends React.Component {
     render() {
         return (
             <SafeAreaView>
+                <View style={{padding: 8, flexDirection: 'row', justifyContent: 'center'}}>
+                    <Icon.Button 
+                        name="plus-circle"
+                        style={{}}
+                        onPress={this.openNewInventoryModal}
+                    >Nouvel inventaire</Icon.Button>
+                </View>
                 <FlatList
-                    style={{ height: '100%' }}
+                    style={{ backgroundColor: 'white' }}
                     data={this.state.inventoriesData}
                     renderItem={({ item }) =>
-                        <TouchableHighlight onPress={() => {
-                            this.didTapInventoryEntry({
-                                componentId: this.props.componentId,
-                                item: item
-                            })}
-                        }>
+                        <TouchableHighlight
+                            onPress={() => {
+                                this.didTapInventoryEntry({
+                                    componentId: this.props.componentId,
+                                    item: item
+                                })
+                            }}
+                            underlayColor="#BCBCBC"
+                        >
                             <View style={styles.row}>
-                                <Text style={styles.rowTitle}>{item.title}</Text>
-                                <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
+                                <Icon name="clipboard" style={styles.rowIcon} />
+                                <View style={styles.rowContent}>
+                                    <Text style={styles.rowTitle}>{item.title}</Text>
+                                    <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
+                                </View>
+                                <Icon name="info-circle" style={styles.rowActionIcon} />
                             </View>
                         </TouchableHighlight>
                     }
@@ -106,36 +126,3 @@ export default class InventoryList extends React.Component {
         )
     }
 }
-
-const styles = EStyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: 'black',
-    },
-    row: {
-        height: 44,
-        paddingTop: 5,
-        paddingLeft: 16
-    },
-    rowTitle: {
-        fontSize: 17
-    },
-    rowSubtitle: {
-        fontSize: 12,
-    },
-    preview: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    capture: {
-        flex: 0,
-        backgroundColor: '#fff',
-        borderRadius: 5,
-        padding: 15,
-        paddingHorizontal: 20,
-        alignSelf: 'center',
-        margin: 20,
-    },
-});

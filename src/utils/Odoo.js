@@ -45,7 +45,10 @@ export default class Odoo {
             console.error(response);
         }
         console.debug(response);
-        return new OdooProduct(response.data[0]);
+        if (response.data.length > 0) {
+            return new OdooProduct(response.data[0]);
+        }
+        return null;
     }
 
     async fetchImageForOdooProduct(odooProduct) {

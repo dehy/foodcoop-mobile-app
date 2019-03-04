@@ -14,4 +14,5 @@ export function registerScreens() {
     Navigation.registerComponent('Inventory/New', () => require('../screens/Inventory/New').default);
     Navigation.registerComponent('Inventory/Show', () => require('../screens/Inventory/Show').default);
     Navigation.registerComponent('Inventory/Scan', () => require('../screens/Inventory/Scan').default);
+    Navigation.registerComponent('Inventory/Export', () => require('../screens/Inventory/Export').default);
 }

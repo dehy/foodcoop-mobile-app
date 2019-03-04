@@ -4,6 +4,7 @@ import {
     FlatList,
     Image,
     SafeAreaView,
+    ScrollView,
     StyleSheet,
     Text,
     View
@@ -11,8 +12,12 @@ import {
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import InventoryFactory from '../../factories/InventoryFactory';
+import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
+import CSVGenerator from '../../utils/CSVGenerator';
+import materialStyle from '../../styles/material';
+import material from '../../styles/material';
+import OdooProduct from '../../entities/OdooProduct';
 
 export default class InventoryShow extends React.Component {
     constructor(props) {
@@ -20,44 +25,25 @@ export default class InventoryShow extends React.Component {
         Navigation.events().bindComponent(this);
 
         this.state = {
-            inventory: null,
             inventoryEntries: []
         }
     }
 
     static options(passProps) {
-        this.entry = {
-            id: 1,
-            date: "7 février 2019",
-            zone: 1
-        }
-        var title = this.entry.date;
-        var options = defaultScreenOptions(title);
-        options.topBar.rightButtons = [
-            {
-                id: 'reorder',
-                text: 'Ordonner'
-            }
-        ]
+        var options = defaultScreenOptions("Inventaire");
 
         return options;
     }
 
     componentDidMount() {
-        InventoryFactory.sharedInstance().find(this.props.inventoryId).then(inventory => {
-            this.setState({
-                inventory: inventory
+        InventoryEntryFactory
+            .sharedInstance()
+            .findForInventorySession(this.props.inventory)
+            .then(entries => {
+                this.setState({
+                    inventoryEntries: entries
+                })
             })
-            InventoryEntryFactory
-                .sharedInstance()
-                .findForInventory(this.state.inventory.id)
-                .then(entries => {
-                    this.setState({
-                        inventoryEntries: entries
-                    })
-                }
-            )
-        });
     }
 
     computeEntriesData() {
@@ -69,59 +55,107 @@ export default class InventoryShow extends React.Component {
                 title: entry.articleName,
                 subtitle: entry.articleBarcode,
                 image: entry.articleImage ? { uri: entry.articleImage } : null,
-                info: `${entry.articleQuantity} ${entry.articleUnit}`
+                metadata: `${entry.articleQuantity}\n${OdooProduct.quantityUnitAsString(entry.articleUnit)}`
             }
             listDatas.push(data);
         }
         return listDatas;
     }
 
+    openScannerModal() {
+        Navigation.showModal({
+            stack: {
+                children: [{
+                    component: {
+                        name: 'Inventory/Scan',
+                        passProps: {
+                            inventory: this.props.inventory
+                        },
+                        options: {
+                            topBar: {
+
+                            }
+                        }
+                    }
+                }]
+            }
+        });
+    }
+
+    openExportModal() {
+        Navigation.showModal({
+            stack: {
+                children: [{
+                    component: {
+                        name: 'Inventory/Export',
+                        passProps: {
+                            inventory: this.props.inventory,
+                            inventoryEntries: this.state.inventoryEntries
+                        },
+                        options: {
+                            topBar: {
+
+                            }
+                        }
+                    }
+                }]
+            }
+        });
+    }
+
     render() {
+        if (!this.props.inventory) { return null }
         return (
             <SafeAreaView>
-                <View>
-                    <Text>Zone: {this.state.inventory ? this.state.inventory.zone : ""}</Text>
-                </View>
-                <View>
-                    <Button
-                        onPress={() => {
-                            Navigation.showModal({
-                                stack: {
-                                    children: [{
-                                        component: {
-                                            name: 'Inventory/Scan',
-                                            passProps: {
-                                                inventoryId: this.props.inventoryId
-                                            },
-                                            options: {
-                                                topBar: {
-
-                                                }
-                                            }
-                                        }
-                                    }]
-                                }
-                            });
-                        }}
-                        title="Scanner"
-                    />
-                </View>
-                <FlatList
-                    style={{ height: '100%' }}
-                    data={this.computeEntriesData()}
-                    renderItem={({ item }) =>
-                        <View>
-                            <Image style={styles.itemImage} source={item.image} />
-                            <View>
-                                <Text style={styles.itemName}>{item.title}</Text>
-                                <Text style={styles.itemBarcode}>{item.subtitle}</Text>
-                            </View>
-                            <View>
-                                <Text>{item.info}</Text>
-                            </View>
+                <ScrollView>
+                    <View style={{ flexDirection: 'row', backgroundColor: 'white', paddingTop: 16 }}>
+                        <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 20, textAlign: 'center' }}>{this.props.inventory.date.format('dddd')}</Text>
+                            <Text style={{ fontSize: 30, textAlign: 'center' }}>{this.props.inventory.date.format('DD MMMM')}</Text>
+                            <Text style={{ fontSize: 20, textAlign: 'center' }}>{this.props.inventory.date.format('YYYY')}</Text>
+                            {/* <Text style={{fontSize: 25, textAlign: 'center'}}>{this.props.inventory.date.format('YYYY')}</Text> */}
                         </View>
-                    }
-                />
+                        <View style={{ flexDirection: 'column', flex: 1 }}>
+                            <Text style={{ fontSize: 24, textAlign: 'center' }}>Zone</Text>
+                            <Text style={{ fontSize: 50, textAlign: 'center' }}>{this.props.inventory.zone}</Text>
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: 'white', paddingVertical: 16 }}>
+                        <Icon.Button
+                            onPress={() => {
+                                this.openScannerModal();
+                            }}
+                            name="barcode"
+                        >Scanner</Icon.Button>
+                        <Icon.Button
+                            onPress={() => {
+                                this.openExportModal();
+                            }}
+                            name="file-export"
+                            title="Exporter"
+                        >Envoyer</Icon.Button>
+                    </View>
+                    {this.state.inventoryEntries.length > 0 ? (
+                        <FlatList
+                            scrollEnabled={false}
+                            style={{ backgroundColor: 'white' }}
+                            data={this.computeEntriesData()}
+                            renderItem={({ item }) =>
+                                <View style={materialStyle.row}>
+                                    <View style={materialStyle.rowContent}>
+                                        <Text style={materialStyle.rowTitle}>{item.title}</Text>
+                                        <Text style={materialStyle.rowSubtitle}>{item.subtitle}</Text>
+                                    </View>
+                                    <Text>{item.metadata}</Text>
+                                </View>
+                            }
+                        />
+                    ) : (
+                        <View>
+                            <Text style={{ fontSize: 25, textAlign: 'center', marginTop: 30}}>Aucun article pour le moment !</Text>
+                        </View>
+                    )}
+                </ScrollView>
             </SafeAreaView>
         )
     }
