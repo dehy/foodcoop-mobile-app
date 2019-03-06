@@ -1,12 +1,12 @@
 package fr.supercoop;
 
-import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.horcrux.svg.SvgPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
-//import com.oblador.vectoricons.VectorIconsPackage;
 
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import io.sentry.RNSentryPackage;
@@ -27,6 +27,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends NavigationApplication {
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @Override
     protected ReactGateway createReactGateway() {

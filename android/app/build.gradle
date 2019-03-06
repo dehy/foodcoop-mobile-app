@@ -109,7 +109,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
-        versionCode 1
+        multiDexEnabled true
+        versionCode 2
         versionName "1.0"
     }
     compileOptions {
@@ -153,7 +154,7 @@ android {
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         def requested = details.requested
-        if (requested.group == 'com.android.support' && requested.name != 'multidex') {
+        if (requested.group == 'com.android.support' && !(requested.name ==~ /^multidex.*/)) {
             details.useVersion "${rootProject.ext.supportLibVersion}"
         }
     }
@@ -173,8 +174,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation 'com.facebook.react:react-native:+'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation "com.google.android.gms:play-services-auth:${rootProject.ext.googlePlayServicesAuthVersion}"
-    // From node_modules
 }
 
 // Run this once to be able to run the application with BUCK
