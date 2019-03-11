@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Alert, FlatList, SafeAreaView, TouchableHighlight, Text, StyleSheet, View } from 'react-native'
 import { defaultScreenOptions } from '../../utils/navigation'
 import Database from '../../utils/Database';
+import materialStyle from '../../styles/material';
 
 export default class ProfileSettings extends React.Component {
     constructor(props) {
@@ -14,7 +15,9 @@ export default class ProfileSettings extends React.Component {
 
     resetDatabase() {
         Database.sharedInstance().resetDatabase().then(() => {
-            Database.sharedInstance().migrate();
+            Database.sharedInstance().migrate().then(() => {
+                Alert.alert("Base de donnée", "La base de donnée a bien été effacée");
+            });
         });
     }
 
@@ -53,8 +56,10 @@ export default class ProfileSettings extends React.Component {
                             onPress={() => this._onPress(item.key)}
                             onShowUnderlay={separators.highlight}
                             onHideUnderlay={separators.unhighlight}>
-                            <View style={styles.listItem}>
-                                <Text style={[styles.listItemText, {color: item.color?item.color:"black"}]}>{item.title}</Text>
+                            <View style={materialStyle.row}>
+                                <View style={materialStyle.rowContent}>
+                                    <Text style={[materialStyle.rowTitle, {color: item.color?item.color:"black"}]}>{item.title}</Text>
+                                </View>
                             </View>
                         </TouchableHighlight>
                     }

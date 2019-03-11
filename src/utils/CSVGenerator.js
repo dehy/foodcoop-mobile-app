@@ -21,6 +21,8 @@ export default class CSVGenerator {
     }
 
     arrayToCsv(data) {
-        return Papa.unparse(data);
+        return Papa.unparse(data, {
+            quotes: true
+        });
     }
 }

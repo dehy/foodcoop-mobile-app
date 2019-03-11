@@ -2,10 +2,12 @@ import React from 'react'
 import {
     ActivityIndicator,
     Alert,
+    Button,
     Image,
     SafeAreaView,
     StyleSheet,
     Text,
+    TextInput,
     View
 } from 'react-native'
 import { defaultScreenOptions } from '../utils/navigation';
@@ -14,8 +16,16 @@ import { RNCamera } from 'react-native-camera';
 import Odoo from '../utils/Odoo';
 import OdooProduct from '../entities/OdooProduct';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import InventoryEntry from '../entities/InventoryEntry';
+import InventoryEntryFactory from '../factories/InventoryEntryFactory';
+import InventorySessionFactory from '../factories/InventorySessionFactory';
+import moment from 'moment';
 
 export default class Scanner extends React.Component {
+
+    static MODE_SCANNER = 1;
+    static MODE_INVENTORY = 2;
+
     constructor(props) {
         super(props);
 
@@ -39,6 +49,11 @@ export default class Scanner extends React.Component {
         this.odoo = new Odoo();
         this.lastScannedBarcode = null;
 
+        // Inventory Mode
+        this.textInput = null;
+        this.articleQuantityValue = null;
+        this.scannedAt = null;
+
         this.state = {
             displayCamera: false,
             flashStatus: RNCamera.Constants.FlashMode.off,
@@ -54,7 +69,8 @@ export default class Scanner extends React.Component {
     componentDidAppear() {
         this.setState({
             displayCamera: true
-        })
+        });
+        // this.lookupForBarcode(this.camera, "2600221000001");
     }
 
     componentDidDisappear() {
@@ -72,6 +88,18 @@ export default class Scanner extends React.Component {
     static options(passProps) {
         var options = defaultScreenOptions("Recherche...");
         return options;
+    }
+
+    isInInventoryMode() {
+        if (this.props.inventory) {
+            return true;
+        }
+        return false;
+    }
+
+    focusOnInput() {
+        this.textInput.clear();
+        this.textInput.focus();
     }
 
     toggleFlash() {
@@ -94,6 +122,31 @@ export default class Scanner extends React.Component {
         });
     }
 
+    showProductCard() {
+        this.setState({
+            displayCamera: false,
+            showProductCard: true
+        })
+    }
+
+    hideProductCard() {
+        this.setState({
+            odooProduct: null,
+            displayCamera: true,
+            showProductCard: false
+        })
+    }
+
+    updateNavigationTitle(title) {
+        Navigation.mergeOptions(this.props.componentId, {
+            topBar: {
+                title: {
+                    text: title ? title : "Recherche..."
+                }
+            }
+        });
+    }
+
     lookupForBarcode(camera, barcode) {
         if (this.lastScannedBarcode === barcode) {
             return;
@@ -102,28 +155,22 @@ export default class Scanner extends React.Component {
         this.beepSound.play(() => {
             this.beepSound.stop(); // Resets file for immediate play availability
         });
-        Navigation.mergeOptions(this.props.componentId, {
-            topBar: {
-                title: {
-                    text: barcode
-                }
-            }
-        })
-        this.setState({
-            odooProduct: null,
-            showProductCard: true
-        })
+        this.scannedAt = moment();
+        this.updateNavigationTitle(barcode);
+        this.showProductCard();
         this.odoo.fetchProductFromBarcode(barcode).then((odooProduct) => {
             if (!odooProduct) {
-                Alert.alert("Code barre inconnu", "Le code barre "+barcode+" est introuvable dans odoo.");
-                this.setState({
-                    showProductCard: false
-                });
+                Alert.alert("Code barre inconnu", "Le code barre " + barcode + " est introuvable dans odoo.");
+                this.hideProductCard();
+                this.updateNavigationTitle(null);
                 return;
             }
             this.setState({
-                odooProduct: new OdooProduct(odooProduct)
+                odooProduct: odooProduct
             })
+            if (this.isInInventoryMode()) {
+                this.focusOnInput();
+            }
             this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
                 const odooProduct = this.state.odooProduct;
                 odooProduct.image = OdooProduct.imageFromOdooBase64(image);
@@ -133,6 +180,52 @@ export default class Scanner extends React.Component {
             });
         }, (reason) => {
             console.error(reason);
+        });
+    }
+
+    inventoryDidTapSaveButton() {
+        const unit = this.state.odooProduct.uom_id;
+        let quantity;
+        try {
+            quantity = this.articleQuantityValue.toNumber();
+        } catch (e) {
+            Alert.alert("Valeur incorrecte", "Cela ne ressemble pas à un nombre.");
+            return;
+        }
+        if (quantity >= 0) {
+            if (unit === OdooProduct.UNIT_OF_MESUREMENT_UNITY && quantity.isInt() === false) { // Int only
+                Alert.alert(
+                    "Valeur incorrecte",
+                    "Ce produit est compté en unité. Merci de ne pas entrer de nombre à virgule."
+                );
+                return;
+            }
+            if (unit === OdooProduct.UNIT_OF_MESUREMENT_KG) { // Float authorized
+
+            }
+        }
+
+        const newEntry = new InventoryEntry();
+        newEntry.inventoryId = this.props.inventory.id;
+        newEntry.articleBarcode = this.state.odooProduct.barcode;
+        newEntry.articleName = this.state.odooProduct.name;
+        newEntry.articleUnit = this.state.odooProduct.uom_id;
+        newEntry.articlePrice = this.state.odooProduct.lst_price;
+        newEntry.scannedAt = this.scannedAt;
+        newEntry.articleQuantity = quantity;
+        newEntry.savedAt = moment();
+
+        InventoryEntryFactory.sharedInstance().persist(newEntry).then(() => {
+            InventorySessionFactory
+                .sharedInstance()
+                .updateLastModifiedAt(this.props.inventory, moment())
+                .then(() => {
+                    this.textInput.blur();
+                    this.lastScannedBarcode = null;
+                    this.updateNavigationTitle(null);
+                    this.hideProductCard();
+                    this.scannedAt = null;
+                })
         });
     }
 
@@ -152,6 +245,7 @@ export default class Scanner extends React.Component {
                         autoFocus={RNCamera.Constants.AutoFocus.on}
                         flashMode={this.state.flashStatus}
                         onBarCodeRead={({ data, rawData, type, bounds }) => {
+                            console.debug("Scanned barcode", type, data);
                             if (type === RNCamera.Constants.BarCodeType.ean13) {
                                 this.lookupForBarcode(this.camera, data);
                                 return;
@@ -175,19 +269,19 @@ export default class Scanner extends React.Component {
                 <View style={styles.actions}>
                     <View style={styles.actionButton}>
                         <Icon.Button
-                                name="bolt"
-                                backgroundColor={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#000000": "#FFFFFF"}
-                                color={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#FFFFFF": "#000000"}
-                                onPress={() => {this.toggleFlash()}}
-                            >
-                                Flash
+                            name="bolt"
+                            backgroundColor={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#000000" : "#FFFFFF"}
+                            color={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#FFFFFF" : "#000000"}
+                            onPress={() => { this.toggleFlash() }}
+                        >
+                            Flash
                             </Icon.Button>
-                        </View>
+                    </View>
                     <View style={styles.actionButton}>
                         <Icon.Button
                             name="keyboard"
                             backgroundColor="#000000"
-                            onPress={() => {}}
+                            onPress={() => { }}
                         >
                             Clavier
                         </Icon.Button>
@@ -216,22 +310,46 @@ export default class Scanner extends React.Component {
                                 {this.state.odooProduct ? this.state.odooProduct.name : "Chargement..."}
                             </Text>
                         </View>
-                        <View style={{ flex: 1, flexDirection: 'row', marginTop: 8, marginBottom: 8 }}>
-                            <View style={{ flex: 1, flexDirection: 'column' }}>
-                                <Text style={styles.detailTitle}>Prix</Text>
-                                <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '...'}</Text>
+                        {this.props.inventory ? (
+                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
+                                <TextInput
+                                    ref={ref => this.textInput = ref}
+                                    onChangeText={value => this.articleQuantityValue = value}
+                                    style={{ fontSize: 28, width: 80, borderWidth: 1, borderRadius: 8, marginRight: 8, textAlign: 'right', alignItems: 'center' }}
+                                    keyboardType='number-pad'
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={() => {
+                                        this.inventoryDidTapSaveButton();
+                                    }}
+                                />
+                                <Text style={{ fontSize: 28 }}>{this.state.odooProduct ? this.state.odooProduct.unitAsString() : null}</Text>
+                                <Button
+                                    style={{ flex: 0, marginLeft: 16 }}
+                                    onPress={() => {
+                                        this.inventoryDidTapSaveButton();
+                                    }}
+                                    title="Enregistrer"
+                                />
                             </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={styles.detailTitle}>Stock</Text>
-                                <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '...'}</Text>
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                                <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '...'}</Text>
-                            </View>
-                        </View>
+                        ) : (
+                                <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
+                                    <View style={{ flex: 1, flexDirection: 'column' }}>
+                                        <Text style={styles.detailTitle}>Prix</Text>
+                                        <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '...'}</Text>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.detailTitle}>Stock</Text>
+                                        <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '...'}</Text>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.detailTitle}>Poid/Vol.</Text>
+                                        <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '...'}</Text>
+                                    </View>
+                                </View>
+                            )}
                     </View>
-                ) : null}
+                ) : null
+                }
             </SafeAreaView>
         )
     }
