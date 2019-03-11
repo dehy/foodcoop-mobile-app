@@ -3,6 +3,9 @@ import SQLite from 'react-native-sqlite-storage';
 export default class Database {
     static TARGET_SCHEMA_VERSION = 1;
 
+    static DATE_FORMAT="YYYY-MM-DD";
+    static DATETIME_FORMAT="YYYY-MM-DD HH:mm:ss";
+
     static instance = null;
 
     static sharedInstance() {
@@ -15,7 +18,7 @@ export default class Database {
 
     constructor() {
         this.db = null;
-        SQLite.DEBUG(true);
+        // SQLite.DEBUG(true);
         SQLite.enablePromise(true);
     }
 

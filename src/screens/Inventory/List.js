@@ -35,7 +35,15 @@ export default class InventoryList extends React.Component {
         return options;
     }
 
+    componentDidAppear() {
+        this.loadData();
+    }
+
     componentDidMount() {
+        // this.loadData();
+    }
+
+    loadData() {
         InventorySessionFactory.sharedInstance().findAll().then(inventories => {
             const inventoriesData = [];
             for (k in inventories) {
@@ -50,7 +58,7 @@ export default class InventoryList extends React.Component {
                 inventoriesData.push(inventoryData);
             }
 
-            console.log(inventoriesData);
+            //console.log(inventoriesData);
 
             this.setState({
                 inventoriesData: inventoriesData
@@ -82,7 +90,7 @@ export default class InventoryList extends React.Component {
             component: {
                 name: 'Inventory/Show',
                 passProps: {
-                    inventory: props.item.object
+                    inventorySessionId: props.item.id
                 }
             }
         });

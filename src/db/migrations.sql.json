@@ -1,10 +1,10 @@
 {
     "1": [
         "DROP TABLE IF EXISTS `inventories`;",
-        "CREATE TABLE `inventories` (`id` integer NOT NULL, `date` text NOT NULL, `zone` integer NOT NULL, PRIMARY KEY (`id`));",
+        "CREATE TABLE `inventories` (`id` integer NOT NULL, `date` text NOT NULL, `zone` integer NOT NULL, `last_modified_at` text NULL, `last_sent_at` text NULL, PRIMARY KEY (`id`));",
         "DROP TABLE IF EXISTS `inventories_entries`;",
-        "CREATE TABLE `inventories_entries` ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id));",
-        "INSERT INTO `inventories` (`id`,`date`,`zone`) VALUES (1,'2019-02-07',1);",
+        "CREATE TABLE `inventories_entries` ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id), UNIQUE(inventory_id, article_barcode));",
+        "INSERT INTO `inventories` (`id`,`date`,`zone`,`last_modified_at`,`last_sent_at`) VALUES (1,'2019-02-07',1,'2019-02-07 20:34:12',NULL);",
         "INSERT INTO `inventories_entries` (`id`,`inventory_id`,`article_barcode`, `article_name`, `article_image`, `article_unit`, `article_price`, `scanned_at`, `article_quantity`, `saved_at`) VALUES (1,1,'2600221000001','Jambon Cuit 2 Tranches/kg FVA', null, 3, 25.83, '2019-02-07 20:13:43', 12, '2019-02-07 20:13:50');",
         "PRAGMA user_version = 1;"
     ]

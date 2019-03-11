@@ -45,6 +45,17 @@ export default class InventoryEntryFactory {
 
     async persist(object) {
         const params = this._objectToParams(object);
+
+        const response = await this.db.executeQuery(
+            'INSERT OR REPLACE INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            params
+        );
+
+        return;
+    }
+
+    async update(object) {
+        const params = this._objectToParams(object);
         console.log(params);
 
         const response = await this.db.executeQuery(
@@ -56,6 +67,7 @@ export default class InventoryEntryFactory {
     }
 
     _rowToObject(row) {
+        console.debug("inventories_entries row", row);
         const entry = new InventoryEntry();
         entry.id = Number(row.id);
         entry.inventoryId = Number(row.inventory_id);
@@ -64,9 +76,9 @@ export default class InventoryEntryFactory {
         entry.articleImage = row.article_image;
         entry.articleUnit = Number(row.article_unit);
         entry.articlePrice = Number(row.article_price);
-        entry.scannedAt = moment(row.scanned_at, 'YYYY-MM-DD HH:MM:SS.SSS');
+        entry.scannedAt = moment(row.scanned_at, Database.DATETIME_FORMAT);
         entry.articleQuantity = Number(row.article_quantity);
-        entry.savedAt = moment(row.saved_at, 'YYYY-MM-DD HH:MM:SS.SSS');
+        entry.savedAt = moment(row.saved_at, Database.DATETIME_FORMAT);
 
         return entry;
     }
@@ -80,9 +92,9 @@ export default class InventoryEntryFactory {
             article_image: null,
             article_unit: object.articleUnit,
             article_price: object.articlePrice,
-            scanned_at: object.scannedAt.format('YYYY-MM-DD HH:MM:SS.SSS'),
+            scanned_at: object.scannedAt.format(Database.DATETIME_FORMAT),
             article_quantity: object.articleQuantity,
-            saved_at: object.scannedAt.format('YYYY-MM-DD HH:MM:SS.SSS')
+            saved_at: object.savedAt.format(Database.DATETIME_FORMAT)
         };
 
         const params = Object.values(row);

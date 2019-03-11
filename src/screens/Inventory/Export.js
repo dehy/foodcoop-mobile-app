@@ -1,6 +1,7 @@
 import React from 'react'
 import {
     ActivityIndicator,
+    Alert,
     Button,
     FlatList,
     Image,
@@ -15,6 +16,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import CSVGenerator from '../../utils/CSVGenerator';
+import Google from '../../utils/Google';
+import moment from 'moment';
 
 export default class InventoryShow extends React.Component {
     constructor(props) {
@@ -46,11 +49,30 @@ export default class InventoryShow extends React.Component {
             this.setState({
                 inventoryCheckPassed: true
             })
+            this.generatedCSV = csv;
         })
     }
 
     sendInventory() {
+        const userFirstname = Google.getInstance().getFirstname();
+        const zone = this.props.inventory.zone;
+        const date = this.props.inventory.lastModifiedAt.format("DD/MM/YYYY");
+        const time = this.props.inventory.lastModifiedAt.format("HH:mm:ss");
 
+        const inventoryEntries = InventoryEntryFactory.sharedInstance().findForInventorySession(this.props.inventory);
+        const entriesCount = inventoryEntries.length;
+
+        const subject = `[Zone ${zone}][${date}] Résultat d'inventaire`;
+        const body = `Inventaire fait par ${userFirstname}, zone ${zone}, le ${date} à ${time}
+${entriesCount} produits scannés`;
+
+        const csvFilenameDateTime = this.props.inventory.lastModifiedAt.format("YYYYMMDDHHmmss");
+        const csvFilename = `${csvFilenameDateTime}-Zone${zone}_${userFirstname}.csv`
+
+        Google.getInstance().sendInventoryEmail(subject, body, csvFilename, this.generatedCSV).then(() => {
+            InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
+            Alert.alert("Envoyé", "Le message est parti sur les Internets Mondialisés");
+        });
     }
 
     render() {
