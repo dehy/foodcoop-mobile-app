@@ -2,6 +2,7 @@ import React from 'react'
 import { GoogleSignin, statusCodes } from 'react-native-google-signin'
 import { goToAuth } from './navigation';
 import Sentry from 'react-native-sentry';
+import base64 from 'react-native-base64';
 
 export default class Google {
 
@@ -23,7 +24,7 @@ export default class Google {
                 scopes: [
                     'https://www.googleapis.com/auth/userinfo.email',
                     'https://www.googleapis.com/auth/userinfo.profile',
-                    'https://www.googleapis.com/auth/gmail.compose'
+                    'https://www.googleapis.com/auth/gmail.send'
                 ],
                 hostedDomain: 'supercoop.fr'
             });
@@ -78,6 +79,26 @@ export default class Google {
         }
     }
 
+    async getAccessToken() {
+        if (this.currentUser !== null) {
+            const tokens = await GoogleSignin.getTokens();
+            console.debug("tokens: ", tokens);
+            if (tokens) {
+                console.debug("accessToken: ", tokens.accessToken);
+                return tokens.accessToken;
+            }
+        }
+        return null;
+    }
+
+    getEmail() {
+        return this.currentUser ? this.currentUser.user.email : null;
+    }
+
+    getFirstname() {
+        return this.currentUser ? this.currentUser.user.givenName : null;
+    }
+
     getUsername() {
         if (this.currentUser === null ||
             !('user' in this.currentUser) ||
@@ -98,6 +119,77 @@ export default class Google {
 
     async signOut() {
         await GoogleSignin.signOut();
+        // await GoogleSignin.revokeAccess();
         this.setCurrentUser(null);
     };
+
+    async revoke() {
+        await GoogleSignin.revokeAccess();
+    }
+
+    /* Email Part */
+
+    async sendInventoryEmail(subject, messageBody, csvFilename, csvString) {
+        const csvSize = csvString.length;
+        const csvBase64 = base64.encode(csvString);
+
+        // const recipients = "andre.lacote@supercoop.fr,fjg@supercoop.fr";
+        const recipients = "arnaud.demouhy@supercoop.fr,fjg@supercoop.fr";
+        const accessToken = await this.getAccessToken();
+
+        const endpoint = "https://www.googleapis.com/gmail/v1/users/{userId}/messages/send"
+        url = endpoint.replace(/\{userId\}/, "me");
+
+        const messageBoundary = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 16);
+        const fromEmail = this.getEmail();     
+
+const rfc822Message=`From: ${fromEmail}
+To: ${__DEV__ ? fromEmail : recipients}
+Subject: ${(__DEV__ ? "[Test]" : "")} ${subject}
+Content-Type: multipart/mixed; boundary="${messageBoundary}"
+MIME-Version: 1.0
+
+--${messageBoundary}
+Content-Type: text/plain; charset=UTF-8
+
+${messageBody}
+
+--${messageBoundary}
+Content-Type: text/comma-separated-values; name="${csvFilename}"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="${csvFilename}"; size=${csvSize}
+
+${csvBase64}
+
+--${messageBoundary}--`;
+
+        const rfc822MessageBase64 = base64.encode(rfc822Message);
+
+        const body = `{
+    "raw": "${rfc822MessageBase64}"
+}`
+
+
+// --${messageBoundary}
+// Content-Type: text/comma-separated-values; name="toto.csv"
+// Content-Transfert-Encoding: base64
+// Content-Disposition: attachment; filename="toto.csv"; size=${csvSize}
+
+// ${csvBase64}
+
+console.debug(rfc822Message);
+console.debug(body);
+
+        const result = await fetch(url, {
+            method: "POST",
+            cache: "no-cache",
+            headers: {
+                "Content-Type":  "application/json; charset=UTF-8",
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Length": body.length
+            },
+            body: body
+        });
+        console.debug(result);
+    }
 }
