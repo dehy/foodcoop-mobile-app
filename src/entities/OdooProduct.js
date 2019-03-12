@@ -7,14 +7,14 @@ export default class OdooProduct {
     constructor (odooJson) {
         const json = odooJson || {}
     
-        this.barcode = json.barcode ? json.barcode : '';
-        this.name = json.name ? json.name : '';
-        this.image = json.image ? OdooProduct.imageFromOdooBase64(json.image) : null;
-        this.qty_available = json.qty_available ? json.qty_available : null;
-        this.uom_id = json.uom_id ? json.uom_id[0] : null;
-        this.lst_price = json.lst_price ? json.lst_price : null;
-        this.weight_net = json.weight_net ? json.weight_net : null; // kg
-        this.volume = json.volume ? json.volume : null; // liters
+        this.barcode = json.barcode != undefined ? json.barcode : '';
+        this.name = json.name != undefined ? json.name : '';
+        this.image = json.image != undefined ? OdooProduct.imageFromOdooBase64(json.image) : null;
+        this.qty_available = json.qty_available != undefined ? json.qty_available : null;
+        this.uom_id = json.uom_id != undefined ? json.uom_id[0] : null;
+        this.lst_price = json.lst_price != undefined ? json.lst_price : null;
+        this.weight_net = json.weight_net != undefined ? json.weight_net : null; // kg
+        this.volume = json.volume != undefined ? json.volume : null; // liters
     }
 
     static imageFromOdooBase64(imageBase64) {
@@ -45,10 +45,10 @@ export default class OdooProduct {
 
     packagingAsString() {
         let metricString = "N/A";
-        if (this.weight_net !== null) {
+        if (this.weight_net) {
             metricString = `${String(this.weight_net)} kg`
         }
-        if (this.volume !== null) {
+        if (this.volume) {
             metricString = `${String(this.volume)} L`
         }
         return metricString;

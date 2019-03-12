@@ -2,14 +2,14 @@ import React from 'react'
 import {
     ActivityIndicator,
     Alert,
-    Button,
     FlatList,
     Image,
     SafeAreaView,
     StyleSheet,
     Text,
     View
-} from 'react-native'
+} from 'react-native';
+import { Button } from 'react-native-elements';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -24,20 +24,33 @@ export default class InventoryShow extends React.Component {
         super(props);
         Navigation.events().bindComponent(this);
 
-        console.log(props);
-
+        this.inventoryEntries = null;
         this.csvGenerator = new CSVGenerator();
         this.generatedCSV = null;
 
         this.state = {
-            inventoryCheckPassed: null
+            sendingMail: false,
+            inventoryCheckPassed: false
         }
     }
 
     static options(passProps) {
         var options = defaultScreenOptions("Envoi d'inventaire");
+        options.topBar.rightButtons = [
+            {
+                id: 'cancel',
+                text: 'Fermer'
+            }
+        ];
 
         return options;
+    }
+
+    navigationButtonPressed({ buttonId }) {
+        if (buttonId === 'cancel') {
+            Navigation.dismissModal(this.props.componentId);
+            return;
+        }
     }
 
     componentDidMount() {
@@ -45,22 +58,30 @@ export default class InventoryShow extends React.Component {
     }
 
     checkInventory() {
-        this.csvGenerator.exportInventorySession(this.props.inventory).then((csv) => {
-            this.setState({
-                inventoryCheckPassed: true
-            })
-            this.generatedCSV = csv;
-        })
+        InventoryEntryFactory
+            .sharedInstance()
+            .findForInventorySession(this.props.inventory)
+            .then(inventoryEntries => {
+                this.inventoryEntries = inventoryEntries;
+                this.csvGenerator.exportInventorySession(this.props.inventory).then((csv) => {
+                    this.setState({
+                        inventoryCheckPassed: true
+                    })
+                    this.generatedCSV = csv;
+                })
+            });
     }
 
     sendInventory() {
+        this.setState({
+            sendingMail: true
+        })
         const userFirstname = Google.getInstance().getFirstname();
         const zone = this.props.inventory.zone;
         const date = this.props.inventory.lastModifiedAt.format("DD/MM/YYYY");
         const time = this.props.inventory.lastModifiedAt.format("HH:mm:ss");
 
-        const inventoryEntries = InventoryEntryFactory.sharedInstance().findForInventorySession(this.props.inventory);
-        const entriesCount = inventoryEntries.length;
+        const entriesCount = this.inventoryEntries.length;
 
         const subject = `[Zone ${zone}][${date}] Résultat d'inventaire`;
         const body = `Inventaire fait par ${userFirstname}, zone ${zone}, le ${date} à ${time}
@@ -71,6 +92,9 @@ ${entriesCount} produits scannés`;
 
         Google.getInstance().sendInventoryEmail(subject, body, csvFilename, this.generatedCSV).then(() => {
             InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
+            this.setState({
+                sendingMail: false
+            });
             Alert.alert("Envoyé", "Le message est parti sur les Internets Mondialisés");
         });
     }
@@ -120,12 +144,11 @@ ${entriesCount} produits scannés`;
                     </View>
                     <Text>En tapant sur le bouton ci-dessous, il sera envoyé à l'équipe inventaire :</Text>
                     <View style={{flexDirection: 'row', justifyContent: 'center', margin: 16}}>
-                        <Icon.Button
-                            name="clipboard-list"
-                            onPress={() => {
-                                this.sendInventory();
-                            }}
-                        >Envoyer mon inventaire</Icon.Button>
+                        <Button
+                            onPress={() => this.sendInventory()}
+                            title="Envoyer mon inventaire"
+                            disabled={(this.state.sendingMail || !this.state.inventoryCheckPassed)}
+                        />
                     </View>
                 </View>
             </SafeAreaView>

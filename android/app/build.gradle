@@ -96,10 +96,16 @@ def enableProguardInReleaseBuilds = false
 android {
     signingConfigs {
         debug {
-            keyAlias 'sp_debug'
-            keyPassword 'android'
             storeFile file('../keystores/debug.keystore')
             storePassword 'android'
+            keyAlias 'sp_debug'
+            keyPassword 'android'
+        }
+        release {
+            storeFile file(SUPERCOOP_RELEASE_STORE_FILE)
+            storePassword SUPERCOOP_RELEASE_STORE_PASSWORD
+            keyAlias SUPERCOOP_RELEASE_KEY_ALIAS
+            keyPassword SUPERCOOP_RELEASE_KEY_PASSWORD
         }
     }
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -110,7 +116,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
         multiDexEnabled true
-        versionCode 2
+        versionCode 3
         versionName "1.0"
     }
     compileOptions {
@@ -127,6 +133,7 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -161,6 +168,7 @@ configurations.all {
 }
 
 dependencies {
+    implementation project(':react-native-action-sheet')
     implementation project(':react-native-sentry')
     implementation project(':react-native-svg')
     implementation project(':react-native-keychain')
