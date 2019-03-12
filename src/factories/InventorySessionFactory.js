@@ -27,7 +27,7 @@ export default class InventoryFactory {
     }
 
     async findAll() {
-        const response = await this.db.executeQuery('SELECT * FROM `inventories`');
+        const response = await this.db.executeQuery('SELECT * FROM `inventories` ORDER BY date DESC');
         const inventories = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             inventories.push(this._rowToObject(response[0].rows.item(i)));
@@ -41,7 +41,7 @@ export default class InventoryFactory {
         console.log(params);
 
         const response = await this.db.executeQuery(
-            'INSERT INTO `inventories` (id, date, zone, last_modified_at, last_sent_at) VALUES (?, ?, ?, ?, ?)',
+            'INSERT OR REPLACE INTO `inventories` (id, date, zone, last_modified_at, last_sent_at) VALUES (?, ?, ?, ?, ?)',
             params
         );
 
@@ -84,10 +84,10 @@ export default class InventoryFactory {
     _objectToParams(object) {
         const row = {
             id: object.id,
-            date: object.date.format(Database.DATE),
+            date: object.date.format(Database.DATE_FORMAT),
             zone: object.zone,
-            last_modified_at: object.lastUpdatedAt ? object.lastUpdateAt.format(Database.DATETIME_FORMAT) : null,
-            last_sent_at: obejct.lastSentAt ? object.lastSentAt.format(Database.DATETIME_FORMAT) : null
+            last_modified_at: object.lastModifiedAt ? object.lastModifiedAt.format(Database.DATETIME_FORMAT) : null,
+            last_sent_at: object.lastSentAt ? object.lastSentAt.format(Database.DATETIME_FORMAT) : null
         };
 
         const params = Object.values(row);

@@ -32,5 +32,8 @@ export default StyleSheet.create({
         flex: 0,
         color: 'rgba(0, 0, 0, 0.380392)',
         fontSize: 24
+    },
+    rowDetailText: {
+        textAlign: 'right'
     }
 });

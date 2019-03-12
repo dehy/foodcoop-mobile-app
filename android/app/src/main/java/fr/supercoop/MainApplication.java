@@ -3,6 +3,7 @@ package fr.supercoop;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.actionsheet.ActionSheetPackage;
 import com.horcrux.svg.SvgPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -62,7 +63,8 @@ public class MainApplication extends NavigationApplication {
                 new KeychainPackage(),
                 new RNSoundPackage(),
                 new VectorIconsPackage(),
-                new SQLitePluginPackage()
+                new SQLitePluginPackage(),
+                new ActionSheetPackage()
         );
     }
 

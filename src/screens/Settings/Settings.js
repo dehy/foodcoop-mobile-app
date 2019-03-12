@@ -9,7 +9,8 @@ import {
     Text,
     TouchableHighlight,
     View
-} from 'react-native'
+} from 'react-native';
+import { Avatar } from 'react-native-elements';
 import { defaultScreenOptions, goToAuth } from '../../utils/navigation'
 import Google from '../../utils/Google';
 import { Navigation } from 'react-native-navigation';
@@ -24,7 +25,7 @@ export default class Profile extends React.Component {
         return defaultScreenOptions("Paramètres");
     }
     _onPress = (key) => {
-        switch(key) {
+        switch (key) {
             case 'about':
                 Navigation.push(this.props.componentId, {
                     component: {
@@ -44,10 +45,12 @@ export default class Profile extends React.Component {
                     {
                         text: 'Annuler',
                         style: 'cancel',
-                      },
-                    {text: 'Oui', onPress: () => Google.getInstance().signOut().then(() => {
-                        goToAuth();
-                    })}
+                    },
+                    {
+                        text: 'Oui', onPress: () => Google.getInstance().signOut().then(() => {
+                            goToAuth();
+                        })
+                    }
                 ])
                 break;
         }
@@ -55,13 +58,20 @@ export default class Profile extends React.Component {
     render() {
         return (
             <SafeAreaView>
-                <ScrollView style={{height: '100%'}}>
+                <ScrollView style={{ height: '100%' }}>
                     <View style={styles.profile}>
-                        <Image
-                            style={styles.profilePhoto}
-                            source={{uri: Google.getInstance().getUserPhoto() }}
+                        <Avatar
+                            rounded
+                            size="large"
+                            source={{
+                                uri: Google.getInstance().getUserPhoto(),
+                            }}
+                            containerStyle={styles.avatar}
                         />
-                        <Text style={styles.profileName}>{ Google.getInstance().getUsername() }</Text>
+                        <View>
+                            <Text style={styles.profileName}>{Google.getInstance().getUsername()}</Text>
+                            <Text>{Google.getInstance().getEmail()}</Text>
+                        </View>
                     </View>
                     <FlatList
                         scrollEnabled={false}
@@ -79,7 +89,7 @@ export default class Profile extends React.Component {
                                 onShowUnderlay={separators.highlight}
                                 onHideUnderlay={separators.unhighlight}>
                                 <View style={styles.listItem}>
-                                    <Text style={[styles.listItemText, {color: item.color?item.color:"black"}]}>{item.title}</Text>
+                                    <Text style={[styles.listItemText, { color: item.color ? item.color : "black" }]}>{item.title}</Text>
                                 </View>
                             </TouchableHighlight>
                         }
@@ -97,8 +107,13 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     profile: {
-        textAlign: 'center',
-        marginBottom: 24
+        backgroundColor: 'white',
+        flexDirection: 'row',
+        padding: 16,
+        marginBottom: 16
+    },
+    avatar: {
+        marginRight: 16
     },
     profilePhoto: {
         borderRadius: 64,

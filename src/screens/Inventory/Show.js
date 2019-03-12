@@ -1,12 +1,12 @@
 import React from 'react'
 import {
-    Button,
     FlatList,
-    Image,
+    Platform,
     SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
+    TouchableHighlight,
     View
 } from 'react-native'
 import { defaultScreenOptions } from '../../utils/navigation';
@@ -14,10 +14,10 @@ import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
-import CSVGenerator from '../../utils/CSVGenerator';
 import materialStyle from '../../styles/material';
 import bootstrapStyle from '../../styles/bootstrap';
 import OdooProduct from '../../entities/OdooProduct';
+import ActionSheet from 'react-native-action-sheet';
 
 export default class InventoryShow extends React.Component {
     constructor(props) {
@@ -61,6 +61,17 @@ export default class InventoryShow extends React.Component {
                     inventoryEntries: entries
                 })
             })
+        ;
+    }
+
+    deleteInventoryEntry(inventoryEntry) {
+        InventoryEntryFactory
+            .sharedInstance()
+            .delete(inventoryEntry)
+            .then(() => {
+                this.loadInventoryEntries();
+            })
+        ;
     }
 
     computeEntriesData() {
@@ -73,7 +84,8 @@ export default class InventoryShow extends React.Component {
                 title: entry.articleName,
                 subtitle: entry.articleBarcode,
                 image: entry.articleImage ? { uri: entry.articleImage } : null,
-                metadata: `${entry.articleQuantity}\n${OdooProduct.quantityUnitAsString(entry.articleUnit)}`
+                metadata: `${entry.articleQuantity}\n${OdooProduct.quantityUnitAsString(entry.articleUnit)}`,
+                inventoryEntry: entry
             }
             listDatas.push(data);
         }
@@ -121,6 +133,32 @@ export default class InventoryShow extends React.Component {
         });
     }
 
+    didTapIventoryEntry(inventoryEntry) {
+        const title = inventoryEntry.articleName;
+        const buttons_ios = [
+            "Supprimer",
+            "Annuler"
+        ];
+        const buttons_android = [
+            "Supprimer"
+        ]
+        const DESTRUCTIVE_INDEX = 0;
+        const CANCEL_INDEX = 1;
+
+        ActionSheet.showActionSheetWithOptions({
+            title: title,
+            options: (Platform.OS == 'ios') ? buttons_ios : buttons_android,
+            cancelButtonIndex: CANCEL_INDEX,
+            destructiveButtonIndex: DESTRUCTIVE_INDEX,
+            tintColor: 'blue'
+        },
+            (buttonIndex) => {
+                if (buttonIndex == DESTRUCTIVE_INDEX) {
+                    this.deleteInventoryEntry(inventoryEntry);
+                }
+            });
+    }
+
     render() {
         if (!this.state.inventorySession) { return null; }
         const inventory = this.state.inventorySession;
@@ -143,7 +181,7 @@ export default class InventoryShow extends React.Component {
         }
         return (
             <SafeAreaView>
-                <ScrollView>
+                <ScrollView style={{ height: '100%' }}>
                     {lastSentAtInfo}
                     {wasModifiedWarning}
                     <View style={{ flexDirection: 'row', backgroundColor: 'white', paddingTop: 16 }}>
@@ -163,6 +201,7 @@ export default class InventoryShow extends React.Component {
                                 this.openScannerModal();
                             }}
                             name="barcode"
+                            solid
                         >Scanner</Icon.Button>
                         <Icon.Button
                             onPress={() => {
@@ -170,6 +209,7 @@ export default class InventoryShow extends React.Component {
                             }}
                             name="file-export"
                             title="Exporter"
+                            solid
                         >Envoyer</Icon.Button>
                     </View>
                     {this.state.inventoryEntries.length > 0 ? (
@@ -178,13 +218,21 @@ export default class InventoryShow extends React.Component {
                             style={{ backgroundColor: 'white' }}
                             data={this.computeEntriesData()}
                             renderItem={({ item }) =>
-                                <View style={materialStyle.row}>
-                                    <View style={materialStyle.rowContent}>
-                                        <Text style={materialStyle.rowTitle}>{item.title}</Text>
-                                        <Text style={materialStyle.rowSubtitle}>{item.subtitle}</Text>
+                                <TouchableHighlight
+                                    style={materialStyle.row}
+                                    underlayColor="#BCBCBC"
+                                    onPress={() => {
+                                        this.didTapIventoryEntry(item.inventoryEntry);
+                                    }}
+                                >
+                                    <View style={materialStyle.row}>
+                                        <View style={materialStyle.rowContent}>
+                                            <Text style={materialStyle.rowTitle}>{item.title}</Text>
+                                            <Text style={materialStyle.rowSubtitle}>{item.subtitle}</Text>
+                                        </View>
+                                        <Text style={{ textAlign: 'right' }}>{item.metadata}</Text>
                                     </View>
-                                    <Text style={{ textAlign: 'right' }}>{item.metadata}</Text>
-                                </View>
+                                </TouchableHighlight>
                             }
                         />
                     ) : (

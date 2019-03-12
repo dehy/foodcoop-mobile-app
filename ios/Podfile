@@ -25,6 +25,7 @@ target 'Supercoop' do
 
   pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
 
+
   post_install do |installer|
       installer.pods_project.targets.each do |target|
           
