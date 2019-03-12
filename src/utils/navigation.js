@@ -20,6 +20,15 @@ export function goHome() {
         }
     });
 
+    // Navigation.setRoot({
+    //     root: {
+    //         component: {
+    //             name: "Inventory/New"
+    //         }
+    //     }
+    // });
+    // return;
+
     Navigation.setRoot({
         root: {
             bottomTabs: {
@@ -69,7 +78,7 @@ export function goHome() {
                             ],
                             options: {
                                 bottomTab: {
-                                    text: 'Inventaire',
+                                    text: 'Inventaires',
                                     icon: require('../../assets/icons/clipboard-list-check-regular.png')
                                 }
                             }

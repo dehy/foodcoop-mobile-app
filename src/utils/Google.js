@@ -135,24 +135,26 @@ export default class Google {
 
         // const recipients = "andre.lacote@supercoop.fr,fjg@supercoop.fr";
         const recipients = "arnaud.demouhy@supercoop.fr,fjg@supercoop.fr";
+        const messageBodyBase64 = base64.encode(messageBody);
         const accessToken = await this.getAccessToken();
 
         const endpoint = "https://www.googleapis.com/gmail/v1/users/{userId}/messages/send"
         url = endpoint.replace(/\{userId\}/, "me");
 
-        const messageBoundary = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 16);
+        const messageBoundary = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 32);
         const fromEmail = this.getEmail();     
 
 const rfc822Message=`From: ${fromEmail}
 To: ${__DEV__ ? fromEmail : recipients}
-Subject: ${(__DEV__ ? "[Test]" : "")} ${subject}
+Subject: ${(__DEV__ ? "[Test]" : "")}${subject}
 Content-Type: multipart/mixed; boundary="${messageBoundary}"
 MIME-Version: 1.0
 
 --${messageBoundary}
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-${messageBody}
+${messageBodyBase64}
 
 --${messageBoundary}
 Content-Type: text/comma-separated-values; name="${csvFilename}"

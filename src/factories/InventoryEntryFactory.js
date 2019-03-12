@@ -24,7 +24,7 @@ export default class InventoryEntryFactory {
     }
 
     async findForInventorySessionId(inventorySessionId) {
-        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ?', [inventorySessionId]);
+        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? ORDER BY `saved_at` DESC', [inventorySessionId]);
         const entries = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             entries.push(this._rowToObject(response[0].rows.item(i)));
@@ -60,6 +60,17 @@ export default class InventoryEntryFactory {
 
         const response = await this.db.executeQuery(
             'INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            params
+        );
+
+        return;
+    }
+
+    async delete(object) {
+        const params = [object.id];
+
+        const response = await this.db.executeQuery(
+            'DELETE FROM `inventories_entries` WHERE `id` = ?;',
             params
         );
 

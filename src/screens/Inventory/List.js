@@ -53,6 +53,7 @@ export default class InventoryList extends React.Component {
                     id: inventory.id,
                     title: inventory.date.format('DD MMMM YYYY'),
                     subtitle: "Zone "+String(inventory.zone),
+                    detailText: "",
                     object: inventory
                 }
                 inventoriesData.push(inventoryData);
@@ -102,6 +103,7 @@ export default class InventoryList extends React.Component {
                 <View style={{padding: 8, flexDirection: 'row', justifyContent: 'center'}}>
                     <Icon.Button 
                         name="plus-circle"
+                        solid
                         style={{}}
                         onPress={this.openNewInventoryModal}
                     >Nouvel inventaire</Icon.Button>
@@ -125,6 +127,7 @@ export default class InventoryList extends React.Component {
                                     <Text style={styles.rowTitle}>{item.title}</Text>
                                     <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
                                 </View>
+                                <Text style={styles.rowDetailText}>{item.detailText}</Text>
                                 <Icon name="info-circle" style={styles.rowActionIcon} />
                             </View>
                         </TouchableHighlight>
