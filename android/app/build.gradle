@@ -115,6 +115,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
+        missingDimensionStrategy 'react-native-camera', 'mlkit'
         multiDexEnabled true
         versionCode 3
         versionName "1.0"
@@ -155,6 +156,9 @@ android {
         }
     }
     productFlavors {
+    }
+    packagingOptions {
+        exclude 'META-INF/androidx.exifinterface_exifinterface.version'
     }
 }
 
