@@ -3080,7 +3080,7 @@ inquirer@^6.2.0:
     strip-ansi "^5.0.0"
     through "^2.3.6"
 
-invariant@^2.2.4:
+invariant@^2.1.0, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -4613,9 +4613,9 @@ mute-stream@0.0.7:
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
 nan@^2.9.2:
-  version "2.12.1"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
-  integrity sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.13.0.tgz#7bdfc27dd3c060c46e60b62c72b74012d1a4cd68"
+  integrity sha512-5DDQvN0luhXdut8SCwzm/ZuAX2W+fwhqNzfq7CZ+OJzQ6NwpcqmIGyLD1R8MEt7BeErzcsI0JLr4pND2pNp2Cw==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -5445,11 +5445,18 @@ react-native-base64@^0.0.2:
   integrity sha512-Fu/J1a2y0X22EJDWqJR2oEa1fpP4gTFjYxk8ElJdt1Yak3HOXmFJ7EohLVHU2DaQkgmKfw8qb7u/48gpzveRbg==
 
 react-native-camera@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-2.0.0.tgz#6cd4ac447737c0b94b244baea07853b38a096a91"
-  integrity sha512-dLJQ1cEyMtRykXgQ7+hYwhcPGRMqTDJYPmA/6eCudYKnJRwXt1FyeOkO19gYQk1HaZZeKSyr9sN/ktIx8oN/CA==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-2.0.1.tgz#2263d9c656054a137e5abddaaa0d02d14dc3fb38"
+  integrity sha512-ZAKYegDYLVvGu48HfDMOu7CL/ybcxLLr8VdUjXqIFcyd4AVgePGu4yTm9JNSaWMe1G6lbUhERXJPSvGIfApzKA==
   dependencies:
     prop-types "^15.6.2"
+
+react-native-cookies@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-cookies/-/react-native-cookies-3.3.0.tgz#527f65eb2d8a7a000107706bb11beb57f511e701"
+  integrity sha512-GobKo8Kvyuif6ROj6rDAjQJpCSLazcZl6AgZb1z7ldB9FrMtetQzXvIehS0QcwbpnXWyJzXJaY0yrlDjFz+NaA==
+  dependencies:
+    invariant "^2.1.0"
 
 react-native-dialog-input@^1.0.7:
   version "1.0.7"
@@ -5515,9 +5522,9 @@ react-native-navigation@^2.10.0:
     tslib "1.9.3"
 
 react-native-odoo-promise-based@^0.6.3:
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/react-native-odoo-promise-based/-/react-native-odoo-promise-based-0.6.3.tgz#b58545be50d5a6e027e1c85b27891e441a31aa3d"
-  integrity sha512-EmdGgYNdT63tzQiQ3YyB2mb9YAtCG/XG6tVOS9zaSPf7lereChHwcdRrMaT02Z3WwTFuzAyrY877pQ+FbEXwpA==
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/react-native-odoo-promise-based/-/react-native-odoo-promise-based-0.6.4.tgz#a2a576b83170e0ad90ae6f792151d59e81b93192"
+  integrity sha512-+ht09Ee9Oqy6IhVTlUnrq1CXuUTA2jd+33QAffT5fTJlokswQgdqFGyM+iVualFHgyH6pvtOt7EpfuXBezty5w==
 
 react-native-odoo@^0.5.0:
   version "0.5.0"
@@ -5580,9 +5587,9 @@ react-native-vector-icons@^6.2.0:
     yargs "^13.2.2"
 
 react-native-webview@^5.2.1:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-5.3.0.tgz#191666e7ded6d6077380a98b0a32a6cce81a2f4b"
-  integrity sha512-1tiHUXCt7uTAZylRezk5danOUCHVpchxGl9eOtXAa2oSDJUcr6CeafctDbTPTGN4r7jo89wp+XdAHT+FRTGumQ==
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-5.3.1.tgz#e9338f4e805c937d77227eb4f01e4713a59c4fe0"
+  integrity sha512-idz20vnEgbHqdYC0F3bZOdigw1oTjYl/OWQC1dtWqcIZo2z68NfGfvggOG/ZusFV1AfU806jEU/FIs1rmHgJCw==
   dependencies:
     escape-string-regexp "^1.0.5"
     fbjs "^0.8.17"

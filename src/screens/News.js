@@ -5,17 +5,19 @@ import { defaultScreenOptions } from "../utils/navigation";
 
 export default class News extends React.Component {
     static get options() {
-        return defaultScreenOptions("Agenda");
+        return defaultScreenOptions("News");
     }
 
     render() {
+        if (__DEV__) {
+            return <View></View>;
+        }
         return (
-            <View></View>
-            // <WebView
-            //   source={{ uri: "https://supercoop.fr/evenements/" }}
-            //   style={{ marginTop: 0 }}
-            //   onLoadProgress={e => console.log(e.nativeEvent.progress)}
-            // />
+            <WebView
+              source={{ uri: "https://supercoop.fr/blog/" }}
+              style={{ marginTop: 0 }}
+              onLoadProgress={e => console.debug(e.nativeEvent.progress)}
+            />
         );
     }
 }

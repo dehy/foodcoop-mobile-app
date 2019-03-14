@@ -73,7 +73,7 @@ export default class InventoryFactory {
     _rowToObject(row) {
         const inventorySession = new InventorySession();
         inventorySession.id = Number(row.id);
-        inventorySession.date = moment(row.date, Database.DATE_FORMAT);
+        inventorySession.date = moment(row.date, Database.DATETIME_FORMAT);
         inventorySession.zone = Number(row.zone);
         inventorySession.lastModifiedAt = row.last_modified_at ? moment(row.last_modified_at, Database.DATETIME_FORMAT) : null
         inventorySession.lastSentAt = row.last_sent_at ? moment(row.last_sent_at, Database.DATETIME_FORMAT) : null
@@ -84,7 +84,7 @@ export default class InventoryFactory {
     _objectToParams(object) {
         const row = {
             id: object.id,
-            date: object.date.format(Database.DATE_FORMAT),
+            date: object.date.format(Database.DATETIME_FORMAT),
             zone: object.zone,
             last_modified_at: object.lastModifiedAt ? object.lastModifiedAt.format(Database.DATETIME_FORMAT) : null,
             last_sent_at: object.lastSentAt ? object.lastSentAt.format(Database.DATETIME_FORMAT) : null

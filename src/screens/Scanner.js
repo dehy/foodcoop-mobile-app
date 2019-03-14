@@ -2,6 +2,7 @@ import React from 'react'
 import {
     ActivityIndicator,
     Alert,
+    AlertButton,
     Button,
     Image,
     SafeAreaView,
@@ -21,6 +22,7 @@ import InventoryEntryFactory from '../factories/InventoryEntryFactory';
 import InventorySessionFactory from '../factories/InventorySessionFactory';
 import moment from 'moment';
 import DialogInput from 'react-native-dialog-input';
+import Google from '../utils/Google';
 
 export default class Scanner extends React.Component {
 
@@ -61,6 +63,7 @@ export default class Scanner extends React.Component {
             odooProduct: null,
             showProductCard: false,
             showManualSearchView: false,
+            showUnknownOdooProductNameView: false
         }
     }
 
@@ -108,6 +111,21 @@ export default class Scanner extends React.Component {
         }
     }
 
+    reset() {
+        this.updateNavigationTitle(null);
+        this.blurInput();
+        this.lastScannedBarcode = null;
+        this.articleQuantityValue = null;
+        this.scannedAt = null;
+        this.resumeCamera();
+        this.setState({
+            odooProduct: null,
+            showManualSearchView: false,
+            showProductCard: false,
+            showUnknownOdooProductNameView: false
+        });
+    }
+
     isInInventoryMode() {
         if (this.props.inventory) {
             return true;
@@ -115,7 +133,7 @@ export default class Scanner extends React.Component {
         return false;
     }
 
-    focusOnInput() {
+    focusOnQuantityInput() {
         this.textInput.clear();
         this.textInput.focus();
     }
@@ -144,10 +162,10 @@ export default class Scanner extends React.Component {
         this.pauseCamera();
         this.setState({ showManualSearchView: true });
     }
-    hideManualSearchView = () => {
-        this.resumeCamera();
-        this.setState({ showManualSearchView: false });
-    }
+    hideManualSearchView = () => this.setState({ showManualSearchView: false });
+
+    showUnknownOdooProductNameView = () => this.setState({ showUnknownOdooProductNameView: true });
+    hideUnknownOdooProductView = () => this.setState({ showUnknownOdooProductNameView: false });
 
     pauseCamera = () => this.setState({ displayCamera: false })
     resumeCamera = () => this.setState({ displayCamera: true })
@@ -188,28 +206,94 @@ export default class Scanner extends React.Component {
         this.showProductCard();
         this.odoo.fetchProductFromBarcode(barcode).then((odooProduct) => {
             if (!odooProduct) {
-                Alert.alert("Code barre inconnu", "Le code barre " + barcode + " est introuvable dans odoo.");
-                this.hideProductCard();
-                this.updateNavigationTitle(null);
+                this.handleNotFoundOdooProduct(barcode);
                 return;
             }
-            this.setState({
-                odooProduct: odooProduct
-            })
-            if (this.isInInventoryMode()) {
-                this.focusOnInput();
-            }
-            this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
-                const odooProduct = this.state.odooProduct;
-                odooProduct.image = OdooProduct.imageFromOdooBase64(image);
-                this.setState({
-                    odooProduct: odooProduct
-                })
-            });
+            this.handleFoundOdooProduct(odooProduct);
         }, (reason) => {
             console.error(reason);
         });
     }
+
+    handleNotFoundOdooProduct(barcode) {
+        let notFoundInOdooString = `Le code barre ${barcode} est introuvable dans odoo.`;
+        let alertButtons = [{
+            text: "Annuler",
+            onPress: () => {
+                this.reset();
+                return;
+            },
+            style: "cancel"
+        }];
+        const odooProduct = new OdooProduct();
+        odooProduct.barcode = barcode;
+        this.setState({ odooProduct: odooProduct });
+        if (this.isInInventoryMode()) {
+            notFoundInOdooString = notFoundInOdooString.concat(" L'utiliser quand même pour l'inventaire ?");
+            alertButtons.push({
+                text: "Utiliser",
+                onPress: () => { this.askForUnknownOdooProductName() },
+                style: "default"
+            });
+        } else {
+            notFoundInOdooString = notFoundInOdooString.concat(" Le signaler en envoyant un email automatique ?");
+            alertButtons.push({
+                text: "Signaler",
+                onPress: () => { this.askForUnknownOdooProductName() },
+                style: "default"
+            });
+        }
+        Alert.alert(
+            "Code barre inconnu",
+            notFoundInOdooString,
+            alertButtons
+        );
+    }
+
+    handleFoundOdooProduct(odooProduct) {
+        this.setState({
+            odooProduct: odooProduct
+        })
+        if (this.isInInventoryMode()) {
+            this.focusOnQuantityInput();
+        }
+        this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
+            const odooProduct = this.state.odooProduct;
+            odooProduct.image = OdooProduct.imageFromOdooBase64(image);
+            this.setState({
+                odooProduct: odooProduct
+            })
+        });
+    }
+
+    askForUnknownOdooProductName = () => this.setState({ showUnknownOdooProductNameView: true });
+    hideUnknownOdooProductNameView = () => this.setState({ showUnknownOdooProductNameView: false });
+    handleUnknownOdooProductName = (name) => {
+        this.hideUnknownOdooProductNameView();
+        this.state.odooProduct.name = name;
+
+        if (this.isInInventoryMode()) {
+            this.handleFoundOdooProduct(this.state.odooProduct);
+        } else {
+            this.reportUnknownOdooProductByMail(this.state.odooProduct);
+        }
+    }
+
+    reportUnknownOdooProductByMail(odooProduct) {
+        const to = "inventaire@supercoop.fr";
+        const subject = `Code barre inconnu (${(odooProduct.barcode)})`;
+        const body = `Le code barre ${(odooProduct.barcode)} est introuvable dans Odoo.
+Il a été associé à un produit nommé "${(odooProduct.name)}"`;
+        try {
+            Google.getInstance().sendEmail(to, subject, body).then(() => {
+                Alert.alert("Mail envoyé", "Merci pour le signalement ! 🎉");
+            });
+        } catch (e) {
+            Alert.alert("Erreur", "Houston, une erreur est survenue lors de l'envoi du mail de signalement 😢");
+        }
+        this.reset();
+    }
+
 
     inventoryDidTapSaveButton() {
         const unit = this.state.odooProduct.uom_id;
@@ -248,26 +332,38 @@ export default class Scanner extends React.Component {
                 .sharedInstance()
                 .updateLastModifiedAt(this.props.inventory, moment())
                 .then(() => {
-                    this.textInput.blur();
-                    this.lastScannedBarcode = null;
-                    this.updateNavigationTitle(null);
-                    this.hideProductCard();
-                    this.setState({
-                        odooProduct: null
-                    });
-                    this.scannedAt = null;
+                    this.reset();
                     this.resumeCamera();
                 })
         });
+    }
+
+    renderUnknownOdooProductView() {
+        return (
+            <DialogInput isDialogVisible={this.state.showUnknownOdooProductNameView}
+            title={"Nom du produit"}
+            message={"Quel est le nom du produit tel qu'affiché sur l'étiquette ?"}
+            submitInput={name => this.handleUnknownOdooProductName(name)}
+            closeDialog={() => {
+                this.hideUnknownOdooProductView();
+                this.reset();
+            }}
+            cancelText="Annuler"
+            submitText="Enregistrer"
+            />
+        );
     }
 
     renderManualSearchView() {
         return (
             <DialogInput isDialogVisible={this.state.showManualSearchView}
                 title={"Recherche manuelle"}
-                message={"Entre le code barre du produit que tu cherches"}
+                message={"Entres le code barre du produit que tu cherches"}
                 submitInput={(barcode) => { this.didScanBarcode(null, barcode) }}
-                closeDialog={this.hideManualSearchView}
+                closeDialog={() => {
+                    this.hideManualSearchView();
+                    this.reset();
+                }}
                 textInputProps={{
                     keyboardType: 'number-pad'
                 }}
@@ -315,6 +411,7 @@ export default class Scanner extends React.Component {
     render() {
         return (
             <SafeAreaView style={styles.container}>
+                {this.renderUnknownOdooProductView()}
                 {this.renderManualSearchView()}
                 {this.renderCameraView()}
                 <View style={styles.actions}>
@@ -389,15 +486,15 @@ export default class Scanner extends React.Component {
                                     <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
                                         <View style={{ flex: 1, flexDirection: 'column' }}>
                                             <Text style={styles.detailTitle}>Prix</Text>
-                                            <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '...'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Stock</Text>
-                                            <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '...'}</Text>
+                                            <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                                            <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '...'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '-'}</Text>
                                         </View>
                                     </View>
                                 )}

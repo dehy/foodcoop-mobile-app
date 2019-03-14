@@ -10,6 +10,7 @@ import {
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation } from 'react-native-navigation';
+import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import styles from '../../styles/material';
@@ -44,22 +45,28 @@ export default class InventoryList extends React.Component {
     }
 
     loadData() {
-        InventorySessionFactory.sharedInstance().findAll().then(inventories => {
+        InventorySessionFactory.sharedInstance().findAll().then(async inventories => {
             const inventoriesData = [];
             for (k in inventories) {
                 const inventory = inventories[k];
+                const inventoryEntries = await InventoryEntryFactory.sharedInstance().findForInventorySession(inventory);
+
+                let articleCountString;
+                if (inventoryEntries.length == 0) {
+                    articleCountString = "aucun article";
+                } else {
+                    articleCountString = inventoryEntries.length + " article" + (inventories.length > 1 ? "s" : "");
+                }
                 const inventoryData = {
                     key: 'inventory-' + inventory.id,
                     id: inventory.id,
-                    title: inventory.date.format('DD MMMM YYYY'),
-                    subtitle: "Zone "+String(inventory.zone),
+                    title: inventory.date.format('DD MMMM YYYY à HH[h]mm'),
+                    subtitle: "Zone "+String(inventory.zone)+" - "+articleCountString,
                     detailText: "",
                     object: inventory
                 }
                 inventoriesData.push(inventoryData);
             }
-
-            //console.log(inventoriesData);
 
             this.setState({
                 inventoriesData: inventoriesData

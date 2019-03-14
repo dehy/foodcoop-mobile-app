@@ -17,4 +17,11 @@ export default class InventoryEntry {
         this.articleQuantity = json.article_quantity ? json.article_quantity : null;
         this.savedAt = json.saved_at ? json.saved_at : null;
     }
+
+    isFetchedFromOdoo() {
+        if (this.articleUnit) {
+            return true;
+        }
+        return false;
+    }
 }

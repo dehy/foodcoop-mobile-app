@@ -83,22 +83,42 @@ export default class InventoryShow extends React.Component {
 
         const entriesCount = this.inventoryEntries.length;
 
+        let notFoundInOdoo = [];
+        this.inventoryEntries.forEach(inventoryEntry => {
+            if (!inventoryEntry.isFetchedFromOdoo()) {
+                notFoundInOdoo.push(`${(inventoryEntry.articleBarcode)} - ${(inventoryEntry.articleName)}`);
+            }
+        });
+        const notFoundInOdooString = '- ' + notFoundInOdoo.join('\n- ');
+
+        const to = 'inventaire@supercoop.fr';
         const subject = `[Zone ${zone}][${date}] Résultat d'inventaire`;
-        const body = `Inventaire fait par ${userFirstname}, zone ${zone}, le ${date} à ${time}
+        let body = `Inventaire fait par ${userFirstname}, zone ${zone}, le ${date} à ${time}
 ${entriesCount} produits scannés`;
+
+        if (notFoundInOdoo.length > 0) {
+            body = body.concat(`
+            
+Attention, ces codes barre n'ont pas été trouvé dans Odoo:
+${notFoundInOdooString}`);
+        }
 
         const csvFilenameDateTime = this.props.inventory.lastModifiedAt.format("YYYYMMDDHHmmss");
         const csvFilename = `Zone${zone}_${userFirstname}-${csvFilenameDateTime}.csv`
+        const attachments = [{
+            filename: csvFilename,
+            content: this.generatedCSV
+        }];
 
         Google.getInstance()
-            .sendInventoryEmail(subject, body, csvFilename, this.generatedCSV)
+            .sendEmail(to, subject, body, attachments)
             .then(() => {
                 InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
                 Alert.alert("Envoyé", "Le message est parti sur les Internets Mondialisés");
             })
             .catch((e) => {
+                if (__DEV__) { console.error(e); }
                 Alert.alert("ERREUR", "Houston, quelchose s'est mal passé et le mail n'est pas parti... Mais on n'en sait pas plus :(");
-            
             })
             .finally(() => {
                 this.setState({
