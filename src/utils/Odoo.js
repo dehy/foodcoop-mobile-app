@@ -21,6 +21,50 @@ export default class Odoo {
         });
     }
 
+    // async fetchBarcodeRules() {
+    //     await this.assertConnect();
+    //     var params = {
+
+    //     }
+
+    //     const response = await this.odooApi.search_read('barcode.rule', params);
+    //     if (response.success !== true) {
+    //         console.error(response);
+    //     }
+    //     console.debug(response);
+    // }
+
+    // async fetchProductFromBarcodeBase(barcodeBase, barcodeRuleId) {
+    //     console.log("fetchProductFromBarcode");
+    //     const isConnected = await this.assertConnect();
+    //     if (isConnected !== true) {
+    //         console.error(odooApi);
+    //         throw new Error("Odoo is not connected");
+    //     }
+
+    //     var params = {
+    //         // ids: [1, 2, 3, 4, 5],
+    //         // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
+    //         domain: [['barcode_rule_id', '=', barcodeRuleId], ['barcode_base', '=', barcodeBase]],
+    //         fields: ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'],
+    //         // lst_price = prix de vente, standard_price = achat, uom_id = unité de vente, uom_po_id = unité d'achat
+    //         // order: 'name DESC',
+    //         limit: 1,
+    //         offset: 0,
+    //     }; //params
+
+    //     const response = await this.odooApi.search_read('product.product', params);
+    //     if (response.success !== true) {
+    //         console.error(response);
+    //     }
+    //     console.debug(response);
+    //     if (response.data.length > 0) {
+    //         return new OdooProduct(response.data[0]);
+    //     }
+    //     return null;
+    // }
+
+
     async fetchProductFromBarcode(barcode) {
         console.log("fetchProductFromBarcode");
         const isConnected = await this.assertConnect();
@@ -28,7 +72,7 @@ export default class Odoo {
             console.error(odooApi);
             throw new Error("Odoo is not connected");
         }
-    
+
         var params = {
             // ids: [1, 2, 3, 4, 5],
             // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
@@ -39,7 +83,7 @@ export default class Odoo {
             limit: 1,
             offset: 0,
         }; //params
-    
+
         const response = await this.odooApi.search_read('product.product', params);
         if (response.success !== true) {
             console.error(response);
@@ -70,7 +114,7 @@ export default class Odoo {
         }
 
         console.log(response);
-        return response.data[0].image;
+        return response.data.length > 0 ? response.data[0].image : null;
     }
 
     async assertConnect() {

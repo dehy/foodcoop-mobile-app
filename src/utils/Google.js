@@ -129,26 +129,15 @@ export default class Google {
     }
 
     /* Email Part */
+    async sendEmail(to, subject, body, attachments = []) {
+        console.debug(to, subject, body, attachments);
 
-    async sendInventoryEmail(subject, messageBody, csvFilename, csvString) {
-        const csvSize = csvString.length;
-        const csvBase64 = base64.encode(csvString);
-
-        // const recipients = "andre.lacote@supercoop.fr,fjg@supercoop.fr";
-        const recipients = "inventaire@supercoop.fr";
-        const messageBodyBase64 = base64.encode(messageBody);
-        const accessToken = await this.getAccessToken();
-
-        const endpoint = "https://www.googleapis.com/gmail/v1/users/{userId}/messages/send"
-        url = endpoint.replace(/\{userId\}/, "me");
+        const from = this.getEmail();
+        const bodyBase64 = base64.encode(body);
 
         const messageBoundary = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 32);
-        const fromName = this.getUsername();
-        const fromEmail = this.getEmail();
-        const from = `${fromName} <${fromEmail}>`;
-
-        const rfc822Message=`From: ${fromEmail}
-To: ${__DEV__ ? from : recipients}
+        let rfc822Message=`From: ${from}
+To: ${__DEV__ ? from : to}
 Subject: ${(__DEV__ ? "[Test]" : "")}${subject}
 Content-Type: multipart/mixed; boundary="${messageBoundary}"
 MIME-Version: 1.0
@@ -157,41 +146,54 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: base64
 
-${messageBodyBase64}
+${bodyBase64}
 
---${messageBoundary}
-Content-Type: text/comma-separated-values; charset="UTF-8"; name="${csvFilename}"
+`;
+
+        attachments.forEach((attachment) => {
+            const filename = attachment.filename;
+            const fileContentBase64 = base64.encode(attachment.content);
+            const size = attachment.content.length;
+
+            rfc822Message = rfc822Message.concat(`--${messageBoundary}
+Content-Type: text/comma-separated-values; charset="UTF-8"; name="${filename}"
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="${csvFilename}"; size=${csvSize}
+Content-Disposition: attachment; filename="${filename}"; size=${size}
 
-${csvBase64}
+${fileContentBase64}
 
---${messageBoundary}--`;
+`);
+        });
 
+        rfc822Message = rfc822Message.concat(`--${messageBoundary}--`);
+
+        const endpoint = "https://www.googleapis.com/gmail/v1/users/{userId}/messages/send"
+        url = endpoint.replace(/\{userId\}/, "me");
         const rfc822MessageBase64 = base64.encode(rfc822Message);
 
-        const body = `{
+        const requestBody = `{
     "raw": "${rfc822MessageBase64}"
 }`
 
         console.debug(rfc822Message);
-        console.debug(body);
+        console.debug(requestBody);
 
+        const accessToken = await this.getAccessToken();
         const result = await fetch(url, {
             method: "POST",
             cache: "no-cache",
             headers: {
                 "Content-Type":  "application/json; charset=UTF-8",
                 "Authorization": `Bearer ${accessToken}`,
-                "Content-Length": body.length
+                "Content-Length": requestBody.length
             },
-            body: body
+            body: requestBody
         });
         console.debug(result);
 
         if (result.ok) {
             return;
         }
-        throw new Error();
+        throw new Error(result);
     }
 }

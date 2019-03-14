@@ -7,6 +7,7 @@ import com.actionsheet.ActionSheetPackage;
 import com.horcrux.svg.SvgPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
@@ -64,7 +65,8 @@ public class MainApplication extends NavigationApplication {
                 new RNSoundPackage(),
                 new VectorIconsPackage(),
                 new SQLitePluginPackage(),
-                new ActionSheetPackage()
+                new ActionSheetPackage(),
+                new CookieManagerPackage()
         );
     }
 
