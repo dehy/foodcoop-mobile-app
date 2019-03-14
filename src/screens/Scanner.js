@@ -169,7 +169,7 @@ export default class Scanner extends React.Component {
             this.lookupForBarcode(barcode);
             return;
         }
-        Alert.alert("Code barre incompatible", "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres, dont le premier chiffre est séparé des autres.");
+        Alert.alert("Code barre incompatible", "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.");
     }
 
     lookupForBarcode(barcode) {
