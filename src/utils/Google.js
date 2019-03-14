@@ -34,6 +34,7 @@ export default class Google {
     }
 
     setCurrentUser(user) {
+        console.debug(user);
         this.currentUser = user;
         // Sentry.setUserContext({
         //     email: this.currentUser ? this.currentUser.email : null
@@ -134,7 +135,7 @@ export default class Google {
         const csvBase64 = base64.encode(csvString);
 
         // const recipients = "andre.lacote@supercoop.fr,fjg@supercoop.fr";
-        const recipients = "arnaud.demouhy@supercoop.fr,fjg@supercoop.fr";
+        const recipients = "inventaire@supercoop.fr";
         const messageBodyBase64 = base64.encode(messageBody);
         const accessToken = await this.getAccessToken();
 
@@ -142,22 +143,24 @@ export default class Google {
         url = endpoint.replace(/\{userId\}/, "me");
 
         const messageBoundary = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 32);
-        const fromEmail = this.getEmail();     
+        const fromName = this.getUsername();
+        const fromEmail = this.getEmail();
+        const from = `${fromName} <${fromEmail}>`;
 
-const rfc822Message=`From: ${fromEmail}
-To: ${__DEV__ ? fromEmail : recipients}
+        const rfc822Message=`From: ${fromEmail}
+To: ${__DEV__ ? from : recipients}
 Subject: ${(__DEV__ ? "[Test]" : "")}${subject}
 Content-Type: multipart/mixed; boundary="${messageBoundary}"
 MIME-Version: 1.0
 
 --${messageBoundary}
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: base64
 
 ${messageBodyBase64}
 
 --${messageBoundary}
-Content-Type: text/comma-separated-values; name="${csvFilename}"
+Content-Type: text/comma-separated-values; charset="UTF-8"; name="${csvFilename}"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="${csvFilename}"; size=${csvSize}
 
@@ -171,16 +174,8 @@ ${csvBase64}
     "raw": "${rfc822MessageBase64}"
 }`
 
-
-// --${messageBoundary}
-// Content-Type: text/comma-separated-values; name="toto.csv"
-// Content-Transfert-Encoding: base64
-// Content-Disposition: attachment; filename="toto.csv"; size=${csvSize}
-
-// ${csvBase64}
-
-console.debug(rfc822Message);
-console.debug(body);
+        console.debug(rfc822Message);
+        console.debug(body);
 
         const result = await fetch(url, {
             method: "POST",
@@ -193,5 +188,10 @@ console.debug(body);
             body: body
         });
         console.debug(result);
+
+        if (result.ok) {
+            return;
+        }
+        throw new Error();
     }
 }
