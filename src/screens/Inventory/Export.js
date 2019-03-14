@@ -88,15 +88,23 @@ export default class InventoryShow extends React.Component {
 ${entriesCount} produits scannés`;
 
         const csvFilenameDateTime = this.props.inventory.lastModifiedAt.format("YYYYMMDDHHmmss");
-        const csvFilename = `${csvFilenameDateTime}-Zone${zone}_${userFirstname}.csv`
+        const csvFilename = `Zone${zone}_${userFirstname}-${csvFilenameDateTime}.csv`
 
-        Google.getInstance().sendInventoryEmail(subject, body, csvFilename, this.generatedCSV).then(() => {
-            InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
-            this.setState({
-                sendingMail: false
+        Google.getInstance()
+            .sendInventoryEmail(subject, body, csvFilename, this.generatedCSV)
+            .then(() => {
+                InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
+                Alert.alert("Envoyé", "Le message est parti sur les Internets Mondialisés");
+            })
+            .catch((e) => {
+                Alert.alert("ERREUR", "Houston, quelchose s'est mal passé et le mail n'est pas parti... Mais on n'en sait pas plus :(");
+            
+            })
+            .finally(() => {
+                this.setState({
+                    sendingMail: false
+                });
             });
-            Alert.alert("Envoyé", "Le message est parti sur les Internets Mondialisés");
-        });
     }
 
     render() {
