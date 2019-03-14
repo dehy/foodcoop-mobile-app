@@ -12,26 +12,26 @@ PODS:
     - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
   - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
   - GTMSessionFetcher/Core (1.2.1)
-  - React (0.58.6):
-    - React/Core (= 0.58.6)
-  - react-native-camera (2.0.0):
+  - React (0.59.1):
+    - React/Core (= 0.59.1)
+  - react-native-camera (2.0.1):
     - React
-    - react-native-camera/RCT (= 2.0.0)
-    - react-native-camera/RN (= 2.0.0)
-  - react-native-camera/RCT (2.0.0):
+    - react-native-camera/RCT (= 2.0.1)
+    - react-native-camera/RN (= 2.0.1)
+  - react-native-camera/RCT (2.0.1):
     - React
-  - react-native-camera/RN (2.0.0):
+  - react-native-camera/RN (2.0.1):
     - React
   - react-native-sqlite-storage (3.3.10):
     - React
-  - react-native-webview (5.3.0):
+  - react-native-webview (5.3.1):
     - React
-  - React/Core (0.58.6):
-    - yoga (= 0.58.6.React)
-  - React/RCTImage (0.58.6):
+  - React/Core (0.59.1):
+    - yoga (= 0.59.1.React)
+  - React/RCTImage (0.59.1):
     - React/Core
     - React/RCTNetwork
-  - React/RCTNetwork (0.58.6):
+  - React/RCTNetwork (0.59.1):
     - React/Core
   - ReactNativeNavigation (2.13.1):
     - React
@@ -53,7 +53,7 @@ PODS:
   - SentryReactNative (0.42.0):
     - React
     - Sentry (~> 4.1.3)
-  - yoga (0.58.6.React)
+  - yoga (0.59.1.React)
 
 DEPENDENCIES:
   - GoogleSignIn
@@ -104,10 +104,10 @@ SPEC CHECKSUMS:
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  React: 130b87b2d5e2baac646954282cab87be986d98fc
-  react-native-camera: 4b810becdf9bebf269b252552ee9a074f5f03bd4
+  React: 34a405ead72252839fdc4afc1f972a7ed984af84
+  react-native-camera: 8a7658ffe5ae3bbdc9718b650970eba2628ee13c
   react-native-sqlite-storage: dba8e864e9a76f1aae6ddb5e7d0dc330d59f4bb3
-  react-native-webview: cca202b9f4d3da2af7743a123e69260d166cc7eb
+  react-native-webview: c2e27c2ff4b4c4f8f2f5eda36fe9e355a784492e
   ReactNativeNavigation: 275dcc7845050bec9a82c7004fae8054bc741125
   RNGoogleSignin: b3a2d99e1e61c750646c8be4faa10d062d4a0e57
   RNKeychain: 1a121521011702409f5a1009eb8a1effa81000f3
@@ -115,7 +115,7 @@ SPEC CHECKSUMS:
   RNSVG: 978db19eaef499d9ebffb74a091ca0abf209c8c1
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
-  yoga: 32d7ef1081951e9a35a4c72a7be797598b138a48
+  yoga: 8fb47f180b19b0dadb285a09e4c74c8a41721d3a
 
 PODFILE CHECKSUM: edf4d4f930f81713400a50c4768aef3580fa49ed
 

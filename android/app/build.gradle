@@ -117,7 +117,7 @@ android {
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         multiDexEnabled true
-        versionCode 4
+        versionCode 5
         versionName "1.0"
     }
     compileOptions {
