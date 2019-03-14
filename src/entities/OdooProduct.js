@@ -7,8 +7,8 @@ export default class OdooProduct {
     constructor (odooJson) {
         const json = odooJson || {}
     
-        this.barcode = json.barcode != undefined ? json.barcode : '';
-        this.name = json.name != undefined ? json.name : '';
+        this.barcode = json.barcode != undefined ? json.barcode : null;
+        this.name = json.name != undefined ? json.name : null;
         this.image = json.image != undefined ? OdooProduct.imageFromOdooBase64(json.image) : null;
         this.qty_available = json.qty_available != undefined ? json.qty_available : null;
         this.uom_id = json.uom_id != undefined ? json.uom_id[0] : null;
@@ -44,7 +44,7 @@ export default class OdooProduct {
     }
 
     packagingAsString() {
-        let metricString = "N/A";
+        let metricString = "";
         if (this.weight_net) {
             metricString = `${String(this.weight_net)} kg`
         }

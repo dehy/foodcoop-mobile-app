@@ -528,3 +528,11 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/java,linux,macos,windows,objective-c,reactnative,androidstudio,visualstudiocode
 android/app/release/
+
+android/app/src/main/assets/index\.android\.bundle
+
+android/app/src/main/res/drawable-mdpi/
+
+android/app/src/main/res/drawable-xhdpi/
+
+android/app/src/main/res/drawable-xxhdpi/
