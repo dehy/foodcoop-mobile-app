@@ -94,24 +94,15 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('../keystores/debug.keystore')
-            storePassword 'android'
-            keyAlias 'sp_debug'
-            keyPassword 'android'
-        }
-        release {
-            storeFile file(SUPERCOOP_RELEASE_STORE_FILE)
-            storePassword SUPERCOOP_RELEASE_STORE_PASSWORD
-            keyAlias SUPERCOOP_RELEASE_KEY_ALIAS
-            keyPassword SUPERCOOP_RELEASE_KEY_PASSWORD
-        }
-    }
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
-        applicationId 'fr.supercoop.app_android'
+        applicationId "fr.supercoop.app_android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
@@ -120,26 +111,18 @@ android {
         versionCode 5
         versionName "1.0"
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     splits {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86", "arm64-v8a"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-        debug {
-            signingConfig signingConfigs.debug
         }
     }
     // applicationVariants are e.g. debug, release
@@ -147,7 +130,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3]
+            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -155,10 +138,16 @@ android {
             }
         }
     }
-    productFlavors {
-    }
     packagingOptions {
-        exclude 'META-INF/androidx.exifinterface_exifinterface.version'
+        exclude "META-INF/androidx.exifinterface_exifinterface.version"
+    }
+    signingConfigs {
+        debug {
+            storeFile file("../keystores/debug.keystore")
+            storePassword "android"
+            keyAlias "sp_debug"
+            keyPassword "android"
+        }
     }
 }
 
@@ -172,6 +161,9 @@ configurations.all {
 }
 
 dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-cookies')
     implementation project(':react-native-action-sheet')
     implementation project(':react-native-sentry')
@@ -184,9 +176,6 @@ dependencies {
     implementation project(':react-native-camera')
     implementation project(':react-native-navigation')
     implementation project(':react-native-sqlite-storage')
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation 'com.facebook.react:react-native:+'
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.google.android.gms:play-services-auth:${rootProject.ext.googlePlayServicesAuthVersion}"
 }
