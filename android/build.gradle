@@ -11,9 +11,9 @@ buildscript {
     }
     repositories {
         google()
-        jcenter()
         mavenLocal()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
@@ -26,8 +26,8 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
         google()
         jcenter()
         maven {
@@ -54,10 +54,4 @@ subprojects { subproject ->
             }
         }
     }
-}
-
-
-task wrapperGradle(type: Wrapper) {
-    gradleVersion = '4.7'
-    distributionUrl = distributionUrl.replace("bin", "all")
 }
