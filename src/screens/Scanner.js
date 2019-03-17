@@ -256,9 +256,6 @@ export default class Scanner extends React.Component {
         this.setState({
             odooProduct: odooProduct
         })
-        if (this.isInInventoryMode()) {
-            this.focusOnQuantityInput();
-        }
         this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
             const odooProduct = this.state.odooProduct;
             odooProduct.image = OdooProduct.imageFromOdooBase64(image);
@@ -266,6 +263,44 @@ export default class Scanner extends React.Component {
                 odooProduct: odooProduct
             })
         });
+        if (this.isInInventoryMode()) {
+            InventoryEntryFactory
+                .sharedInstance()
+                .findByInventorySessionIdAndBarcode(this.props.inventory.id, odooProduct.barcode)
+                .then((foundInventoryEntries) => {
+                    if (foundInventoryEntries) {
+                        const lastEntry = foundInventoryEntries[0];
+                        const timeAgoString = lastEntry.scannedAt ? lastEntry.scannedAt.fromNow() : null;
+                        Alert.alert(
+                            "Déjà scanné",
+                            `Ce produit a déjà été scanné ${timeAgoString}. Veux-tu le remplacer ou l'additionner dans l'inventaire ?`,
+                            [{
+                                text: "Annuler",
+                                onPress: () => {
+                                    this.reset();
+                                },
+                                style: "cancel"
+                            }, {
+                                text: "Remplacer",
+                                onPress: () => {
+                                    foundInventoryEntries
+                                        .forEach((foundInventoryEntry) => {
+                                            InventoryEntryFactory
+                                            .sharedInstance()
+                                            .delete(foundInventoryEntry);
+                                    });
+                                },
+                                style: "destructive"
+                            }, {
+                                text: "Additionner",
+                                onPress: () => {},
+                                style: "default"
+                            }]
+                        );
+                    }
+                });
+                this.focusOnQuantityInput();
+        }
     }
 
     askForUnknownOdooProductName = () => this.setState({ showUnknownOdooProductNameView: true });

@@ -1,7 +1,7 @@
 import SQLite from 'react-native-sqlite-storage';
 
 export default class Database {
-    static TARGET_SCHEMA_VERSION = 1;
+    static TARGET_SCHEMA_VERSION = 2;
 
     static DATE_FORMAT="YYYY-MM-DD";
     static DATETIME_FORMAT="YYYY-MM-DD HH:mm:ss";

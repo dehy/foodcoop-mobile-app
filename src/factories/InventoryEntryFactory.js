@@ -19,6 +19,16 @@ export default class InventoryEntryFactory {
         this.db = Database.sharedInstance();
     }
 
+    async findByInventorySessionIdAndBarcode(inventorySessionId, barcode) {
+        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? AND `article_barcode` = ? ORDER BY scanned_at DESC', [inventorySessionId, barcode]);
+        const entries = [];
+        for (let i = 0; i < response[0].rows.length; i++) {
+            entries.push(this._rowToObject(response[0].rows.item(i)));
+        }
+
+        return entries;
+    }
+
     async findForInventorySession(inventorySession) {
         return await this.findForInventorySessionId(inventorySession.id);
     }
@@ -47,7 +57,7 @@ export default class InventoryEntryFactory {
         const params = this._objectToParams(object);
 
         const response = await this.db.executeQuery(
-            'INSERT OR REPLACE INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             params
         );
 
