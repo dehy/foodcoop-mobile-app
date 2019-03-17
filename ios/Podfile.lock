@@ -22,6 +22,8 @@ PODS:
     - React
   - react-native-camera/RN (2.0.1):
     - React
+  - react-native-cookies (3.2.0):
+    - React
   - react-native-sqlite-storage (3.3.10):
     - React
   - react-native-webview (5.3.1):
@@ -33,7 +35,7 @@ PODS:
     - React/RCTNetwork
   - React/RCTNetwork (0.59.1):
     - React/Core
-  - ReactNativeNavigation (2.13.1):
+  - ReactNativeNavigation (2.14.0):
     - React
   - RNGoogleSignin (1.2.1):
     - GoogleSignIn
@@ -58,6 +60,7 @@ PODS:
 DEPENDENCIES:
   - GoogleSignIn
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
   - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React/RCTImage (from `../node_modules/react-native`)
@@ -81,6 +84,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-cookies:
+    :path: "../node_modules/react-native-cookies/ios"
   react-native-sqlite-storage:
     :path: "../node_modules/react-native-sqlite-storage"
   react-native-webview:
@@ -106,9 +111,10 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   React: 34a405ead72252839fdc4afc1f972a7ed984af84
   react-native-camera: 8a7658ffe5ae3bbdc9718b650970eba2628ee13c
+  react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-sqlite-storage: dba8e864e9a76f1aae6ddb5e7d0dc330d59f4bb3
   react-native-webview: c2e27c2ff4b4c4f8f2f5eda36fe9e355a784492e
-  ReactNativeNavigation: 275dcc7845050bec9a82c7004fae8054bc741125
+  ReactNativeNavigation: 588afd01de3661c130dc89fd2c70d18f0bd8d532
   RNGoogleSignin: b3a2d99e1e61c750646c8be4faa10d062d4a0e57
   RNKeychain: 1a121521011702409f5a1009eb8a1effa81000f3
   RNSound: a1d01988e043aed5dbb476c2152b5ffb02446750
@@ -117,6 +123,6 @@ SPEC CHECKSUMS:
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
   yoga: 8fb47f180b19b0dadb285a09e4c74c8a41721d3a
 
-PODFILE CHECKSUM: edf4d4f930f81713400a50c4768aef3580fa49ed
+PODFILE CHECKSUM: 747cd502721af0ce2686a59ea1ee0fe1c88fc88c
 
 COCOAPODS: 1.6.0.rc.2

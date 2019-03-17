@@ -2,9 +2,11 @@ import { Navigation } from 'react-native-navigation';
 
 export function registerScreens() {
     Navigation.registerComponent('News', () => require('../screens/News').default);
-    Navigation.registerComponent('Settings/Settings', () => require('../screens/Settings/Settings').default);
+    Navigation.registerComponent('Settings', () => require('../screens/Settings').default);
     Navigation.registerComponent('Settings/About', () => require('../screens/Settings/About').default);
-    Navigation.registerComponent('Settings/Database', () => require('../screens/Settings/Database').default);
+    Navigation.registerComponent('Settings/Maintenance', () => require('../screens/Settings/Maintenance').default);
+    Navigation.registerComponent('Settings/Maintenance/Database', () => require('../screens/Settings/Maintenance/Database').default);
+    Navigation.registerComponent('Settings/Maintenance/Cookies', () => require('../screens/Settings/Maintenance/Cookies').default);
     Navigation.registerComponent('Initializing', (sc) => require('../screens/Initializing').default);
     Navigation.registerComponent('Welcome', () => require('../screens/Welcome').default);
     Navigation.registerComponent('Scanner', () => require('../screens/Scanner').default);

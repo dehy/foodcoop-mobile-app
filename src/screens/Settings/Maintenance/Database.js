@@ -1,22 +1,22 @@
 import React, { Component } from 'react'
 import { Alert, FlatList, SafeAreaView, TouchableHighlight, Text, StyleSheet, View } from 'react-native'
-import { defaultScreenOptions } from '../../utils/navigation'
-import Database from '../../utils/Database';
-import materialStyle from '../../styles/material';
+import { defaultScreenOptions } from '../../../utils/navigation'
+import Database from '../../../utils/Database';
+import materialStyle from '../../../styles/material';
 
-export default class ProfileSettings extends React.Component {
+export default class DatabaseMaintenance extends React.Component {
     constructor(props) {
         super(props)
     }
 
     static get options() {
-        return defaultScreenOptions("Paramètres");
+        return defaultScreenOptions("Base de donnée");
     }
 
     resetDatabase() {
         Database.sharedInstance().resetDatabase().then(() => {
             Database.sharedInstance().migrate().then(() => {
-                Alert.alert("Base de donnée", "La base de donnée a bien été effacée");
+                Alert.alert("Base de donnée effacée");
             });
         });
     }
@@ -25,12 +25,12 @@ export default class ProfileSettings extends React.Component {
         switch(key) {
             case 'reset-db':
                 Alert.alert(
-                    "Effacer la base de donnée locale",
-                    "Êtes-vous vraiment sûr(e) de vouloir effacer la base de donnée locale ? Aucune récupération possible !",
+                    "Effacer la base de donnée locale 💣",
+                    "Es-tu vraiment sûr(e) de vouloir effacer la base de donnée locale ? ⚠ Aucune récupération possible !",
                     [{
-                        text: "NON!"
+                        text: "😱 NON !"
                     }, {
-                        text: "Je suis sûr(e) et certain(e)",
+                        text: "Je suis sûr(e) et certain(e) !",
                         style: "destructive",
                         onPress: () => {
                             this.resetDatabase();
@@ -70,9 +70,4 @@ export default class ProfileSettings extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    }
-})
+});

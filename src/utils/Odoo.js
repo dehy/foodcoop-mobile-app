@@ -2,17 +2,29 @@
 
 import OdooApi from 'react-native-odoo-promise-based';
 import OdooProduct from '../entities/OdooProduct';
+import CookieManager from 'react-native-cookies';
 
 export default class Odoo {
 
     static UNIT_UNIT = 1;
     static UNIT_KG = 2;
 
+    static instance = null;
+    static odooEnpoint = 'labo.supercoop.fr';
+
+    static getInstance() {
+        if (Odoo.instance == null) {
+            Odoo.instance = new Odoo();
+        }
+
+        return this.instance;
+    }
+
     constructor() {
         this.isConnected = false;
 
         this.odooApi = new OdooApi({
-            host: 'labo.supercoop.fr',
+            host: Odoo.odooEnpoint,
             port: 443,
             protocol: 'https',
             database: 'PROD',
@@ -64,9 +76,31 @@ export default class Odoo {
     //     return null;
     // }
 
+    resetApiAuthDetails() {
+        this.isConnected = false;
+        this.odooApi.sid = null;
+        this.odooApi.cookie = null;
+        this.odooApi.session_id = null;
+    }
+
+    assertApiResponse(response) {
+        console.debug("assertApiResponse()");
+        console.debug(response);
+        CookieManager.get(Odoo.odooEnpoint).then((res) => {
+            console.debug("CookieManager.get => ", res);
+        });
+        if (response.success == true) {
+            return;
+        }
+        if (response.error.code == 100) { // "Odoo Session Expired"
+            console.error(response);
+            this.resetApiAuthDetails();
+            throw new Error(response.error.message);
+        }
+    }
 
     async fetchProductFromBarcode(barcode) {
-        console.log("fetchProductFromBarcode");
+        console.debug("[Odoo] fetchProductFromBarcode()");
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(odooApi);
@@ -84,11 +118,10 @@ export default class Odoo {
             offset: 0,
         }; //params
 
+        console.debug("[Odoo] search_read(product.product) with params:");
+        console.debug(params);
         const response = await this.odooApi.search_read('product.product', params);
-        if (response.success !== true) {
-            console.error(response);
-        }
-        console.debug(response);
+        this.assertApiResponse(response);
         if (response.data.length > 0) {
             return new OdooProduct(response.data[0]);
         }
@@ -96,7 +129,7 @@ export default class Odoo {
     }
 
     async fetchImageForOdooProduct(odooProduct) {
-        console.log("fetchImageForOdooProduct");
+        console.debug("fetchImageForOdooProduct()");
         if (await this.assertConnect() !== true) {
             throw new Error("Odoo is not connected");
         }
@@ -109,32 +142,36 @@ export default class Odoo {
         }
 
         const response = await this.odooApi.search_read('product.product', params);
-        if (response.success !== true) {
-            console.error(response);
-        }
+        this.assertApiResponse(response);
 
-        console.log(response);
         return response.data.length > 0 ? response.data[0].image : null;
     }
 
     async assertConnect() {
-        console.log("assertConnect");
+        console.debug("[Odoo] assertConnect()");
         var context = this;
         return new Promise(function (resolve, reject) {
             if (!context.isConnected) {
-                console.log("not connected");
+                console.debug("[Odoo] not connected, connecting...");
                 context.odooApi.connect().then((response) => {
+                    context.assertApiResponse(response);
                     if (Number.isInteger(response.data.uid) && response.data.uid > 0) {
+                        console.debug("[Odoo] connection ok");
+                        // console.debug(context.odooApi);
                         context.isConnected = true;
                         resolve(true);
                     } else {
+                        console.debug("[Odoo] connection ko");
                         context.isConnected = false;
+                        console.error(response);
                         reject(false);
                     }
                 }).catch((reason) => {
+                    console.debug("[Odoo] odoo connect failed");
                     reject(reason);
                 });
             } else {
+                console.debug("[Odoo] alreay connected");
                 resolve(true);
             }
         }).catch((e) => {

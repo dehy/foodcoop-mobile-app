@@ -49,7 +49,7 @@ export default class Scanner extends React.Component {
         this.camera = null;
 
         // Odoo
-        this.odoo = new Odoo();
+        this.odoo = Odoo.getInstance();
         this.lastScannedBarcode = null;
 
         // Inventory Mode
@@ -194,6 +194,7 @@ export default class Scanner extends React.Component {
         if (this.lastScannedBarcode === barcode) {
             return;
         }
+        this.setState({ odooProduct: null });
         this.lastScannedBarcode = barcode;
         this.beepSound.play(() => {
             this.beepSound.stop(); // Resets file for immediate play availability
@@ -211,7 +212,8 @@ export default class Scanner extends React.Component {
             }
             this.handleFoundOdooProduct(odooProduct);
         }, (reason) => {
-            console.error(reason);
+            Alert.alert("Erreur", `Une erreur est survenue ("${reason}"). Merci de réessayer.`);
+            this.reset();
         });
     }
 
