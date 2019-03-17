@@ -89,7 +89,7 @@ export function goHome() {
                             children: [
                                 {
                                     component: {
-                                        name: 'Settings/Settings'
+                                        name: 'Settings'
                                     }
                                 }
                             ],
