@@ -5,5 +5,14 @@
         "DROP TABLE IF EXISTS `inventories_entries`;",
         "CREATE TABLE `inventories_entries` ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id), UNIQUE(inventory_id, article_barcode));",
         "PRAGMA user_version = 1;"
+    ],
+    "2": [
+        "ALTER TABLE inventories_entries RENAME TO old_inventories_entries;",
+        "CREATE TABLE inventories_entries ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id));",
+        "INSERT INTO inventories_entries SELECT * FROM old_inventories_entries;",
+        "CREATE INDEX idx_inventory_barcode ON inventories_entries (inventory_id, article_barcode);",
+        "CREATE INDEX idx_inventory ON inventories_entries (inventory_id);",
+        "CREATE INDEX idx_saved_at ON inventories_entries (saved_at);",
+        "PRAGMA user_version = 2;"
     ]
 }
