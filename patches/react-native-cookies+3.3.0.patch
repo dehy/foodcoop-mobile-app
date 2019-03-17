@@ -1,16 +1,17 @@
 diff --git a/node_modules/react-native-cookies/android/build.gradle b/node_modules/react-native-cookies/android/build.gradle
-index 149aa19..bc3ec98 100644
+index 149aa19..d18f7a8 100644
 --- a/node_modules/react-native-cookies/android/build.gradle
 +++ b/node_modules/react-native-cookies/android/build.gradle
-@@ -12,7 +12,6 @@ apply plugin: 'com.android.library'
+@@ -12,7 +12,7 @@ apply plugin: 'com.android.library'
  
  android {
      compileSdkVersion 23
 -    buildToolsVersion "25.0.2"
++    buildToolsVersion "28.0.3"
  
      defaultConfig {
          minSdkVersion 16
-@@ -30,5 +29,5 @@ repositories {
+@@ -30,5 +30,5 @@ repositories {
  }
  
  dependencies {

@@ -9,9 +9,9 @@ export default class News extends React.Component {
     }
 
     render() {
-        if (__DEV__) {
-            return <View></View>;
-        }
+        // if (__DEV__) {
+        //     return <View></View>;
+        // }
         return (
             <WebView
               source={{ uri: "https://supercoop.fr/blog/" }}
