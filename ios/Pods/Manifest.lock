@@ -37,6 +37,8 @@ PODS:
     - React/Core
   - ReactNativeNavigation (2.14.0):
     - React
+  - RNDeviceInfo (1.0.0):
+    - React
   - RNGoogleSignin (1.2.1):
     - GoogleSignIn
     - React
@@ -65,6 +67,7 @@ DEPENDENCIES:
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNSound (from `../node_modules/react-native-sound`)
@@ -92,6 +95,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-webview"
   ReactNativeNavigation:
     :path: "../node_modules/react-native-navigation"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGoogleSignin:
     :path: "../node_modules/react-native-google-signin"
   RNKeychain:
@@ -115,6 +120,7 @@ SPEC CHECKSUMS:
   react-native-sqlite-storage: dba8e864e9a76f1aae6ddb5e7d0dc330d59f4bb3
   react-native-webview: c2e27c2ff4b4c4f8f2f5eda36fe9e355a784492e
   ReactNativeNavigation: 588afd01de3661c130dc89fd2c70d18f0bd8d532
+  RNDeviceInfo: 98d06534f7e68edb88b0a2313ad99a1217212688
   RNGoogleSignin: b3a2d99e1e61c750646c8be4faa10d062d4a0e57
   RNKeychain: 1a121521011702409f5a1009eb8a1effa81000f3
   RNSound: a1d01988e043aed5dbb476c2152b5ffb02446750
@@ -123,6 +129,6 @@ SPEC CHECKSUMS:
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
   yoga: 8fb47f180b19b0dadb285a09e4c74c8a41721d3a
 
-PODFILE CHECKSUM: 747cd502721af0ce2686a59ea1ee0fe1c88fc88c
+PODFILE CHECKSUM: 98c5556ef7ca69ab37c96072f61cfeb6ab7be958
 
 COCOAPODS: 1.6.0.rc.2

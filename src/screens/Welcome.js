@@ -4,6 +4,7 @@ import { goHome } from '../utils/navigation';
 import { GoogleSigninButton } from 'react-native-google-signin';
 import Google from '../utils/Google';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
+import DeviceInfo from 'react-native-device-info';
 
 export default class Welcome extends Component {
     constructor(props) {
@@ -25,7 +26,7 @@ export default class Welcome extends Component {
                     grâce au bouton ci-dessous. Tu auras besoin de tes identifiants Google Supercoop.
                     On se retrouve juste après !
                 </Text>
-                <View style={{ height: 96, flex: 0 }}>
+                <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
                     <GoogleSigninButton
                         style={{ width: 230, height: 48, margin: 12 }}
                         size={GoogleSigninButton.Size.Standard}
@@ -48,6 +49,7 @@ export default class Welcome extends Component {
                         }}
                         disabled={this.state.signinInProgress} />
                 </View>
+                <Text style={styles.version}>v{(DeviceInfo.getVersion())} ({(DeviceInfo.getBuildNumber())})</Text>
             </SafeAreaView>
         );
     }
@@ -57,9 +59,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'space-between',
-        alignItems: 'center',
         backgroundColor: '#FFFFFF',
-        height: '100%'
+        height: '100%',
+        padding: 8
     },
     welcome: {
         flex: 0,
@@ -76,4 +78,8 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         marginLeft: 20
     },
+    version: {
+        fontSize: 10,
+        textAlign: 'right'
+    }
 });
