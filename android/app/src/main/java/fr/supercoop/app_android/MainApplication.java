@@ -1,4 +1,4 @@
-package fr.supercoop;
+package fr.supercoop.app_android;
 
 import com.actionsheet.ActionSheetPackage;
 import com.facebook.react.ReactNativeHost;
