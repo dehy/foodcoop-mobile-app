@@ -23,6 +23,8 @@ target 'Supercoop' do
   pod 'react-native-cookies', :path => '../node_modules/react-native-cookies/ios'
 
 
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
   post_install do |installer|
       installer.pods_project.targets.each do |target|
           
