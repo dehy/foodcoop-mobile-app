@@ -5583,6 +5583,11 @@ react-native-cookies@^3.3.0:
   dependencies:
     invariant "^2.1.0"
 
+react-native-device-info@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-1.0.0.tgz#f1b2da9ed77439abf07d9eee5f476645639c3d23"
+  integrity sha512-9ch8BAnQxodfIGfzs8rDLYMYeO8PuN01Mro1MTIbUt8kcPez6HdqeE10sTZIzHTDMLtqeAD8LBvxWzu0Kt7PqA==
+
 react-native-dialog-input@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/react-native-dialog-input/-/react-native-dialog-input-1.0.7.tgz#b2fefb4193d1784b3ae78c4a18d8fd6759466009"

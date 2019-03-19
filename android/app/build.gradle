@@ -176,6 +176,7 @@ dependencies {
     implementation project(':react-native-camera')
     implementation project(':react-native-navigation')
     implementation project(':react-native-sqlite-storage')
+    implementation project(':react-native-device-info')
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.google.android.gms:play-services-auth:${rootProject.ext.googlePlayServicesAuthVersion}"
 }
