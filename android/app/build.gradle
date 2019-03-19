@@ -108,7 +108,7 @@ android {
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         multiDexEnabled true
-        versionCode 6
+        versionCode 7
         versionName "1.0.1"
     }
     splits {
