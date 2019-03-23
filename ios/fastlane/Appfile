@@ -1,0 +1,8 @@
+app_identifier "fr.supercoop.app-ios" # The bundle identifier of your app
+apple_id "apple@admds.net" # Your Apple email address
+
+itc_team_id "289087" # iTunes Connect Team ID
+team_id "E9GCQH28SQ" # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
