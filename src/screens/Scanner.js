@@ -268,7 +268,7 @@ export default class Scanner extends React.Component {
                 .sharedInstance()
                 .findByInventorySessionIdAndBarcode(this.props.inventory.id, odooProduct.barcode)
                 .then((foundInventoryEntries) => {
-                    if (foundInventoryEntries) {
+                    if (foundInventoryEntries.length > 0) {
                         const lastEntry = foundInventoryEntries[0];
                         const timeAgoString = lastEntry.scannedAt ? lastEntry.scannedAt.fromNow() : null;
                         Alert.alert(
