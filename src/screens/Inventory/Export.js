@@ -76,7 +76,7 @@ export default class InventoryShow extends React.Component {
         this.setState({
             sendingMail: true
         })
-        const userFirstname = Google.getInstance().getFirstname();
+        const userFirstname = Google.getInstance().getFirstnameSlug();
         const zone = this.props.inventory.zone;
         const date = this.props.inventory.lastModifiedAt.format("DD/MM/YYYY");
         const time = this.props.inventory.lastModifiedAt.format("HH:mm:ss");
