@@ -100,6 +100,11 @@ export default class Google {
         return this.currentUser ? this.currentUser.user.givenName : null;
     }
 
+    getFirstnameSlug() {
+        const email = this.getEmail();
+        return email.match(/^[^\.]+/);
+    }
+
     getUsername() {
         if (this.currentUser === null ||
             !('user' in this.currentUser) ||
