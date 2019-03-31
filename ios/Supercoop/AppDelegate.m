@@ -10,19 +10,10 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
+#import <SentryReactNative/RNSentry.h>
 #import "RNGoogleSignin.h"
 
 @implementation AppDelegate
-
-//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-//{
-// - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-// {
-//   NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-//   [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
-  
-//   return YES;
-// }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -35,6 +26,7 @@
 #endif
 
   [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
+  [RNSentry installWithBridge:[ReactNativeNavigation getBridge]];
   
   return YES;
 }
