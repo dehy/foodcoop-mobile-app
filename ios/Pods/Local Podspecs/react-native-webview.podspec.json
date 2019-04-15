@@ -1,6 +1,6 @@
 {
   "name": "react-native-webview",
-  "version": "5.3.1",
+  "version": "5.7.0",
   "summary": "React Native WebView component for iOS, Android, and Windows 10 (coming soon)",
   "license": "MIT",
   "authors": "Jamon Holmgren <jamon@infinite.red>",
