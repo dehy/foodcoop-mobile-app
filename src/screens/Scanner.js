@@ -419,8 +419,12 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                 captureAudio={false}
                 style={styles.preview}
                 type={RNCamera.Constants.Type.back}
-                permissionDialogTitle={'Permission to use camera'}
-                permissionDialogMessage={'We need your permission to use your camera phone'}
+                androidCameraPermissionOptions={{
+                    title: 'Permission d\'utiliser la caméra',
+                    message: 'Nous avons besoin de ta permission pour utiliser la caméra de ton téléphone',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Annuler',
+                }}
                 autoFocus={RNCamera.Constants.AutoFocus.on}
                 flashMode={this.state.flashStatus}
                 onBarCodeRead={({ data, rawData, type, bounds }) => this.didScanBarcode(type, data)}
