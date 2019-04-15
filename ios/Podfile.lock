@@ -14,19 +14,19 @@ PODS:
   - GTMSessionFetcher/Core (1.2.1)
   - React (0.59.1):
     - React/Core (= 0.59.1)
-  - react-native-camera (2.0.1):
+  - react-native-camera (2.4.0):
     - React
-    - react-native-camera/RCT (= 2.0.1)
-    - react-native-camera/RN (= 2.0.1)
-  - react-native-camera/RCT (2.0.1):
+    - react-native-camera/RCT (= 2.4.0)
+    - react-native-camera/RN (= 2.4.0)
+  - react-native-camera/RCT (2.4.0):
     - React
-  - react-native-camera/RN (2.0.1):
+  - react-native-camera/RN (2.4.0):
     - React
   - react-native-cookies (3.2.0):
     - React
   - react-native-sqlite-storage (3.3.10):
     - React
-  - react-native-webview (5.3.1):
+  - react-native-webview (5.7.0):
     - React
   - React/Core (0.59.1):
     - yoga (= 0.59.1.React)
@@ -35,12 +35,12 @@ PODS:
     - React/RCTNetwork
   - React/RCTNetwork (0.59.1):
     - React/Core
-  - ReactNativeNavigation (2.14.0):
+  - ReactNativeNavigation (2.17.0):
     - React
-  - RNDeviceInfo (1.0.0):
+  - RNDeviceInfo (1.4.3):
     - React
-  - RNGoogleSignin (1.2.1):
-    - GoogleSignIn
+  - RNGoogleSignin (1.2.2):
+    - GoogleSignIn (~> 4.4.0)
     - React
   - RNKeychain (3.1.1):
     - React
@@ -49,7 +49,7 @@ PODS:
     - RNSound/Core (= 0.10.12)
   - RNSound/Core (0.10.12):
     - React/Core
-  - RNSVG (9.3.3):
+  - RNSVG (9.4.0):
     - React
   - Sentry (4.1.3):
     - Sentry/Core (= 4.1.3)
@@ -115,20 +115,20 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   React: 34a405ead72252839fdc4afc1f972a7ed984af84
-  react-native-camera: 8a7658ffe5ae3bbdc9718b650970eba2628ee13c
+  react-native-camera: afbb9f2ce85ac178314c46dbc4541178ceb1a177
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-sqlite-storage: dba8e864e9a76f1aae6ddb5e7d0dc330d59f4bb3
-  react-native-webview: c2e27c2ff4b4c4f8f2f5eda36fe9e355a784492e
-  ReactNativeNavigation: 588afd01de3661c130dc89fd2c70d18f0bd8d532
-  RNDeviceInfo: 98d06534f7e68edb88b0a2313ad99a1217212688
-  RNGoogleSignin: b3a2d99e1e61c750646c8be4faa10d062d4a0e57
+  react-native-webview: 69ca34f590814ae44260d30e293ab4b7b3eea793
+  ReactNativeNavigation: f40739b34c4e5f67fa4a3e6556a47c14c3a65866
+  RNDeviceInfo: 0e4abfc346f969b784f92da61d9c7509eac91510
+  RNGoogleSignin: 87609bab5259417834a5a4f305d8a040babdfc56
   RNKeychain: 1a121521011702409f5a1009eb8a1effa81000f3
   RNSound: a1d01988e043aed5dbb476c2152b5ffb02446750
-  RNSVG: 978db19eaef499d9ebffb74a091ca0abf209c8c1
+  RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
   yoga: 8fb47f180b19b0dadb285a09e4c74c8a41721d3a
 
 PODFILE CHECKSUM: 98c5556ef7ca69ab37c96072f61cfeb6ab7be958
 
-COCOAPODS: 1.6.0.rc.2
+COCOAPODS: 1.7.0.beta.3
