@@ -9,7 +9,6 @@ import { registerScreens } from './src/utils/screens';
 import { Sentry } from 'react-native-sentry';
 import moment from 'moment';
 import momentFr from 'moment/locale/fr';
-import './src/utils/utils';
 
 moment.locale('fr');
 if (!__DEV__) {

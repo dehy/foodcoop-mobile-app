@@ -5,6 +5,12 @@ module.exports = (async () => {
         resolver: { sourceExts, assetExts }
     } = await getDefaultConfig();
     return {
+        getTransformModulePath() {
+            return require.resolve('react-native-typescript-transformer');
+        },
+        getSourceExts() {
+            return ['ts', 'tsx'];
+        },
         transformer: {
             babelTransformerPath: require.resolve("react-native-svg-transformer")
         },

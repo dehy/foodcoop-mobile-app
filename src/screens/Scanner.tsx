@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {
     ActivityIndicator,
     Alert,
@@ -9,35 +9,48 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    View,
+    EventSubscription
 } from 'react-native'
 import { defaultScreenOptions } from '../utils/navigation';
 import { Navigation } from 'react-native-navigation';
 import { RNCamera } from 'react-native-camera';
 import Odoo from '../utils/Odoo';
-import OdooProduct from '../entities/OdooProduct';
+import OdooProduct, { UnitOfMesurement } from '../entities/OdooProduct';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import InventoryEntry from '../entities/InventoryEntry';
 import InventoryEntryFactory from '../factories/InventoryEntryFactory';
 import InventorySessionFactory from '../factories/InventorySessionFactory';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import DialogInput from 'react-native-dialog-input';
 import Google from '../utils/Google';
+import Sound from 'react-native-sound';
 
-export default class Scanner extends React.Component {
+export default class Scanner extends React.Component<any, any> {
 
     static MODE_SCANNER = 1;
     static MODE_INVENTORY = 2;
 
-    constructor(props) {
+    private beepSound: any;
+    private odoo: Odoo;
+    private lastScannedBarcode?: string;
+    private camera?: RNCamera;
+
+    private textInput?: TextInput|null;
+    private articleQuantityValue?: string;
+    private scannedAt?: Moment;
+    private articleTitle?: Text|null;
+
+    private navigationEventListener?: EventSubscription;
+
+    constructor(props: any) {
         super(props);
 
         // Navigation
         Navigation.events().bindComponent(this);
 
         // Sound
-        var Sound = require('react-native-sound');
-        Sound.setCategory('Ambient');
+        Sound.setCategory("Ambiant", true);
         this.beepSound = new Sound('beep.mp3', Sound.MAIN_BUNDLE, (error) => {
             if (error) {
                 console.log('failed to load the sound', error);
@@ -46,16 +59,9 @@ export default class Scanner extends React.Component {
         });
         this.beepSound.stop();
 
-        this.camera = null;
-
         // Odoo
         this.odoo = Odoo.getInstance();
-        this.lastScannedBarcode = null;
-
-        // Inventory Mode
-        this.textInput = null;
-        this.articleQuantityValue = null;
-        this.scannedAt = null;
+        this.lastScannedBarcode = undefined;
 
         this.state = {
             displayCamera: false,
@@ -89,9 +95,9 @@ export default class Scanner extends React.Component {
         }
     }
 
-    static options(passProps) {
+    static options(passProps: any) {
         var options = defaultScreenOptions("Recherche...");
-        if (passProps.inventory) {
+        if (passProps.inventory && options && options.topBar) {
             options.topBar.rightButtons = [
                 {
                     id: 'close',
@@ -112,11 +118,11 @@ export default class Scanner extends React.Component {
     }
 
     reset() {
-        this.updateNavigationTitle(null);
+        this.updateNavigationTitle(undefined);
         this.blurInput();
-        this.lastScannedBarcode = null;
-        this.articleQuantityValue = null;
-        this.scannedAt = null;
+        this.lastScannedBarcode = undefined;
+        this.articleQuantityValue = undefined;
+        this.scannedAt = undefined;
         this.resumeCamera();
         this.setState({
             odooProduct: null,
@@ -134,8 +140,10 @@ export default class Scanner extends React.Component {
     }
 
     focusOnQuantityInput() {
-        this.textInput.clear();
-        this.textInput.focus();
+        if (this.textInput) {
+            this.textInput.clear();
+            this.textInput.focus();
+        }
     }
 
     blurInput = () => {
@@ -170,7 +178,7 @@ export default class Scanner extends React.Component {
     pauseCamera = () => this.setState({ displayCamera: false })
     resumeCamera = () => this.setState({ displayCamera: true })
 
-    updateNavigationTitle(title) {
+    updateNavigationTitle(title?: string) {
         Navigation.mergeOptions(this.props.componentId, {
             topBar: {
                 title: {
@@ -180,7 +188,7 @@ export default class Scanner extends React.Component {
         });
     }
 
-    didScanBarcode(type, barcode) {
+    didScanBarcode(barcode: string, type?: string): void {
         console.debug("didScanBarcode()", type, barcode);
         if ((type && type === RNCamera.Constants.BarCodeType.ean13) || (!type && barcode.length == 13)) {
             this.hideManualSearchView();
@@ -190,7 +198,7 @@ export default class Scanner extends React.Component {
         Alert.alert("Code barre incompatible", "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.");
     }
 
-    lookupForBarcode(barcode) {
+    lookupForBarcode(barcode: string): void {
         if (this.lastScannedBarcode === barcode) {
             return;
         }
@@ -217,7 +225,7 @@ export default class Scanner extends React.Component {
         });
     }
 
-    handleNotFoundOdooProduct(barcode) {
+    handleNotFoundOdooProduct(barcode: string): void {
         let notFoundInOdooString = `Le code barre ${barcode} est introuvable dans odoo.`;
         let alertButtons = [{
             text: "Annuler",
@@ -252,7 +260,7 @@ export default class Scanner extends React.Component {
         );
     }
 
-    handleFoundOdooProduct(odooProduct) {
+    handleFoundOdooProduct(odooProduct: OdooProduct) {
         this.setState({
             odooProduct: odooProduct
         })
@@ -267,7 +275,7 @@ export default class Scanner extends React.Component {
             InventoryEntryFactory
                 .sharedInstance()
                 .findByInventorySessionIdAndBarcode(this.props.inventory.id, odooProduct.barcode)
-                .then((foundInventoryEntries) => {
+                .then((foundInventoryEntries: InventoryEntry[]) => {
                     if (foundInventoryEntries.length > 0) {
                         const lastEntry = foundInventoryEntries[0];
                         const timeAgoString = lastEntry.scannedAt ? lastEntry.scannedAt.fromNow() : null;
@@ -305,7 +313,7 @@ export default class Scanner extends React.Component {
 
     askForUnknownOdooProductName = () => this.setState({ showUnknownOdooProductNameView: true });
     hideUnknownOdooProductNameView = () => this.setState({ showUnknownOdooProductNameView: false });
-    handleUnknownOdooProductName = (name) => {
+    handleUnknownOdooProductName = (name: string) => {
         this.hideUnknownOdooProductNameView();
         this.state.odooProduct.name = name;
 
@@ -316,7 +324,7 @@ export default class Scanner extends React.Component {
         }
     }
 
-    reportUnknownOdooProductByMail(odooProduct) {
+    reportUnknownOdooProductByMail(odooProduct: OdooProduct) {
         const to = "inventaire@supercoop.fr";
         const subject = `Code barre inconnu (${(odooProduct.barcode)})`;
         const body = `Le code barre ${(odooProduct.barcode)} est introuvable dans Odoo.
@@ -334,22 +342,25 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
 
     inventoryDidTapSaveButton() {
         const unit = this.state.odooProduct.uom_id;
-        let quantity;
+        let quantity: number;
         try {
+            if (!this.articleQuantityValue) {
+                throw new Error();
+            }
             quantity = this.articleQuantityValue.toNumber();
         } catch (e) {
             Alert.alert("Valeur incorrecte", "Cela ne ressemble pas à un nombre.");
             return;
         }
         if (quantity >= 0) {
-            if (unit === OdooProduct.UNIT_OF_MESUREMENT_UNITY && quantity.isInt() === false) { // Int only
+            if (unit === UnitOfMesurement.unit && quantity.isInt() === false) { // Int only
                 Alert.alert(
                     "Valeur incorrecte",
                     "Ce produit est compté en unité. Merci de ne pas entrer de nombre à virgule."
                 );
                 return;
             }
-            if (unit === OdooProduct.UNIT_OF_MESUREMENT_KG) { // Float authorized
+            if (unit === UnitOfMesurement.kg) { // Float authorized
 
             }
         }
@@ -378,15 +389,15 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
     renderUnknownOdooProductView() {
         return (
             <DialogInput isDialogVisible={this.state.showUnknownOdooProductNameView}
-            title={"Nom du produit"}
-            message={"Quel est le nom du produit tel qu'affiché sur l'étiquette ?"}
-            submitInput={name => this.handleUnknownOdooProductName(name)}
-            closeDialog={() => {
-                this.hideUnknownOdooProductView();
-                this.reset();
-            }}
-            cancelText="Annuler"
-            submitText="Enregistrer"
+                title={"Nom du produit"}
+                message={"Quel est le nom du produit tel qu'affiché sur l'étiquette ?"}
+                submitInput={(name: string) => this.handleUnknownOdooProductName(name)}
+                closeDialog={() => {
+                    this.hideUnknownOdooProductView();
+                    this.reset();
+                }}
+                cancelText="Annuler"
+                submitText="Enregistrer"
             />
         );
     }
@@ -396,7 +407,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
             <DialogInput isDialogVisible={this.state.showManualSearchView}
                 title={"Recherche manuelle"}
                 message={"Entres le code barre du produit que tu cherches"}
-                submitInput={(barcode) => { this.didScanBarcode(null, barcode) }}
+                submitInput={(barcode: string) => { this.didScanBarcode(barcode) }}
                 closeDialog={() => {
                     this.hideManualSearchView();
                     this.reset();
@@ -427,7 +438,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                 }}
                 autoFocus={RNCamera.Constants.AutoFocus.on}
                 flashMode={this.state.flashStatus}
-                onBarCodeRead={({ data, rawData, type, bounds }) => this.didScanBarcode(type, data)}
+                onBarCodeRead={({ data, rawData, type, bounds }) => this.didScanBarcode(data, type)}
             >
                 {({ camera, status, recordAudioPermissionStatus }) => {
                     if (status !== 'READY') {

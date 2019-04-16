@@ -2,13 +2,22 @@
 
 import Database from '../utils/Database';
 import InventorySession from '../entities/InventorySession';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
+
+interface InventorySessionDatabaseDefinition {
+    id?: number;
+    date?: Moment;
+    zone?: number;
+    last_modified_at?: Moment;
+    last_sent_at?: Moment;
+}
 
 export default class InventoryFactory {
-    static instance = null;
+    private static instance: InventoryFactory;
+    private db: Database;
 
-    static sharedInstance() {
-        if (InventoryFactory.instance === null) {
+    static sharedInstance(): InventoryFactory {
+        if (InventoryFactory.instance === undefined) {
             InventoryFactory.instance = new InventoryFactory();
         }
         return this.instance;
@@ -18,7 +27,7 @@ export default class InventoryFactory {
         this.db = Database.sharedInstance();
     }
 
-    async find(id) {
+    async find(id: number): Promise<InventorySession> {
         const response = await this.db.executeQuery('SELECT * FROM `inventories` WHERE `id` = ? LIMIT 1', [id]);
         if (response[0].rows.length == 0) {
             console.error(`InventorySession #${id} not found!`);
@@ -26,7 +35,7 @@ export default class InventoryFactory {
         return this._rowToObject(response[0].rows.item(0));
     }
 
-    async findAll() {
+    async findAll(): Promise<InventorySession[]> {
         const response = await this.db.executeQuery('SELECT * FROM `inventories` ORDER BY date DESC');
         const inventories = [];
         for (let i = 0; i < response[0].rows.length; i++) {
@@ -36,11 +45,11 @@ export default class InventoryFactory {
         return inventories;
     }
 
-    async persist(object) {
+    async persist(object: InventorySession): Promise<void> {
         const params = this._objectToParams(object);
         console.log(params);
 
-        const response = await this.db.executeQuery(
+        await this.db.executeQuery(
             'INSERT OR REPLACE INTO `inventories` (id, date, zone, last_modified_at, last_sent_at) VALUES (?, ?, ?, ?, ?)',
             params
         );
@@ -48,7 +57,7 @@ export default class InventoryFactory {
         return;
     }
 
-    async updateLastModifiedAt(inventorySession, date) {
+    async updateLastModifiedAt(inventorySession: InventorySession, date: Moment): Promise<void> {
         const id = inventorySession.id;
         const lastModifiedAt = date.format(Database.DATETIME_FORMAT);
         const response = await this.db.executeQuery(
@@ -59,7 +68,7 @@ export default class InventoryFactory {
         return;
     }
 
-    async updateLastSentAt(inventorySession, date) {
+    async updateLastSentAt(inventorySession: InventorySession, date: Moment): Promise<void> {
         const id = inventorySession.id;
         const lastSentAt = date.format(Database.DATETIME_FORMAT);
         const response = await this.db.executeQuery(
@@ -70,21 +79,21 @@ export default class InventoryFactory {
         return;
     }
 
-    _rowToObject(row) {
+    _rowToObject(row: InventorySessionDatabaseDefinition): InventorySession {
         const inventorySession = new InventorySession();
         inventorySession.id = Number(row.id);
         inventorySession.date = moment(row.date, Database.DATETIME_FORMAT);
         inventorySession.zone = Number(row.zone);
-        inventorySession.lastModifiedAt = row.last_modified_at ? moment(row.last_modified_at, Database.DATETIME_FORMAT) : null
-        inventorySession.lastSentAt = row.last_sent_at ? moment(row.last_sent_at, Database.DATETIME_FORMAT) : null
+        inventorySession.lastModifiedAt = row.last_modified_at ? moment(row.last_modified_at, Database.DATETIME_FORMAT) : undefined
+        inventorySession.lastSentAt = row.last_sent_at ? moment(row.last_sent_at, Database.DATETIME_FORMAT) : undefined
 
         return inventorySession;
     }
 
-    _objectToParams(object) {
+    _objectToParams(object: InventorySession): any[] {
         const row = {
             id: object.id,
-            date: object.date.format(Database.DATETIME_FORMAT),
+            date: object.date ? object.date.format(Database.DATETIME_FORMAT) : null,
             zone: object.zone,
             last_modified_at: object.lastModifiedAt ? object.lastModifiedAt.format(Database.DATETIME_FORMAT) : null,
             last_sent_at: object.lastSentAt ? object.lastSentAt.format(Database.DATETIME_FORMAT) : null

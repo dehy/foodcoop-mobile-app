@@ -6,14 +6,17 @@ import Google from '../utils/Google';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
 import DeviceInfo from 'react-native-device-info';
 
-export default class Welcome extends Component {
-    constructor(props) {
+type WelcomeState = {
+    signinInProgress: boolean
+};
+
+export default class Welcome extends Component<{}, WelcomeState> {
+    constructor(props: any[]) {
         super(props);
         this.state = {
             signinInProgress: false
         };
     }
-
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -22,9 +25,8 @@ export default class Welcome extends Component {
                 </View>
                 <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
                 <Text style={styles.instructions}>
-                    Pour commencer à utiliser l'application, connectes-toi à ton compte Supercoop
-                    grâce au bouton ci-dessous. Tu auras besoin de tes identifiants Google Supercoop.
-                    On se retrouve juste après !
+                    Pour commencer à utiliser l'application, connectes-toi à ton compte Supercoop grâce au bouton
+                    ci-dessous. Tu auras besoin de tes identifiants Google Supercoop. On se retrouve juste après !
                 </Text>
                 <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
                     <GoogleSigninButton
@@ -34,27 +36,34 @@ export default class Welcome extends Component {
                         onPress={() => {
                             this.setState({
                                 signinInProgress: true
-                            })
-                            Google.getInstance().signIn().then(() => {
-                                this.setState({
-                                    signinInProgress: false
-                                })
-                                goHome();
-                            }, (reason) => {
-                                console.warn(reason);
-                                this.setState({
-                                    signinInProgress: false
-                                })
-                            })
+                            });
+                            Google.getInstance()
+                                .signIn()
+                                .then(
+                                    () => {
+                                        this.setState({
+                                            signinInProgress: false
+                                        });
+                                        goHome();
+                                    },
+                                    reason => {
+                                        console.warn(reason);
+                                        this.setState({
+                                            signinInProgress: false
+                                        });
+                                    }
+                                );
                         }}
-                        disabled={this.state.signinInProgress} />
+                        disabled={this.state.signinInProgress}
+                    />
                 </View>
-                <Text style={styles.version}>v{(DeviceInfo.getVersion())} ({(DeviceInfo.getBuildNumber())})</Text>
+                <Text style={styles.version}>
+                    v{DeviceInfo.getVersion()} ({DeviceInfo.getBuildNumber()})
+                </Text>
             </SafeAreaView>
         );
     }
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -67,7 +76,7 @@ const styles = StyleSheet.create({
         flex: 0,
         fontSize: 30,
         textAlign: 'center',
-        margin: 10,
+        margin: 10
     },
     instructions: {
         flex: 0,
