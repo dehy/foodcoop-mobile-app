@@ -51,7 +51,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Nous avons besoin d'accéder à la caméra pour pouvoir scanner des codes barre.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nous avons besoin d'accéder au micro pour pouvoir afficher la caméra. Me demandez pas pourquoi, je ne sais pas non plus.</string>
 	<key>UIAppFonts</key>
