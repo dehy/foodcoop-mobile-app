@@ -9,7 +9,7 @@ import { goHome, goToAuth } from '../utils/navigation';
 import Database from '../utils/Database';
 
 export default class Initialising extends React.Component {
-    constructor(props) {
+    constructor(props: object) {
         super(props);
         this.state = {
             loggedUser: null
@@ -17,16 +17,14 @@ export default class Initialising extends React.Component {
     }
     
     componentDidMount() {
-        this.migrateDatabase().then(() => {
-            this.signInSilently();
+        Database.sharedInstance().migrate().then((success) => {
+            if (success) {
+                this.signInSilently();
+            }
         });
     }
 
-    async migrateDatabase() {
-        await Database.sharedInstance().migrate();
-    }
-
-    signInSilently() {
+    signInSilently(): void {
         Google.getInstance().signInSilently().then(() => {
             goHome();
         }, (reason) => {

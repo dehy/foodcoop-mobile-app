@@ -1,15 +1,17 @@
 import SQLite from 'react-native-sqlite-storage';
+import './typings.extensions';
 
 export default class Database {
     static TARGET_SCHEMA_VERSION = 2;
 
-    static DATE_FORMAT="YYYY-MM-DD";
-    static DATETIME_FORMAT="YYYY-MM-DD HH:mm:ss";
+    public static DATE_FORMAT="YYYY-MM-DD";
+    public static DATETIME_FORMAT="YYYY-MM-DD HH:mm:ss";
 
-    static instance = null;
+    private static instance: Database;
+    private db?: SQLite.SQLiteDatabase;
 
-    static sharedInstance() {
-        if (Database.instance === null) {
+    public static sharedInstance(): Database {
+        if (Database.instance === undefined) {
             Database.instance = new Database();
         }
 
@@ -17,15 +19,15 @@ export default class Database {
     }
 
     constructor() {
-        this.db = null;
+        this.db = undefined;
         // SQLite.DEBUG(true);
         SQLite.enablePromise(true);
     }
 
-    async connect() {
-        if (this.db === null) {
+    async connect(): Promise<void> {
+        if (this.db === undefined) {
             try {
-                await SQLite.echoTest();
+                // await SQLite.echoTest();
                 this.db = await SQLite.openDatabase({
                     name: 'inventory.db',
                     location: 'Library'
@@ -37,8 +39,12 @@ export default class Database {
         }
     }
 
-    async migrate() {
+    async migrate(): Promise<boolean> {
         await this.connect();
+        if (this.db === undefined) {
+            console.error("No database open while trying to migrate");
+            return false;
+        }
         // Reset
         // await this.resetDatabase();
         // await this.db.executeSql('PRAGMA user_version = 0;');
@@ -46,14 +52,15 @@ export default class Database {
 
         if (currentSchemaVersion >= Database.TARGET_SCHEMA_VERSION) {
             console.info("No need for schema migration");
-            return;
+            return true;
         }
         console.info(`Schema migration needed from ${currentSchemaVersion} to ${Database.TARGET_SCHEMA_VERSION}`);
 
 
         const migrationData = require("../db/migrations.sql.json");
 
-        for (schemaVersion in migrationData) {
+        for (const schemaVersionKey in migrationData) {
+            const schemaVersion: Number = schemaVersionKey.toNumber();
             const currentSchemaVersion = await this.getCurrentSchemaVersion();
             console.info(`Current schema version: ${currentSchemaVersion}`);
             console.info(`Processing schema version ${schemaVersion}`);
@@ -63,51 +70,66 @@ export default class Database {
 
             try {
                 await this.db.transaction(tx => {
-                    for (statementKey in migrationData[schemaVersion]) {
-                        tx.executeSql(migrationData[schemaVersion][statementKey]);
+                    for (const statementKey in migrationData[schemaVersionKey]) {
+                        tx.executeSql(migrationData[schemaVersionKey][statementKey]);
                     }
                     console.info(`Successfully migrated to schema version ${schemaVersion}`);
                 })
                 console.info(`Checking schema version: ${await this.getCurrentSchemaVersion()}`);
             } catch (e) {
                 console.error(e);
+                return false;
             }
         }
+        return true;
     }
 
-    async getCurrentSchemaVersion() {
-        let currentSchemaVersion;
+    async getCurrentSchemaVersion(): Promise<Number> {
+        if (this.db === undefined) {
+            console.error("No database open while getting current schema version");
+            return 99999;
+        }
+        let currentSchemaVersion: number;
         try {
             const userVersionResponses = await this.db.executeSql('PRAGMA user_version;');
             currentSchemaVersion = userVersionResponses[0].rows.item(0).user_version;
+            return currentSchemaVersion;
         } catch (e) {
             console.error(e);
         }
-
-        return currentSchemaVersion;
+        return 99999;
     }
 
-    async resetDatabase() {
+    async resetDatabase(): Promise<boolean> {
         await this.connect();
         const response = await this.executeQuery("SELECT `name` FROM `sqlite_master` WHERE `type` = 'table'");
+        if (response == undefined) {
+            console.error("No response from database while selecting table names during database reset");
+            return false;
+        }
         const tablesToDelete = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             tablesToDelete.push(response[0].rows.item(i).name);
         }
 
-        for (key in tablesToDelete) {
+        for (const key in tablesToDelete) {
             const tableName = tablesToDelete[key];
             const response = await this.executeQuery("DROP TABLE `" + tableName +"`");
         }
         await this.executeQuery("PRAGMA user_version = 0");
+        return true;
     }
 
-    async executeQuery(statement, parameters) {
+    async executeQuery(statement: string, parameters: any[] = []): Promise<[SQLite.ResultSet]> {
         await this.connect();
+        if (this.db === undefined) {
+            throw new Error("No database open while executing query");
+        }
         try {
             return await this.db.executeSql(statement, parameters);
         } catch (e) {
             console.error(e);
         }
+        throw new Error();
     }
 }

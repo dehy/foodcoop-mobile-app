@@ -1,5 +1,4 @@
-import React, {StyleSheet} from 'react-native'
-
+import React, { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     row: {
         flexDirection: 'row',
@@ -9,7 +8,7 @@ export default StyleSheet.create({
         flex: 1,
         height: 56,
         paddingVertical: 0,
-        paddingHorizontal: 16,
+        paddingHorizontal: 16
     },
     rowIcon: {
         flex: 0,

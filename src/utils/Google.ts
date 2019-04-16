@@ -1,23 +1,29 @@
 import React from 'react'
-import { GoogleSignin, statusCodes } from 'react-native-google-signin'
+import { GoogleSignin, statusCodes, User } from 'react-native-google-signin'
 import { goToAuth } from './navigation';
 import Sentry from 'react-native-sentry';
 import base64 from 'react-native-base64';
 
+interface MailAttachment {
+    filename: string
+    content: string;
+}
+
 export default class Google {
 
-    static instance = null;
+    private static instance: Google;
+    private currentUser?: User;
 
-    static getInstance() {
-        if (Google.instance == null) {
+    public static getInstance(): Google {
+        if (Google.instance == undefined) {
             Google.instance = new Google();
         }
 
         return this.instance;
     }
 
-    constructor(props) {
-        this.currentUser = null;
+    constructor() {
+        this.currentUser = undefined;
 
         try {
             GoogleSignin.configure({
@@ -33,7 +39,7 @@ export default class Google {
         }
     }
 
-    setCurrentUser(user) {
+    setCurrentUser(user: User|undefined): void {
         console.debug(user);
         this.currentUser = user;
         // Sentry.setUserContext({
@@ -41,7 +47,7 @@ export default class Google {
         // })
     }
 
-    async signInSilently() {
+    async signInSilently(): Promise<void> {
         const isSignedIn = await this.isSignedIn();
         if (isSignedIn === true) {
             return;
@@ -53,7 +59,7 @@ export default class Google {
         }
     }
 
-    async isSignedIn() {
+    async isSignedIn(): Promise<boolean> {
         const isSignedIn = await GoogleSignin.isSignedIn();
         if (isSignedIn) {
             const user = await GoogleSignin.getCurrentUser();
@@ -68,7 +74,7 @@ export default class Google {
         return false;
     }
 
-    async signIn() {
+    async signIn(): Promise<void> {
         const hasPlayServices = await GoogleSignin.hasPlayServices();
         if (hasPlayServices) {
             await this.signOut();
@@ -80,8 +86,8 @@ export default class Google {
         }
     }
 
-    async getAccessToken() {
-        if (this.currentUser !== null) {
+    async getAccessToken(): Promise<string|null> {
+        if (this.currentUser !== undefined) {
             const tokens = await GoogleSignin.getTokens();
             console.debug("tokens: ", tokens);
             if (tokens) {
@@ -92,21 +98,22 @@ export default class Google {
         return null;
     }
 
-    getEmail() {
+    getEmail(): string|null {
         return this.currentUser ? this.currentUser.user.email : null;
     }
 
-    getFirstname() {
+    getFirstname(): string|null {
         return this.currentUser ? this.currentUser.user.givenName : null;
     }
 
-    getFirstnameSlug() {
+    getFirstnameSlug(): RegExpMatchArray|null {
         const email = this.getEmail();
+        if (email === null) { return null; }
         return email.match(/^[^\.]+/);
     }
 
-    getUsername() {
-        if (this.currentUser === null ||
+    getUsername(): string {
+        if (this.currentUser === undefined ||
             !('user' in this.currentUser) ||
             this.currentUser.user.name === null) {
             return "John Doe";
@@ -114,8 +121,8 @@ export default class Google {
         return this.currentUser.user.name;
     }
 
-    getUserPhoto() {
-        if (this.currentUser === null ||
+    getUserPhoto(): string {
+        if (this.currentUser === undefined ||
             !('user' in this.currentUser) ||
             this.currentUser.user.photo === null) {
             return "";
@@ -123,18 +130,18 @@ export default class Google {
         return this.currentUser.user.photo;
     }
 
-    async signOut() {
+    async signOut(): Promise<void> {
         await GoogleSignin.signOut();
         // await GoogleSignin.revokeAccess();
-        this.setCurrentUser(null);
+        this.setCurrentUser(undefined);
     };
 
-    async revoke() {
+    async revoke(): Promise<void> {
         await GoogleSignin.revokeAccess();
     }
 
     /* Email Part */
-    async sendEmail(to, subject, body, attachments = []) {
+    async sendEmail(to: string, subject: string, body: string, attachments: Array<MailAttachment> = []): Promise<void> {
         console.debug(to, subject, body, attachments);
 
         const from = this.getEmail();
@@ -173,7 +180,7 @@ ${fileContentBase64}
         rfc822Message = rfc822Message.concat(`--${messageBoundary}--`);
 
         const endpoint = "https://www.googleapis.com/gmail/v1/users/{userId}/messages/send"
-        url = endpoint.replace(/\{userId\}/, "me");
+        const url = endpoint.replace(/\{userId\}/, "me");
         const rfc822MessageBase64 = base64.encode(rfc822Message);
 
         const requestBody = `{
@@ -186,11 +193,10 @@ ${fileContentBase64}
         const accessToken = await this.getAccessToken();
         const result = await fetch(url, {
             method: "POST",
-            cache: "no-cache",
             headers: {
                 "Content-Type":  "application/json; charset=UTF-8",
                 "Authorization": `Bearer ${accessToken}`,
-                "Content-Length": requestBody.length
+                "Content-Length": requestBody.length.toString()
             },
             body: requestBody
         });
@@ -199,6 +205,6 @@ ${fileContentBase64}
         if (result.ok) {
             return;
         }
-        throw new Error(result);
+        throw new Error();
     }
 }

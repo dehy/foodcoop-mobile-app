@@ -7,7 +7,7 @@ export function registerScreens() {
     Navigation.registerComponent('Settings/Maintenance', () => require('../screens/Settings/Maintenance').default);
     Navigation.registerComponent('Settings/Maintenance/Database', () => require('../screens/Settings/Maintenance/Database').default);
     Navigation.registerComponent('Settings/Maintenance/Cookies', () => require('../screens/Settings/Maintenance/Cookies').default);
-    Navigation.registerComponent('Initializing', (sc) => require('../screens/Initializing').default);
+    Navigation.registerComponent('Initializing', () => require('../screens/Initializing').default);
     Navigation.registerComponent('Welcome', () => require('../screens/Welcome').default);
     Navigation.registerComponent('Scanner', () => require('../screens/Scanner').default);
     Navigation.registerComponent('Inventory/List', () => require('../screens/Inventory/List').default);

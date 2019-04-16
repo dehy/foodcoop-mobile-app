@@ -1,7 +1,14 @@
 'use strict'
 
 export default class Article {
-    constructor (json) {
+    public id: number;
+    public barcode: string;
+    public name: string;
+    public imageData: string;
+    public unit: number;
+    public price: number;
+
+    constructor (json: any) {
         json = json || {}
     
         this.id = json.id ? json.id : null;

@@ -1,5 +1,4 @@
-import { Navigation } from 'react-native-navigation'
-import Drawer from './Drawer';
+import { Navigation, Options } from 'react-native-navigation'
 
 export const goToAuth = () => Navigation.setRoot({
     root: {
@@ -107,8 +106,8 @@ export function goHome() {
     });
 }
 
-export function goToScreen(screen) {
-    Drawer.close('left');
+export function goToScreen(screen: string) {
+    // Drawer.close('left');
     Navigation.setStackRoot('App', [{
         component: {
             id: screen,
@@ -117,7 +116,7 @@ export function goToScreen(screen) {
     }]);
 };
 
-export function defaultScreenOptions(screenTitle) {
+export function defaultScreenOptions(screenTitle: string): Options {
     return {
         topBar: {
             title: {
