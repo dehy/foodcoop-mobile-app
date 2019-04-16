@@ -7,6 +7,7 @@
         "PRAGMA user_version = 1;"
     ],
     "2": [
+        "DROP TABLE IF EXISTS `old_inventories_entries`;",
         "ALTER TABLE inventories_entries RENAME TO old_inventories_entries;",
         "CREATE TABLE inventories_entries ( `id` integer NOT NULL, `inventory_id` integer NOT NULL, `article_barcode` text NOT NULL, `article_name` text, `article_image` blob, `article_unit` integer, `article_price` double, `scanned_at` text NOT NULL, `article_quantity` double NOT NULL, `saved_at` text NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (inventory_id) REFERENCES inventories (id));",
         "INSERT INTO inventories_entries SELECT * FROM old_inventories_entries;",

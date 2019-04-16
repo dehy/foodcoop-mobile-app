@@ -2,17 +2,20 @@
 
 import OdooApi from 'react-native-odoo-promise-based';
 import OdooProduct from '../entities/OdooProduct';
+import OdooProductFactory from '../factories/OdooProductFactory';
 import CookieManager from 'react-native-cookies';
 
 export default class Odoo {
 
-    static UNIT_UNIT = 1;
-    static UNIT_KG = 2;
+    private static UNIT_UNIT = 1;
+    private static UNIT_KG = 2;
 
-    static instance = null;
-    static odooEnpoint = 'labo.supercoop.fr';
+    private static instance: Odoo;
+    private static odooEnpoint: string = 'labo.supercoop.fr';
+    private isConnected: boolean;
+    private odooApi: OdooApi;
 
-    static getInstance() {
+    static getInstance(): Odoo {
         if (Odoo.instance == null) {
             Odoo.instance = new Odoo();
         }
@@ -76,14 +79,14 @@ export default class Odoo {
     //     return null;
     // }
 
-    resetApiAuthDetails() {
+    resetApiAuthDetails(): void {
         this.isConnected = false;
-        this.odooApi.sid = null;
-        this.odooApi.cookie = null;
-        this.odooApi.session_id = null;
+        this.odooApi.sid = undefined;
+        this.odooApi.cookie = undefined;
+        this.odooApi.session_id = undefined;
     }
 
-    assertApiResponse(response) {
+    assertApiResponse(response: OdooApiResponse): void {
         console.debug("assertApiResponse()");
         console.debug(response);
         CookieManager.get(Odoo.odooEnpoint).then((res) => {
@@ -99,11 +102,11 @@ export default class Odoo {
         }
     }
 
-    async fetchProductFromBarcode(barcode) {
+    async fetchProductFromBarcode(barcode: string): Promise<OdooProduct|undefined> {
         console.debug("[Odoo] fetchProductFromBarcode()");
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
-            console.error(odooApi);
+            console.error(this.odooApi);
             throw new Error("Odoo is not connected");
         }
 
@@ -123,12 +126,12 @@ export default class Odoo {
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
         if (response.data.length > 0) {
-            return new OdooProduct(response.data[0]);
+            return OdooProductFactory.OdooProductFromResponse(response.data[0]);
         }
-        return null;
+        return undefined;
     }
 
-    async fetchImageForOdooProduct(odooProduct) {
+    async fetchImageForOdooProduct(odooProduct: OdooProduct) {
         console.debug("fetchImageForOdooProduct()");
         if (await this.assertConnect() !== true) {
             throw new Error("Odoo is not connected");

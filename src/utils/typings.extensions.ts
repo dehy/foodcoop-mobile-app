@@ -1,16 +1,16 @@
 'use strict'
 
-Number.prototype.isInt = function() {
+Number.prototype.isInt = function(): boolean {
     const n = Number(this);
     return n % 1 === 0;
 }
 
-Number.prototype.isFloat = function() {
+Number.prototype.isFloat = function(): boolean {
     const n = Number(this);
     return n % 1 !== 0;
 }
 
-String.prototype.toNumber = function() {
+String.prototype.toNumber = function(): Number {
     const s = String(this);
     if (s === '') {
         throw new Error('String can\'t be empty');
