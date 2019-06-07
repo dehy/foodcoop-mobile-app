@@ -8,8 +8,12 @@ import Google from '../utils/Google';
 import { goHome, goToAuth } from '../utils/navigation';
 import Database from '../utils/Database';
 
-export default class Initialising extends React.Component {
-    constructor(props: object) {
+export interface InitialisingProps {
+
+}
+
+export default class Initialising extends React.Component<InitialisingProps> {
+    constructor(props: InitialisingProps) {
         super(props);
         this.state = {
             loggedUser: null

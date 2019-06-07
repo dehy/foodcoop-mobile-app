@@ -4,6 +4,7 @@ import Database from '../utils/Database';
 import InventorySession from '../entities/InventorySession';
 import moment from 'moment';
 import InventoryEntry from '../entities/InventoryEntry';
+import OdooProduct from '../entities/OdooProduct';
 
 interface InventoryEntryTableDefinition {
     id?: number;
@@ -22,8 +23,8 @@ export default class InventoryEntryFactory {
     private static instance: InventoryEntryFactory;
     private db: Database;
 
-    static sharedInstance() {
-        if (InventoryEntryFactory.instance === null) {
+    static sharedInstance(): InventoryEntryFactory {
+        if (InventoryEntryFactory.instance === undefined) {
             InventoryEntryFactory.instance = new InventoryEntryFactory();
         }
         return this.instance;
@@ -33,8 +34,11 @@ export default class InventoryEntryFactory {
         this.db = Database.sharedInstance();
     }
 
-    async findByInventorySessionIdAndBarcode(inventorySessionId: number, barcode: string) {
-        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? AND `article_barcode` = ? ORDER BY scanned_at DESC', [inventorySessionId.toString(), barcode]);
+    async findByInventorySessionAndOdooProduct(inventorySession: InventorySession, product: OdooProduct): Promise<InventoryEntry[]> {
+        if (!inventorySession.id || !product.barcode) {
+            throw new Error();
+        }
+        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? AND `article_barcode` = ? ORDER BY scanned_at DESC', [inventorySession.id.toString(), product.barcode]);
         const entries = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             entries.push(this._rowToObject(response[0].rows.item(i)));
@@ -43,14 +47,15 @@ export default class InventoryEntryFactory {
         return entries;
     }
 
-    async findForInventorySession(inventorySession: InventorySession) {
+    async findForInventorySession(inventorySession: InventorySession): Promise<InventoryEntry[]> {
         if (!inventorySession.id) {
+            console.error("InventorySession has no id");
             throw new Error("InventorySession has no id");
         }
         return await this.findForInventorySessionId(inventorySession.id);
     }
 
-    async findForInventorySessionId(inventorySessionId: number) {
+    async findForInventorySessionId(inventorySessionId: number): Promise<InventoryEntry[]> {
         const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? ORDER BY `saved_at` DESC', [inventorySessionId.toString()]);
         const entries = [];
         for (let i = 0; i < response[0].rows.length; i++) {
@@ -60,7 +65,7 @@ export default class InventoryEntryFactory {
         return entries;
     }
 
-    async findAll() {
+    async findAll(): Promise<InventoryEntry[]> {
         const response = await this.db.executeQuery('SELECT * FROM `inventories_entries`');
         const inventorySessions = [];
         for (let i = 0; i < response[0].rows.length; i++) {
@@ -70,7 +75,7 @@ export default class InventoryEntryFactory {
         return inventorySessions;
     }
 
-    async persist(object: InventoryEntry) {
+    async persist(object: InventoryEntry): Promise<void> {
         const params = this._objectToParams(object);
 
         const response = await this.db.executeQuery(
@@ -93,7 +98,7 @@ export default class InventoryEntryFactory {
         return;
     }
 
-    async delete(object: InventoryEntry) {
+    async delete(object: InventoryEntry): Promise<void> {
         if (!object.id) {
             throw new Error("Cannot delete InventoryEntry with no id!");
         }
@@ -107,18 +112,18 @@ export default class InventoryEntryFactory {
         return;
     }
 
-    _rowToObject(row: InventoryEntryTableDefinition) {
+    _rowToObject(row: InventoryEntryTableDefinition): InventoryEntry {
         console.debug("inventories_entries row", row);
         const entry = new InventoryEntry();
-        entry.id = Number(row.id);
-        entry.inventoryId = Number(row.inventory_id);
+        entry.id = row.id;
+        entry.inventoryId = row.inventory_id;
         entry.articleBarcode = String(row.article_barcode);
         entry.articleName = String(row.article_name);
         entry.articleImage = row.article_image;
-        entry.articleUnit = Number(row.article_unit);
-        entry.articlePrice = Number(row.article_price);
+        entry.articleUnit = row.article_unit;
+        entry.articlePrice = row.article_price;
         entry.scannedAt = moment(row.scanned_at, Database.DATETIME_FORMAT);
-        entry.articleQuantity = Number(row.article_quantity);
+        entry.articleQuantity = row.article_quantity;
         entry.savedAt = moment(row.saved_at, Database.DATETIME_FORMAT);
 
         return entry;

@@ -14,7 +14,7 @@ declare module 'react-native-dialog-input' {
         submitText?: string;
         submitInput?: TextInput;
 
-        closeDialog(): void;
+        closeDialog?: () => void;
     }
 }
   

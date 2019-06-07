@@ -11,43 +11,63 @@ import { Navigation } from 'react-native-navigation';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import InventorySession from '../../entities/InventorySession';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
+import { number } from 'prop-types';
+import { toNumber, isInt } from '../../utils/helpers';
 
-export default class InventoryNew extends React.Component {
+export interface InventoryNewProps {
+    componentId: string
+}
 
-    state = {
+interface InventoryNewState {
+    submitButtonEnabled: boolean,
+    isDateTimePickerVisible: boolean,
+    date: Moment,
+    zone?: number,
+    dateInputValue?: string
+}
+
+export default class InventoryNew extends React.Component<InventoryNewProps, InventoryNewState> {
+
+    state: InventoryNewState = {
         submitButtonEnabled: true,
         isDateTimePickerVisible: false,
         date: moment(),
-        zone: null
+        zone: undefined
     };
-    dateInput = null;
-    zoneInput = null;
+    dateInput?: Input;
+    zoneInput?: Input;
 
-    constructor(props) {
+    constructor(props: InventoryNewProps) {
         super(props);
         Navigation.events().bindComponent(this);
         console.debug("DateInputFormat", moment().format("DD MMMM YYYY"));
     }
 
-    static options(passProps) {
+    static options() {
         var options = defaultScreenOptions("Nouvel inventaire");
-        options.topBar.rightButtons = [
-            {
-                id: 'cancel',
-                text: 'Annuler'
-            }
-        ];
+        options.topBar = {
+            rightButtons: [
+                {
+                    id: 'cancel',
+                    text: 'Annuler'
+                }
+            ]
+        };
 
         return options;
     }
 
     componentDidAppear() {
-        this.zoneInput.focus();
+        if (this.zoneInput) {
+            this.zoneInput.focus();
+        }
     }
 
     componentDidDisappear() {
-        this.zoneInput.blur();
+        if (this.zoneInput) {
+            this.zoneInput.blur();
+        }
         this.hideDateTimePicker();
     }
 
@@ -57,12 +77,14 @@ export default class InventoryNew extends React.Component {
     showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
     hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
-    handleDatePicked = (date) => {
+    handleDatePicked = (date: Date) => {
         console.debug('A date has been picked: ', date);
         this.state.date = moment(date);
         this.updateDateInput();
         this.hideDateTimePicker();
-        this.dateInput.blur();
+        if (this.dateInput) {
+            this.dateInput.blur();
+        }
     };
 
     updateDateInput = () => {
@@ -81,8 +103,7 @@ export default class InventoryNew extends React.Component {
 
     didTapSubmitButton() {
         try {
-            const zoneNumber = this.state.zone.toNumber();
-            if (!zoneNumber.isInt()) {
+            if (!this.state.zone || !isInt(this.state.zone)) {
                 throw new Error("Zone number is not an Int");
             }
         } catch (e) {
@@ -109,7 +130,7 @@ export default class InventoryNew extends React.Component {
                 <View style={{ marginBottom: 8, flexDirection: 'row' }}>
                     <Input
                         containerStyle={{ flex: 9 }}
-                        ref={(ref) => { this.dateInput = ref }}
+                        ref={(ref) => { this.dateInput = ref !== null ? ref : undefined }}
                         leftIcon={{ type: 'font-awesome', name: 'calendar' }}
                         leftIconContainerStyle={{ marginRight: 8 }}
                         label="Date"
@@ -120,14 +141,14 @@ export default class InventoryNew extends React.Component {
                     />
                     <Input
                         containerStyle={{ flex: 3 }}
-                        ref={(ref) => { this.zoneInput = ref }}
+                        ref={(ref) => { this.zoneInput = ref !== null ? ref : undefined }}
                         leftIcon={{ type: 'font-awesome', name: 'map-marker' }}
                         leftIconContainerStyle={{ marginRight: 8 }}
                         label="Zone"
                         inputContainerStyle={styles.input}
                         keyboardType="number-pad"
-                        value={this.state.zone}
-                        onChangeText={value => this.setState({ zone: value })}
+                        value={this.state.zone?this.state.zone.toString():undefined}
+                        onChangeText={value => this.setState({ zone: toNumber(value) })}
                     />
                 </View>
                 <Button

@@ -1,5 +1,7 @@
 'use strict'
 
+import { isFloat } from "../utils/helpers";
+
 export enum UnitOfMesurement {
     unit = 1,
     kg = 3
@@ -8,7 +10,7 @@ export enum UnitOfMesurement {
 export default class OdooProduct {
     public barcode?: string;
     public name?: string;
-    public image?: string|null;
+    public image?: string;
     public qty_available?: number;
     public uom_id?: number;
     public lst_price?: number;
@@ -60,7 +62,7 @@ export default class OdooProduct {
             return false;
         }
         if (this.uom_id === UnitOfMesurement.unit
-            && this.qty_available.isFloat()) {
+            && isFloat(this.qty_available)) {
                 return false;
         }
 

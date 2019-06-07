@@ -14,19 +14,35 @@ import {
 } from 'react-native'
 import { defaultScreenOptions } from '../utils/navigation';
 import { Navigation } from 'react-native-navigation';
-import { RNCamera } from 'react-native-camera';
-import Odoo from '../utils/Odoo';
-import OdooProduct, { UnitOfMesurement } from '../entities/OdooProduct';
+import { RNCamera, RNCameraProps, FlashMode } from 'react-native-camera';
+import DialogInput from 'react-native-dialog-input';
+import Google from '../utils/Google';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import InventoryEntry from '../entities/InventoryEntry';
 import InventoryEntryFactory from '../factories/InventoryEntryFactory';
+import InventorySession from '../entities/InventorySession';
 import InventorySessionFactory from '../factories/InventorySessionFactory';
 import moment, { Moment } from 'moment';
-import DialogInput from 'react-native-dialog-input';
-import Google from '../utils/Google';
+import Odoo from '../utils/Odoo';
+import OdooProduct, { UnitOfMesurement } from '../entities/OdooProduct';
 import Sound from 'react-native-sound';
+import { isInt } from '../utils/helpers';
 
-export default class Scanner extends React.Component<any, any> {
+export interface ScannerProps {
+    componentId: string,
+    inventory: InventorySession
+}
+
+interface ScannerState {
+    displayCamera: boolean,
+    flashStatus: FlashMode,
+    odooProduct?: OdooProduct,
+    showProductCard: boolean,
+    showManualSearchView: boolean,
+    showUnknownOdooProductNameView: boolean
+}
+
+export default class Scanner extends React.Component<ScannerProps, ScannerState> {
 
     static MODE_SCANNER = 1;
     static MODE_INVENTORY = 2;
@@ -43,14 +59,14 @@ export default class Scanner extends React.Component<any, any> {
 
     private navigationEventListener?: EventSubscription;
 
-    constructor(props: any) {
+    constructor(props: ScannerProps) {
         super(props);
 
         // Navigation
         Navigation.events().bindComponent(this);
 
         // Sound
-        Sound.setCategory("Ambiant", true);
+        Sound.setCategory('Ambient', true);
         this.beepSound = new Sound('beep.mp3', Sound.MAIN_BUNDLE, (error) => {
             if (error) {
                 console.log('failed to load the sound', error);
@@ -66,7 +82,7 @@ export default class Scanner extends React.Component<any, any> {
         this.state = {
             displayCamera: false,
             flashStatus: RNCamera.Constants.FlashMode.off,
-            odooProduct: null,
+            odooProduct: undefined,
             showProductCard: false,
             showManualSearchView: false,
             showUnknownOdooProductNameView: false
@@ -125,14 +141,14 @@ export default class Scanner extends React.Component<any, any> {
         this.scannedAt = undefined;
         this.resumeCamera();
         this.setState({
-            odooProduct: null,
+            odooProduct: undefined,
             showManualSearchView: false,
             showProductCard: false,
             showUnknownOdooProductNameView: false
         });
     }
 
-    isInInventoryMode() {
+    isInInventoryMode(): boolean {
         if (this.props.inventory) {
             return true;
         }
@@ -202,7 +218,7 @@ export default class Scanner extends React.Component<any, any> {
         if (this.lastScannedBarcode === barcode) {
             return;
         }
-        this.setState({ odooProduct: null });
+        this.setState({ odooProduct: undefined });
         this.lastScannedBarcode = barcode;
         this.beepSound.play(() => {
             this.beepSound.stop(); // Resets file for immediate play availability
@@ -227,7 +243,7 @@ export default class Scanner extends React.Component<any, any> {
 
     handleNotFoundOdooProduct(barcode: string): void {
         let notFoundInOdooString = `Le code barre ${barcode} est introuvable dans odoo.`;
-        let alertButtons = [{
+        let alertButtons: AlertButton[] = [{
             text: "Annuler",
             onPress: () => {
                 this.reset();
@@ -266,15 +282,17 @@ export default class Scanner extends React.Component<any, any> {
         })
         this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
             const odooProduct = this.state.odooProduct;
-            odooProduct.image = OdooProduct.imageFromOdooBase64(image);
-            this.setState({
-                odooProduct: odooProduct
-            })
+            if (odooProduct) {
+                odooProduct.image = OdooProduct.imageFromOdooBase64(image);
+                this.setState({
+                    odooProduct: odooProduct
+                })
+            }
         });
         if (this.isInInventoryMode()) {
             InventoryEntryFactory
                 .sharedInstance()
-                .findByInventorySessionIdAndBarcode(this.props.inventory.id, odooProduct.barcode)
+                .findByInventorySessionAndOdooProduct(this.props.inventory, odooProduct)
                 .then((foundInventoryEntries: InventoryEntry[]) => {
                     if (foundInventoryEntries.length > 0) {
                         const lastEntry = foundInventoryEntries[0];
@@ -315,6 +333,9 @@ export default class Scanner extends React.Component<any, any> {
     hideUnknownOdooProductNameView = () => this.setState({ showUnknownOdooProductNameView: false });
     handleUnknownOdooProductName = (name: string) => {
         this.hideUnknownOdooProductNameView();
+        if (!this.state.odooProduct) {
+            throw new Error("No Odoo Product set");
+        }
         this.state.odooProduct.name = name;
 
         if (this.isInInventoryMode()) {
@@ -341,19 +362,22 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
 
 
     inventoryDidTapSaveButton() {
+        if (!this.state.odooProduct) {
+            throw new Error("No Odoo Product set");
+        }
         const unit = this.state.odooProduct.uom_id;
         let quantity: number;
         try {
             if (!this.articleQuantityValue) {
                 throw new Error();
             }
-            quantity = this.articleQuantityValue.toNumber();
+            quantity = parseInt(this.articleQuantityValue);
         } catch (e) {
             Alert.alert("Valeur incorrecte", "Cela ne ressemble pas à un nombre.");
             return;
         }
         if (quantity >= 0) {
-            if (unit === UnitOfMesurement.unit && quantity.isInt() === false) { // Int only
+            if (unit === UnitOfMesurement.unit && isInt(quantity) === false) { // Int only
                 Alert.alert(
                     "Valeur incorrecte",
                     "Ce produit est compté en unité. Merci de ne pas entrer de nombre à virgule."
@@ -365,12 +389,8 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
             }
         }
 
-        const newEntry = new InventoryEntry();
+        const newEntry = InventoryEntry.createFromOdooProduct(this.state.odooProduct);
         newEntry.inventoryId = this.props.inventory.id;
-        newEntry.articleBarcode = this.state.odooProduct.barcode;
-        newEntry.articleName = this.state.odooProduct.name;
-        newEntry.articleUnit = this.state.odooProduct.uom_id;
-        newEntry.articlePrice = this.state.odooProduct.lst_price;
         newEntry.scannedAt = this.scannedAt;
         newEntry.articleQuantity = quantity;
         newEntry.savedAt = moment();
@@ -425,7 +445,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
         if (this.state.displayCamera) {
             return (<RNCamera
                 ref={ref => {
-                    this.camera = ref;
+                    this.camera = ref !== null ? ref : undefined;
                 }}
                 captureAudio={false}
                 style={styles.preview}
@@ -527,7 +547,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                                     />
                                     <Text style={{ fontSize: 28, flex: 0 }}>{this.state.odooProduct ? this.state.odooProduct.unitAsString() : null}</Text>
                                     <Button
-                                        style={{ flex: 1, marginLeft: 16 }}
+                                        // style={{ flex: 1, marginLeft: 16 }}
                                         onPress={() => {
                                             this.inventoryDidTapSaveButton();
                                         }}
@@ -538,7 +558,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                                     <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
                                         <View style={{ flex: 1, flexDirection: 'column' }}>
                                             <Text style={styles.detailTitle}>Prix</Text>
-                                            <Text style={styles.detailValue}>{this.state.odooProduct ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.odooProduct && this.state.odooProduct.lst_price ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Stock</Text>

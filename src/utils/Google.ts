@@ -4,7 +4,7 @@ import { goToAuth } from './navigation';
 import Sentry from 'react-native-sentry';
 import base64 from 'react-native-base64';
 
-interface MailAttachment {
+export interface MailAttachment {
     filename: string
     content: string;
 }
