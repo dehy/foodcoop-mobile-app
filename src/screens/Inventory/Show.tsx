@@ -18,19 +18,30 @@ import materialStyle from '../../styles/material';
 import bootstrapStyle from '../../styles/bootstrap';
 import OdooProduct from '../../entities/OdooProduct';
 import ActionSheet from 'react-native-action-sheet';
+import InventorySession from '../../entities/InventorySession';
+import InventoryEntry from '../../entities/InventoryEntry';
 
-export default class InventoryShow extends React.Component {
-    constructor(props) {
+export interface InventoryShowProps {
+    inventorySessionId: number
+}
+
+interface InventoryShowState {
+    inventorySession?: InventorySession,
+    inventoryEntries: InventoryEntry[]
+}
+
+export default class InventoryShow extends React.Component<InventoryShowProps, InventoryShowState> {
+    constructor(props: InventoryShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
 
         this.state = {
-            inventorySession: null,
+            inventorySession: undefined,
             inventoryEntries: []
         }
     }
 
-    static options(passProps) {
+    static options() {
         var options = defaultScreenOptions("Inventaire");
 
         return options;
@@ -53,6 +64,9 @@ export default class InventoryShow extends React.Component {
     }
 
     loadInventoryEntries() {
+        if (!this.state.inventorySession) {
+            throw new Error("Missing inventorySession");
+        }
         InventoryEntryFactory
             .sharedInstance()
             .findForInventorySession(this.state.inventorySession)
@@ -64,7 +78,7 @@ export default class InventoryShow extends React.Component {
         ;
     }
 
-    deleteInventoryEntry(inventoryEntry) {
+    deleteInventoryEntry(inventoryEntry: InventoryEntry) {
         InventoryEntryFactory
             .sharedInstance()
             .delete(inventoryEntry)
@@ -76,9 +90,8 @@ export default class InventoryShow extends React.Component {
 
     computeEntriesData() {
         const listDatas = [];
-        for (k in this.state.inventoryEntries) {
+        for (const k in this.state.inventoryEntries) {
             const entry = this.state.inventoryEntries[k];
-            console.debug(entry.lastModifiedAt);
             const data = {
                 key: 'inventory-entry-' + entry.id,
                 title: entry.articleName,
@@ -133,7 +146,7 @@ export default class InventoryShow extends React.Component {
         });
     }
 
-    didTapIventoryEntry(inventoryEntry) {
+    didTapIventoryEntry(inventoryEntry: InventoryEntry) {
         const title = inventoryEntry.articleName;
         const buttons_ios = [
             "Supprimer",
@@ -186,9 +199,9 @@ export default class InventoryShow extends React.Component {
                     {wasModifiedWarning}
                     <View style={{ flexDirection: 'row', backgroundColor: 'white', paddingTop: 16 }}>
                         <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>{inventory.date.format('dddd')}</Text>
-                            <Text style={{ fontSize: 30, textAlign: 'center' }}>{inventory.date.format('DD MMMM')}</Text>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>{inventory.date.format('YYYY')}</Text>
+                            <Text style={{ fontSize: 20, textAlign: 'center' }}>{inventory.date ? inventory.date.format('dddd') : "-"}</Text>
+                            <Text style={{ fontSize: 30, textAlign: 'center' }}>{inventory.date ? inventory.date.format('DD MMMM') : "-"}</Text>
+                            <Text style={{ fontSize: 20, textAlign: 'center' }}>{inventory.date ? inventory.date.format('YYYY') : "-"}</Text>
                         </View>
                         <View style={{ flexDirection: 'column', flex: 1 }}>
                             <Text style={{ fontSize: 24, textAlign: 'center' }}>Zone</Text>

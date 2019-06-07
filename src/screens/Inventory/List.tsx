@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Props } from 'react'
 import {
     View,
     Text,
@@ -14,9 +14,34 @@ import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import styles from '../../styles/material';
+import InventoryEntry from '../../entities/InventoryEntry';
+import InventorySession from '../../entities/InventorySession';
 
-export default class InventoryList extends React.Component {
-    constructor(props) {
+export interface InventoryListProps {
+    componentId: string;
+    item: InventorySession;
+}
+
+interface InventoryListState {
+    inventoriesData: InventorySessionListItem[];
+}
+
+interface InventorySessionListItem {
+    key: string,
+    id: number,
+    title: string,
+    subtitle: string,
+    detailText: string,
+    object: InventorySession
+}
+
+interface InventorySessionTapProps {
+    componentId: string
+    item: InventorySessionListItem
+}
+
+export default class InventoryList extends React.Component<InventoryListProps, InventoryListState> {
+    constructor(props: InventoryListProps) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
@@ -24,7 +49,7 @@ export default class InventoryList extends React.Component {
         }
     }
 
-    static options(passProps) {
+    static options() {
         var options = defaultScreenOptions("Inventaires");
         // options.topBar.rightButtons = [
         //     {
@@ -47,7 +72,7 @@ export default class InventoryList extends React.Component {
     loadData() {
         InventorySessionFactory.sharedInstance().findAll().then(async inventories => {
             const inventoriesData = [];
-            for (k in inventories) {
+            for (const k in inventories) {
                 const inventory = inventories[k];
                 const inventoryEntries = await InventoryEntryFactory.sharedInstance().findForInventorySession(inventory);
 
@@ -57,10 +82,10 @@ export default class InventoryList extends React.Component {
                 } else {
                     articleCountString = inventoryEntries.length + " article" + (inventories.length > 1 ? "s" : "");
                 }
-                const inventoryData = {
+                const inventoryData: InventorySessionListItem = {
                     key: 'inventory-' + inventory.id,
-                    id: inventory.id,
-                    title: inventory.date.format('DD MMMM YYYY à HH[h]mm'),
+                    id: inventory.id ? inventory.id : 0,
+                    title: inventory.date?inventory.date.format('DD MMMM YYYY à HH[h]mm'):"",
                     subtitle: "Zone "+String(inventory.zone)+" - "+articleCountString,
                     detailText: "",
                     object: inventory
@@ -93,7 +118,7 @@ export default class InventoryList extends React.Component {
         }
     }
 
-    didTapInventoryEntry = (props) => {
+    didTapInventoryEntry = (props: InventorySessionTapProps) => {
         Navigation.push(props.componentId, {
             component: {
                 name: 'Inventory/Show',
@@ -121,10 +146,11 @@ export default class InventoryList extends React.Component {
                     renderItem={({ item }) =>
                         <TouchableHighlight
                             onPress={() => {
-                                this.didTapInventoryEntry({
+                                let inventorySessionTapProps: InventorySessionTapProps = {
                                     componentId: this.props.componentId,
                                     item: item
-                                })
+                                }
+                                this.didTapInventoryEntry(inventorySessionTapProps)
                             }}
                             underlayColor="#BCBCBC"
                         >

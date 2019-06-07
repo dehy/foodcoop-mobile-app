@@ -12,16 +12,33 @@ import { defaultScreenOptions, goToAuth } from '../../utils/navigation'
 import { Navigation } from 'react-native-navigation';
 import materialStyle from '../../styles/material';
 
-export default class Maintenance extends React.Component {
-    constructor(props) {
+export interface MaintenanceProps {
+    componentId: string
+}
+
+interface MaintenaceState {
+
+}
+
+interface MaintenanceFlatListItem {
+    key: string;
+    title: string;
+    color?: string;
+}
+
+export default class Maintenance extends React.Component<MaintenanceProps, MaintenaceState> {
+    private flatListItems: MaintenanceFlatListItem[] = [
+        { title: "Base de donnée locale", key: "database" },
+        { title: "Cookies", key: "cookies" }
+    ];
+    constructor(props: MaintenanceProps) {
         super(props);
         Navigation.events().bindComponent(this);
     }
     static get options() {
-        console.log(this.state);
         return defaultScreenOptions("Maintenance");
     }
-    _onPress = (key) => {
+    _onPress = (key: string) => {
         switch (key) {
             case 'database':
                 Navigation.push(this.props.componentId, {
@@ -48,10 +65,7 @@ export default class Maintenance extends React.Component {
                         ItemSeparatorComponent={({ highlighted }) => (
                             <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
                         )}
-                        data={[
-                            { title: "Base de donnée locale", key: "database" },
-                            { title: "Cookies", key: "cookies" }
-                        ]}
+                        data={this.flatListItems}
                         renderItem={({ item, separators }) =>
                             <TouchableHighlight
                                 onPress={() => this._onPress(item.key)}

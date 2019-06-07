@@ -16,17 +16,31 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import CSVGenerator from '../../utils/CSVGenerator';
-import Google from '../../utils/Google';
+import Google, { MailAttachment } from '../../utils/Google';
 import moment from 'moment';
+import InventoryEntry from '../../entities/InventoryEntry';
+import InventorySession from '../../entities/InventorySession';
 
-export default class InventoryShow extends React.Component {
-    constructor(props) {
+export interface InventoryShowProps {
+    componentId: string,
+    inventory: InventorySession
+    inventoryEntries: Array<InventoryEntry>
+}
+  
+interface InventoryShowState {
+    sendingMail: boolean,
+    inventoryCheckPassed: boolean
+}
+
+export default class InventoryShow extends React.Component<InventoryShowProps, InventoryShowState> {
+
+    private inventoryEntries: Array<InventoryEntry> = []
+    private csvGenerator: CSVGenerator = new CSVGenerator();
+    private generatedCSV?: string
+
+    constructor(props: InventoryShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
-
-        this.inventoryEntries = null;
-        this.csvGenerator = new CSVGenerator();
-        this.generatedCSV = null;
 
         this.state = {
             sendingMail: false,
@@ -34,14 +48,16 @@ export default class InventoryShow extends React.Component {
         }
     }
 
-    static options(passProps) {
+    static options(passProps: object) {
         var options = defaultScreenOptions("Envoi d'inventaire");
-        options.topBar.rightButtons = [
-            {
-                id: 'cancel',
-                text: 'Fermer'
-            }
-        ];
+        options.topBar = {
+            rightButtons: [
+                {
+                    id: 'cancel',
+                    text: 'Fermer'
+                }
+            ]
+        };
 
         return options;
     }
@@ -57,7 +73,7 @@ export default class InventoryShow extends React.Component {
         this.checkInventory();
     }
 
-    checkInventory() {
+    checkInventory(): void {
         InventoryEntryFactory
             .sharedInstance()
             .findForInventorySession(this.props.inventory)
@@ -72,10 +88,13 @@ export default class InventoryShow extends React.Component {
             });
     }
 
-    sendInventory() {
+    sendInventory(): void {
         this.setState({
             sendingMail: true
         })
+        if (!this.props.inventory.lastModifiedAt) {
+            throw new Error("Last Modified date unavailable");
+        }
         const userFirstname = Google.getInstance().getFirstnameSlug();
         const zone = this.props.inventory.zone;
         const date = this.props.inventory.lastModifiedAt.format("DD/MM/YYYY");
@@ -83,7 +102,7 @@ export default class InventoryShow extends React.Component {
 
         const entriesCount = this.inventoryEntries.length;
 
-        let notFoundInOdoo = [];
+        let notFoundInOdoo: Array<string> = [];
         this.inventoryEntries.forEach(inventoryEntry => {
             if (!inventoryEntry.isFetchedFromOdoo()) {
                 notFoundInOdoo.push(`${(inventoryEntry.articleBarcode)} - ${(inventoryEntry.articleName)}`);
@@ -105,9 +124,9 @@ ${notFoundInOdooString}`);
 
         const csvFilenameDateTime = this.props.inventory.lastModifiedAt.format("YYYYMMDDHHmmss");
         const csvFilename = `Zone${zone}_${userFirstname}-${csvFilenameDateTime}.csv`
-        const attachments = [{
+        const attachments: MailAttachment[] = [{
             filename: csvFilename,
-            content: this.generatedCSV
+            content: this.generatedCSV ? this.generatedCSV : "Failed to generate CSV"
         }];
 
         Google.getInstance()
@@ -116,7 +135,7 @@ ${notFoundInOdooString}`);
                 InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
                 Alert.alert("Envoyé", "Le message est parti sur les Internets Mondialisés");
             })
-            .catch((e) => {
+            .catch((e: Error) => {
                 if (__DEV__) { console.error(e); }
                 Alert.alert("ERREUR", "Houston, quelchose s'est mal passé et le mail n'est pas parti... Mais on n'en sait pas plus :(");
             })

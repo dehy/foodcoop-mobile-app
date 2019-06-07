@@ -4,6 +4,7 @@ import OdooApi from 'react-native-odoo-promise-based';
 import OdooProduct from '../entities/OdooProduct';
 import OdooProductFactory from '../factories/OdooProductFactory';
 import CookieManager from 'react-native-cookies';
+import { isInt } from './helpers';
 
 export default class Odoo {
 
@@ -158,7 +159,7 @@ export default class Odoo {
                 console.debug("[Odoo] not connected, connecting...");
                 context.odooApi.connect().then((response) => {
                     context.assertApiResponse(response);
-                    if (Number.isInteger(response.data.uid) && response.data.uid > 0) {
+                    if (isInt(response.data.uid) && response.data.uid > 0) {
                         console.debug("[Odoo] connection ok");
                         // console.debug(context.odooApi);
                         context.isConnected = true;
