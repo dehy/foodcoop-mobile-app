@@ -5,13 +5,28 @@ import materialStyle from '../../../styles/material';
 import CookieManager from 'react-native-cookies';
 import Odoo from '../../../utils/Odoo';
 import { Navigation } from 'react-native-navigation';
+import { toNumber } from '../../../utils/helpers';
 
-export default class CookiesMaintenance extends React.Component {
-    cookies = [];
-    state = {
-        cookiesItemList: []
+export interface CookiesMaintenanceProps {
+
+}
+
+interface CookiesMaintenanceState {
+    cookieItemList: CookiesMaintenanceFlatListItem[];
+}
+
+interface CookiesMaintenanceFlatListItem {
+    key: number,
+    title: string,
+    subtitle: string
+}
+
+export default class CookiesMaintenance extends React.Component<CookiesMaintenanceProps, CookiesMaintenanceState> {
+    cookies: Cookie[] = [];
+    state: CookiesMaintenanceState = {
+        cookieItemList: []
     }
-    constructor(props) {
+    constructor(props: CookiesMaintenanceProps) {
         super(props)
         Navigation.events().bindComponent(this);
     }
@@ -28,7 +43,7 @@ export default class CookiesMaintenance extends React.Component {
     }
 
     fetchAllCookies() {
-        let cookieItemList = []
+        let cookieItemList: CookiesMaintenanceFlatListItem[] = []
         if (Platform.OS == 'ios') {
             CookieManager.getAll()
                 .then(cookies => {
@@ -36,7 +51,7 @@ export default class CookiesMaintenance extends React.Component {
                     this.cookies = cookies;
                     for (let cookieKey in cookies) {
                         const cookie = cookies[cookieKey];
-                        cookieItemList.push({ key: cookieKey, title: cookie.name, subtitle: cookie.domain });
+                        cookieItemList.push({ key: toNumber(cookieKey), title: cookie.name, subtitle: cookie.domain });
                     }
                     this.setState({ cookieItemList: cookieItemList });
                 });
@@ -55,20 +70,19 @@ export default class CookiesMaintenance extends React.Component {
             });
     }
 
-    didTapCookieItem = (key) => {
+    didTapCookieItem = (key: number) => {
         console.debug("didTapCookieItem()", key);
         if (this.cookies[key]) {
             const cookie = this.cookies[key];
             const alertBody = `domain: ${(cookie.domain)}
 name: ${(cookie.name)}
-expiresDate: ${(cookie.expiresDate)}
 value: ${(cookie.value)}
 path: ${(cookie.path)}`;
             Alert.alert("Détails du cookie", alertBody);
         }
     }
 
-    didTapActionItem = (key) => {
+    didTapActionItem = (key: string) => {
         switch (key) {
             case 'clear-cookies':
                 Alert.alert(
@@ -95,7 +109,6 @@ path: ${(cookie.path)}`;
             <FlatList
                 scrollEnabled={false}
                 data={this.state.cookieItemList}
-                onPress={() => this.didTapCookieItem(item.key)}
                 renderItem={({ item, separators }) =>
                     <TouchableHighlight
                         onPress={() => this.didTapCookieItem(item.key)}
@@ -128,7 +141,7 @@ path: ${(cookie.path)}`;
                     ]}
                     renderItem={({ item, separators }) =>
                         <TouchableHighlight
-                            onPress={() => this.didTapActionItem(item.key)}
+                            onPress={(item: any) => this.didTapActionItem(item.key)}
                             onShowUnderlay={separators.highlight}
                             onHideUnderlay={separators.unhighlight}>
                             <View style={materialStyle.row}>
@@ -145,6 +158,9 @@ path: ${(cookie.path)}`;
 }
 
 const styles = StyleSheet.create({
+    separator: {
+
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',

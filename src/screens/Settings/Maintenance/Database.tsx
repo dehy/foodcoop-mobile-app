@@ -4,8 +4,16 @@ import { defaultScreenOptions } from '../../../utils/navigation'
 import Database from '../../../utils/Database';
 import materialStyle from '../../../styles/material';
 
-export default class DatabaseMaintenance extends React.Component {
-    constructor(props) {
+export interface DatabaseMaintenanceProps {
+
+}
+
+interface DatabaseMaintenanceState {
+
+}
+
+export default class DatabaseMaintenance extends React.Component<DatabaseMaintenanceProps, DatabaseMaintenanceState> {
+    constructor(props: DatabaseMaintenanceProps) {
         super(props)
     }
 
@@ -21,7 +29,7 @@ export default class DatabaseMaintenance extends React.Component {
         });
     }
 
-    _onPress = (key) => {
+    _onPress = (key: string) => {
         switch(key) {
             case 'reset-db':
                 Alert.alert(
@@ -70,4 +78,7 @@ export default class DatabaseMaintenance extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    separator: {
+        
+    }
 });

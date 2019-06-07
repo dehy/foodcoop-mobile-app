@@ -5,8 +5,13 @@ import { defaultScreenOptions, goToAuth } from '../utils/navigation';
 import Google from '../utils/Google';
 import { Navigation } from 'react-native-navigation';
 import materialStyle from '../styles/material';
-export default class Profile extends React.Component<any, any> {
-    constructor(props: any[]) {
+
+export interface ProfileProps {
+    componentId: string
+}
+
+export default class Profile extends React.Component<ProfileProps> {
+    constructor(props: ProfileProps) {
         super(props);
         Navigation.events().bindComponent(this);
     }

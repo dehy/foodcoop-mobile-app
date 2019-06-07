@@ -3,7 +3,11 @@ import { StyleSheet, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { defaultScreenOptions } from "../utils/navigation";
 
-export default class News extends React.Component<any, any> {
+export interface NewsProps {
+
+}
+
+export default class News extends React.Component<NewsProps> {
     static get options() {
         return defaultScreenOptions("News");
     }

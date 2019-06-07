@@ -3,8 +3,12 @@ import { SafeAreaView, Text, StyleSheet } from 'react-native'
 import { defaultScreenOptions } from '../../utils/navigation'
 import DeviceInfo from 'react-native-device-info';
 
-export default class ProfileAbout extends React.Component {
-    constructor(props) {
+export interface ProfileAboutProps {
+
+}
+
+export default class ProfileAbout extends React.Component<ProfileAboutProps> {
+    constructor(props: ProfileAboutProps) {
         super(props)
     }
 

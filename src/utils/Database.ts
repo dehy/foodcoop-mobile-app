@@ -1,5 +1,6 @@
 import SQLite from 'react-native-sqlite-storage';
-import './typings.extensions';
+import './helpers';
+import { toNumber } from './helpers';
 
 export default class Database {
     static TARGET_SCHEMA_VERSION = 2;
@@ -60,7 +61,7 @@ export default class Database {
         const migrationData = require("../db/migrations.sql.json");
 
         for (const schemaVersionKey in migrationData) {
-            const schemaVersion: Number = schemaVersionKey.toNumber();
+            const schemaVersion: number = toNumber(schemaVersionKey);
             const currentSchemaVersion = await this.getCurrentSchemaVersion();
             console.info(`Current schema version: ${currentSchemaVersion}`);
             console.info(`Processing schema version ${schemaVersion}`);
@@ -84,7 +85,7 @@ export default class Database {
         return true;
     }
 
-    async getCurrentSchemaVersion(): Promise<Number> {
+    async getCurrentSchemaVersion(): Promise<number> {
         if (this.db === undefined) {
             console.error("No database open while getting current schema version");
             return 99999;
