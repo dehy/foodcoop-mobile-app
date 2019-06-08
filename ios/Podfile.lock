@@ -12,8 +12,8 @@ PODS:
     - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.1)"
   - "GoogleToolboxForMac/NSString+URLArguments (2.2.1)"
   - GTMSessionFetcher/Core (1.2.2)
-  - React (0.59.4):
-    - React/Core (= 0.59.4)
+  - React (0.59.9):
+    - React/Core (= 0.59.9)
   - react-native-camera (2.10.1):
     - React
     - react-native-camera/RCT (= 2.10.1)
@@ -28,12 +28,12 @@ PODS:
     - React
   - react-native-webview (5.11.0):
     - React
-  - React/Core (0.59.4):
-    - yoga (= 0.59.4.React)
-  - React/RCTImage (0.59.4):
+  - React/Core (0.59.9):
+    - yoga (= 0.59.9.React)
+  - React/RCTImage (0.59.9):
     - React/Core
     - React/RCTNetwork
-  - React/RCTNetwork (0.59.4):
+  - React/RCTNetwork (0.59.9):
     - React/Core
   - ReactNativeNavigation (2.21.0):
     - React
@@ -57,7 +57,7 @@ PODS:
   - SentryReactNative (0.43.1):
     - React
     - Sentry (~> 4.1.3)
-  - yoga (0.59.4.React)
+  - yoga (0.59.9.React)
 
 DEPENDENCIES:
   - GoogleSignIn
@@ -114,7 +114,7 @@ SPEC CHECKSUMS:
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
   GoogleToolboxForMac: b3553629623a3b1bff17f555e736cd5a6d95ad55
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
-  React: 5cb71fb1a15b5ce04794ab49e24b48ebe4c94e65
+  React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-camera: 702c01e2ebbe26c9fb1ad24101282fbb26e9e00b
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-sqlite-storage: dba8e864e9a76f1aae6ddb5e7d0dc330d59f4bb3
@@ -127,7 +127,7 @@ SPEC CHECKSUMS:
   RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 227e4ec6f3f1d4e0eac65a4657256cce7b6ef497
-  yoga: 596e61c9b57751d08a22b07aba310dbd3e65ab75
+  yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
 PODFILE CHECKSUM: 98c5556ef7ca69ab37c96072f61cfeb6ab7be958
 
