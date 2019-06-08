@@ -55,10 +55,7 @@ export default class OdooProduct {
     }
 
     quantityIsValid(): boolean {
-        if (this.qty_available == undefined) {
-            throw new Error("Undefined quantity");
-        }
-        if (this.qty_available < 0) {
+        if (this.qty_available == undefined || this.qty_available < 0) {
             return false;
         }
         if (this.uom_id === UnitOfMesurement.unit
