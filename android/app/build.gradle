@@ -110,7 +110,7 @@ android {
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         multiDexEnabled true
         versionCode Integer.parseInt(VERSION_CODE)
-        versionName "1.0.1"
+        versionName "1.0.2"
     }
     splits {
         abi {
