@@ -30,7 +30,7 @@ import { isInt } from '../utils/helpers';
 
 export interface ScannerProps {
     componentId: string,
-    inventory: InventorySession
+    inventory?: InventorySession
 }
 
 interface ScannerState {
@@ -206,12 +206,17 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
 
     didScanBarcode(barcode: string, type?: string): void {
         console.debug("didScanBarcode()", type, barcode);
+        this.pauseCamera();
         if ((type && type === RNCamera.Constants.BarCodeType.ean13) || (!type && barcode.length == 13)) {
             this.hideManualSearchView();
             this.lookupForBarcode(barcode);
             return;
         }
-        Alert.alert("Code barre incompatible", "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.");
+        Alert.alert(
+            "Code barre incompatible",
+            "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.",
+            [{text: 'OK', onPress: () => this.reset()}]
+        );
     }
 
     lookupForBarcode(barcode: string): void {
@@ -325,7 +330,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
                         );
                     }
                 });
-                this.focusOnQuantityInput();
+            this.focusOnQuantityInput();
+        } else {
+            this.resumeCamera();
         }
     }
 
@@ -401,7 +408,6 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                 .updateLastModifiedAt(this.props.inventory, moment())
                 .then(() => {
                     this.reset();
-                    this.resumeCamera();
                 })
         });
     }
@@ -562,7 +568,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Stock</Text>
-                                            <Text style={[styles.detailValue, (this.state.odooProduct && this.state.odooProduct.quantityIsValid() === false ? styles.detailValueInvalid : null)]}>{this.state.odooProduct ? this.state.odooProduct.quantityAsString() : '-'}</Text>
+                                            <Text style={[styles.detailValue, (this.state.odooProduct && !this.state.odooProduct.quantityIsValid() ? styles.detailValueInvalid : undefined)]}>{this.state.odooProduct && this.state.odooProduct.quantityIsValid() ? this.state.odooProduct.quantityAsString() : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Poid/Vol.</Text>
