@@ -7,6 +7,7 @@ export default StyleSheet.create({
         backgroundColor: 'white',
         flex: 1,
         height: 56,
+        marginVertical: 8,
         paddingVertical: 0,
         paddingHorizontal: 16
     },
@@ -15,6 +16,20 @@ export default StyleSheet.create({
         marginRight: 16,
         fontSize: 36,
         color: 'rgba(0, 0, 0, 0.380392)'
+    },
+    rowIconDate: {
+        flex: 0,
+        flexDirection: 'column',
+        marginRight: 16,
+        color: 'rgba(0, 0, 0, 0.380392)',
+    },
+    rowIconDateDay: {
+        flex: 0,
+        fontSize: 24,
+    },
+    rowIconDateMonth: {
+        flex: 0,
+        textAlign: 'center'
     },
     rowContent: {
         flexDirection: 'column',

@@ -37,13 +37,13 @@ export function goHome() {
                             children: [
                                 {
                                     component: {
-                                        name: 'News'
+                                        name: 'News/List'
                                     }
                                 }
                             ],
                             options: {
                                 bottomTab: {
-                                    text: 'News',
+                                    text: 'Actualités',
                                     icon: require('../../assets/icons/newspaper-regular.png')
                                 }
                             }
