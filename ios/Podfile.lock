@@ -3,30 +3,30 @@ PODS:
     - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
     - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleToolboxForMac/DebugUtils (2.2.0):
-    - GoogleToolboxForMac/Defines (= 2.2.0)
-  - GoogleToolboxForMac/Defines (2.2.0)
-  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.0)":
-    - GoogleToolboxForMac/DebugUtils (= 2.2.0)
-    - GoogleToolboxForMac/Defines (= 2.2.0)
-    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
-  - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
-  - GTMSessionFetcher/Core (1.2.1)
+  - GoogleToolboxForMac/DebugUtils (2.2.1):
+    - GoogleToolboxForMac/Defines (= 2.2.1)
+  - GoogleToolboxForMac/Defines (2.2.1)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.1)":
+    - GoogleToolboxForMac/DebugUtils (= 2.2.1)
+    - GoogleToolboxForMac/Defines (= 2.2.1)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.1)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.2.1)"
+  - GTMSessionFetcher/Core (1.2.2)
   - React (0.59.4):
     - React/Core (= 0.59.4)
-  - react-native-camera (2.4.0):
+  - react-native-camera (2.10.1):
     - React
-    - react-native-camera/RCT (= 2.4.0)
-    - react-native-camera/RN (= 2.4.0)
-  - react-native-camera/RCT (2.4.0):
+    - react-native-camera/RCT (= 2.10.1)
+    - react-native-camera/RN (= 2.10.1)
+  - react-native-camera/RCT (2.10.1):
     - React
-  - react-native-camera/RN (2.4.0):
+  - react-native-camera/RN (2.10.1):
     - React
   - react-native-cookies (3.2.0):
     - React
   - react-native-sqlite-storage (3.3.10):
     - React
-  - react-native-webview (5.7.0):
+  - react-native-webview (5.11.0):
     - React
   - React/Core (0.59.4):
     - yoga (= 0.59.4.React)
@@ -35,14 +35,14 @@ PODS:
     - React/RCTNetwork
   - React/RCTNetwork (0.59.4):
     - React/Core
-  - ReactNativeNavigation (2.17.0):
+  - ReactNativeNavigation (2.21.0):
     - React
-  - RNDeviceInfo (1.4.3):
+  - RNDeviceInfo (2.1.1):
     - React
-  - RNGoogleSignin (1.2.2):
+  - RNGoogleSignin (2.0.0):
     - GoogleSignIn (~> 4.4.0)
     - React
-  - RNKeychain (3.1.1):
+  - RNKeychain (3.1.3):
     - React
   - RNSound (0.10.12):
     - React/Core
@@ -54,7 +54,7 @@ PODS:
   - Sentry (4.1.3):
     - Sentry/Core (= 4.1.3)
   - Sentry/Core (4.1.3)
-  - SentryReactNative (0.42.0):
+  - SentryReactNative (0.43.1):
     - React
     - Sentry (~> 4.1.3)
   - yoga (0.59.4.React)
@@ -112,21 +112,21 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
-  GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
-  GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
+  GoogleToolboxForMac: b3553629623a3b1bff17f555e736cd5a6d95ad55
+  GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   React: 5cb71fb1a15b5ce04794ab49e24b48ebe4c94e65
-  react-native-camera: afbb9f2ce85ac178314c46dbc4541178ceb1a177
+  react-native-camera: 702c01e2ebbe26c9fb1ad24101282fbb26e9e00b
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-sqlite-storage: dba8e864e9a76f1aae6ddb5e7d0dc330d59f4bb3
-  react-native-webview: 69ca34f590814ae44260d30e293ab4b7b3eea793
-  ReactNativeNavigation: f40739b34c4e5f67fa4a3e6556a47c14c3a65866
-  RNDeviceInfo: 0e4abfc346f969b784f92da61d9c7509eac91510
-  RNGoogleSignin: 87609bab5259417834a5a4f305d8a040babdfc56
-  RNKeychain: 1a121521011702409f5a1009eb8a1effa81000f3
+  react-native-webview: d388bd8c7f3499640feb60f776b4c89f9c069961
+  ReactNativeNavigation: 6113c2504bfe0735ee91bb768c4b29f8f008b20e
+  RNDeviceInfo: 1399caa42e1d89ef1c100200d20114e0b98d7af7
+  RNGoogleSignin: d030c6c6591db24c3cee649f64c7babf0a1699a0
+  RNKeychain: c658833a9cb2cbcba6423bdd6e16cce59e27da0e
   RNSound: a1d01988e043aed5dbb476c2152b5ffb02446750
   RNSVG: 9cb6e958c4b6a1f58185ac72a350b148947d6fed
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
-  SentryReactNative: 09d5cc89e8bb5d80cfaf3ae11ed2ecb0a47317d2
+  SentryReactNative: 227e4ec6f3f1d4e0eac65a4657256cce7b6ef497
   yoga: 596e61c9b57751d08a22b07aba310dbd3e65ab75
 
 PODFILE CHECKSUM: 98c5556ef7ca69ab37c96072f61cfeb6ab7be958
