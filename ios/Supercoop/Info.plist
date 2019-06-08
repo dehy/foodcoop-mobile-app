@@ -50,8 +50,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Nous avons besoin d'accéder à la caméra pour pouvoir scanner des codes barre.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Nous n'utilisons pas votre localisation. Ce message n'est pas censé apparaitre.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Nous n'utilisons pas votre localisation. Ce message n'est pas censé apparaitre.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nous avons besoin d'accéder au micro pour pouvoir afficher la caméra. Me demandez pas pourquoi, je ne sais pas non plus.</string>
 	<key>UIAppFonts</key>
