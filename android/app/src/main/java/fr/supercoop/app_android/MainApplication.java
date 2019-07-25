@@ -1,5 +1,8 @@
 package fr.supercoop.app_android;
 
+import android.content.Context;
+import android.support.multidex.MultiDex;
+
 import com.actionsheet.ActionSheetPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -25,6 +28,12 @@ import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import io.sentry.RNSentryPackage;
 
 public class MainApplication extends NavigationApplication {
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
+    }
+
     @Override
     protected ReactGateway createReactGateway() {
         ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
