@@ -1,7 +1,7 @@
 'use strict'
 
 import { Moment } from 'moment';
-import OdooProduct from './OdooProduct';
+import ProductProduct from './Odoo/ProductProduct';
 
 export default class InventoryEntry {
     public id?: number;
@@ -15,7 +15,7 @@ export default class InventoryEntry {
     public articleQuantity?: number;
     public savedAt?: Moment;
 
-    static createFromOdooProduct(product: OdooProduct) {
+    static createFromProductProduct(product: ProductProduct) {
         let newEntry: InventoryEntry = new InventoryEntry();
         newEntry.articleBarcode = product.barcode;
         newEntry.articleName = product.name;

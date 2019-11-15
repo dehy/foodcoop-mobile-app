@@ -1,13 +1,14 @@
 'use strict'
 
-import { isFloat } from "../utils/helpers";
+import { isFloat } from "../../utils/helpers";
 
 export enum UnitOfMesurement {
     unit = 1,
     kg = 3
 }
 
-export default class OdooProduct {
+export default class ProductProduct {
+    public id?: number;
     public barcode?: string;
     public name?: string;
     public image?: string;
@@ -36,7 +37,7 @@ export default class OdooProduct {
     }
 
     unitAsString(): string {
-        return OdooProduct.quantityUnitAsString(this.uom_id);
+        return ProductProduct.quantityUnitAsString(this.uom_id);
     }
 
     quantityAsString(): string {

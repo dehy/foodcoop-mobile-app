@@ -16,7 +16,7 @@ import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import materialStyle from '../../styles/material';
 import bootstrapStyle from '../../styles/bootstrap';
-import OdooProduct from '../../entities/OdooProduct';
+import ProductProduct from '../../entities/Odoo/ProductProduct';
 import ActionSheet from 'react-native-action-sheet';
 import InventorySession from '../../entities/InventorySession';
 import InventoryEntry from '../../entities/InventoryEntry';
@@ -97,7 +97,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                 title: entry.articleName,
                 subtitle: entry.articleBarcode,
                 image: entry.articleImage ? { uri: entry.articleImage } : null,
-                metadata: `${entry.articleQuantity}\n${OdooProduct.quantityUnitAsString(entry.articleUnit)}`,
+                metadata: `${entry.articleQuantity}\n${ProductProduct.quantityUnitAsString(entry.articleUnit)}`,
                 inventoryEntry: entry
             }
             listDatas.push(data);

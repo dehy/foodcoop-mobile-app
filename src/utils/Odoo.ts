@@ -1,8 +1,8 @@
 'use strict'
 
 import OdooApi from 'react-native-odoo-promise-based';
-import OdooProduct from '../entities/OdooProduct';
-import OdooProductFactory from '../factories/OdooProductFactory';
+import ProductProduct from '../entities/Odoo/ProductProduct';
+import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
 import CookieManager from 'react-native-cookies';
 import { isInt } from './helpers';
 
@@ -75,7 +75,7 @@ export default class Odoo {
     //     }
     //     console.debug(response);
     //     if (response.data.length > 0) {
-    //         return new OdooProduct(response.data[0]);
+    //         return new ProductProduct(response.data[0]);
     //     }
     //     return null;
     // }
@@ -103,7 +103,7 @@ export default class Odoo {
         }
     }
 
-    async fetchProductFromBarcode(barcode: string): Promise<OdooProduct|undefined> {
+    async fetchProductFromBarcode(barcode: string): Promise<ProductProduct|undefined> {
         console.debug("[Odoo] fetchProductFromBarcode()");
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
@@ -127,19 +127,19 @@ export default class Odoo {
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
         if (response.data.length > 0) {
-            return OdooProductFactory.OdooProductFromResponse(response.data[0]);
+            return ProductProductFactory.ProductProductFromResponse(response.data[0]);
         }
         return undefined;
     }
 
-    async fetchImageForOdooProduct(odooProduct: OdooProduct) {
-        console.debug("fetchImageForOdooProduct()");
+    async fetchImageForProductProduct(ProductProduct: ProductProduct) {
+        console.debug("fetchImageForProductProduct()");
         if (await this.assertConnect() !== true) {
             throw new Error("Odoo is not connected");
         }
 
         var params = {
-            domain: [['barcode', '=', odooProduct.barcode]],
+            domain: [['barcode', '=', ProductProduct.barcode]],
             fields: ['image'],
             limit: 1,
             offset: 0

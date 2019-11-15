@@ -24,7 +24,7 @@ import InventorySession from '../entities/InventorySession';
 import InventorySessionFactory from '../factories/InventorySessionFactory';
 import moment, { Moment } from 'moment';
 import Odoo from '../utils/Odoo';
-import OdooProduct, { UnitOfMesurement } from '../entities/OdooProduct';
+import ProductProduct, { UnitOfMesurement } from '../entities/Odoo/ProductProduct';
 import Sound from 'react-native-sound';
 import { isInt } from '../utils/helpers';
 
@@ -36,10 +36,10 @@ export interface ScannerProps {
 interface ScannerState {
     displayCamera: boolean,
     flashStatus: FlashMode,
-    odooProduct?: OdooProduct,
+    ProductProduct?: ProductProduct,
     showProductCard: boolean,
     showManualSearchView: boolean,
-    showUnknownOdooProductNameView: boolean
+    showUnknownProductProductNameView: boolean
 }
 
 export default class Scanner extends React.Component<ScannerProps, ScannerState> {
@@ -82,10 +82,10 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         this.state = {
             displayCamera: false,
             flashStatus: RNCamera.Constants.FlashMode.off,
-            odooProduct: undefined,
+            ProductProduct: undefined,
             showProductCard: false,
             showManualSearchView: false,
-            showUnknownOdooProductNameView: false
+            showUnknownProductProductNameView: false
         }
     }
 
@@ -141,10 +141,10 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         this.scannedAt = undefined;
         this.resumeCamera();
         this.setState({
-            odooProduct: undefined,
+            ProductProduct: undefined,
             showManualSearchView: false,
             showProductCard: false,
-            showUnknownOdooProductNameView: false
+            showUnknownProductProductNameView: false
         });
     }
 
@@ -188,8 +188,8 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
     }
     hideManualSearchView = () => this.setState({ showManualSearchView: false });
 
-    showUnknownOdooProductNameView = () => this.setState({ showUnknownOdooProductNameView: true });
-    hideUnknownOdooProductView = () => this.setState({ showUnknownOdooProductNameView: false });
+    showUnknownProductProductNameView = () => this.setState({ showUnknownProductProductNameView: true });
+    hideUnknownProductProductView = () => this.setState({ showUnknownProductProductNameView: false });
 
     pauseCamera = () => this.setState({ displayCamera: false })
     resumeCamera = () => this.setState({ displayCamera: true })
@@ -223,7 +223,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         if (this.lastScannedBarcode === barcode) {
             return;
         }
-        this.setState({ odooProduct: undefined });
+        this.setState({ ProductProduct: undefined });
         this.lastScannedBarcode = barcode;
         this.beepSound.play(() => {
             this.beepSound.stop(); // Resets file for immediate play availability
@@ -234,19 +234,19 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
         this.updateNavigationTitle(barcode);
         this.showProductCard();
-        this.odoo.fetchProductFromBarcode(barcode).then((odooProduct) => {
-            if (!odooProduct) {
-                this.handleNotFoundOdooProduct(barcode);
+        this.odoo.fetchProductFromBarcode(barcode).then((ProductProduct) => {
+            if (!ProductProduct) {
+                this.handleNotFoundProductProduct(barcode);
                 return;
             }
-            this.handleFoundOdooProduct(odooProduct);
+            this.handleFoundProductProduct(ProductProduct);
         }, (reason) => {
             Alert.alert("Erreur", `Une erreur est survenue ("${reason}"). Merci de réessayer.`);
             this.reset();
         });
     }
 
-    handleNotFoundOdooProduct(barcode: string): void {
+    handleNotFoundProductProduct(barcode: string): void {
         let notFoundInOdooString = `Le code barre ${barcode} est introuvable dans odoo.`;
         let alertButtons: AlertButton[] = [{
             text: "Annuler",
@@ -256,21 +256,21 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
             },
             style: "cancel"
         }];
-        const odooProduct = new OdooProduct();
-        odooProduct.barcode = barcode;
-        this.setState({ odooProduct: odooProduct });
+        const ProductProduct = new ProductProduct();
+        ProductProduct.barcode = barcode;
+        this.setState({ ProductProduct: ProductProduct });
         if (this.isInInventoryMode()) {
             notFoundInOdooString = notFoundInOdooString.concat(" L'utiliser quand même pour l'inventaire ?");
             alertButtons.push({
                 text: "Utiliser",
-                onPress: () => { this.askForUnknownOdooProductName() },
+                onPress: () => { this.askForUnknownProductProductName() },
                 style: "default"
             });
         } else {
             notFoundInOdooString = notFoundInOdooString.concat(" Le signaler en envoyant un email automatique ?");
             alertButtons.push({
                 text: "Signaler",
-                onPress: () => { this.askForUnknownOdooProductName() },
+                onPress: () => { this.askForUnknownProductProductName() },
                 style: "default"
             });
         }
@@ -281,23 +281,23 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         );
     }
 
-    handleFoundOdooProduct(odooProduct: OdooProduct) {
+    handleFoundProductProduct(ProductProduct: ProductProduct) {
         this.setState({
-            odooProduct: odooProduct
+            ProductProduct: ProductProduct
         })
-        this.odoo.fetchImageForOdooProduct(odooProduct).then(image => {
-            const odooProduct = this.state.odooProduct;
-            if (odooProduct) {
-                odooProduct.image = OdooProduct.imageFromOdooBase64(image);
+        this.odoo.fetchImageForProductProduct(ProductProduct).then(image => {
+            const ProductProduct = this.state.ProductProduct;
+            if (ProductProduct) {
+                ProductProduct.image = ProductProduct.imageFromOdooBase64(image);
                 this.setState({
-                    odooProduct: odooProduct
+                    ProductProduct: ProductProduct
                 })
             }
         });
         if (this.isInInventoryMode()) {
             InventoryEntryFactory
                 .sharedInstance()
-                .findByInventorySessionAndOdooProduct(this.props.inventory, odooProduct)
+                .findByInventorySessionAndProductProduct(this.props.inventory, ProductProduct)
                 .then((foundInventoryEntries: InventoryEntry[]) => {
                     if (foundInventoryEntries.length > 0) {
                         const lastEntry = foundInventoryEntries[0];
@@ -336,27 +336,27 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
     }
 
-    askForUnknownOdooProductName = () => this.setState({ showUnknownOdooProductNameView: true });
-    hideUnknownOdooProductNameView = () => this.setState({ showUnknownOdooProductNameView: false });
-    handleUnknownOdooProductName = (name: string) => {
-        this.hideUnknownOdooProductNameView();
-        if (!this.state.odooProduct) {
+    askForUnknownProductProductName = () => this.setState({ showUnknownProductProductNameView: true });
+    hideUnknownProductProductNameView = () => this.setState({ showUnknownProductProductNameView: false });
+    handleUnknownProductProductName = (name: string) => {
+        this.hideUnknownProductProductNameView();
+        if (!this.state.ProductProduct) {
             throw new Error("No Odoo Product set");
         }
-        this.state.odooProduct.name = name;
+        this.state.ProductProduct.name = name;
 
         if (this.isInInventoryMode()) {
-            this.handleFoundOdooProduct(this.state.odooProduct);
+            this.handleFoundProductProduct(this.state.ProductProduct);
         } else {
-            this.reportUnknownOdooProductByMail(this.state.odooProduct);
+            this.reportUnknownProductProductByMail(this.state.ProductProduct);
         }
     }
 
-    reportUnknownOdooProductByMail(odooProduct: OdooProduct) {
+    reportUnknownProductProductByMail(ProductProduct: ProductProduct) {
         const to = "inventaire@supercoop.fr";
-        const subject = `Code barre inconnu (${(odooProduct.barcode)})`;
-        const body = `Le code barre ${(odooProduct.barcode)} est introuvable dans Odoo.
-Il a été associé à un produit nommé "${(odooProduct.name)}"`;
+        const subject = `Code barre inconnu (${(ProductProduct.barcode)})`;
+        const body = `Le code barre ${(ProductProduct.barcode)} est introuvable dans Odoo.
+Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
         try {
             Google.getInstance().sendEmail(to, subject, body).then(() => {
                 Alert.alert("Mail envoyé", "Merci pour le signalement ! 🎉");
@@ -369,10 +369,10 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
 
 
     inventoryDidTapSaveButton() {
-        if (!this.state.odooProduct) {
+        if (!this.state.ProductProduct) {
             throw new Error("No Odoo Product set");
         }
-        const unit = this.state.odooProduct.uom_id;
+        const unit = this.state.ProductProduct.uom_id;
         let quantity: number;
         try {
             if (!this.articleQuantityValue) {
@@ -396,7 +396,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
             }
         }
 
-        const newEntry = InventoryEntry.createFromOdooProduct(this.state.odooProduct);
+        const newEntry = InventoryEntry.createFromProductProduct(this.state.ProductProduct);
         newEntry.inventoryId = this.props.inventory.id;
         newEntry.scannedAt = this.scannedAt;
         newEntry.articleQuantity = quantity;
@@ -412,14 +412,14 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
         });
     }
 
-    renderUnknownOdooProductView() {
+    renderUnknownProductProductView() {
         return (
-            <DialogInput isDialogVisible={this.state.showUnknownOdooProductNameView}
+            <DialogInput isDialogVisible={this.state.showUnknownProductProductNameView}
                 title={"Nom du produit"}
                 message={"Quel est le nom du produit tel qu'affiché sur l'étiquette ?"}
-                submitInput={(name: string) => this.handleUnknownOdooProductName(name)}
+                submitInput={(name: string) => this.handleUnknownProductProductName(name)}
                 closeDialog={() => {
-                    this.hideUnknownOdooProductView();
+                    this.hideUnknownProductProductView();
                     this.reset();
                 }}
                 cancelText="Annuler"
@@ -489,7 +489,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                {this.renderUnknownOdooProductView()}
+                {this.renderUnknownProductProductView()}
                 {this.renderManualSearchView()}
                 {this.renderCameraView()}
                 <View style={styles.actions}>
@@ -519,9 +519,9 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                     this.state.showProductCard ? (
                         <View style={styles.information}>
                             <View style={{ flexDirection: 'row' }}>
-                                {(this.state.odooProduct && this.state.odooProduct.image) ? (
+                                {(this.state.ProductProduct && this.state.ProductProduct.image) ? (
                                     <Image
-                                        source={{ uri: this.state.odooProduct.image }}
+                                        source={{ uri: this.state.ProductProduct.image }}
                                         style={styles.articleImage}
                                     />
                                 ) : (
@@ -536,7 +536,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                                     numberOfLines={2}
                                     style={styles.articleName}
                                 >
-                                    {this.state.odooProduct ? this.state.odooProduct.name : "Chargement..."}
+                                    {this.state.ProductProduct ? this.state.ProductProduct.name : "Chargement..."}
                                 </Text>
                             </View>
                             {this.props.inventory ? (
@@ -551,7 +551,7 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                                             this.inventoryDidTapSaveButton();
                                         }}
                                     />
-                                    <Text style={{ fontSize: 28, flex: 0 }}>{this.state.odooProduct ? this.state.odooProduct.unitAsString() : null}</Text>
+                                    <Text style={{ fontSize: 28, flex: 0 }}>{this.state.ProductProduct ? this.state.ProductProduct.unitAsString() : null}</Text>
                                     <Button
                                         // style={{ flex: 1, marginLeft: 16 }}
                                         onPress={() => {
@@ -564,15 +564,15 @@ Il a été associé à un produit nommé "${(odooProduct.name)}"`;
                                     <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
                                         <View style={{ flex: 1, flexDirection: 'column' }}>
                                             <Text style={styles.detailTitle}>Prix</Text>
-                                            <Text style={styles.detailValue}>{this.state.odooProduct && this.state.odooProduct.lst_price ? Math.round(this.state.odooProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.ProductProduct && this.state.ProductProduct.lst_price ? Math.round(this.state.ProductProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Stock</Text>
-                                            <Text style={[styles.detailValue, (this.state.odooProduct && !this.state.odooProduct.quantityIsValid() ? styles.detailValueInvalid : undefined)]}>{this.state.odooProduct && this.state.odooProduct.quantityIsValid() ? this.state.odooProduct.quantityAsString() : '-'}</Text>
+                                            <Text style={[styles.detailValue, (this.state.ProductProduct && !this.state.ProductProduct.quantityIsValid() ? styles.detailValueInvalid : undefined)]}>{this.state.ProductProduct && this.state.ProductProduct.quantityIsValid() ? this.state.ProductProduct.quantityAsString() : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                                            <Text style={styles.detailValue}>{this.state.odooProduct ? this.state.odooProduct.packagingAsString() : '-'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.ProductProduct ? this.state.ProductProduct.packagingAsString() : '-'}</Text>
                                         </View>
                                     </View>
                                 )}

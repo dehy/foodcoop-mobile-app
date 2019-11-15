@@ -4,7 +4,7 @@ import Database from '../utils/Database';
 import InventorySession from '../entities/InventorySession';
 import moment from 'moment';
 import InventoryEntry from '../entities/InventoryEntry';
-import OdooProduct from '../entities/OdooProduct';
+import ProductProduct from '../entities/Odoo/ProductProduct';
 
 interface InventoryEntryTableDefinition {
     id?: number;
@@ -34,7 +34,7 @@ export default class InventoryEntryFactory {
         this.db = Database.sharedInstance();
     }
 
-    async findByInventorySessionAndOdooProduct(inventorySession: InventorySession, product: OdooProduct): Promise<InventoryEntry[]> {
+    async findByInventorySessionAndProductProduct(inventorySession: InventorySession, product: ProductProduct): Promise<InventoryEntry[]> {
         if (!inventorySession.id || !product.barcode) {
             throw new Error();
         }

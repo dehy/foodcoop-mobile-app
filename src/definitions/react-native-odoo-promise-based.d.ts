@@ -7,6 +7,7 @@ interface OdooApiResponse {
 }
 
 interface OdooApiProductProduct {
+    id?: number;
     barcode?: string;
     name?: string;
     image?: string|null;
