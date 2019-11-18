@@ -6,12 +6,12 @@ import Google from '../utils/Google';
 import { Navigation } from 'react-native-navigation';
 import materialStyle from '../styles/material';
 
-export interface ProfileProps {
+export interface PlusProps {
     componentId: string
 }
 
-export default class Profile extends React.Component<ProfileProps> {
-    constructor(props: ProfileProps) {
+export default class Plus extends React.Component<PlusProps> {
+    constructor(props: PlusProps) {
         super(props);
         Navigation.events().bindComponent(this);
     }
@@ -20,14 +20,14 @@ export default class Profile extends React.Component<ProfileProps> {
             case 'about':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Settings/About'
+                        name: 'Plus/About'
                     }
                 });
                 break;
             case 'maintenance':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Settings/Maintenance'
+                        name: 'Plus/Maintenance'
                     }
                 });
                 break;

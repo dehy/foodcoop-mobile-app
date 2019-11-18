@@ -43,14 +43,14 @@ export default class Maintenance extends React.Component<MaintenanceProps, Maint
             case 'database':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Settings/Maintenance/Database',
+                        name: 'Plus/Maintenance/Database',
                     }
                 })
                 break;
             case 'cookies':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Settings/Maintenance/Cookies'
+                        name: 'Plus/Maintenance/Cookies'
                     }
                 })
                 break;
