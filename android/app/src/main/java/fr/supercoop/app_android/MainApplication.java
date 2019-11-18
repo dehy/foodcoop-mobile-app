@@ -24,8 +24,6 @@ import org.reactnative.camera.RNCameraPackage;
 import java.util.Arrays;
 import java.util.List;
 
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
-import io.sentry.RNSentryPackage;
 
 public class MainApplication extends NavigationApplication {
     @Override

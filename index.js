@@ -7,14 +7,16 @@ import 'reflect-metadata';
 import { Navigation } from "react-native-navigation";
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { registerScreens } from './src/utils/screens';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import moment from 'moment';
 import momentFr from 'moment/locale/fr';
 import Database from './src/utils/Database';
 
 moment.locale('fr');
 if (!__DEV__) {
-    Sentry.config('***REMOVED***').install();
+    Sentry.init({ 
+        dsn: '***REMOVED***', 
+      });
 }
 
 registerScreens();
