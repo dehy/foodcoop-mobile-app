@@ -1,6 +1,9 @@
 import SQLite from 'react-native-sqlite-storage';
 import './helpers';
 import { toNumber } from './helpers';
+import GoodsReceiptSession from '../entities/GoodsReceiptSession';
+import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
+import { createConnection } from 'typeorm';
 
 export default class Database {
     static TARGET_SCHEMA_VERSION = 2;
@@ -25,7 +28,22 @@ export default class Database {
         SQLite.enablePromise(true);
     }
 
-    async connect(): Promise<void> {
+    static connect() {
+        return createConnection({
+            type: 'react-native',
+            database: 'supercoop',
+            location: 'Documents',
+            logging: ['error', 'query', 'schema'],
+            //dropSchema: true,
+            synchronize: true,
+            entities: [
+                GoodsReceiptSession,
+                GoodsReceiptEntry
+            ]
+        });
+    }
+
+    async legacyConnect(): Promise<void> {
         if (this.db === undefined) {
             try {
                 // await SQLite.echoTest();
@@ -41,7 +59,7 @@ export default class Database {
     }
 
     async migrate(): Promise<boolean> {
-        await this.connect();
+        await this.legacyConnect();
         if (this.db === undefined) {
             console.error("No database open while trying to migrate");
             return false;
@@ -102,7 +120,7 @@ export default class Database {
     }
 
     async resetDatabase(): Promise<boolean> {
-        await this.connect();
+        await this.legacyConnect();
         const response = await this.executeQuery("SELECT `name` FROM `sqlite_master` WHERE `type` = 'table'");
         if (response == undefined) {
             console.error("No response from database while selecting table names during database reset");
@@ -122,7 +140,7 @@ export default class Database {
     }
 
     async executeQuery(statement: string, parameters: any[] = []): Promise<[SQLite.ResultSet]> {
-        await this.connect();
+        await this.legacyConnect();
         if (this.db === undefined) {
             throw new Error("No database open while executing query");
         }

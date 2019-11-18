@@ -33,9 +33,7 @@
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-  if ([url.absoluteString hasPrefix:@"com.googleusercontent.apps"]) {
     return [GIDSignIn.sharedInstance handleURL:url sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey] annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
-  }
   
   return true;
 }
