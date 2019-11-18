@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-google-signin/ios/RNGoogleSignin/RNGSPromiseWrapper.h
+../../../../../node_modules/@react-native-community/google-signin/ios/RNGoogleSignin/RNGSPromiseWrapper.h
