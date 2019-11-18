@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView } from 'react-native';
 import { goHome } from '../utils/navigation';
-import { GoogleSigninButton } from 'react-native-google-signin';
+import { GoogleSigninButton } from '@react-native-community/google-signin';
 import Google from '../utils/Google';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
 import DeviceInfo from 'react-native-device-info';

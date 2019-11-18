@@ -78,6 +78,7 @@ project.ext.react = [
 
 apply from: './versionCode.gradle'
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -168,13 +169,11 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-cookies')
     implementation project(':react-native-action-sheet')
-    implementation project(':react-native-sentry')
     implementation project(':react-native-svg')
     implementation project(':react-native-keychain')
     implementation project(':react-native-sound')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webview')
-    implementation project(':react-native-google-signin')
     implementation project(':react-native-camera')
     implementation project(':react-native-navigation')
     implementation project(':react-native-sqlite-storage')

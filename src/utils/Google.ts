@@ -1,7 +1,4 @@
-import React from 'react'
-import { GoogleSignin, statusCodes, User } from 'react-native-google-signin'
-import { goToAuth } from './navigation';
-import Sentry from 'react-native-sentry';
+import { GoogleSignin, statusCodes, User } from '@react-native-community/google-signin';
 import base64 from 'react-native-base64';
 
 export interface MailAttachment {
