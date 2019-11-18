@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import { defaultScreenOptions } from '../utils/navigation';
 import { Navigation } from 'react-native-navigation';
-import { RNCamera, RNCameraProps, FlashMode } from 'react-native-camera';
+import { RNCamera, RNCameraProps, FlashMode, AutoFocus, Barcode } from 'react-native-camera';
 import DialogInput from 'react-native-dialog-input';
 import Google from '../utils/Google';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -25,8 +25,8 @@ import InventorySessionFactory from '../factories/InventorySessionFactory';
 import moment, { Moment } from 'moment';
 import Odoo from '../utils/Odoo';
 import ProductProduct, { UnitOfMesurement } from '../entities/Odoo/ProductProduct';
-import Sound from 'react-native-sound';
 import { isInt } from '../utils/helpers';
+import Scanner2 from './Scanner2';
 
 export interface ScannerProps {
     componentId: string,
@@ -34,23 +34,38 @@ export interface ScannerProps {
 }
 
 interface ScannerState {
+    mode: keyof ScanMode,
     displayCamera: boolean,
-    flashStatus: FlashMode,
-    ProductProduct?: ProductProduct,
+    flashStatus: keyof FlashMode,
+    autoFocus: keyof AutoFocus,
+    odooProductProduct?: ProductProduct,
     showProductCard: boolean,
-    showManualSearchView: boolean,
     showUnknownProductProductNameView: boolean
+}
+
+type ScanMode = {
+    infos: any,
+    inventory: any,
+    admissions: any,
+    losses: any
 }
 
 export default class Scanner extends React.Component<ScannerProps, ScannerState> {
 
+    static ScanMode: ScanMode = {
+        infos: 1,
+        inventory: 2,
+        admissions: 3,
+        losses: 4
+    }
+
     static MODE_SCANNER = 1;
     static MODE_INVENTORY = 2;
 
-    private beepSound: any;
     private odoo: Odoo;
     private lastScannedBarcode?: string;
     private camera?: RNCamera;
+    private scanner?: Scanner2;
 
     private textInput?: TextInput|null;
     private articleQuantityValue?: string;
@@ -65,26 +80,17 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         // Navigation
         Navigation.events().bindComponent(this);
 
-        // Sound
-        Sound.setCategory('Ambient', true);
-        this.beepSound = new Sound('beep.mp3', Sound.MAIN_BUNDLE, (error) => {
-            if (error) {
-                console.log('failed to load the sound', error);
-                return;
-            }
-        });
-        this.beepSound.stop();
-
         // Odoo
         this.odoo = Odoo.getInstance();
         this.lastScannedBarcode = undefined;
 
         this.state = {
+            mode: Scanner.ScanMode.infos,
             displayCamera: false,
             flashStatus: RNCamera.Constants.FlashMode.off,
-            ProductProduct: undefined,
+            autoFocus: RNCamera.Constants.AutoFocus.on,
+            odooProductProduct: undefined,
             showProductCard: false,
-            showManualSearchView: false,
             showUnknownProductProductNameView: false
         }
     }
@@ -125,7 +131,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         return options;
     }
 
-    navigationButtonPressed({ buttonId }) {
+    navigationButtonPressed({ buttonId }: { buttonId: string }) {
         if (buttonId === 'close') {
             this.blurInput();
             Navigation.dismissModal(this.props.componentId);
@@ -139,13 +145,12 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         this.lastScannedBarcode = undefined;
         this.articleQuantityValue = undefined;
         this.scannedAt = undefined;
-        this.resumeCamera();
         this.setState({
-            ProductProduct: undefined,
-            showManualSearchView: false,
+            odooProductProduct: undefined,
             showProductCard: false,
             showUnknownProductProductNameView: false
         });
+        this.scanner ? this.scanner.reset() : undefined;
     }
 
     isInInventoryMode(): boolean {
@@ -168,31 +173,37 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
     }
 
-    enableFlash = () => this.setState({ flashStatus: RNCamera.Constants.FlashMode.torch })
-    disableFlash = () => this.setState({ flashStatus: RNCamera.Constants.FlashMode.off })
+    enableFlash = () => {
+        this.setState({
+            flashStatus: RNCamera.Constants.FlashMode.torch
+        });
+    }
+    disableFlash = () => {
+        this.setState({
+            flashStatus: RNCamera.Constants.FlashMode.off
+        });
+    }
     toggleFlash = () => {
         if (this.state.flashStatus == RNCamera.Constants.FlashMode.off) {
-            this.setState({ flashStatus: RNCamera.Constants.FlashMode.torch });
+            this.enableFlash();
             return;
         }
-        this.setState({ flashStatus: RNCamera.Constants.FlashMode.off });
+        this.disableFlash();
+    }
+
+    toggleAutoFocus = () => {
+        if (this.state.autoFocus == RNCamera.Constants.AutoFocus.off) {
+            this.setState({ autoFocus: RNCamera.Constants.AutoFocus.on })
+        } else {
+            this.setState({ autoFocus: RNCamera.Constants.AutoFocus.off })
+        }
     }
 
     showProductCard = () => this.setState({ showProductCard: true });
     hideProductCard = () => this.setState({ showProductCard: false });
 
-    showManualSearchView = () => {
-        this.hideProductCard();
-        this.pauseCamera();
-        this.setState({ showManualSearchView: true });
-    }
-    hideManualSearchView = () => this.setState({ showManualSearchView: false });
-
     showUnknownProductProductNameView = () => this.setState({ showUnknownProductProductNameView: true });
     hideUnknownProductProductView = () => this.setState({ showUnknownProductProductNameView: false });
-
-    pauseCamera = () => this.setState({ displayCamera: false })
-    resumeCamera = () => this.setState({ displayCamera: true })
 
     updateNavigationTitle(title?: string) {
         Navigation.mergeOptions(this.props.componentId, {
@@ -204,12 +215,10 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         });
     }
 
-    didScanBarcode(barcode: string, type?: string): void {
-        console.debug("didScanBarcode()", type, barcode);
-        this.pauseCamera();
-        if ((type && type === RNCamera.Constants.BarCodeType.ean13) || (!type && barcode.length == 13)) {
-            this.hideManualSearchView();
-            this.lookupForBarcode(barcode);
+    didScanBarcode(barcode: Barcode): void {
+        console.debug("didScanBarcode()", barcode.data, barcode.type);
+        if ((barcode.type !== "PRODUCT") || !(barcode.data.length !== 13)) {
+            this.lookupForBarcode(barcode.data);
             return;
         }
         Alert.alert(
@@ -223,23 +232,17 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         if (this.lastScannedBarcode === barcode) {
             return;
         }
-        this.setState({ ProductProduct: undefined });
+        this.setState({ odooProductProduct: undefined });
         this.lastScannedBarcode = barcode;
-        this.beepSound.play(() => {
-            this.beepSound.stop(); // Resets file for immediate play availability
-        });
         this.scannedAt = moment();
-        if (this.isInInventoryMode()) {
-            this.pauseCamera();
-        }
         this.updateNavigationTitle(barcode);
         this.showProductCard();
-        this.odoo.fetchProductFromBarcode(barcode).then((ProductProduct) => {
-            if (!ProductProduct) {
+        this.odoo.fetchProductFromBarcode(barcode).then((odooProductProduct) => {
+            if (!odooProductProduct) {
                 this.handleNotFoundProductProduct(barcode);
                 return;
             }
-            this.handleFoundProductProduct(ProductProduct);
+            this.handleFoundProductProduct(odooProductProduct);
         }, (reason) => {
             Alert.alert("Erreur", `Une erreur est survenue ("${reason}"). Merci de réessayer.`);
             this.reset();
@@ -256,9 +259,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
             },
             style: "cancel"
         }];
-        const ProductProduct = new ProductProduct();
-        ProductProduct.barcode = barcode;
-        this.setState({ ProductProduct: ProductProduct });
+        const odooProductProduct = new ProductProduct();
+        odooProductProduct.barcode = barcode;
+        this.setState({ odooProductProduct: odooProductProduct });
         if (this.isInInventoryMode()) {
             notFoundInOdooString = notFoundInOdooString.concat(" L'utiliser quand même pour l'inventaire ?");
             alertButtons.push({
@@ -281,23 +284,23 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         );
     }
 
-    handleFoundProductProduct(ProductProduct: ProductProduct) {
+    handleFoundProductProduct(odooProductProduct: ProductProduct) {
         this.setState({
-            ProductProduct: ProductProduct
+            odooProductProduct: odooProductProduct
         })
-        this.odoo.fetchImageForProductProduct(ProductProduct).then(image => {
-            const ProductProduct = this.state.ProductProduct;
-            if (ProductProduct) {
-                ProductProduct.image = ProductProduct.imageFromOdooBase64(image);
+        this.odoo.fetchImageForProductProduct(odooProductProduct).then(image => {
+            const odooProductProduct = this.state.odooProductProduct;
+            if (odooProductProduct) {
+                odooProductProduct.image = ProductProduct.imageFromOdooBase64(image);
                 this.setState({
-                    ProductProduct: ProductProduct
+                    odooProductProduct: odooProductProduct
                 })
             }
         });
         if (this.isInInventoryMode()) {
             InventoryEntryFactory
                 .sharedInstance()
-                .findByInventorySessionAndProductProduct(this.props.inventory, ProductProduct)
+                .findByInventorySessionAndProductProduct(this.props.inventory!, odooProductProduct)
                 .then((foundInventoryEntries: InventoryEntry[]) => {
                     if (foundInventoryEntries.length > 0) {
                         const lastEntry = foundInventoryEntries[0];
@@ -331,8 +334,6 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
                     }
                 });
             this.focusOnQuantityInput();
-        } else {
-            this.resumeCamera();
         }
     }
 
@@ -340,23 +341,23 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
     hideUnknownProductProductNameView = () => this.setState({ showUnknownProductProductNameView: false });
     handleUnknownProductProductName = (name: string) => {
         this.hideUnknownProductProductNameView();
-        if (!this.state.ProductProduct) {
+        if (!this.state.odooProductProduct) {
             throw new Error("No Odoo Product set");
         }
-        this.state.ProductProduct.name = name;
+        this.state.odooProductProduct.name = name;
 
         if (this.isInInventoryMode()) {
-            this.handleFoundProductProduct(this.state.ProductProduct);
+            this.handleFoundProductProduct(this.state.odooProductProduct);
         } else {
-            this.reportUnknownProductProductByMail(this.state.ProductProduct);
+            this.reportUnknownProductProductByMail(this.state.odooProductProduct);
         }
     }
 
-    reportUnknownProductProductByMail(ProductProduct: ProductProduct) {
+    reportUnknownProductProductByMail(odooProductProduct: ProductProduct) {
         const to = "inventaire@supercoop.fr";
-        const subject = `Code barre inconnu (${(ProductProduct.barcode)})`;
-        const body = `Le code barre ${(ProductProduct.barcode)} est introuvable dans Odoo.
-Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
+        const subject = `Code barre inconnu (${(odooProductProduct.barcode)})`;
+        const body = `Le code barre ${(odooProductProduct.barcode)} est introuvable dans Odoo.
+Il a été associé à un produit nommé "${(odooProductProduct.name)}"`;
         try {
             Google.getInstance().sendEmail(to, subject, body).then(() => {
                 Alert.alert("Mail envoyé", "Merci pour le signalement ! 🎉");
@@ -369,10 +370,10 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
 
 
     inventoryDidTapSaveButton() {
-        if (!this.state.ProductProduct) {
+        if (!this.state.odooProductProduct) {
             throw new Error("No Odoo Product set");
         }
-        const unit = this.state.ProductProduct.uom_id;
+        const unit = this.state.odooProductProduct.uom_id;
         let quantity: number;
         try {
             if (!this.articleQuantityValue) {
@@ -396,8 +397,8 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
             }
         }
 
-        const newEntry = InventoryEntry.createFromProductProduct(this.state.ProductProduct);
-        newEntry.inventoryId = this.props.inventory.id;
+        const newEntry = InventoryEntry.createFromProductProduct(this.state.odooProductProduct);
+        newEntry.inventoryId = this.props.inventory!.id;
         newEntry.scannedAt = this.scannedAt;
         newEntry.articleQuantity = quantity;
         newEntry.savedAt = moment();
@@ -405,7 +406,7 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
         InventoryEntryFactory.sharedInstance().persist(newEntry).then(() => {
             InventorySessionFactory
                 .sharedInstance()
-                .updateLastModifiedAt(this.props.inventory, moment())
+                .updateLastModifiedAt(this.props.inventory!, moment())
                 .then(() => {
                     this.reset();
                 })
@@ -428,55 +429,49 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
         );
     }
 
-    renderManualSearchView() {
-        return (
-            <DialogInput isDialogVisible={this.state.showManualSearchView}
-                title={"Recherche manuelle"}
-                message={"Entres le code barre du produit que tu cherches"}
-                submitInput={(barcode: string) => { this.didScanBarcode(barcode) }}
-                closeDialog={() => {
-                    this.hideManualSearchView();
-                    this.reset();
-                }}
-                textInputProps={{
-                    keyboardType: 'number-pad'
-                }}
-                cancelText="Annuler"
-                submitText="Chercher"
-            />
-        );
-    }
-
     renderCameraView() {
         if (this.state.displayCamera) {
-            return (<RNCamera
-                ref={ref => {
-                    this.camera = ref !== null ? ref : undefined;
-                }}
-                captureAudio={false}
-                style={styles.preview}
-                type={RNCamera.Constants.Type.back}
-                androidCameraPermissionOptions={{
-                    title: 'Permission d\'utiliser la caméra',
-                    message: 'Nous avons besoin de ta permission pour utiliser la caméra de ton téléphone',
-                    buttonPositive: 'Ok',
-                    buttonNegative: 'Annuler',
-                }}
-                autoFocus={RNCamera.Constants.AutoFocus.on}
-                flashMode={this.state.flashStatus}
-                onBarCodeRead={({ data, rawData, type, bounds }) => this.didScanBarcode(data, type)}
-            >
-                {({ camera, status, recordAudioPermissionStatus }) => {
-                    if (status !== 'READY') {
-                        return (
-                            <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>Chargement de la caméra...</Text>
-                            </View>
-                        );
-                    }
-                }}
-            </RNCamera>);
+            return (
+                <Scanner2
+                    ref={(ref) => {
+                        this.scanner = ref !== null ? ref : undefined;
+                    }}
+                    onBarcodeRead={(barcode) => {
+                        this.didScanBarcode(barcode);
+                    }}
+                >
+
+                </Scanner2>);
         }
+        // if (this.state.displayCamera) {
+        //     return (<RNCamera
+        //         ref={ref => {
+        //             this.camera = ref !== null ? ref : undefined;
+        //         }}
+        //         captureAudio={false}
+        //         style={styles.preview}
+        //         type={RNCamera.Constants.Type.back}
+        //         androidCameraPermissionOptions={{
+        //             title: 'Permission d\'utiliser la caméra',
+        //             message: 'Nous avons besoin de ta permission pour utiliser la caméra de ton téléphone',
+        //             buttonPositive: 'Ok',
+        //             buttonNegative: 'Annuler',
+        //         }}
+        //         autoFocus={RNCamera.Constants.AutoFocus.on}
+        //         flashMode={this.state.flashStatus}
+        //         onBarCodeRead={({ data, rawData, type, bounds }) => this.didScanBarcode(data, type)}
+        //     >
+        //         {({ camera, status, recordAudioPermissionStatus }) => {
+        //             if (status !== 'READY') {
+        //                 return (
+        //                     <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
+        //                         <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>Chargement de la caméra...</Text>
+        //                     </View>
+        //                 );
+        //             }
+        //         }}
+        //     </RNCamera>);
+        // }
         if (!this.state.displayCamera) {
             return (
                 <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.25)', justifyContent: 'center' }}>
@@ -490,38 +485,14 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
         return (
             <SafeAreaView style={styles.container}>
                 {this.renderUnknownProductProductView()}
-                {this.renderManualSearchView()}
                 {this.renderCameraView()}
-                <View style={styles.actions}>
-                    <View style={styles.actionButton}>
-                        <Icon.Button
-                            name="bolt"
-                            backgroundColor={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#000000" : "#FFFFFF"}
-                            color={this.state.flashStatus == RNCamera.Constants.FlashMode.off ? "#FFFFFF" : "#000000"}
-                            onPress={() => { this.toggleFlash() }}
-                            solid
-                        >
-                            Flash
-                            </Icon.Button>
-                    </View>
-                    <View style={styles.actionButton}>
-                        <Icon.Button
-                            name="keyboard"
-                            backgroundColor="#000000"
-                            onPress={this.showManualSearchView}
-                            solid
-                        >
-                            Clavier
-                        </Icon.Button>
-                    </View>
-                </View>
                 {
                     this.state.showProductCard ? (
                         <View style={styles.information}>
                             <View style={{ flexDirection: 'row' }}>
-                                {(this.state.ProductProduct && this.state.ProductProduct.image) ? (
+                                {(this.state.odooProductProduct && this.state.odooProductProduct.image) ? (
                                     <Image
-                                        source={{ uri: this.state.ProductProduct.image }}
+                                        source={{ uri: this.state.odooProductProduct.image }}
                                         style={styles.articleImage}
                                     />
                                 ) : (
@@ -536,7 +507,7 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
                                     numberOfLines={2}
                                     style={styles.articleName}
                                 >
-                                    {this.state.ProductProduct ? this.state.ProductProduct.name : "Chargement..."}
+                                    {this.state.odooProductProduct ? this.state.odooProductProduct.name : "Chargement..."}
                                 </Text>
                             </View>
                             {this.props.inventory ? (
@@ -551,7 +522,7 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
                                             this.inventoryDidTapSaveButton();
                                         }}
                                     />
-                                    <Text style={{ fontSize: 28, flex: 0 }}>{this.state.ProductProduct ? this.state.ProductProduct.unitAsString() : null}</Text>
+                                    <Text style={{ fontSize: 28, flex: 0 }}>{this.state.odooProductProduct ? this.state.odooProductProduct.unitAsString() : null}</Text>
                                     <Button
                                         // style={{ flex: 1, marginLeft: 16 }}
                                         onPress={() => {
@@ -564,15 +535,15 @@ Il a été associé à un produit nommé "${(ProductProduct.name)}"`;
                                     <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
                                         <View style={{ flex: 1, flexDirection: 'column' }}>
                                             <Text style={styles.detailTitle}>Prix</Text>
-                                            <Text style={styles.detailValue}>{this.state.ProductProduct && this.state.ProductProduct.lst_price ? Math.round(this.state.ProductProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.odooProductProduct && this.state.odooProductProduct.lst_price ? Math.round(this.state.odooProductProduct.lst_price * 100) / 100 + ' €' : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Stock</Text>
-                                            <Text style={[styles.detailValue, (this.state.ProductProduct && !this.state.ProductProduct.quantityIsValid() ? styles.detailValueInvalid : undefined)]}>{this.state.ProductProduct && this.state.ProductProduct.quantityIsValid() ? this.state.ProductProduct.quantityAsString() : '-'}</Text>
+                                            <Text style={[styles.detailValue, (this.state.odooProductProduct && !this.state.odooProductProduct.quantityIsValid() ? styles.detailValueInvalid : undefined)]}>{this.state.odooProductProduct && this.state.odooProductProduct.quantityIsValid() ? this.state.odooProductProduct.quantityAsString() : '-'}</Text>
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                                            <Text style={styles.detailValue}>{this.state.ProductProduct ? this.state.ProductProduct.packagingAsString() : '-'}</Text>
+                                            <Text style={styles.detailValue}>{this.state.odooProductProduct ? this.state.odooProductProduct.packagingAsString() : '-'}</Text>
                                         </View>
                                     </View>
                                 )}
@@ -590,6 +561,13 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         position: 'relative',
         backgroundColor: 'black',
+    },
+    scanMode: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        marginLeft: 8,
+        marginTop: 8
     },
     actions: {
         position: 'absolute',

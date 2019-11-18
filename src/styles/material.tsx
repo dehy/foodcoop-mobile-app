@@ -1,5 +1,11 @@
 import React, { StyleSheet } from 'react-native';
 export default StyleSheet.create({
+    listHeader: {
+        backgroundColor: '#EEEEEE',
+        fontWeight: 'bold',
+        paddingHorizontal: 16,
+        paddingVertical: 4
+    },
     row: {
         flexDirection: 'row',
         justifyContent: 'flex-start',

@@ -5,11 +5,21 @@ import ProductProduct from '../entities/Odoo/ProductProduct';
 import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
 import CookieManager from 'react-native-cookies';
 import { isInt } from './helpers';
+import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
+import PurchaseOrderFactory from '../factories/Odoo/PurchaseOrderFactory';
+import moment from 'moment';
+import PurchaseOrderLine from '../entities/Odoo/PurchaseOrderLine';
+import PurchaseOrderLineFactory from '../factories/Odoo/PurchaseOrderLineFactory';
+import iconv from 'iconv-lite';
 
 export default class Odoo {
 
     private static UNIT_UNIT = 1;
     private static UNIT_KG = 2;
+
+    private static FETCH_FIELDS_PRODUCT = ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'];
+
+    public static DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
     private static instance: Odoo;
     private static odooEnpoint: string = 'labo.supercoop.fr';
@@ -103,6 +113,121 @@ export default class Odoo {
         }
     }
 
+    async fetchPurchaseOrdersPlannedToday(): Promise<PurchaseOrder[]> {
+        const isConnected = await this.assertConnect();
+
+        var params = {
+            domain: [['state', '=', 'purchase'], ['date_planned', '>=', moment().startOf('day').format(Odoo.DATETIME_FORMAT)], ['date_planned', '<', moment().endOf('day').format(Odoo.DATETIME_FORMAT)]],
+            fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
+            offset: 0,
+            order: 'date_planned DESC'
+        };
+        const response = await this.odooApi.search_read('purchase.order', params);
+        this.assertApiResponse(response);
+        if (response.data.length > 0) {
+            let purchaseOrders: PurchaseOrder[] = [];
+            response.data.forEach((element: OdooApiPurchaseOrder) => {
+                purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element))
+            });
+            return purchaseOrders;
+        }
+        return [];
+    }
+
+    async fetchWaitingPurchaseOrders(): Promise<PurchaseOrder[]> {
+        const isConnected = await this.assertConnect();
+        
+        var params = {
+            domain: [['state', '=', 'purchase'], ['date_planned', '>', moment().subtract(1, 'months').format(Odoo.DATETIME_FORMAT)]],
+            fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
+            //limit: 10,
+            offset: 0,
+            order: 'date_planned DESC'
+        };
+
+        const response = await this.odooApi.search_read('purchase.order', params);
+        this.assertApiResponse(response);
+        if (response.data.length > 0) {
+            let purchaseOrders: PurchaseOrder[] = [];
+            response.data.forEach((element: OdooApiPurchaseOrder) => {
+                purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element))
+            });
+            return purchaseOrders;
+        }
+        return [];
+    }
+
+    async fetchPurchaseOrderFromName(poName: string): Promise<PurchaseOrder|undefined> {
+        const isConnected = await this.assertConnect();
+    
+        var params = {
+            domain: [['name', '=', poName]],
+            //fields: ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'],
+            limit: 1,
+            offset: 0,
+        };
+
+        const response = await this.odooApi.search_read('purchase.order', params);
+        this.assertApiResponse(response);
+        if (response.data.length > 0) {
+            return PurchaseOrderFactory.PurchaseOrderFromResponse(response.data[0]);
+        }
+        return undefined;
+    }
+
+    async fetchPurchaseOrderLinesForPurchaseOrder(purchaseOrder: PurchaseOrder): Promise<PurchaseOrderLine[]> {
+        const isConnected = await this.assertConnect();
+    
+        var params = {
+            domain: [['order_id', '=', purchaseOrder.id!]],
+            fields: ['id', 'name', 'product_id', 'package_qty', 'product_qty_package', 'product_qty', 'product_uom'],
+            offset: 0,
+        };
+
+        const response = await this.odooApi.search_read('purchase.order.line', params);
+        this.assertApiResponse(response);
+        console.log("fetchPurchaseOrderLinesForPurchaseOrder");
+        if (response.data.length > 0) {
+            let purchaseOrderLines: PurchaseOrderLine[] = [];
+            response.data.forEach((element: OdooApiPurchaseOrderLine) => {
+                const purchaseOrderLine = PurchaseOrderLineFactory.PurchaseOrderLineFromResponse(element);
+                purchaseOrderLine.purchaseOrder = purchaseOrder;
+
+                purchaseOrderLines.push(purchaseOrderLine);
+            });
+            purchaseOrder.purchaseOrderLines = purchaseOrderLines;
+            return purchaseOrderLines;
+        }
+        return [];
+    }
+
+    async fetchProductFromIds(ids: number[]): Promise<ProductProduct[]|undefined> {
+        console.debug("[Odoo] fetchProductFromIds()");
+        const isConnected = await this.assertConnect();
+        if (isConnected !== true) {
+            console.error(this.odooApi);
+            throw new Error("Odoo is not connected");
+        }
+
+        var params = {
+            ids: ids,
+            fields: Odoo.FETCH_FIELDS_PRODUCT
+        }; //params
+
+        console.debug("[Odoo] search_read(product.product) with params:");
+        console.debug(params);
+        const response = await this.odooApi.get('product.product', params);
+        this.assertApiResponse(response);
+        let products: ProductProduct[] = [];
+        if (response.data.length > 0) {
+            response.data.forEach((element: OdooApiProductProduct) => {
+                products.push(ProductProductFactory.ProductProductFromResponse(element))
+            });
+            return products;
+        }
+        return undefined;
+    }
+
     async fetchProductFromBarcode(barcode: string): Promise<ProductProduct|undefined> {
         console.debug("[Odoo] fetchProductFromBarcode()");
         const isConnected = await this.assertConnect();
@@ -115,7 +240,7 @@ export default class Odoo {
             // ids: [1, 2, 3, 4, 5],
             // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
             domain: [['barcode', '=', barcode]],
-            fields: ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'],
+            fields: Odoo.FETCH_FIELDS_PRODUCT,
             // lst_price = prix de vente, standard_price = achat, uom_id = unité de vente, uom_po_id = unité d'achat
             // order: 'name DESC',
             limit: 1,
@@ -132,7 +257,7 @@ export default class Odoo {
         return undefined;
     }
 
-    async fetchImageForProductProduct(ProductProduct: ProductProduct) {
+    async fetchImageForProductProduct(odooProduct: ProductProduct) {
         console.debug("fetchImageForProductProduct()");
         if (await this.assertConnect() !== true) {
             throw new Error("Odoo is not connected");
@@ -181,5 +306,9 @@ export default class Odoo {
         }).catch((e) => {
             console.error(e);
         });
+    }
+
+    iso88591ToUtf8(data: string): string {
+        return iconv.decode(Buffer.from(data), 'iso-8859-1')
     }
 }

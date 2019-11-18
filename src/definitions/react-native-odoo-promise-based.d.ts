@@ -18,6 +18,24 @@ interface OdooApiProductProduct {
     volume?: number;
 }
 
+interface OdooApiPurchaseOrder {
+    id?: number;
+    name?: string;
+    date_order?: string;
+    date_planned?: string;
+    partner_id?: [number!, string!];
+}
+
+interface OdooApiPurchaseOrderLine {
+    id?: number;
+    name?: string;
+    product_id?: [number, string];
+    package_qty?: number;
+    product_qty_package?: number;
+    product_qty?: number;
+    product_uom?: [number, string];
+}
+
 interface OdooApi {
     sid?: string;
     cookie?: string;
