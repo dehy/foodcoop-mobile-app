@@ -1,13 +1,12 @@
-import { GoogleSignin, statusCodes, User } from '@react-native-community/google-signin';
+import { GoogleSignin, User } from '@react-native-community/google-signin';
 import base64 from 'react-native-base64';
 
 export interface MailAttachment {
-    filename: string
+    filename: string;
     content: string;
 }
 
 export default class Google {
-
     private static instance: Google;
     private currentUser?: User;
 
@@ -27,16 +26,16 @@ export default class Google {
                 scopes: [
                     'https://www.googleapis.com/auth/userinfo.email',
                     'https://www.googleapis.com/auth/userinfo.profile',
-                    'https://www.googleapis.com/auth/gmail.send'
+                    'https://www.googleapis.com/auth/gmail.send',
                 ],
-                hostedDomain: 'supercoop.fr'
+                hostedDomain: 'supercoop.fr',
             });
         } catch (error) {
             console.error('Google Signin configure error', error);
         }
     }
 
-    setCurrentUser(user: User|undefined): void {
+    setCurrentUser(user: User | undefined): void {
         console.debug(user);
         this.currentUser = user;
         // Sentry.setUserContext({
@@ -83,46 +82,44 @@ export default class Google {
         }
     }
 
-    async getAccessToken(): Promise<string|null> {
+    async getAccessToken(): Promise<string | null> {
         if (this.currentUser !== undefined) {
             const tokens = await GoogleSignin.getTokens();
-            console.debug("tokens: ", tokens);
+            console.debug('tokens: ', tokens);
             if (tokens) {
-                console.debug("accessToken: ", tokens.accessToken);
+                console.debug('accessToken: ', tokens.accessToken);
                 return tokens.accessToken;
             }
         }
         return null;
     }
 
-    getEmail(): string|null {
+    getEmail(): string | null {
         return this.currentUser ? this.currentUser.user.email : null;
     }
 
-    getFirstname(): string|null {
+    getFirstname(): string | null {
         return this.currentUser ? this.currentUser.user.givenName : null;
     }
 
-    getFirstnameSlug(): RegExpMatchArray|null {
+    getFirstnameSlug(): RegExpMatchArray | null {
         const email = this.getEmail();
-        if (email === null) { return null; }
+        if (email === null) {
+            return null;
+        }
         return email.match(/^[^\.]+/);
     }
 
     getUsername(): string {
-        if (this.currentUser === undefined ||
-            !('user' in this.currentUser) ||
-            this.currentUser.user.name === null) {
-            return "John Doe";
+        if (this.currentUser === undefined || !('user' in this.currentUser) || this.currentUser.user.name === null) {
+            return 'John Doe';
         }
         return this.currentUser.user.name;
     }
 
     getUserPhoto(): string {
-        if (this.currentUser === undefined ||
-            !('user' in this.currentUser) ||
-            this.currentUser.user.photo === null) {
-            return "";
+        if (this.currentUser === undefined || !('user' in this.currentUser) || this.currentUser.user.photo === null) {
+            return '';
         }
         return this.currentUser.user.photo;
     }
@@ -131,7 +128,7 @@ export default class Google {
         await GoogleSignin.signOut();
         // await GoogleSignin.revokeAccess();
         this.setCurrentUser(undefined);
-    };
+    }
 
     async revoke(): Promise<void> {
         await GoogleSignin.revokeAccess();
@@ -144,10 +141,13 @@ export default class Google {
         const from = this.getEmail();
         const bodyBase64 = base64.encode(body);
 
-        const messageBoundary = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 32);
-        let rfc822Message=`From: ${from}
+        const messageBoundary = Math.random()
+            .toString(36)
+            .replace(/[^a-z]+/g, '')
+            .substr(0, 32);
+        let rfc822Message = `From: ${from}
 To: ${__DEV__ ? from : to}
-Subject: ${(__DEV__ ? "[Test]" : "")}${subject}
+Subject: ${__DEV__ ? '[Test]' : ''}${subject}
 Content-Type: multipart/mixed; boundary="${messageBoundary}"
 MIME-Version: 1.0
 
@@ -159,7 +159,7 @@ ${bodyBase64}
 
 `;
 
-        attachments.forEach((attachment) => {
+        attachments.forEach(attachment => {
             const filename = attachment.filename;
             const fileContentBase64 = base64.encode(attachment.content);
             const size = attachment.content.length;
@@ -176,26 +176,26 @@ ${fileContentBase64}
 
         rfc822Message = rfc822Message.concat(`--${messageBoundary}--`);
 
-        const endpoint = "https://www.googleapis.com/gmail/v1/users/{userId}/messages/send"
-        const url = endpoint.replace(/\{userId\}/, "me");
+        const endpoint = 'https://www.googleapis.com/gmail/v1/users/{userId}/messages/send';
+        const url = endpoint.replace(/\{userId\}/, 'me');
         const rfc822MessageBase64 = base64.encode(rfc822Message);
 
         const requestBody = `{
     "raw": "${rfc822MessageBase64}"
-}`
+}`;
 
         console.debug(rfc822Message);
         console.debug(requestBody);
 
         const accessToken = await this.getAccessToken();
         const result = await fetch(url, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type":  "application/json; charset=UTF-8",
-                "Authorization": `Bearer ${accessToken}`,
-                "Content-Length": requestBody.length.toString()
+                'Content-Type': 'application/json; charset=UTF-8',
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Length': requestBody.length.toString(),
             },
-            body: requestBody
+            body: requestBody,
         });
         console.debug(result);
 

@@ -1,10 +1,10 @@
-import React, { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     listHeader: {
         backgroundColor: '#EEEEEE',
         fontWeight: 'bold',
         paddingHorizontal: 16,
-        paddingVertical: 4
+        paddingVertical: 4,
     },
     row: {
         flexDirection: 'row',
@@ -15,13 +15,13 @@ export default StyleSheet.create({
         height: 56,
         marginVertical: 8,
         paddingVertical: 0,
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
     },
     rowIcon: {
         flex: 0,
         marginRight: 16,
         fontSize: 36,
-        color: 'rgba(0, 0, 0, 0.380392)'
+        color: 'rgba(0, 0, 0, 0.380392)',
     },
     rowIconDate: {
         flex: 0,
@@ -35,26 +35,26 @@ export default StyleSheet.create({
     },
     rowIconDateMonth: {
         flex: 0,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     rowContent: {
         flexDirection: 'column',
-        flex: 1
+        flex: 1,
     },
     rowTitle: {
         fontSize: 16,
-        color: 'rgba(0, 0, 0, 0.870588)'
+        color: 'rgba(0, 0, 0, 0.870588)',
     },
     rowSubtitle: {
         fontSize: 14,
-        color: 'rgba(0, 0, 0, 0.541176)'
+        color: 'rgba(0, 0, 0, 0.541176)',
     },
     rowActionIcon: {
         flex: 0,
         color: 'rgba(0, 0, 0, 0.380392)',
-        fontSize: 24
+        fontSize: 24,
     },
     rowDetailText: {
-        textAlign: 'right'
-    }
+        textAlign: 'right',
+    },
 });

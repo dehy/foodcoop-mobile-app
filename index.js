@@ -9,7 +9,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import { registerScreens } from './src/utils/screens';
 import * as Sentry from '@sentry/react-native';
 import moment from 'moment';
-import momentFr from 'moment/locale/fr';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Database from './src/utils/Database';
 
 moment.locale('fr');

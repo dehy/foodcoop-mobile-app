@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
-import { isFloat } from "../../utils/helpers";
+import { isFloat } from '../../utils/helpers';
 
 export enum UnitOfMesurement {
     unit = 1,
-    kg = 3
+    kg = 3,
 }
 
 export default class ProductProduct {
@@ -23,13 +23,13 @@ export default class ProductProduct {
     }
 
     static quantityUnitAsString(odooUnit?: number): string {
-        let string = "";
+        let string = '';
         switch (odooUnit) {
             case UnitOfMesurement.unit:
-                string = "unités";
+                string = 'unités';
                 break;
             case UnitOfMesurement.kg:
-                string = "kg";
+                string = 'kg';
                 break;
         }
 
@@ -45,12 +45,12 @@ export default class ProductProduct {
     }
 
     packagingAsString(): string {
-        let metricString = "";
+        let metricString = '';
         if (this.weight_net) {
-            metricString = `${String(this.weight_net)} kg`
+            metricString = `${String(this.weight_net)} kg`;
         }
         if (this.volume) {
-            metricString = `${String(this.volume)} L`
+            metricString = `${String(this.volume)} L`;
         }
         return metricString;
     }
@@ -59,9 +59,8 @@ export default class ProductProduct {
         if (this.qty_available == undefined || this.qty_available < 0) {
             return false;
         }
-        if (this.uom_id === UnitOfMesurement.unit
-            && isFloat(this.qty_available)) {
-                return false;
+        if (this.uom_id === UnitOfMesurement.unit && isFloat(this.qty_available)) {
+            return false;
         }
 
         return true;

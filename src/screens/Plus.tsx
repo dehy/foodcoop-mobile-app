@@ -1,56 +1,99 @@
 import React from 'react';
-import { Alert, FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { defaultScreenOptions, goToAuth } from '../utils/navigation';
+import { goToAuth } from '../utils/navigation';
 import Google from '../utils/Google';
 import { Navigation } from 'react-native-navigation';
 import materialStyle from '../styles/material';
 
 export interface PlusProps {
-    componentId: string
+    componentId: string;
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profile: {
+        backgroundColor: 'white',
+        flexDirection: 'row',
+        padding: 16,
+        marginBottom: 16,
+    },
+    avatar: {
+        marginRight: 16,
+    },
+    profilePhoto: {
+        borderRadius: 64,
+        width: 128,
+        height: 128,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 12,
+        marginBottom: 12,
+    },
+    profileName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    listItem: {
+        backgroundColor: 'white',
+        height: 44,
+        padding: 10,
+        textAlignVertical: 'center',
+    },
+    listItemText: {
+        fontSize: 17,
+    },
+    separator: {
+        backgroundColor: '#000000',
+    },
+});
 
 export default class Plus extends React.Component<PlusProps> {
     constructor(props: PlusProps) {
         super(props);
         Navigation.events().bindComponent(this);
     }
-    _onPress = (key: string) => {
+    _onPress = (key: string): void => {
         switch (key) {
             case 'about':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Plus/About'
-                    }
+                        name: 'Plus/About',
+                    },
                 });
                 break;
             case 'maintenance':
                 Navigation.push(this.props.componentId, {
                     component: {
-                        name: 'Plus/Maintenance'
-                    }
+                        name: 'Plus/Maintenance',
+                    },
                 });
                 break;
             case 'logout':
                 Alert.alert('Déconnexion', 'Es-tu sûr de vouloir te déconnecter ?', [
                     {
                         text: 'Annuler',
-                        style: 'cancel'
+                        style: 'cancel',
                     },
                     {
                         text: 'Oui',
-                        onPress: () =>
+                        onPress: (): Promise<void> =>
                             Google.getInstance()
                                 .signOut()
                                 .then(() => {
                                     goToAuth();
-                                })
-                    }
+                                }),
+                    },
                 ]);
                 break;
         }
     };
-    render() {
+    render(): React.ReactNode {
         return (
             <SafeAreaView>
                 <ScrollView style={{ height: '100%' }}>
@@ -59,7 +102,7 @@ export default class Plus extends React.Component<PlusProps> {
                             rounded
                             size="large"
                             source={{
-                                uri: Google.getInstance().getUserPhoto()
+                                uri: Google.getInstance().getUserPhoto(),
                             }}
                             containerStyle={styles.avatar}
                         />
@@ -70,21 +113,30 @@ export default class Plus extends React.Component<PlusProps> {
                     </View>
                     <FlatList
                         scrollEnabled={false}
-                        ItemSeparatorComponent={({ highlighted }) => <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />}
+                        ItemSeparatorComponent={({ highlighted }) => (
+                            <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                        )}
                         data={[
                             { title: 'À propos', key: 'about' },
                             { title: 'Maintenance', key: 'maintenance' },
-                            { title: 'Se déconnecter', key: 'logout', color: 'red' }
+                            { title: 'Se déconnecter', key: 'logout', color: 'red' },
                         ]}
                         renderItem={({ item, separators }) => (
                             <TouchableHighlight
-                                onPress={() => this._onPress(item.key)}
+                                onPress={(): void => this._onPress(item.key)}
                                 onShowUnderlay={separators.highlight}
                                 onHideUnderlay={separators.unhighlight}
                             >
                                 <View style={materialStyle.row}>
                                     <View style={materialStyle.rowContent}>
-                                        <Text style={[materialStyle.rowTitle, { color: item.color ? item.color : 'black' }]}>{item.title}</Text>
+                                        <Text
+                                            style={[
+                                                materialStyle.rowTitle,
+                                                { color: item.color ? item.color : 'black' },
+                                            ]}
+                                        >
+                                            {item.title}
+                                        </Text>
                                     </View>
                                 </View>
                             </TouchableHighlight>
@@ -95,45 +147,3 @@ export default class Plus extends React.Component<PlusProps> {
         );
     }
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    profile: {
-        backgroundColor: 'white',
-        flexDirection: 'row',
-        padding: 16,
-        marginBottom: 16
-    },
-    avatar: {
-        marginRight: 16
-    },
-    profilePhoto: {
-        borderRadius: 64,
-        width: 128,
-        height: 128,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginTop: 12,
-        marginBottom: 12
-    },
-    profileName: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    listItem: {
-        backgroundColor: 'white',
-        height: 44,
-        padding: 10,
-        textAlignVertical: 'center'
-    },
-    listItemText: {
-        fontSize: 17
-    },
-    separator: {
-        backgroundColor: '#000000'
-    }
-});
