@@ -1,23 +1,56 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { goHome } from '../utils/navigation';
 import { GoogleSigninButton } from '@react-native-community/google-signin';
 import Google from '../utils/Google';
-import LogoSupercoop from '../../assets/svg/supercoop.svg';
 import DeviceInfo from 'react-native-device-info';
+import LogoSupercoop from '../../assets/svg/supercoop.svg';
 
 type WelcomeState = {
-    signinInProgress: boolean
+    signinInProgress: boolean;
 };
 
-export default class Welcome extends Component<{}, WelcomeState> {
-    constructor(props: any[]) {
+export interface WelcomeProps {
+    componentId: string;
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'space-between',
+        backgroundColor: '#FFFFFF',
+        height: '100%',
+        padding: 8,
+    },
+    welcome: {
+        flex: 0,
+        fontSize: 30,
+        textAlign: 'center',
+        margin: 10,
+    },
+    instructions: {
+        flex: 0,
+        textAlign: 'justify',
+        color: '#333333',
+        marginTop: 40,
+        marginRight: 20,
+        marginBottom: 40,
+        marginLeft: 20,
+    },
+    version: {
+        fontSize: 10,
+        textAlign: 'right',
+    },
+});
+
+export default class Welcome extends Component<WelcomeProps, WelcomeState> {
+    constructor(props: WelcomeProps) {
         super(props);
         this.state = {
-            signinInProgress: false
+            signinInProgress: false,
         };
     }
-    render() {
+    render(): React.ReactNode {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={{ flex: 1, width: '100%', marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
@@ -35,23 +68,23 @@ export default class Welcome extends Component<{}, WelcomeState> {
                         color={GoogleSigninButton.Color.Dark}
                         onPress={() => {
                             this.setState({
-                                signinInProgress: true
+                                signinInProgress: true,
                             });
                             Google.getInstance()
                                 .signIn()
                                 .then(
                                     () => {
                                         this.setState({
-                                            signinInProgress: false
+                                            signinInProgress: false,
                                         });
                                         goHome();
                                     },
                                     reason => {
                                         console.warn(reason);
                                         this.setState({
-                                            signinInProgress: false
+                                            signinInProgress: false,
                                         });
-                                    }
+                                    },
                                 );
                         }}
                         disabled={this.state.signinInProgress}
@@ -64,31 +97,3 @@ export default class Welcome extends Component<{}, WelcomeState> {
         );
     }
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'space-between',
-        backgroundColor: '#FFFFFF',
-        height: '100%',
-        padding: 8
-    },
-    welcome: {
-        flex: 0,
-        fontSize: 30,
-        textAlign: 'center',
-        margin: 10
-    },
-    instructions: {
-        flex: 0,
-        textAlign: 'justify',
-        color: '#333333',
-        marginTop: 40,
-        marginRight: 20,
-        marginBottom: 40,
-        marginLeft: 20
-    },
-    version: {
-        fontSize: 10,
-        textAlign: 'right'
-    }
-});

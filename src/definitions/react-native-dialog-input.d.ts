@@ -1,4 +1,4 @@
-import { TextInput } from "react-native";
+import { TextInput } from 'react-native';
 import { DialogInput } from 'react-native-dialog-input';
 
 declare module 'react-native-dialog-input' {
@@ -17,4 +17,3 @@ declare module 'react-native-dialog-input' {
         closeDialog?: () => void;
     }
 }
-  

@@ -1,23 +1,23 @@
-import React from "react";
-import { Navigation } from 'react-native-navigation';
-import { defaultScreenOptions } from "../../utils/navigation";
-import { Moment } from "moment";
-import WebView from "react-native-webview";
-
+import React from 'react';
+import { Navigation, Options } from 'react-native-navigation';
+import { defaultScreenOptions } from '../../utils/navigation';
+import { Moment } from 'moment';
+import WebView from 'react-native-webview';
 
 export interface NewsShowProps {
-    componentId: string,
-    newsItem: NewsItem
+    componentId: string;
+    newsItem: NewsItem;
 }
 
 interface NewsShowState {
+    componentId: string;
 }
 
 export interface NewsItem {
-    key: string,
-    title: string,
-    published: Moment,
-    url: string
+    key: string;
+    title: string;
+    published: Moment;
+    url: string;
 }
 
 export default class NewsShow extends React.Component<NewsShowProps, NewsShowState> {
@@ -27,19 +27,16 @@ export default class NewsShow extends React.Component<NewsShowProps, NewsShowSta
         console.debug(this.props.newsItem.url);
     }
 
-    componentDidMount() {
-    }
-
-    get options() {
+    get options(): Options {
         return defaultScreenOptions(this.props.newsItem.title);
     }
 
-    render() {
+    render(): React.ReactNode {
         return (
-                <WebView
-                    source={{ uri: this.props.newsItem.url }}
-                    onLoadProgress={e => console.debug(e.nativeEvent.progress)}
-                    injectedJavaScript={`
+            <WebView
+                source={{ uri: this.props.newsItem.url }}
+                onLoadProgress={(e): void => console.debug(e.nativeEvent.progress)}
+                injectedJavaScript={`
                         (function() {
                             if (document.getElementsByClassName("single-post").length > 0) {
 
@@ -79,7 +76,7 @@ export default class NewsShow extends React.Component<NewsShowProps, NewsShowSta
 
                         true;
                     `}
-                />
+            />
         );
     }
 }

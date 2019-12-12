@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import { Moment } from 'moment';
 import ProductProduct from './Odoo/ProductProduct';
@@ -16,7 +16,7 @@ export default class InventoryEntry {
     public savedAt?: Moment;
 
     static createFromProductProduct(product: ProductProduct) {
-        let newEntry: InventoryEntry = new InventoryEntry();
+        const newEntry: InventoryEntry = new InventoryEntry();
         newEntry.articleBarcode = product.barcode;
         newEntry.articleName = product.name;
         newEntry.articleUnit = product.uom_id;

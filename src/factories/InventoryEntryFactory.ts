@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import Database from '../utils/Database';
 import InventorySession from '../entities/InventorySession';
@@ -34,11 +34,17 @@ export default class InventoryEntryFactory {
         this.db = Database.sharedInstance();
     }
 
-    async findByInventorySessionAndProductProduct(inventorySession: InventorySession, product: ProductProduct): Promise<InventoryEntry[]> {
+    async findByInventorySessionAndProductProduct(
+        inventorySession: InventorySession,
+        product: ProductProduct,
+    ): Promise<InventoryEntry[]> {
         if (!inventorySession.id || !product.barcode) {
             throw new Error();
         }
-        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? AND `article_barcode` = ? ORDER BY scanned_at DESC', [inventorySession.id.toString(), product.barcode]);
+        const response = await this.db.executeQuery(
+            'SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? AND `article_barcode` = ? ORDER BY scanned_at DESC',
+            [inventorySession.id.toString(), product.barcode],
+        );
         const entries = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             entries.push(this._rowToObject(response[0].rows.item(i)));
@@ -49,14 +55,17 @@ export default class InventoryEntryFactory {
 
     async findForInventorySession(inventorySession: InventorySession): Promise<InventoryEntry[]> {
         if (!inventorySession.id) {
-            console.error("InventorySession has no id");
-            throw new Error("InventorySession has no id");
+            console.error('InventorySession has no id');
+            throw new Error('InventorySession has no id');
         }
         return await this.findForInventorySessionId(inventorySession.id);
     }
 
     async findForInventorySessionId(inventorySessionId: number): Promise<InventoryEntry[]> {
-        const response = await this.db.executeQuery('SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? ORDER BY `saved_at` DESC', [inventorySessionId.toString()]);
+        const response = await this.db.executeQuery(
+            'SELECT * FROM `inventories_entries` WHERE `inventory_id` = ? ORDER BY `saved_at` DESC',
+            [inventorySessionId.toString()],
+        );
         const entries = [];
         for (let i = 0; i < response[0].rows.length; i++) {
             entries.push(this._rowToObject(response[0].rows.item(i)));
@@ -80,7 +89,7 @@ export default class InventoryEntryFactory {
 
         const response = await this.db.executeQuery(
             'INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            params
+            params,
         );
 
         return;
@@ -90,30 +99,24 @@ export default class InventoryEntryFactory {
         const params = this._objectToParams(object);
         console.log(params);
 
-        await this.db.executeQuery(
-            'INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            params
-        );
+        await this.db.executeQuery('INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', params);
 
         return;
     }
 
     async delete(object: InventoryEntry): Promise<void> {
         if (!object.id) {
-            throw new Error("Cannot delete InventoryEntry with no id!");
+            throw new Error('Cannot delete InventoryEntry with no id!');
         }
-        const params: (string|number)[] = [object.id];
+        const params: (string | number)[] = [object.id];
 
-        const response = await this.db.executeQuery(
-            'DELETE FROM `inventories_entries` WHERE `id` = ?;',
-            params
-        );
+        const response = await this.db.executeQuery('DELETE FROM `inventories_entries` WHERE `id` = ?;', params);
 
         return;
     }
 
     _rowToObject(row: InventoryEntryTableDefinition): InventoryEntry {
-        console.debug("inventories_entries row", row);
+        console.debug('inventories_entries row', row);
         const entry = new InventoryEntry();
         entry.id = row.id;
         entry.inventoryId = row.inventory_id;
@@ -140,7 +143,7 @@ export default class InventoryEntryFactory {
             article_price: object.articlePrice,
             scanned_at: object.scannedAt ? object.scannedAt.format(Database.DATETIME_FORMAT) : null,
             article_quantity: object.articleQuantity,
-            saved_at: object.savedAt ? object.savedAt.format(Database.DATETIME_FORMAT) : null
+            saved_at: object.savedAt ? object.savedAt.format(Database.DATETIME_FORMAT) : null,
         };
 
         const params = Object.values(row);

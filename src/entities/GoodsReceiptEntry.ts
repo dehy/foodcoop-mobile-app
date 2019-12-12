@@ -1,52 +1,51 @@
-import {Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import moment from 'moment';
-import Partner from './Partner';
-import GoodsReceiptSession from "./GoodsReceiptSession";
+import GoodsReceiptSession from './GoodsReceiptSession';
 
 @Entity()
 export default class GoodsReceiptEntry {
     @PrimaryGeneratedColumn()
     public id?: number;
-  
-    @Column("text")
+
+    @Column('text')
     public name?: string;
-  
-    @Column("int")
+
+    @Column('int')
     public packageQty?: number; // Colisage (nombre de produits par colis)
 
-    @Column("int")
+    @Column('int')
     public productQtyPackage?: number; // Nombre de colis
-  
-    @Column("text")
+
+    @Column('text')
     public productBarcode?: string;
 
-    @Column("int")
+    @Column('int')
     public productId?: number;
-  
-    @Column("text")
+
+    @Column('text')
     public productName?: string;
 
-    @Column("int")
+    @Column('int')
     public expectedProductQty?: number;
-  
+
     @Column({
-      type: "int",
-      nullable: true
+        type: 'int',
+        nullable: true,
     })
     public productQty?: number; // Quantité totale
 
-    @Column("int")
+    @Column('int')
     public productUom?: number; // Unité de mesure d'article
 
     @Column({
-      type: "text",
-      nullable: true
+        type: 'text',
+        nullable: true,
     })
     public comment?: string;
-  
+
     @ManyToOne(
-      type => GoodsReceiptSession,
-      goodsReceiptSession => goodsReceiptSession.goodsReceiptEntries
+        type => GoodsReceiptSession,
+        goodsReceiptSession => goodsReceiptSession.goodsReceiptEntries,
     )
     public goodsReceiptSession?: GoodsReceiptSession;
 }
