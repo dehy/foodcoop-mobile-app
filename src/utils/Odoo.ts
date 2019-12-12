@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import OdooApi from 'react-native-odoo-promise-based';
 import ProductProduct from '../entities/Odoo/ProductProduct';
@@ -13,16 +13,23 @@ import PurchaseOrderLineFactory from '../factories/Odoo/PurchaseOrderLineFactory
 import iconv from 'iconv-lite';
 
 export default class Odoo {
-
     private static UNIT_UNIT = 1;
     private static UNIT_KG = 2;
 
-    private static FETCH_FIELDS_PRODUCT = ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'];
+    private static FETCH_FIELDS_PRODUCT = [
+        'name',
+        'barcode',
+        'qty_available',
+        'lst_price',
+        'uom_id',
+        'weight_net',
+        'volume',
+    ];
 
-    public static DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+    public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
     private static instance: Odoo;
-    private static odooEnpoint: string = 'labo.supercoop.fr';
+    private static odooEnpoint = 'labo.supercoop.fr';
     private isConnected: boolean;
     private odooApi: OdooApi;
 
@@ -43,7 +50,7 @@ export default class Odoo {
             protocol: 'https',
             database: 'PROD',
             username: '***REMOVED***',
-            password: '***REMOVED***'
+            password: '***REMOVED***',
         });
     }
 
@@ -94,19 +101,21 @@ export default class Odoo {
         this.isConnected = false;
         this.odooApi.sid = undefined;
         this.odooApi.cookie = undefined;
+        // eslint-disable-next-line @typescript-eslint/camelcase
         this.odooApi.session_id = undefined;
     }
 
     assertApiResponse(response: OdooApiResponse): void {
-        console.debug("assertApiResponse()");
+        console.debug('assertApiResponse()');
         console.debug(response);
-        CookieManager.get(Odoo.odooEnpoint).then((res) => {
-            console.debug("CookieManager.get => ", res);
+        CookieManager.get(Odoo.odooEnpoint).then(res => {
+            console.debug('CookieManager.get => ', res);
         });
         if (response.success == true) {
             return;
         }
-        if (response.error.code == 100) { // "Odoo Session Expired"
+        if (response.error.code == 100) {
+            // "Odoo Session Expired"
             console.error(response);
             this.resetApiAuthDetails();
             throw new Error(response.error.message);
@@ -114,20 +123,36 @@ export default class Odoo {
     }
 
     async fetchPurchaseOrdersPlannedToday(): Promise<PurchaseOrder[]> {
-        const isConnected = await this.assertConnect();
+        await this.assertConnect();
 
-        var params = {
-            domain: [['state', '=', 'purchase'], ['date_planned', '>=', moment().startOf('day').format(Odoo.DATETIME_FORMAT)], ['date_planned', '<', moment().endOf('day').format(Odoo.DATETIME_FORMAT)]],
+        const params = {
+            domain: [
+                ['state', '=', 'purchase'],
+                [
+                    'date_planned',
+                    '>=',
+                    moment()
+                        .startOf('day')
+                        .format(Odoo.DATETIME_FORMAT),
+                ],
+                [
+                    'date_planned',
+                    '<',
+                    moment()
+                        .endOf('day')
+                        .format(Odoo.DATETIME_FORMAT),
+                ],
+            ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
             offset: 0,
-            order: 'date_planned DESC'
+            order: 'date_planned DESC',
         };
         const response = await this.odooApi.search_read('purchase.order', params);
         this.assertApiResponse(response);
         if (response.data.length > 0) {
-            let purchaseOrders: PurchaseOrder[] = [];
+            const purchaseOrders: PurchaseOrder[] = [];
             response.data.forEach((element: OdooApiPurchaseOrder) => {
-                purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element))
+                purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element));
             });
             return purchaseOrders;
         }
@@ -135,32 +160,41 @@ export default class Odoo {
     }
 
     async fetchWaitingPurchaseOrders(): Promise<PurchaseOrder[]> {
-        const isConnected = await this.assertConnect();
-        
-        var params = {
-            domain: [['state', '=', 'purchase'], ['date_planned', '>', moment().subtract(1, 'months').format(Odoo.DATETIME_FORMAT)]],
+        await this.assertConnect();
+
+        const params = {
+            domain: [
+                ['state', '=', 'purchase'],
+                [
+                    'date_planned',
+                    '>',
+                    moment()
+                        .subtract(1, 'months')
+                        .format(Odoo.DATETIME_FORMAT),
+                ],
+            ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
             //limit: 10,
             offset: 0,
-            order: 'date_planned DESC'
+            order: 'date_planned DESC',
         };
 
         const response = await this.odooApi.search_read('purchase.order', params);
         this.assertApiResponse(response);
         if (response.data.length > 0) {
-            let purchaseOrders: PurchaseOrder[] = [];
+            const purchaseOrders: PurchaseOrder[] = [];
             response.data.forEach((element: OdooApiPurchaseOrder) => {
-                purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element))
+                purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element));
             });
             return purchaseOrders;
         }
         return [];
     }
 
-    async fetchPurchaseOrderFromName(poName: string): Promise<PurchaseOrder|undefined> {
-        const isConnected = await this.assertConnect();
-    
-        var params = {
+    async fetchPurchaseOrderFromName(poName: string): Promise<PurchaseOrder | undefined> {
+        await this.assertConnect();
+
+        const params = {
             domain: [['name', '=', poName]],
             //fields: ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'],
             limit: 1,
@@ -176,19 +210,23 @@ export default class Odoo {
     }
 
     async fetchPurchaseOrderLinesForPurchaseOrder(purchaseOrder: PurchaseOrder): Promise<PurchaseOrderLine[]> {
-        const isConnected = await this.assertConnect();
-    
-        var params = {
-            domain: [['order_id', '=', purchaseOrder.id!]],
+        await this.assertConnect();
+
+        if (purchaseOrder.id == null) {
+            return [];
+        }
+
+        const params = {
+            domain: [['order_id', '=', purchaseOrder.id]],
             fields: ['id', 'name', 'product_id', 'package_qty', 'product_qty_package', 'product_qty', 'product_uom'],
             offset: 0,
         };
 
         const response = await this.odooApi.search_read('purchase.order.line', params);
         this.assertApiResponse(response);
-        console.log("fetchPurchaseOrderLinesForPurchaseOrder");
+        console.log('fetchPurchaseOrderLinesForPurchaseOrder');
         if (response.data.length > 0) {
-            let purchaseOrderLines: PurchaseOrderLine[] = [];
+            const purchaseOrderLines: PurchaseOrderLine[] = [];
             response.data.forEach((element: OdooApiPurchaseOrderLine) => {
                 const purchaseOrderLine = PurchaseOrderLineFactory.PurchaseOrderLineFromResponse(element);
                 purchaseOrderLine.purchaseOrder = purchaseOrder;
@@ -201,42 +239,42 @@ export default class Odoo {
         return [];
     }
 
-    async fetchProductFromIds(ids: number[]): Promise<ProductProduct[]|undefined> {
-        console.debug("[Odoo] fetchProductFromIds()");
+    async fetchProductFromIds(ids: number[]): Promise<ProductProduct[] | undefined> {
+        console.debug('[Odoo] fetchProductFromIds()');
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(this.odooApi);
-            throw new Error("Odoo is not connected");
+            throw new Error('Odoo is not connected');
         }
 
-        var params = {
+        const params = {
             ids: ids,
-            fields: Odoo.FETCH_FIELDS_PRODUCT
+            fields: Odoo.FETCH_FIELDS_PRODUCT,
         }; //params
 
-        console.debug("[Odoo] search_read(product.product) with params:");
+        console.debug('[Odoo] search_read(product.product) with params:');
         console.debug(params);
         const response = await this.odooApi.get('product.product', params);
         this.assertApiResponse(response);
-        let products: ProductProduct[] = [];
+        const products: ProductProduct[] = [];
         if (response.data.length > 0) {
             response.data.forEach((element: OdooApiProductProduct) => {
-                products.push(ProductProductFactory.ProductProductFromResponse(element))
+                products.push(ProductProductFactory.ProductProductFromResponse(element));
             });
             return products;
         }
         return undefined;
     }
 
-    async fetchProductFromBarcode(barcode: string): Promise<ProductProduct|undefined> {
-        console.debug("[Odoo] fetchProductFromBarcode()");
+    async fetchProductFromBarcode(barcode: string): Promise<ProductProduct | null> {
+        console.debug('[Odoo] fetchProductFromBarcode()');
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(this.odooApi);
-            throw new Error("Odoo is not connected");
+            throw new Error('Odoo is not connected');
         }
 
-        var params = {
+        const params = {
             // ids: [1, 2, 3, 4, 5],
             // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
             domain: [['barcode', '=', barcode]],
@@ -247,28 +285,28 @@ export default class Odoo {
             offset: 0,
         }; //params
 
-        console.debug("[Odoo] search_read(product.product) with params:");
+        console.debug('[Odoo] search_read(product.product) with params:');
         console.debug(params);
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
         if (response.data.length > 0) {
             return ProductProductFactory.ProductProductFromResponse(response.data[0]);
         }
-        return undefined;
+        return null;
     }
 
-    async fetchImageForProductProduct(odooProduct: ProductProduct) {
-        console.debug("fetchImageForProductProduct()");
-        if (await this.assertConnect() !== true) {
-            throw new Error("Odoo is not connected");
+    async fetchImageForProductProduct(odooProduct: ProductProduct): Promise<string | null> {
+        console.debug('fetchImageForProductProduct()');
+        if ((await this.assertConnect()) !== true) {
+            throw new Error('Odoo is not connected');
         }
 
-        var params = {
-            domain: [['barcode', '=', ProductProduct.barcode]],
+        const params = {
+            domain: [['barcode', '=', odooProduct.barcode]],
             fields: ['image'],
             limit: 1,
-            offset: 0
-        }
+            offset: 0,
+        };
 
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
@@ -276,39 +314,42 @@ export default class Odoo {
         return response.data.length > 0 ? response.data[0].image : null;
     }
 
-    async assertConnect() {
-        console.debug("[Odoo] assertConnect()");
-        var context = this;
-        return new Promise(function (resolve, reject) {
-            if (!context.isConnected) {
-                console.debug("[Odoo] not connected, connecting...");
-                context.odooApi.connect().then((response) => {
-                    context.assertApiResponse(response);
-                    if (isInt(response.data.uid) && response.data.uid > 0) {
-                        console.debug("[Odoo] connection ok");
-                        // console.debug(context.odooApi);
-                        context.isConnected = true;
-                        resolve(true);
-                    } else {
-                        console.debug("[Odoo] connection ko");
-                        context.isConnected = false;
-                        console.error(response);
-                        reject(false);
-                    }
-                }).catch((reason) => {
-                    console.debug("[Odoo] odoo connect failed");
-                    reject(reason);
-                });
+    assertConnect = async (): Promise<boolean> => {
+        console.debug('[Odoo] assertConnect()');
+        return new Promise<boolean>((resolve, reject) => {
+            if (!this.isConnected) {
+                console.debug('[Odoo] not connected, connecting...');
+                this.odooApi
+                    .connect()
+                    .then(response => {
+                        this.assertApiResponse(response);
+                        if (isInt(response.data.uid) && response.data.uid > 0) {
+                            console.debug('[Odoo] connection ok');
+                            // console.debug(context.odooApi);
+                            this.isConnected = true;
+                            resolve(true);
+                        } else {
+                            console.debug('[Odoo] connection ko');
+                            this.isConnected = false;
+                            console.error(response);
+                            reject(false);
+                        }
+                    })
+                    .catch(reason => {
+                        console.debug('[Odoo] odoo connect failed');
+                        reject(reason);
+                    });
             } else {
-                console.debug("[Odoo] alreay connected");
+                console.debug('[Odoo] alreay connected');
                 resolve(true);
             }
-        }).catch((e) => {
+        }).catch(e => {
             console.error(e);
+            return false;
         });
-    }
+    };
 
     iso88591ToUtf8(data: string): string {
-        return iconv.decode(Buffer.from(data), 'iso-8859-1')
+        return iconv.decode(Buffer.from(data), 'iso-8859-1');
     }
 }

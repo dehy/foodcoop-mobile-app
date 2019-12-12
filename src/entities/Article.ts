@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 export default class Article {
     public id: number;
@@ -8,9 +8,9 @@ export default class Article {
     public unit: number;
     public price: number;
 
-    constructor (json: any) {
-        json = json || {}
-    
+    constructor(json: any) {
+        json = json || {};
+
         this.id = json.id ? json.id : null;
         this.barcode = json.barcode ? json.barcode : '';
         this.name = json.name ? json.name : '';

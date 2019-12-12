@@ -9,11 +9,11 @@ declare module 'react-native-cookies' {
 }
 
 interface Cookie {
-    name: string,
-    domain: string,
-    value: string,
-    origin: string,
-    path: string,
-    version: string,
-    expiration: Date
+    name: string;
+    domain: string;
+    value: string;
+    origin: string;
+    path: string;
+    version: string;
+    expiration: Date;
 }
