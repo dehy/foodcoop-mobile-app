@@ -70,38 +70,23 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Supercoop/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Supercoop/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Supercoop/main.m; sourceTree = "<group>"; };
-		184BA88A30EE4E5A8ECFBD0D /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		1D3C848549724390A8E33857 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
-		277125094F3A4333B799057A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Supercoop-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Supercoop-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Supercoop-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Supercoop-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2F4414AB93C3411F8E04EFC8 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		3E5930C35A644072AED4C059 /* libPods-Supercoop-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4ADA383CB65B4CBDA1039271 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		51AC4DBE220C812C0051FDD5 /* beep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = beep.mp3; sourceTree = "<group>"; };
 		52381E057261B3688ECAD37F /* libPods-Supercoop-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B49F87DB60B4D4DA0B8CB13 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		5C9B6FA1EA12B3064FA93CD6 /* libPods-SupercoopTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SupercoopTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		60B52FF613863E535B85AF8C /* Pods-SupercoopTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SupercoopTests.release.xcconfig"; path = "Target Support Files/Pods-SupercoopTests/Pods-SupercoopTests.release.xcconfig"; sourceTree = "<group>"; };
 		60D0670CA31142E2B609FF43 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		627FCBA52E954A6D9BA54D3C /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		6E1C51E3DAE018ACA38BB7D7 /* Pods-Supercoop-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOSTests/Pods-Supercoop-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		72C7D34D165545E6ACDFC4B4 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		775C24564D76037FF37E0A97 /* Pods-Supercoop-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOS/Pods-Supercoop-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		79AF926F51114A5FAB7BDE85 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		9B255F4A819F4CE885A36A05 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		A5B1476691844A90A1FCA22A /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ABF01E56D7F1CEE4B72A58CF /* Pods-Supercoop-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOS/Pods-Supercoop-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		B0F1DA9F5B2040079528C628 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		B156E4A29A9963AC9B7B1D8D /* Pods-Supercoop-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOSTests/Pods-Supercoop-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B64405A7BEF9C4D8CBAE4055 /* Pods-SupercoopTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SupercoopTests.debug.xcconfig"; path = "Target Support Files/Pods-SupercoopTests/Pods-SupercoopTests.debug.xcconfig"; sourceTree = "<group>"; };
-		BADE9CEEBA7545B99F545497 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		C361FADEC1AA67D4D2EC61B1 /* Pods-Supercoop.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop/Pods-Supercoop.debug.xcconfig"; sourceTree = "<group>"; };
-		DBCC044A22F840AD91A76480 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		EC6084D92D1AE67FEC708337 /* libPods-Supercoop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F0B0EE7B6E354588A9D6A272 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		FB09BC93229854830096FDF5 /* Supercoop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Supercoop.entitlements; path = Supercoop/Supercoop.entitlements; sourceTree = "<group>"; };
 		FB92CF482297F62A0048733D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FBFAF431235A074100008911 /* InputMask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = InputMask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -209,25 +194,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				51AC4DBE220C812C0051FDD5 /* beep.mp3 */,
 				13B07FAE1A68108700A75B9A /* Supercoop */,
-				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* SupercoopTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
+				FB9AA28C23A24FA200D58B64 /* Resources */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				8EA9D05AFF0F4F87AAC633DA /* Resources */,
 				77D6516C453BFA481D14C4D8 /* Pods */,
-				FBFAF3A6235A03BF00008911 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -245,33 +220,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8EA9D05AFF0F4F87AAC633DA /* Resources */ = {
+		FB9AA28C23A24FA200D58B64 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				184BA88A30EE4E5A8ECFBD0D /* FontAwesome.ttf */,
-				2F4414AB93C3411F8E04EFC8 /* FontAwesome5_Brands.ttf */,
-				B0F1DA9F5B2040079528C628 /* FontAwesome5_Regular.ttf */,
-				DBCC044A22F840AD91A76480 /* FontAwesome5_Solid.ttf */,
-				627FCBA52E954A6D9BA54D3C /* AntDesign.ttf */,
-				1D3C848549724390A8E33857 /* Entypo.ttf */,
-				BADE9CEEBA7545B99F545497 /* EvilIcons.ttf */,
-				5B49F87DB60B4D4DA0B8CB13 /* Feather.ttf */,
-				F0B0EE7B6E354588A9D6A272 /* Foundation.ttf */,
-				79AF926F51114A5FAB7BDE85 /* Ionicons.ttf */,
-				277125094F3A4333B799057A /* MaterialCommunityIcons.ttf */,
-				72C7D34D165545E6ACDFC4B4 /* MaterialIcons.ttf */,
-				9B255F4A819F4CE885A36A05 /* Octicons.ttf */,
-				A5B1476691844A90A1FCA22A /* SimpleLineIcons.ttf */,
-				4ADA383CB65B4CBDA1039271 /* Zocial.ttf */,
+				51AC4DBE220C812C0051FDD5 /* beep.mp3 */,
 			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		FBFAF3A6235A03BF00008911 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -308,7 +262,6 @@
 				10F7CE83C52443EED0FBB07D /* [CP] Copy Pods Resources */,
 				FBAD06AC224615840092D6BA /* Upload Debug Symbols to Sentry */,
 				FBFAF434235A074100008911 /* Embed Frameworks */,
-				9D4857ADDC61474A87CC8BAD /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -471,7 +424,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\nexport SENTRY_PROPERTIES=../sentry.properties\n\\\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode   ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export NODE_BINARY=node\nexport SENTRY_PROPERTIES=../sentry.properties\n\\\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		10F7CE83C52443EED0FBB07D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -535,7 +488,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
 		37619D664AF17AF42EF205DF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -602,20 +555,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		9D4857ADDC61474A87CC8BAD /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Debug Symbols to Sentry";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
 		};
 		A6288235AEB3379239402F6A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -786,7 +725,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = QPB8MBWLB4;
 				HEADER_SEARCH_PATHS = (
@@ -822,7 +761,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = QPB8MBWLB4;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
