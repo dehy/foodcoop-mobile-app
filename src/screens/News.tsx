@@ -20,7 +20,7 @@ export default class News extends React.Component<NewsProps> {
             <WebView
                 source={{ uri: 'https://supercoop.fr/blog/' }}
                 style={{ marginTop: 0 }}
-                onLoadProgress={(e): void => console.debug(e.progress)}
+                onLoadProgress={(e): void => console.debug(e.nativeEvent.progress)}
             />
         );
     }

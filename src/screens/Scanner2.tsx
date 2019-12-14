@@ -37,15 +37,17 @@ const wbOrder: { [key: string]: keyof WhiteBalance } = {
     incandescent: RNCamera.Constants.WhiteBalance.auto,
 };
 
-interface LegacyBarcode {
+interface BarcodeReadEvent {
     data: string;
     rawData?: string;
     type: keyof BarCodeType;
     /**
-     * @description For Android use `[Point<string>, Point<string>]`
+     * @description For Android use `{ width: number, height: number, origin: Array<Point<string>> }`
      * @description For iOS use `{ origin: Point<string>, size: Size<string> }`
      */
-    bounds: [Point<string>, Point<string>] | { origin: Point<string>; size: Size<string> };
+    bounds:
+        | { width: number; height: number; origin: Array<Point<string>> }
+        | { origin: Point<string>; size: Size<string> };
 }
 
 const landmarkSize = 2;
@@ -464,7 +466,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         this.setState({ textBlocks });
     };
 
-    legacyBarcodeToBarcode = (legacy: LegacyBarcode): Barcode => {
+    legacyBarcodeToBarcode = (legacy: BarcodeReadEvent): Barcode => {
         let width = 0;
         let height = 0;
         let x = 0;
@@ -475,11 +477,11 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             x = parseFloat(legacy.bounds.origin.x);
             y = parseFloat(legacy.bounds.origin.y);
         }
-        if (Platform.OS === 'android' && '0' in legacy.bounds) {
-            width = parseFloat(legacy.bounds[0].x);
-            height = parseFloat(legacy.bounds[0].y);
-            x = parseFloat(legacy.bounds[1].x);
-            y = parseFloat(legacy.bounds[1].y);
+        if (Platform.OS === 'android' && 'width' in legacy.bounds) {
+            width = legacy.bounds.width;
+            height = legacy.bounds.height;
+            x = parseFloat(legacy.bounds.origin[0].x);
+            y = parseFloat(legacy.bounds.origin[0].y);
         }
 
         const barcode: Barcode = {
@@ -507,10 +509,9 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         return type;
     };
 
-    barcodeRecognized = (event: LegacyBarcode): void => {
+    barcodeRecognized = (event: BarcodeReadEvent): void => {
         const barcode = this.legacyBarcodeToBarcode(event);
-        const previousBarcode: Barcode | undefined =
-            this.state.barcodes.length > 0 ? this.state.barcodes[0] : undefined;
+        const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({ barcodes: [barcode] });
         if (!previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
             this.beepSound.play(() => {
@@ -553,7 +554,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                 title={'Recherche manuelle'}
                 message={'Entres le code barre du produit que tu cherches'}
                 submitInput={(barcodeData: string): void => {
-                    const barcode: LegacyBarcode = {
+                    const barcode: BarcodeReadEvent = {
                         data: barcodeData,
                         type: RNCamera.Constants.BarCodeType.ean13,
                         bounds: { origin: { x: '0', y: '0' }, size: { width: '0', height: '0' } },
