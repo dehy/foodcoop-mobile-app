@@ -13,7 +13,7 @@ import {
     EventSubscription,
 } from 'react-native';
 import { defaultScreenOptions } from '../utils/navigation';
-import { Navigation } from 'react-native-navigation';
+import { Navigation, Options } from 'react-native-navigation';
 import { RNCamera, FlashMode, AutoFocus, Barcode } from 'react-native-camera';
 import DialogInput from 'react-native-dialog-input';
 import Google from '../utils/Google';
@@ -33,7 +33,6 @@ export interface ScannerProps {
 }
 
 interface ScannerState {
-    mode: keyof ScanMode;
     displayCamera: boolean;
     flashStatus: keyof FlashMode;
     autoFocus: keyof AutoFocus;
@@ -41,13 +40,6 @@ interface ScannerState {
     showProductCard: boolean;
     showUnknownProductProductNameView: boolean;
 }
-
-type ScanMode = {
-    infos: any;
-    inventory: any;
-    admissions: any;
-    losses: any;
-};
 
 const styles = StyleSheet.create({
     container: {
@@ -132,13 +124,6 @@ const styles = StyleSheet.create({
 });
 
 export default class Scanner extends React.Component<ScannerProps, ScannerState> {
-    static ScanMode: ScanMode = {
-        infos: 1,
-        inventory: 2,
-        admissions: 3,
-        losses: 4,
-    };
-
     static MODE_SCANNER = 1;
     static MODE_INVENTORY = 2;
 
@@ -165,7 +150,6 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         this.lastScannedBarcode = undefined;
 
         this.state = {
-            mode: Scanner.ScanMode.infos,
             displayCamera: false,
             flashStatus: RNCamera.Constants.FlashMode.off,
             autoFocus: RNCamera.Constants.AutoFocus.on,
@@ -175,29 +159,29 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         };
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.navigationEventListener = Navigation.events().bindComponent(this);
     }
 
-    componentDidAppear() {
+    componentDidAppear(): void {
         this.setState({
             displayCamera: true,
         });
     }
 
-    componentDidDisappear() {
+    componentDidDisappear(): void {
         this.setState({
             displayCamera: false,
         });
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         if (this.navigationEventListener) {
             this.navigationEventListener.remove();
         }
     }
 
-    static options(passProps: any) {
+    static options(passProps: ScannerProps): Options {
         const options = defaultScreenOptions('Recherche...');
         if (passProps.inventory && options && options.topBar) {
             options.topBar.rightButtons = [
@@ -211,7 +195,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         return options;
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }) {
+    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
         if (buttonId === 'close') {
             this.blurInput();
             Navigation.dismissModal(this.props.componentId);
@@ -219,7 +203,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
     }
 
-    reset() {
+    reset(): void {
         this.updateNavigationTitle(undefined);
         this.blurInput();
         this.lastScannedBarcode = undefined;
@@ -240,30 +224,30 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         return false;
     }
 
-    focusOnQuantityInput() {
+    focusOnQuantityInput(): void {
         if (this.textInput) {
             this.textInput.clear();
             this.textInput.focus();
         }
     }
 
-    blurInput = () => {
+    blurInput = (): void => {
         if (this.textInput) {
             this.textInput.blur();
         }
     };
 
-    enableFlash = () => {
+    enableFlash = (): void => {
         this.setState({
             flashStatus: RNCamera.Constants.FlashMode.torch,
         });
     };
-    disableFlash = () => {
+    disableFlash = (): void => {
         this.setState({
             flashStatus: RNCamera.Constants.FlashMode.off,
         });
     };
-    toggleFlash = () => {
+    toggleFlash = (): void => {
         if (this.state.flashStatus == RNCamera.Constants.FlashMode.off) {
             this.enableFlash();
             return;
@@ -271,7 +255,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         this.disableFlash();
     };
 
-    toggleAutoFocus = () => {
+    toggleAutoFocus = (): void => {
         if (this.state.autoFocus == RNCamera.Constants.AutoFocus.off) {
             this.setState({ autoFocus: RNCamera.Constants.AutoFocus.on });
         } else {
@@ -279,13 +263,13 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
     };
 
-    showProductCard = () => this.setState({ showProductCard: true });
-    hideProductCard = () => this.setState({ showProductCard: false });
+    showProductCard = (): void => this.setState({ showProductCard: true });
+    hideProductCard = (): void => this.setState({ showProductCard: false });
 
-    showUnknownProductProductNameView = () => this.setState({ showUnknownProductProductNameView: true });
-    hideUnknownProductProductView = () => this.setState({ showUnknownProductProductNameView: false });
+    showUnknownProductProductNameView = (): void => this.setState({ showUnknownProductProductNameView: true });
+    hideUnknownProductProductView = (): void => this.setState({ showUnknownProductProductNameView: false });
 
-    updateNavigationTitle(title?: string) {
+    updateNavigationTitle(title?: string): void {
         Navigation.mergeOptions(this.props.componentId, {
             topBar: {
                 title: {
@@ -304,7 +288,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         Alert.alert(
             'Code barre incompatible',
             "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.",
-            [{ text: 'OK', onPress: () => this.reset() }],
+            [{ text: 'OK', onPress: (): void => this.reset() }],
         );
     }
 
@@ -337,7 +321,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         const alertButtons: AlertButton[] = [
             {
                 text: 'Annuler',
-                onPress: () => {
+                onPress: (): void => {
                     this.reset();
                     return;
                 },
@@ -369,7 +353,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         Alert.alert('Code barre inconnu', notFoundInOdooString, alertButtons);
     }
 
-    handleFoundProductProduct(odooProductProduct: ProductProduct) {
+    handleFoundProductProduct(odooProductProduct: ProductProduct): void {
         this.setState({
             odooProductProduct: odooProductProduct,
         });
@@ -382,9 +366,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
                 });
             }
         });
-        if (this.isInInventoryMode()) {
+        if (this.isInInventoryMode() && this.props.inventory) {
             InventoryEntryFactory.sharedInstance()
-                .findByInventorySessionAndProductProduct(this.props.inventory!, odooProductProduct)
+                .findByInventorySessionAndProductProduct(this.props.inventory, odooProductProduct)
                 .then((foundInventoryEntries: InventoryEntry[]) => {
                     if (foundInventoryEntries.length > 0) {
                         const lastEntry = foundInventoryEntries[0];
@@ -395,14 +379,14 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
                             [
                                 {
                                     text: 'Annuler',
-                                    onPress: () => {
+                                    onPress: (): void => {
                                         this.reset();
                                     },
                                     style: 'cancel',
                                 },
                                 {
                                     text: 'Remplacer',
-                                    onPress: () => {
+                                    onPress: (): void => {
                                         foundInventoryEntries.forEach(foundInventoryEntry => {
                                             InventoryEntryFactory.sharedInstance().delete(foundInventoryEntry);
                                         });
@@ -424,9 +408,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
     }
 
-    askForUnknownProductProductName = () => this.setState({ showUnknownProductProductNameView: true });
-    hideUnknownProductProductNameView = () => this.setState({ showUnknownProductProductNameView: false });
-    handleUnknownProductProductName = (name: string) => {
+    askForUnknownProductProductName = (): void => this.setState({ showUnknownProductProductNameView: true });
+    hideUnknownProductProductNameView = (): void => this.setState({ showUnknownProductProductNameView: false });
+    handleUnknownProductProductName = (name: string): void => {
         this.hideUnknownProductProductNameView();
         if (!this.state.odooProductProduct) {
             throw new Error('No Odoo Product set');
@@ -444,7 +428,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         }
     };
 
-    reportUnknownProductProductByMail(odooProductProduct: ProductProduct) {
+    reportUnknownProductProductByMail(odooProductProduct: ProductProduct): void {
         const to = 'inventaire@supercoop.fr';
         const subject = `Code barre inconnu (${odooProductProduct.barcode})`;
         const body = `Le code barre ${odooProductProduct.barcode} est introuvable dans Odoo.
@@ -461,9 +445,12 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         this.reset();
     }
 
-    inventoryDidTapSaveButton() {
+    inventoryDidTapSaveButton(): void {
         if (!this.state.odooProductProduct) {
             throw new Error('No Odoo Product set');
+        }
+        if (!this.props.inventory) {
+            throw new Error('No Inventory set');
         }
         const unit = this.state.odooProductProduct.uom_id;
         let quantity: number;
@@ -491,7 +478,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         }
 
         const newEntry = InventoryEntry.createFromProductProduct(this.state.odooProductProduct);
-        newEntry.inventoryId = this.props.inventory!.id;
+        newEntry.inventoryId = this.props.inventory.id;
         newEntry.scannedAt = this.scannedAt;
         newEntry.articleQuantity = quantity;
         newEntry.savedAt = moment();
@@ -499,22 +486,25 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         InventoryEntryFactory.sharedInstance()
             .persist(newEntry)
             .then(() => {
+                if (!this.props.inventory) {
+                    throw new Error('Inventory not set');
+                }
                 InventorySessionFactory.sharedInstance()
-                    .updateLastModifiedAt(this.props.inventory!, moment())
+                    .updateLastModifiedAt(this.props.inventory, moment())
                     .then(() => {
                         this.reset();
                     });
             });
     }
 
-    renderUnknownProductProductView() {
+    renderUnknownProductProductView(): React.ReactElement {
         return (
             <DialogInput
                 isDialogVisible={this.state.showUnknownProductProductNameView}
                 title={'Nom du produit'}
                 message={"Quel est le nom du produit tel qu'affiché sur l'étiquette ?"}
-                submitInput={(name: string) => this.handleUnknownProductProductName(name)}
-                closeDialog={() => {
+                submitInput={(name: string): void => this.handleUnknownProductProductName(name)}
+                closeDialog={(): void => {
                     this.hideUnknownProductProductView();
                     this.reset();
                 }}
@@ -524,49 +514,19 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         );
     }
 
-    renderCameraView() {
+    renderCameraView(): React.ReactElement {
         if (this.state.displayCamera) {
             return (
                 <Scanner2
-                    ref={ref => {
+                    ref={(ref): void => {
                         this.scanner = ref !== null ? ref : undefined;
                     }}
-                    onBarcodeRead={barcode => {
+                    onBarcodeRead={(barcode): void => {
                         this.didScanBarcode(barcode);
                     }}
                 ></Scanner2>
             );
-        }
-        // if (this.state.displayCamera) {
-        //     return (<RNCamera
-        //         ref={ref => {
-        //             this.camera = ref !== null ? ref : undefined;
-        //         }}
-        //         captureAudio={false}
-        //         style={styles.preview}
-        //         type={RNCamera.Constants.Type.back}
-        //         androidCameraPermissionOptions={{
-        //             title: 'Permission d\'utiliser la caméra',
-        //             message: 'Nous avons besoin de ta permission pour utiliser la caméra de ton téléphone',
-        //             buttonPositive: 'Ok',
-        //             buttonNegative: 'Annuler',
-        //         }}
-        //         autoFocus={RNCamera.Constants.AutoFocus.on}
-        //         flashMode={this.state.flashStatus}
-        //         onBarCodeRead={({ data, rawData, type, bounds }) => this.didScanBarcode(data, type)}
-        //     >
-        //         {({ camera, status, recordAudioPermissionStatus }) => {
-        //             if (status !== 'READY') {
-        //                 return (
-        //                     <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center' }}>
-        //                         <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>Chargement de la caméra...</Text>
-        //                     </View>
-        //                 );
-        //             }
-        //         }}
-        //     </RNCamera>);
-        // }
-        if (!this.state.displayCamera) {
+        } else {
             return (
                 <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.25)', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>Caméra en Pause</Text>
@@ -591,15 +551,25 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             ) : (
                                 <ActivityIndicator size="small" color="#999999" style={styles.articleImage} />
                             )}
-                            <Text ref={ref => (this.articleTitle = ref)} numberOfLines={2} style={styles.articleName}>
+                            <Text
+                                ref={(ref): void => {
+                                    this.articleTitle = ref;
+                                }}
+                                numberOfLines={2}
+                                style={styles.articleName}
+                            >
                                 {this.state.odooProductProduct ? this.state.odooProductProduct.name : 'Chargement...'}
                             </Text>
                         </View>
                         {this.props.inventory ? (
                             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
                                 <TextInput
-                                    ref={ref => (this.textInput = ref)}
-                                    onChangeText={value => (this.articleQuantityValue = value)}
+                                    ref={(ref): void => {
+                                        this.textInput = ref;
+                                    }}
+                                    onChangeText={(value): void => {
+                                        this.articleQuantityValue = value;
+                                    }}
                                     style={{
                                         flex: 0,
                                         fontSize: 28,
@@ -612,7 +582,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                     }}
                                     keyboardType="decimal-pad"
                                     blurOnSubmit={false}
-                                    onSubmitEditing={() => {
+                                    onSubmitEditing={(): void => {
                                         this.inventoryDidTapSaveButton();
                                     }}
                                 />
@@ -623,7 +593,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                 </Text>
                                 <Button
                                     // style={{ flex: 1, marginLeft: 16 }}
-                                    onPress={() => {
+                                    onPress={(): void => {
                                         this.inventoryDidTapSaveButton();
                                     }}
                                     title="Enregistrer"
