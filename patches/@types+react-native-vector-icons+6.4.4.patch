@@ -1,0 +1,13 @@
+diff --git a/node_modules/@types/react-native-vector-icons/FontAwesome5.d.ts b/node_modules/@types/react-native-vector-icons/FontAwesome5.d.ts
+index 79c77ff..4d05164 100644
+--- a/node_modules/@types/react-native-vector-icons/FontAwesome5.d.ts
++++ b/node_modules/@types/react-native-vector-icons/FontAwesome5.d.ts
+@@ -40,4 +40,8 @@ export default class FontAwesome5Icon extends Component<
+     ): Promise<ImageSource>;
+     static loadFont(file?: string): Promise<void>;
+     static hasIcon(name: string): boolean;
++    static ToolbarAndroid: typeof Icon.ToolbarAndroid;
++    static TabBarItem: typeof Icon.TabBarItem;
++    static TabBarItemIOS: typeof Icon.TabBarItemIOS;
++    static Button: typeof Icon.Button;
+ }
