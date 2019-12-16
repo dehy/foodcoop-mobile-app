@@ -58,7 +58,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                 </View>
                 <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
                 <Text style={styles.instructions}>
-                    Pour commencer à utiliser l'application, connectes-toi à ton compte Supercoop grâce au bouton
+                    Pour commencer à utiliser l&apos;application, connectes-toi à ton compte Supercoop grâce au bouton
                     ci-dessous. Tu auras besoin de tes identifiants Google Supercoop. On se retrouve juste après !
                 </Text>
                 <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
@@ -66,7 +66,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                         style={{ width: 230, height: 48, margin: 12 }}
                         size={GoogleSigninButton.Size.Standard}
                         color={GoogleSigninButton.Color.Dark}
-                        onPress={() => {
+                        onPress={(): void => {
                             this.setState({
                                 signinInProgress: true,
                             });
