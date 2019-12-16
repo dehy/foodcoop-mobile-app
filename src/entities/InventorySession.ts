@@ -1,6 +1,6 @@
 'use strict';
 
-import moment, { Moment } from 'moment';
+import { Moment } from 'moment';
 
 export default class InventorySession {
     public id?: number;

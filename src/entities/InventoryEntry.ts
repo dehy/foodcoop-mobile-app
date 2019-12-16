@@ -15,7 +15,7 @@ export default class InventoryEntry {
     public articleQuantity?: number;
     public savedAt?: Moment;
 
-    static createFromProductProduct(product: ProductProduct) {
+    static createFromProductProduct(product: ProductProduct): InventoryEntry {
         const newEntry: InventoryEntry = new InventoryEntry();
         newEntry.articleBarcode = product.barcode;
         newEntry.articleName = product.name;
@@ -24,7 +24,7 @@ export default class InventoryEntry {
         return newEntry;
     }
 
-    isFetchedFromOdoo() {
+    isFetchedFromOdoo(): boolean {
         if (this.articleUnit) {
             return true;
         }
