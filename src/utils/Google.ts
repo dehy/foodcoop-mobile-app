@@ -1,9 +1,12 @@
 import { GoogleSignin, User } from '@react-native-community/google-signin';
-import base64 from 'react-native-base64';
+import { Base64 } from 'js-base64';
+import * as RNFS from 'react-native-fs';
+import * as mime from 'react-native-mime-types';
 
 export interface MailAttachment {
-    filename: string;
-    content: string;
+    filepath: string;
+    filename?: string;
+    filetype?: string;
 }
 
 export default class Google {
@@ -139,7 +142,9 @@ export default class Google {
         console.debug(to, subject, body, attachments);
 
         const from = this.getEmail();
-        const bodyBase64 = base64.encode(body);
+        subject = __DEV__ ? '[Test]' + subject : subject;
+        const subjectBase64 = '=?utf-8?B?' + Base64.encode(subject) + '?=';
+        const bodyBase64 = Base64.encode(body);
 
         const messageBoundary = Math.random()
             .toString(36)
@@ -147,57 +152,61 @@ export default class Google {
             .substr(0, 32);
         let rfc822Message = `From: ${from}
 To: ${__DEV__ ? from : to}
-Subject: ${__DEV__ ? '[Test]' : ''}${subject}
-Content-Type: multipart/mixed; boundary="${messageBoundary}"
+Subject: ${subjectBase64}
+Content-Type: multipart/mixed; charset=utf-8; boundary="${messageBoundary}"
 MIME-Version: 1.0
 
 --${messageBoundary}
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 
-${bodyBase64}
+${bodyBase64}`;
 
-`;
+        for (const key in attachments) {
+            console.debug('Attachment key:', key);
+            if (attachments.hasOwnProperty(key)) {
+                const attachment = attachments[key];
+                console.debug('Attachment: ', attachment);
+                const fileContentBase64 = Base64.encode(await RNFS.readFile(attachment.filepath));
+                const filename = attachment.filename || attachment.filepath.split('/').pop();
+                const filetype = attachment.filetype || mime.lookup(attachment.filepath);
+                const fileCharset = mime.charset(attachment.filepath);
+                const filesize = (await RNFS.stat(attachment.filepath)).size;
 
-        attachments.forEach(attachment => {
-            const filename = attachment.filename;
-            const fileContentBase64 = base64.encode(attachment.content);
-            const size = attachment.content.length;
-
-            rfc822Message = rfc822Message.concat(`--${messageBoundary}
-Content-Type: text/comma-separated-values; charset="UTF-8"; name="${filename}"
+                const chartsetStr = fileCharset != false ? ` charset="${fileCharset}";` : '';
+                const rfc822Attachment = `
+--${messageBoundary}
+Content-Type: ${filetype};${chartsetStr} name="${filename}"
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="${filename}"; size=${size}
+Content-Disposition: attachment; filename="${filename}"; size=${filesize}
 
-${fileContentBase64}
+${fileContentBase64}`;
 
-`);
-        });
+                rfc822Message = rfc822Message.concat(rfc822Attachment);
+            }
+        }
 
-        rfc822Message = rfc822Message.concat(`--${messageBoundary}--`);
+        rfc822Message = rfc822Message.concat(`
+--${messageBoundary}--`);
 
         const endpoint = 'https://www.googleapis.com/gmail/v1/users/{userId}/messages/send';
         const url = endpoint.replace(/\{userId\}/, 'me');
-        const rfc822MessageBase64 = base64.encode(rfc822Message);
+        const rfc822MessageBase64 = Base64.encode(rfc822Message);
 
         const requestBody = `{
     "raw": "${rfc822MessageBase64}"
 }`;
 
-        console.debug(rfc822Message);
-        console.debug(requestBody);
-
         const accessToken = await this.getAccessToken();
         const result = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json; charset=utf-8',
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Length': requestBody.length.toString(),
             },
             body: requestBody,
         });
-        console.debug(result);
 
         if (result.ok) {
             return;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { FlatList, Platform, SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
@@ -19,6 +19,15 @@ export interface InventoryShowProps {
 interface InventoryShowState {
     inventorySession?: InventorySession;
     inventoryEntries: InventoryEntry[];
+}
+
+interface InventoryData {
+    key: string;
+    title?: string;
+    subtitle?: string;
+    image: { uri: string } | null;
+    metadata: string;
+    inventoryEntry: InventoryEntry;
 }
 
 export default class InventoryShow extends React.Component<InventoryShowProps, InventoryShowState> {
@@ -74,11 +83,11 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
             });
     }
 
-    computeEntriesData() {
+    computeEntriesData(): InventoryData[] {
         const listDatas = [];
         for (const k in this.state.inventoryEntries) {
             const entry = this.state.inventoryEntries[k];
-            const data = {
+            const data: InventoryData = {
                 key: 'inventory-entry-' + entry.id,
                 title: entry.articleName,
                 subtitle: entry.articleBarcode,
@@ -228,7 +237,6 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                                 this.openExportModal();
                             }}
                             name="file-export"
-                            title="Exporter"
                             solid
                         >
                             Envoyer
@@ -239,7 +247,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                             scrollEnabled={false}
                             style={{ backgroundColor: 'white' }}
                             data={this.computeEntriesData()}
-                            renderItem={({ item }) => (
+                            renderItem={({ item }): React.ReactElement => (
                                 <TouchableHighlight
                                     style={materialStyle.row}
                                     underlayColor="#BCBCBC"
@@ -269,18 +277,3 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
         );
     }
 }
-
-const styles = StyleSheet.create({
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    itemImage: {
-        width: 40,
-        height: 40,
-    },
-    itemName: {
-        fontWeight: 'bold',
-    },
-    itemBarcode: {},
-});

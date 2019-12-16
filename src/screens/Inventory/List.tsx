@@ -126,7 +126,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
         });
     };
 
-    render() {
+    render(): React.ReactNode {
         return (
             <SafeAreaView>
                 <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
@@ -137,7 +137,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
                 <FlatList
                     style={{ backgroundColor: 'white' }}
                     data={this.state.inventoriesData}
-                    renderItem={({ item }) => (
+                    renderItem={({ item }): React.ReactElement => (
                         <TouchableHighlight
                             onPress={(): void => {
                                 const inventorySessionTapProps: InventorySessionTapProps = {

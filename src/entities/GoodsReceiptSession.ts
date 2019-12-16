@@ -1,14 +1,5 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-    ManyToOne,
-    OneToMany,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import GoodsReceiptEntry from './GoodsReceiptEntry';
-import PurchaseOrder from './Odoo/PurchaseOrder';
 
 @Entity()
 export default class GoodsReceiptSession {
@@ -46,6 +37,7 @@ export default class GoodsReceiptSession {
     comment?: string;
 
     @OneToMany(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => GoodsReceiptEntry,
         goodsReceiptEntry => goodsReceiptEntry.goodsReceiptSession,
     )
