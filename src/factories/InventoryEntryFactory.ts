@@ -87,15 +87,12 @@ export default class InventoryEntryFactory {
     async persist(object: InventoryEntry): Promise<void> {
         const params = this._objectToParams(object);
 
-        const response = await this.db.executeQuery(
-            'INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            params,
-        );
+        await this.db.executeQuery('INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', params);
 
         return;
     }
 
-    async update(object: InventoryEntry) {
+    async update(object: InventoryEntry): Promise<void> {
         const params = this._objectToParams(object);
         console.log(params);
 
@@ -110,7 +107,7 @@ export default class InventoryEntryFactory {
         }
         const params: (string | number)[] = [object.id];
 
-        const response = await this.db.executeQuery('DELETE FROM `inventories_entries` WHERE `id` = ?;', params);
+        await this.db.executeQuery('DELETE FROM `inventories_entries` WHERE `id` = ?;', params);
 
         return;
     }
