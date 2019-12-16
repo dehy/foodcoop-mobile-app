@@ -21,6 +21,7 @@ export interface InventoryShowProps {
 interface InventoryShowState {
     sendingMail: boolean;
     inventoryCheckPassed: boolean;
+    filepath?: string;
 }
 
 const styles = StyleSheet.create({
@@ -32,7 +33,6 @@ const styles = StyleSheet.create({
 export default class InventoryShow extends React.Component<InventoryShowProps, InventoryShowState> {
     private inventoryEntries: Array<InventoryEntry> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
-    private generatedCSV?: string;
 
     constructor(props: InventoryShowProps) {
         super(props);
@@ -74,11 +74,11 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
             .findForInventorySession(this.props.inventory)
             .then(inventoryEntries => {
                 this.inventoryEntries = inventoryEntries;
-                this.csvGenerator.exportInventorySession(this.props.inventory).then(csv => {
+                this.csvGenerator.exportInventorySession(this.props.inventory).then(filepath => {
                     this.setState({
+                        filepath: filepath,
                         inventoryCheckPassed: true,
                     });
-                    this.generatedCSV = csv;
                 });
             });
     }
@@ -89,6 +89,9 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
         });
         if (!this.props.inventory.lastModifiedAt) {
             throw new Error('Last Modified date unavailable');
+        }
+        if (!this.state.filepath) {
+            throw new Error('File not generated');
         }
         const userFirstname = Google.getInstance().getFirstnameSlug();
         const zone = this.props.inventory.zone;
@@ -117,12 +120,9 @@ Attention, ces codes barre n'ont pas été trouvé dans Odoo:
 ${notFoundInOdooString}`);
         }
 
-        const csvFilenameDateTime = this.props.inventory.lastModifiedAt.format('YYYYMMDDHHmmss');
-        const csvFilename = `Zone${zone}_${userFirstname}-${csvFilenameDateTime}.csv`;
         const attachments: MailAttachment[] = [
             {
-                filename: csvFilename,
-                content: this.generatedCSV ? this.generatedCSV : 'Failed to generate CSV',
+                filepath: this.state.filepath,
             },
         ];
 

@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableHighlight, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, SafeAreaView, FlatList } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import styles from '../../styles/material';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import { getConnection } from 'typeorm';
+import { getRepository } from 'typeorm';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import ProductProduct from '../../entities/Odoo/ProductProduct';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -14,7 +15,7 @@ export interface GoodsReceiptShowProps {
 }
 
 interface GoodsReceiptShowState {
-    entries: GoodsReceiptEntry[];
+    session: GoodsReceiptSession;
 }
 
 export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowProps, GoodsReceiptShowState> {
@@ -22,7 +23,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
-            entries: [],
+            session: props.session,
         };
     }
 
@@ -43,28 +44,30 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     componentDidMount(): void {
-        // this.loadData();
+        this.loadData();
     }
 
     loadData(): void {
-        const goodsReceiptEntryRepository = getConnection().getRepository(GoodsReceiptEntry);
-        goodsReceiptEntryRepository
-            .createQueryBuilder('entry')
-            .where('entry.goodsReceiptSession = :session', { session: this.props.session.id })
-            .getMany()
-            .then(goodsReceiptEntries => {
-                console.log(goodsReceiptEntries);
+        getRepository(GoodsReceiptSession)
+            .findOne(this.props.session.id, {
+                relations: ['goodsReceiptEntries'],
+            })
+            .then((session): void => {
+                console.log(session);
+                if (!session) {
+                    throw new Error('Session not found');
+                }
                 this.setState({
-                    entries: goodsReceiptEntries,
+                    session,
                 });
             });
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
-        // if (buttonId === "receipt-new") {
-        //   this.openNewGoodsReceiptSessionModal();
-        // }
-    }
+    // navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+    //     if (buttonId === "receipt-new") {
+    //       this.openNewGoodsReceiptSessionModal();
+    //     }
+    // }
 
     //   didTapGoodsReceiptSessionItem = (props: GoodsReceiptSessionTapProps) => {
     //     Navigation.push(props.componentId, {
@@ -91,25 +94,58 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         });
     }
 
+    openGoodsReceiptExport = (): void => {
+        Navigation.showModal({
+            stack: {
+                children: [
+                    {
+                        component: {
+                            name: 'GoodsReceipt/Export',
+                            passProps: {
+                                session: this.state.session,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+    };
+
+    itemBackgroundColor(entry: GoodsReceiptEntry): string {
+        if (true === entry.isValid()) {
+            return '#5cb85c';
+        }
+        if (false === entry.isValid()) {
+            return '#d9534f';
+        }
+        return 'transparent';
+    }
+
     render(): React.ReactNode {
         return (
-            <SafeAreaView>
-                <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
+            <SafeAreaView style={{ height: '100%' }}>
+                <View>
+                    <Text>{this.props.session.partnerName}</Text>
+                </View>
+                <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'space-around' }}>
                     <Icon.Button name="barcode" solid style={{}} onPress={this.openGoodsReceiptScan}>
-                        Démarrer le comptage
+                        Scanner
+                    </Icon.Button>
+                    <Icon.Button name="file-export" solid style={{}} onPress={this.openGoodsReceiptExport}>
+                        Envoyer
                     </Icon.Button>
                 </View>
                 <FlatList
-                    style={{ backgroundColor: 'white', height: '100%' }}
-                    data={this.state.entries}
+                    style={{ backgroundColor: 'white' }}
+                    data={this.state.session.goodsReceiptEntries || []}
                     keyExtractor={(item): string => {
                         if (item.id && item.id.toString()) {
                             return item.id.toString();
                         }
                         return '';
                     }}
-                    renderItem={({ item }) => (
-                        <TouchableHighlight
+                    renderItem={({ item }): React.ReactElement => (
+                        <TouchableWithoutFeedback
                             onPress={(): void => {
                                 // let inventorySessionTapProps: GoodsReceiptSessionTapProps = {
                                 //   componentId: this.props.componentId,
@@ -117,20 +153,21 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                 // };
                                 // this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
                             }}
-                            underlayColor="#BCBCBC"
                         >
-                            <View style={styles.row}>
+                            <View style={[styles.row, { backgroundColor: this.itemBackgroundColor(item) }]}>
                                 {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
-                                <Text style={styles.rowIcon}>{item.expectedProductQty}</Text>
+                                {/* <Text style={styles.rowIcon}>{item.expectedProductQty}</Text> */}
                                 <View style={styles.rowContent}>
                                     <Text style={styles.rowTitle}>{item.productName}</Text>
                                     <Text style={styles.rowSubtitle}>
                                         {item.productBarcode && item.productBarcode.toString()}
                                     </Text>
                                 </View>
-                                {/* <Text style={styles.rowDetailText}>{item.expectedProductQty} {item.productUom}</Text> */}
+                                <Text style={styles.rowDetailText}>
+                                    {item.expectedProductQty} {ProductProduct.quantityUnitAsString(item.productUom)}
+                                </Text>
                             </View>
-                        </TouchableHighlight>
+                        </TouchableWithoutFeedback>
                     )}
                 />
             </SafeAreaView>

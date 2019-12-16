@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, SafeAreaView, TouchableHighlight, FlatList, ListRenderItem } from 'react-native';
+import { Text, View, SafeAreaView, TouchableHighlight, FlatList } from 'react-native';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import * as rssParser from 'react-native-rss-parser';
@@ -70,7 +70,7 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
                 <FlatList
                     style={{ backgroundColor: 'white' }}
                     data={this.state.news}
-                    renderItem={({ item }) => (
+                    renderItem={({ item }): React.ReactElement => (
                         <TouchableHighlight
                             onPress={(): void => {
                                 this.didTapNewsItem(item);
