@@ -1,9 +1,13 @@
 import SQLite from 'react-native-sqlite-storage';
-import './helpers';
 import { toNumber } from './helpers';
 import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
-import { createConnection, Connection } from 'typeorm';
+import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
+
+interface EntityDefinition {
+    name: string;
+    tableName: string;
+}
 
 export default class Database {
     static TARGET_SCHEMA_VERSION = 2;
@@ -34,7 +38,7 @@ export default class Database {
             database: 'supercoop',
             location: 'Documents',
             logging: ['error', 'query', 'schema'],
-            //dropSchema: true,
+            dropSchema: false,
             synchronize: true,
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
         });
@@ -132,6 +136,11 @@ export default class Database {
             await this.executeQuery('DROP TABLE `' + tableName + '`');
         }
         await this.executeQuery('PRAGMA user_version = 0');
+
+        // TypeORM
+        const entities = await this.getEntities();
+        await this.cleanAll(entities);
+
         return true;
     }
 
@@ -146,5 +155,24 @@ export default class Database {
             console.error(e);
         }
         throw new Error();
+    }
+
+    async getEntities(): Promise<EntityDefinition[]> {
+        const entities: EntityDefinition[] = [];
+        (await (await getConnection()).entityMetadatas).forEach(x =>
+            entities.push({ name: x.name, tableName: x.tableName }),
+        );
+        return entities;
+    }
+
+    async cleanAll(entities: EntityDefinition[]): Promise<void> {
+        try {
+            for (const entity of entities) {
+                const repository = await getRepository(entity.name);
+                await repository.query(`TRUNCATE TABLE \`${entity.tableName}\`;`);
+            }
+        } catch (error) {
+            throw new Error(`ERROR: Cleaning test db: ${error}`);
+        }
     }
 }

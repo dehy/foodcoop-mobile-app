@@ -13,8 +13,8 @@ export default StyleSheet.create({
         backgroundColor: 'white',
         flex: 1,
         height: 56,
-        marginVertical: 8,
-        paddingVertical: 0,
+        marginVertical: 0,
+        paddingVertical: 8,
         paddingHorizontal: 16,
     },
     rowIcon: {

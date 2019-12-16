@@ -6,8 +6,9 @@ import { defaultScreenOptions } from '../../utils/navigation';
 import { Barcode } from 'react-native-camera/types';
 import Odoo from '../../utils/Odoo';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
+import AppLogger from '../../utils/AppLogger';
 
 interface GoodsReceiptScanProps {
     componentId: string;
@@ -52,12 +53,15 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     }
 
     didScanBarcode(barcode: Barcode): void {
+        AppLogger.getLogger().debug(`Barcode '${barcode.data}' scanned`);
         Odoo.getInstance()
             .fetchProductFromBarcode(barcode.data)
             .then((product: ProductProduct | null) => {
                 if (product === null) {
+                    AppLogger.getLogger().debug(`Product with barcode '${barcode.data}' not found`);
                     return;
                 }
+                AppLogger.getLogger().debug(`Found Product '${barcode.data}' => '${product.name}'`);
                 getConnection()
                     .getRepository(GoodsReceiptEntry)
                     .findOneOrFail({
@@ -66,6 +70,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         },
                     })
                     .then((entry: GoodsReceiptEntry) => {
+                        AppLogger.getLogger().debug(
+                            `GoodsReceipt Entry found for Product '${barcode.data}': ${entry.productName} (${entry.expectedProductQty})`,
+                        );
                         this.setState({
                             product: product,
                             goodsReceiptEntry: entry,
@@ -75,11 +82,23 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     }
 
     didTapValid(): void {
-        console.debug('Did tap valid');
+        AppLogger.getLogger().debug('Did tap valid');
+        if (this.state.goodsReceiptEntry) {
+            const goodsReceiptEntry = this.state.goodsReceiptEntry;
+            goodsReceiptEntry.productQty = this.state.goodsReceiptEntry.expectedProductQty;
+            getRepository(GoodsReceiptEntry)
+                .save(goodsReceiptEntry)
+                .then(() => {
+                    this.setState({
+                        product: undefined,
+                        goodsReceiptEntry: undefined,
+                    });
+                });
+        }
     }
 
     didTapInvalid(): void {
-        console.debug('Did tap invalid');
+        AppLogger.getLogger().debug('Did tap invalid');
     }
 
     renderEntry(): React.ReactNode {
@@ -108,7 +127,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     this.scanner = ref !== null ? ref : undefined;
                 }}
                 onBarcodeRead={(barcode): void => {
-                    console.log(barcode.data);
+                    this.didScanBarcode(barcode);
                 }}
             ></Scanner2>
         );

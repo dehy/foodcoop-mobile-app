@@ -154,8 +154,10 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                         }
                         return '';
                     }}
-                    renderSectionHeader={({ section: { title } }) => <Text style={styles.listHeader}>{title}</Text>}
-                    renderItem={({ item }) => (
+                    renderSectionHeader={({ section: { title } }): React.ReactElement => (
+                        <Text style={styles.listHeader}>{title}</Text>
+                    )}
+                    renderItem={({ item }): React.ReactElement => (
                         <TouchableHighlight
                             onPress={(): void => {
                                 this.didTapPurchaseOrder({ item: item });
@@ -166,7 +168,8 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                 <Icon name="clipboard-list" style={styles.rowIcon} />
                                 <View style={styles.rowContent}>
                                     <Text style={styles.rowTitle}>
-                                        {moment(item.plannedDeliveryDate!).format('DD MMMM')} - {item.name}
+                                        {item.plannedDeliveryDate && moment(item.plannedDeliveryDate).format('DD MMMM')}{' '}
+                                        - {item.name}
                                     </Text>
                                     <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
                                 </View>

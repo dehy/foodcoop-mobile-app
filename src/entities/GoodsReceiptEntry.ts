@@ -1,5 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import moment from 'moment';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import GoodsReceiptSession from './GoodsReceiptSession';
 
 @Entity()
@@ -44,8 +43,16 @@ export default class GoodsReceiptEntry {
     public comment?: string;
 
     @ManyToOne(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => GoodsReceiptSession,
         goodsReceiptSession => goodsReceiptSession.goodsReceiptEntries,
     )
     public goodsReceiptSession?: GoodsReceiptSession;
+
+    public isValid(): boolean | null {
+        if (null === this.productQty) {
+            return null;
+        }
+        return this.expectedProductQty === this.productQty;
+    }
 }

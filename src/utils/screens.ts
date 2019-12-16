@@ -26,4 +26,5 @@ export function registerScreens(): void {
     Navigation.registerComponent('GoodsReceipt/New', () => require('../screens/GoodsReceipt/New').default);
     Navigation.registerComponent('GoodsReceipt/Show', () => require('../screens/GoodsReceipt/Show').default);
     Navigation.registerComponent('GoodsReceipt/Scan', () => require('../screens/GoodsReceipt/Scan').default);
+    Navigation.registerComponent('GoodsReceipt/Export', () => require('../screens/GoodsReceipt/Export').default);
 }
