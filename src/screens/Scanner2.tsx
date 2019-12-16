@@ -21,12 +21,12 @@ import BarcodeMask from 'react-native-barcode-mask';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Sound from 'react-native-sound';
 
-const flashModeOrder: { [key: string]: keyof FlashMode } = {
-    off: RNCamera.Constants.FlashMode.on,
-    //   on: RNCamera.Constants.FlashMode.auto,
-    //   auto: RNCamera.Constants.FlashMode.torch,
-    torch: RNCamera.Constants.FlashMode.off,
-};
+// const flashModeOrder: { [key: string]: keyof FlashMode } = {
+//     off: RNCamera.Constants.FlashMode.on,
+//     //   on: RNCamera.Constants.FlashMode.auto,
+//     //   auto: RNCamera.Constants.FlashMode.torch,
+//     torch: RNCamera.Constants.FlashMode.off,
+// };
 
 const wbOrder: { [key: string]: keyof WhiteBalance } = {
     auto: RNCamera.Constants.WhiteBalance.sunny,

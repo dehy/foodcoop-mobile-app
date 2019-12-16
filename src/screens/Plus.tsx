@@ -113,7 +113,7 @@ export default class Plus extends React.Component<PlusProps> {
                     </View>
                     <FlatList
                         scrollEnabled={false}
-                        ItemSeparatorComponent={({ highlighted }) => (
+                        ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
                             <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
                         )}
                         data={[
@@ -121,7 +121,7 @@ export default class Plus extends React.Component<PlusProps> {
                             { title: 'Maintenance', key: 'maintenance' },
                             { title: 'Se déconnecter', key: 'logout', color: 'red' },
                         ]}
-                        renderItem={({ item, separators }) => (
+                        renderItem={({ item, separators }): React.ReactElement => (
                             <TouchableHighlight
                                 onPress={(): void => this._onPress(item.key)}
                                 onShowUnderlay={separators.highlight}

@@ -1,8 +1,6 @@
-import { TextInput } from 'react-native';
-import { DialogInput } from 'react-native-dialog-input';
-
-declare module 'react-native-dialog-input' {
-    class DialogInput {
+declare module 'react-native-dialog-input';
+{
+    interface DialogInputProps {
         isDialogVisible: boolean;
         title?: string;
         hintInput?: string;
@@ -13,7 +11,5 @@ declare module 'react-native-dialog-input' {
         cancelText?: string;
         submitText?: string;
         submitInput?: TextInput;
-
-        closeDialog?: () => void;
     }
 }
