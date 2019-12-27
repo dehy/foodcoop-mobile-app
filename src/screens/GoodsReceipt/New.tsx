@@ -59,7 +59,7 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                 const purchaseOrderList: PurchaseOrderList[] = [];
                 let previousTitle: string;
                 let data: PurchaseOrder[];
-                purchaseOrders.forEach((po, index) => {
+                purchaseOrders.forEach(po => {
                     const dateAsString = moment(po.plannedDeliveryDate!).format('Do MMMM YYYY');
                     if (previousTitle != dateAsString) {
                         if (previousTitle != undefined) {
@@ -109,10 +109,10 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                             goodsReceiptEntry.goodsReceiptSession = session;
                             goodsReceiptEntry.name = poLine.name;
                             goodsReceiptEntry.productId = poLine.productId;
-                            goodsReceiptEntry.productUom = poLine.productUom;
                             goodsReceiptEntry.packageQty = poLine.packageQty;
                             goodsReceiptEntry.productQtyPackage = poLine.productQtyPackage;
                             goodsReceiptEntry.expectedProductQty = poLine.productQty;
+                            goodsReceiptEntry.expectedProductUom = poLine.productUom;
 
                             goodsReceiptEntries[goodsReceiptEntry.productId] = goodsReceiptEntry;
                         });
