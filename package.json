@@ -48,6 +48,7 @@
         "react-native-webview": "^7.5.1",
         "react-native-zip-archive": "^5.0.0",
         "reflect-metadata": "^0.1.13",
+        "sha.js": "^2.4.11",
         "typeorm": "^0.2.19"
     },
     "devDependencies": {
