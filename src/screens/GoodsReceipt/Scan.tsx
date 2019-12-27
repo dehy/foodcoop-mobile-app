@@ -1,14 +1,15 @@
 import React from 'react';
-import { Image, SafeAreaView, Text, View, Button } from 'react-native';
+import { Image, SafeAreaView, Text, View, Button, TextInput, Picker } from 'react-native';
 import Scanner2 from '../Scanner2';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Barcode } from 'react-native-camera/types';
 import Odoo from '../../utils/Odoo';
-import ProductProduct from '../../entities/Odoo/ProductProduct';
+import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import AppLogger from '../../utils/AppLogger';
+import { toNumber } from '../../utils/helpers';
 
 interface GoodsReceiptScanProps {
     componentId: string;
@@ -17,6 +18,7 @@ interface GoodsReceiptScanProps {
 interface GoodsReceiptScanState {
     product?: ProductProduct;
     goodsReceiptEntry?: GoodsReceiptEntry;
+    isValid?: boolean;
 }
 
 export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanProps, GoodsReceiptScanState> {
@@ -24,6 +26,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     state: GoodsReceiptScanState = {
         product: undefined,
         goodsReceiptEntry: undefined,
+        isValid: undefined,
     };
 
     constructor(props: GoodsReceiptScanProps) {
@@ -61,17 +64,19 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     AppLogger.getLogger().debug(`Product with barcode '${barcode.data}' not found`);
                     return;
                 }
-                AppLogger.getLogger().debug(`Found Product '${barcode.data}' => '${product.name}'`);
+                AppLogger.getLogger().debug(`Found Product '${product.barcode}' => '${product.name}'`);
                 getConnection()
                     .getRepository(GoodsReceiptEntry)
                     .findOneOrFail({
                         where: {
-                            barcode: product.barcode,
+                            productBarcode: product.barcode,
                         },
                     })
                     .then((entry: GoodsReceiptEntry) => {
                         AppLogger.getLogger().debug(
-                            `GoodsReceipt Entry found for Product '${barcode.data}': ${entry.productName} (${entry.expectedProductQty})`,
+                            `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
+                                entry.expectedProductQty
+                            } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)})`,
                         );
                         this.setState({
                             product: product,
@@ -83,6 +88,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     didTapValid(): void {
         AppLogger.getLogger().debug('Did tap valid');
+        this.setState({
+            isValid: true,
+        });
         if (this.state.goodsReceiptEntry) {
             const goodsReceiptEntry = this.state.goodsReceiptEntry;
             goodsReceiptEntry.productQty = this.state.goodsReceiptEntry.expectedProductQty;
@@ -92,6 +100,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     this.setState({
                         product: undefined,
                         goodsReceiptEntry: undefined,
+                        isValid: undefined,
                     });
                 });
         }
@@ -99,6 +108,81 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     didTapInvalid(): void {
         AppLogger.getLogger().debug('Did tap invalid');
+        this.setState({
+            isValid: false,
+        });
+    }
+
+    renderInvalid(): React.ReactNode {
+        if (this.state.isValid === false) {
+            return (
+                <View>
+                    <TextInput
+                        onChangeText={(receivedQtyStr): void => {
+                            const receivedQty = toNumber(receivedQtyStr);
+                            AppLogger.getLogger().debug(`New receivedQty: ${receivedQtyStr} => ${receivedQty}`);
+                            const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                            if (goodsReceiptEntry) {
+                                goodsReceiptEntry.productQty = receivedQty;
+                                this.setState({ goodsReceiptEntry });
+                            }
+                        }}
+                    />
+                    <Picker
+                        onValueChange={(receivedUomStr: string): void => {
+                            const receivedUom = toNumber(receivedUomStr);
+                            AppLogger.getLogger().debug(
+                                `New receivedUom: ${ProductProduct.quantityUnitAsString(receivedUom)}`,
+                            );
+                            const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                            if (goodsReceiptEntry) {
+                                goodsReceiptEntry.productUom = receivedUom;
+                                this.setState({ goodsReceiptEntry });
+                            }
+                        }}
+                        selectedValue={this.state.goodsReceiptEntry?.productUom}
+                    >
+                        <Picker.Item
+                            label={ProductProduct.quantityUnitAsString(UnitOfMesurement.unit)}
+                            value={UnitOfMesurement.unit}
+                        />
+                        <Picker.Item
+                            label={ProductProduct.quantityUnitAsString(UnitOfMesurement.kg)}
+                            value={UnitOfMesurement.kg}
+                        />
+                    </Picker>
+                    <TextInput
+                        multiline={true}
+                        numberOfLines={4}
+                        onChangeText={(invalidReason): void => {
+                            AppLogger.getLogger().debug(`New reason: ${invalidReason}`);
+                            const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                            if (goodsReceiptEntry) {
+                                goodsReceiptEntry.comment = invalidReason;
+                                this.setState({ goodsReceiptEntry });
+                            }
+                        }}
+                    />
+                    <Button
+                        title="Valider"
+                        onPress={(): void => {
+                            if (this.state.goodsReceiptEntry) {
+                                const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                getRepository(GoodsReceiptEntry)
+                                    .save(goodsReceiptEntry)
+                                    .then(() => {
+                                        this.setState({
+                                            product: undefined,
+                                            goodsReceiptEntry: undefined,
+                                            isValid: undefined,
+                                        });
+                                    });
+                            }
+                        }}
+                    />
+                </View>
+            );
+        }
     }
 
     renderEntry(): React.ReactNode {
@@ -116,6 +200,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     <Button title="Correct" onPress={(): void => this.didTapValid()} />
                     <Button title="Erreur" onPress={(): void => this.didTapInvalid()} />
                 </View>
+                {this.renderInvalid()}
             </View>
         );
     }
