@@ -199,13 +199,13 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-camera (3.14.0):
+  - react-native-camera (3.15.0):
     - React
-    - react-native-camera/RCT (= 3.14.0)
-    - react-native-camera/RN (= 3.14.0)
-  - react-native-camera/RCT (3.14.0):
+    - react-native-camera/RCT (= 3.15.0)
+    - react-native-camera/RN (= 3.15.0)
+  - react-native-camera/RCT (3.15.0):
     - React
-  - react-native-camera/RN (3.14.0):
+  - react-native-camera/RN (3.15.0):
     - React
   - react-native-cookies (3.2.0):
     - React
@@ -248,7 +248,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - ReactNativeNavigation (4.0.4):
+  - ReactNativeNavigation (4.0.9):
     - React
   - RNDeviceInfo (5.4.0):
     - React
@@ -259,7 +259,7 @@ PODS:
     - React
   - RNKeychain (4.0.4):
     - React
-  - RNSentry (1.2.0):
+  - RNSentry (1.2.1):
     - React
     - Sentry (~> 4.4.0)
   - RNSound (0.11.0):
@@ -438,7 +438,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-camera: 9f79d18f91fc8c35d693f1846d84a8b9094bcc65
+  react-native-camera: 52114c432860b89986c9ee4919d00a48a6ba7abb
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-sqlite-storage: f06bfba10f67f989c00b6a699b9c2b80a816edbe
   react-native-webview: db4682f1698ab4b17a5e88f951031d203ff8aea8
@@ -452,12 +452,12 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  ReactNativeNavigation: bf2951e30fb873b3ed1e736419c38ed1efe0f6c2
+  ReactNativeNavigation: 0d56442c71941833659002268312ae8464044f30
   RNDeviceInfo: c7b1dc457611b9231bb780a882102e2c93edc7af
   RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
   RNGoogleSignin: a10b849c165088c737d4465de6c2062f24d06002
   RNKeychain: 79cfca6cd5030bbabcd1a2c009531b84e358116d
-  RNSentry: b63ba6a29ee142b5c3221896be8ff6cda587e03f
+  RNSentry: 9b1d983b2d5d1c215ba6490348fd2a4cc23a8a9d
   RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
