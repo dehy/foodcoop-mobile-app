@@ -27,13 +27,19 @@ export default class GoodsReceiptEntry {
     @Column('int')
     public expectedProductQty?: number;
 
+    @Column('int')
+    public expectedProductUom?: number;
+
     @Column({
         type: 'int',
         nullable: true,
     })
     public productQty?: number; // Quantité totale
 
-    @Column('int')
+    @Column({
+        type: 'int',
+        nullable: true,
+    })
     public productUom?: number; // Unité de mesure d'article
 
     @Column({

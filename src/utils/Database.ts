@@ -38,7 +38,7 @@ export default class Database {
             database: 'supercoop',
             location: 'Documents',
             logging: ['error', 'query', 'schema'],
-            dropSchema: false,
+            dropSchema: true,
             synchronize: true,
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
         });
