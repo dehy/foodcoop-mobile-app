@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-dialog-input/index.js b/node_modules/react-native-dialog-input/index.js
+index ec830ad..b856d18 100644
+--- a/node_modules/react-native-dialog-input/index.js
++++ b/node_modules/react-native-dialog-input/index.js
+@@ -51,7 +51,7 @@ class DialogInput extends React.Component{
+                   onKeyPress={() => this.setState({ openning: false })}
+                   underlineColorAndroid='transparent'
+                   placeholder={hintInput}
+-                  onChangeText={(inputModal) => this.setState({inputModal})}
++                  onChangeText={(inputModal) => this.setState({inputModal, openning: false})}
+                   value={value}
+                   />
+               </View>
