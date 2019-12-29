@@ -603,6 +603,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                         ? RNCamera.Constants.FaceDetection.Landmarks.all
                         : undefined
                 }
+                captureAudio={false}
                 onFacesDetected={canDetectFaces ? this.facesDetected : undefined}
                 onTextRecognized={canDetectText ? this.textRecognized : undefined}
                 onBarCodeRead={canDetectBarcode ? this.barcodeRecognized : undefined}
