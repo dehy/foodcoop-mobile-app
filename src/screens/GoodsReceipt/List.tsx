@@ -2,13 +2,14 @@ import React from 'react';
 import { View, Text, TouchableHighlight, SafeAreaView, SectionList } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
-import styles from '../../styles/material';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getConnection } from 'typeorm';
 import GoodsReceiptService from '../../services/GoodsReceiptService';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import styles from '../../styles/material';
+import { ThemeProvider, Button, Icon } from 'react-native-elements';
+// import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export interface GoodsReceiptListProps {
     componentId: string;
@@ -30,6 +31,15 @@ interface GoodsReceiptSessionTapProps {
 }
 
 export default class GoodsReceiptList extends React.Component<GoodsReceiptListProps, GoodsReceiptListState> {
+    theme = {
+        Button: {
+            iconContainerStyle: { marginRight: 5 },
+        },
+        Icon: {
+            type: 'font-awesome',
+        },
+    };
+
     constructor(props: GoodsReceiptListProps) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -57,7 +67,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
     }
 
     componentDidMount(): void {
-        // this.loadData();
+        this.loadData();
     }
 
     loadTodaysGoodsReceipt(): void {
@@ -167,50 +177,54 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
 
     render(): React.ReactNode {
         return (
-            <SafeAreaView>
-                {this.renderTodaysGoodsReceipts()}
-                <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
-                    <Icon.Button name="plus-circle" solid style={{}} onPress={this.openNewGoodsReceiptSessionModal}>
-                        Nouvelle réception
-                    </Icon.Button>
-                </View>
-                <SectionList
-                    style={{ backgroundColor: 'white', height: '100%' }}
-                    sections={this.state.goodsReceiptsData}
-                    keyExtractor={(item): string => {
-                        if (item.id && item.id.toString()) {
-                            return item.id.toString();
-                        }
-                        return '';
-                    }}
-                    renderSectionHeader={({ section: { title } }): React.ReactElement => (
-                        <Text style={styles.listHeader}>{title}</Text>
-                    )}
-                    renderItem={({ item }): React.ReactElement => (
-                        <TouchableHighlight
-                            onPress={(): void => {
-                                const inventorySessionTapProps: GoodsReceiptSessionTapProps = {
-                                    componentId: this.props.componentId,
-                                    session: item,
-                                };
-                                this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
-                            }}
-                            underlayColor="#BCBCBC"
-                        >
-                            <View style={styles.row}>
-                                {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
-                                <View style={styles.rowContent}>
-                                    <Text style={styles.rowTitle}>{item.poName}</Text>
-                                    <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
+            <ThemeProvider theme={this.theme}>
+                <SafeAreaView>
+                    {this.renderTodaysGoodsReceipts()}
+                    <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
+                        <Button
+                            title=" Nouvelle réception"
+                            icon={<Icon name="plus-circle" color="white" />}
+                            onPress={this.openNewGoodsReceiptSessionModal}
+                        />
+                    </View>
+                    <SectionList
+                        style={{ backgroundColor: 'white', height: '100%' }}
+                        sections={this.state.goodsReceiptsData}
+                        keyExtractor={(item): string => {
+                            if (item.id && item.id.toString()) {
+                                return item.id.toString();
+                            }
+                            return '';
+                        }}
+                        renderSectionHeader={({ section: { title } }): React.ReactElement => (
+                            <Text style={styles.listHeader}>{title}</Text>
+                        )}
+                        renderItem={({ item }): React.ReactElement => (
+                            <TouchableHighlight
+                                onPress={(): void => {
+                                    const inventorySessionTapProps: GoodsReceiptSessionTapProps = {
+                                        componentId: this.props.componentId,
+                                        session: item,
+                                    };
+                                    this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
+                                }}
+                                underlayColor="#BCBCBC"
+                            >
+                                <View style={styles.row}>
+                                    {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
+                                    <View style={styles.rowContent}>
+                                        <Text style={styles.rowTitle}>{item.poName}</Text>
+                                        <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
+                                    </View>
+                                    <Text style={styles.rowDetailText}>
+                                        {item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
+                                    </Text>
                                 </View>
-                                <Text style={styles.rowDetailText}>
-                                    {item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
-                                </Text>
-                            </View>
-                        </TouchableHighlight>
-                    )}
-                />
-            </SafeAreaView>
+                            </TouchableHighlight>
+                        )}
+                    />
+                </SafeAreaView>
+            </ThemeProvider>
         );
     }
 }
