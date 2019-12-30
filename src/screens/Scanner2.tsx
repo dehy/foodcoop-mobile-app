@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, GestureResponderEvent, Platform } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, GestureResponderEvent, Platform, Vibration } from 'react-native';
 import DialogInput from 'react-native-dialog-input';
 import {
     RNCamera,
@@ -74,7 +74,7 @@ interface Scanner2State {
     depth: number;
     type?: keyof CameraType;
     whiteBalance: keyof WhiteBalance;
-    ratio: string;
+    ratio?: string;
     recordOptions: RecordOptions;
     isRecording: boolean;
     canDetectFaces: boolean;
@@ -205,7 +205,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         depth: 0,
         type: RNCamera.Constants.Type.back,
         whiteBalance: RNCamera.Constants.WhiteBalance.auto,
-        ratio: '16:9',
+        ratio: undefined,
         recordOptions: {
             mute: false,
             maxDuration: 5,
@@ -237,7 +237,26 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             }
         });
         this.beepSound.stop();
+        this.camera?.getSupportedRatiosAsync().then((ratios: string[]): void => {
+            console.log(ratios);
+        });
     }
+
+    findBestRatio = async (): Promise<void> => {
+        if (Platform.OS === 'android' && this.camera) {
+            const ratios = await this.camera.getSupportedRatiosAsync();
+
+            // Usually the last element of "ratios" is the maximum supported ratio
+            let ratio = ratios.find(ratio => ratio === '16:9');
+            if (ratio === undefined) {
+                ratio = ratios.find(ratio => ratio === '4:3');
+            }
+
+            this.setState({
+                ratio,
+            });
+        }
+    };
 
     reset = (): void => {
         this.setState({
@@ -514,6 +533,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({ barcodes: [barcode] });
         if (!previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
+            Vibration.vibrate(500, false);
             this.beepSound.play(() => {
                 this.beepSound.stop(); // Resets file for immediate play availability
             });
@@ -598,6 +618,10 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                     buttonPositive: 'Ok',
                     buttonNegative: 'Cancel',
                 }}
+                onMountError={(error: { message: string }): void => {
+                    console.error(error.message);
+                }}
+                onCameraReady={this.findBestRatio}
                 faceDetectionLandmarks={
                     RNCamera.Constants.FaceDetection.Landmarks
                         ? RNCamera.Constants.FaceDetection.Landmarks.all
@@ -610,135 +634,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                 //onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : undefined}
             >
                 <BarcodeMask width={300} height={100} showAnimatedLine={false} />
-                {/* <View
-          style={{
-            flex: 0.5,
-            height: 72,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}
-          >
-            <TouchableOpacity style={styles.flipButton} onPress={this.toggleFacing}>
-              <Text style={styles.flipText}> FLIP </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.flipButton} onPress={this.toggleFlash}>
-              <Text style={styles.flipText}> FLASH: {this.state.flash} </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.flipButton} onPress={this.toggleWB}>
-              <Text style={styles.flipText}> WB: {this.state.whiteBalance} </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}
-          >
-            <TouchableOpacity onPress={() => {this.toggle('canDetectFaces')}} style={styles.flipButton}>
-              <Text style={styles.flipText}>
-                {!canDetectFaces ? 'Detect Faces' : 'Detecting Faces'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {this.toggle('canDetectText')}} style={styles.flipButton}>
-              <Text style={styles.flipText}>
-                {!canDetectText ? 'Detect Text' : 'Detecting Text'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {this.toggle('canDetectBarcode')}} style={styles.flipButton}>
-              <Text style={styles.flipText}>
-                {!canDetectBarcode ? 'Detect Barcode' : 'Detecting Barcode'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View> */}
-                {/* <View style={{ bottom: 0 }}>
-          <View
-            style={{
-              height: 20,
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-            }}
-          >
-            <Slider
-              style={{ width: 150, marginTop: 15, alignSelf: 'flex-end' }}
-              onValueChange={this.setFocusDepth}
-              step={0.1}
-              disabled={this.state.autoFocus === 'on'}
-            />
-          </View>
-          <View
-            style={{
-              height: 56,
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-            }}
-          >
-            <TouchableOpacity
-              style={[
-                styles.flipButton,
-                {
-                  flex: 0.3,
-                  alignSelf: 'flex-end',
-                  backgroundColor: this.state.isRecording ? 'white' : 'darkred',
-                },
-              ]}
-              onPress={this.state.isRecording ? () => {} : this.takeVideo}
-            >
-              {this.state.isRecording ? (
-                <Text style={styles.flipText}> ☕ </Text>
-              ) : (
-                <Text style={styles.flipText}> REC </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-          {this.state.zoom !== 0 && (
-            <Text style={[styles.flipText, styles.zoomText]}>Zoom: {this.state.zoom}</Text>
-          )}
-          <View
-            style={{
-              height: 56,
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-            }}
-          >
-            <TouchableOpacity
-              style={[styles.flipButton, { flex: 0.1, alignSelf: 'flex-end' }]}
-              onPress={this.zoomIn}
-            >
-              <Text style={styles.flipText}> + </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.flipButton, { flex: 0.1, alignSelf: 'flex-end' }]}
-              onPress={this.zoomOut}
-            >
-              <Text style={styles.flipText}> - </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.flipButton, { flex: 0.25, alignSelf: 'flex-end' }]}
-              onPress={this.toggleFocus}
-            >
-              <Text style={styles.flipText}> AF : {this.state.autoFocus} </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.flipButton, styles.picButton, { flex: 0.3, alignSelf: 'flex-end' }]}
-              onPress={this.takePicture}
-            >
-              <Text style={styles.flipText}> SNAP </Text>
-            </TouchableOpacity>
-          </View>
-        </View> */}
                 <View style={styles.actions}>
                     <View style={styles.actionButton}>
                         <Icon.Button
