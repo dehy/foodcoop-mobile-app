@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableWithoutFeedback, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, SafeAreaView, FlatList } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
-import styles from '../../styles/material';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Button, Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
+import moment from 'moment';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -19,6 +19,15 @@ interface GoodsReceiptShowState {
 }
 
 export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowProps, GoodsReceiptShowState> {
+    theme = {
+        Button: {
+            iconContainerStyle: { marginRight: 5 },
+        },
+        Icon: {
+            type: 'font-awesome',
+        },
+    };
+
     constructor(props: GoodsReceiptShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -80,13 +89,16 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     //     });
     //   };
 
-    openGoodsReceiptScan(): void {
+    openGoodsReceiptScan(productBarcode?: string): void {
         Navigation.showModal({
             stack: {
                 children: [
                     {
                         component: {
                             name: 'GoodsReceipt/Scan',
+                            passProps: {
+                                preselectedProductBarcode: productBarcode,
+                            },
                         },
                     },
                 ],
@@ -121,55 +133,103 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return 'transparent';
     }
 
+    renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
+        let correctQty;
+        if (false === entry.isValid()) {
+            correctQty = (
+                <Text>
+                    {entry.productQty} {ProductProduct.quantityUnitAsString(entry.productUom)}
+                </Text>
+            );
+        }
+        return (
+            <View>
+                <Text style={{ textDecorationLine: false === entry.isValid() ? 'line-through' : 'none' }}>
+                    {entry.expectedProductQty} {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
+                </Text>
+                {correctQty}
+            </View>
+        );
+    }
+
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{ height: '100%' }}>
-                <View>
-                    <Text>{this.props.session.partnerName}</Text>
-                </View>
-                <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'space-around' }}>
-                    <Icon.Button name="barcode" solid style={{}} onPress={this.openGoodsReceiptScan}>
-                        Scanner
-                    </Icon.Button>
-                    <Icon.Button name="file-export" solid style={{}} onPress={this.openGoodsReceiptExport}>
-                        Envoyer
-                    </Icon.Button>
-                </View>
-                <FlatList
-                    style={{ backgroundColor: 'white' }}
-                    data={this.state.session.goodsReceiptEntries || []}
-                    keyExtractor={(item): string => {
-                        if (item.id && item.id.toString()) {
-                            return item.id.toString();
-                        }
-                        return '';
-                    }}
-                    renderItem={({ item }): React.ReactElement => (
-                        <TouchableWithoutFeedback
+                <ThemeProvider theme={this.theme}>
+                    <View>
+                        <Text style={{ fontSize: 25, margin: 5 }}>{this.props.session.partnerName}</Text>
+                        <Text style={{ fontSize: 15, margin: 5 }}>
+                            {this.props.session.poName} - {moment(this.props.session.createdAt).format('DD MMMM YYYY')}
+                        </Text>
+                    </View>
+                    <View
+                        style={{
+                            padding: 8,
+                            flexDirection: 'row',
+                            justifyContent: 'space-around',
+                            borderBottomWidth: 1,
+                            borderBottomColor: '#CCCCCC',
+                        }}
+                    >
+                        <Button
+                            title=" Scanner"
                             onPress={(): void => {
-                                // let inventorySessionTapProps: GoodsReceiptSessionTapProps = {
-                                //   componentId: this.props.componentId,
-                                //   item: item
-                                // };
-                                // this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
+                                this.openGoodsReceiptScan();
                             }}
-                        >
-                            <View style={[styles.row, { backgroundColor: this.itemBackgroundColor(item) }]}>
-                                {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
-                                {/* <Text style={styles.rowIcon}>{item.expectedProductQty}</Text> */}
-                                <View style={styles.rowContent}>
-                                    <Text style={styles.rowTitle}>{item.productName}</Text>
-                                    <Text style={styles.rowSubtitle}>
-                                        {item.productBarcode && item.productBarcode.toString()}
-                                    </Text>
-                                </View>
-                                <Text style={styles.rowDetailText}>
-                                    {item.expectedProductQty} {ProductProduct.quantityUnitAsString(item.productUom)}
-                                </Text>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    )}
-                />
+                            icon={<Icon name="barcode" color="white" />}
+                        />
+                        <Button
+                            title=" Envoyer"
+                            onPress={this.openGoodsReceiptExport}
+                            icon={<Icon name="paper-plane" color="white" />}
+                        />
+                    </View>
+                    <FlatList
+                        style={{ backgroundColor: 'white' }}
+                        data={this.state.session.goodsReceiptEntries || []}
+                        keyExtractor={(item): string => {
+                            if (item.id && item.id.toString()) {
+                                return item.id.toString();
+                            }
+                            return '';
+                        }}
+                        renderItem={({ item }): React.ReactElement => (
+                            <ListItem
+                                containerStyle={{ backgroundColor: this.itemBackgroundColor(item) }}
+                                title={item.productName}
+                                subtitle={item.productBarcode && item.productBarcode.toString()}
+                                rightElement={this.renderEntryQty(item)}
+                                onPress={(): void => {
+                                    this.openGoodsReceiptScan(item.productBarcode);
+                                }}
+                                bottomDivider
+                            />
+                            // <TouchableWithoutFeedback
+                            //     onPress={(): void => {
+                            //         // let inventorySessionTapProps: GoodsReceiptSessionTapProps = {
+                            //         //   componentId: this.props.componentId,
+                            //         //   item: item
+                            //         // };
+                            //         // this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
+                            //     }}
+                            // >
+                            //     <View style={[styles.row, { backgroundColor: this.itemBackgroundColor(item) }]}>
+                            //         {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
+                            //         {/* <Text style={styles.rowIcon}>{item.expectedProductQty}</Text> */}
+                            //         <View style={styles.rowContent}>
+                            //             <Text style={styles.rowTitle}>{item.productName}</Text>
+                            //             <Text style={styles.rowSubtitle}>
+                            //                 {item.productBarcode && item.productBarcode.toString()}
+                            //             </Text>
+                            //         </View>
+                            //         <Text style={styles.rowDetailText}>
+                            //             {item.expectedProductQty} {ProductProduct.quantityUnitAsString(item.productUom)}
+                            //         </Text>
+                            //     </View>
+                            // </TouchableWithoutFeedback>
+                        )}
+                    />
+                </ThemeProvider>
             </SafeAreaView>
         );
     }

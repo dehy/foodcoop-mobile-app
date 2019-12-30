@@ -1,6 +1,5 @@
-import React from 'react';
-import { ActivityIndicator, Alert, Platform, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-elements';
+import React, { ReactElement } from 'react';
+import { ActivityIndicator, Alert, Platform, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import CSVGenerator, { CSVData } from '../../utils/CSVGenerator';
@@ -11,6 +10,8 @@ import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import { getRepository } from 'typeorm';
 import ActionSheet from 'react-native-action-sheet';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
+import { Button, ThemeProvider, ListItem } from 'react-native-elements';
+import Dialog from 'react-native-dialog';
 
 export interface GoodsReceiptExportProps {
     componentId: string;
@@ -21,6 +22,8 @@ interface GoodsReceiptExportState {
     isSendingMail: boolean;
     filePath?: string | false;
     selectedGamme?: string;
+    senderNameDialogVisible: boolean;
+    senderName?: string;
 }
 
 const styles = StyleSheet.create({
@@ -32,6 +35,7 @@ const styles = StyleSheet.create({
 export default class GoodsReceiptExport extends React.Component<GoodsReceiptExportProps, GoodsReceiptExportState> {
     private receiptEntries: Array<GoodsReceiptEntry> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
+    private senderNameInput?: string;
 
     private gammes: { [k: string]: string } = {
         'Gamme Boisson': 'gamme-boisson@supercoop.fr',
@@ -50,6 +54,8 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
 
         this.state = {
             isSendingMail: false,
+            senderName: Google.getInstance().getUsername(),
+            senderNameDialogVisible: false,
         };
 
         this.generateCSVFile().then(filePath => {
@@ -114,6 +120,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 barcode: entry.productBarcode,
                 expectedQty: entry.expectedProductQty,
                 receivedQty: entry.productQty,
+                comment: entry.comment,
                 product: entry.productName,
             };
             sessionData.push(entryData);
@@ -139,7 +146,8 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         if (!this.state.filePath) {
             throw new Error('File is not available !');
         }
-        const userFirstname = Google.getInstance().getFirstnameSlug();
+        const userEmail = Google.getInstance().getEmail();
+        const userName = this.state.senderName;
         const poName = this.props.session.poName;
         const partnerName = this.props.session.partnerName;
         const date = moment(this.props.session.updatedAt).format('DD/MM/YYYY');
@@ -149,7 +157,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
 
         const to = this.gammes[this.state.selectedGamme];
         const subject = `[${poName}][${partnerName}] Rapport de livraison`;
-        const body = `Réception de livraison faite par ${userFirstname}.
+        const body = `Réception de livraison faite par ${userName} <${userEmail}>.
 
 PO: ${poName}
 Fournisseur: ${partnerName}
@@ -188,8 +196,16 @@ ${entriesCount} produits traités`;
             });
     }
 
+    isReady = (): boolean => {
+        if (this.state.filePath && this.state.selectedGamme) {
+            return true;
+        }
+        return false;
+    };
+
     render(): React.ReactNode {
-        let ReceiptCheck = null;
+        let ReceiptCheck: React.ReactElement | undefined = undefined;
+
         if (this.state.filePath == undefined) {
             ReceiptCheck = (
                 <View style={styles.checkResult}>
@@ -206,7 +222,7 @@ ${entriesCount} produits traités`;
                 </View>
             );
         }
-        if (this.state.filePath == false) {
+        if (this.state.filePath === false) {
             ReceiptCheck = (
                 <View style={styles.checkResult}>
                     <Icon name="times" color="red" style={{ paddingTop: 3, marginRight: 4 }} />
@@ -216,40 +232,76 @@ ${entriesCount} produits traités`;
         }
 
         return (
-            <SafeAreaView style={{ backgroundColor: 'white', padding: 16 }}>
-                <View>
-                    <Text>
-                        Tu es sur le point d&apos;envoyer ta réception du{' '}
-                        {this.props.session.createdAt &&
-                            moment(this.props.session.createdAt).format('dddd DD MMMM YYYY')}
-                        , PO {this.props.session.poName}, de {this.props.session.partnerName}. Elle contient{' '}
-                        {this.receiptEntries.length} produit
-                        {this.receiptEntries.length > 1 ? 's' : ''}.
-                    </Text>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text>État : {ReceiptCheck}</Text>
-                    </View>
-                    <View>
-                        <Text>Envoyer à :</Text>
-                        <Button
+            <SafeAreaView style={{ backgroundColor: 'white' }}>
+                <ThemeProvider>
+                    <ScrollView>
+                        <Text style={{ fontSize: 16, margin: 16 }}>
+                            Tu es sur le point d&apos;envoyer ta réception du{' '}
+                            {this.props.session.createdAt &&
+                                moment(this.props.session.createdAt).format('dddd DD MMMM YYYY')}
+                            , PO {this.props.session.poName}, de {this.props.session.partnerName}. Elle contient{' '}
+                            {this.receiptEntries.length} produit
+                            {this.receiptEntries.length > 1 ? 's' : ''}.
+                        </Text>
+                        <ListItem
+                            title="Réceptionneur"
+                            rightElement={<Text>{this.state.senderName}</Text>}
+                            onPress={(): void => {
+                                this.senderNameInput = this.state.senderName;
+                                this.setState({ senderNameDialogVisible: true });
+                            }}
+                            topDivider
+                            bottomDivider
+                            chevron
+                        />
+                        <ListItem title="État" rightElement={ReceiptCheck} bottomDivider />
+                        <ListItem
+                            title="Destinataire"
+                            rightElement={<Text>{this.state.selectedGamme || 'À Choisir'}</Text>}
                             onPress={(): void => {
                                 this.chooseRecipient();
                             }}
-                            title={this.state.selectedGamme || 'Choisir Gamme'}
                             disabled={this.state.isSendingMail}
-                        ></Button>
-                    </View>
-                    <Text>En tapant sur le bouton ci-dessous, il sera envoyé à {this.state.selectedGamme} :</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', margin: 16 }}>
-                        <Button
-                            onPress={(): void => {
-                                this.sendReceipt();
-                            }}
-                            title="Envoyer maintenant"
-                            disabled={this.state.isSendingMail || !this.state.filePath}
+                            bottomDivider
+                            chevron
                         />
-                    </View>
-                </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', margin: 16 }}>
+                            <Button
+                                onPress={(): void => {
+                                    this.sendReceipt();
+                                }}
+                                title="Envoyer maintenant"
+                                disabled={this.state.isSendingMail || !this.isReady()}
+                            />
+                        </View>
+                    </ScrollView>
+                    <Dialog.Container visible={this.state.senderNameDialogVisible}>
+                        <Dialog.Title>Nom du réceptionneur</Dialog.Title>
+                        <Dialog.Input
+                            onChangeText={(text): void => {
+                                this.senderNameInput = text;
+                            }}
+                        >
+                            {this.state.senderName}
+                        </Dialog.Input>
+                        <Dialog.Button
+                            label="Annuler"
+                            onPress={(): void => {
+                                this.senderNameInput = this.state.senderName;
+                                this.setState({ senderNameDialogVisible: false });
+                            }}
+                        />
+                        <Dialog.Button
+                            label="OK"
+                            onPress={(): void => {
+                                this.setState({
+                                    senderName: this.senderNameInput,
+                                    senderNameDialogVisible: false,
+                                });
+                            }}
+                        />
+                    </Dialog.Container>
+                </ThemeProvider>
             </SafeAreaView>
         );
     }

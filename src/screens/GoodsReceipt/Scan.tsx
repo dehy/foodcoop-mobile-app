@@ -1,18 +1,21 @@
 import React from 'react';
-import { Image, SafeAreaView, Text, View, Button, TextInput, Picker } from 'react-native';
+import { Image, SafeAreaView, Text, View, Picker, ScrollView } from 'react-native';
 import Scanner2 from '../Scanner2';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
-import { Barcode } from 'react-native-camera/types';
+import { Barcode, BarcodeType } from 'react-native-camera/types';
 import Odoo from '../../utils/Odoo';
 import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import AppLogger from '../../utils/AppLogger';
 import { toNumber } from '../../utils/helpers';
+import { Input } from 'react-native-elements';
+import { Button, Icon, ThemeProvider } from 'react-native-elements';
 
 interface GoodsReceiptScanProps {
     componentId: string;
+    preselectedProductBarcode?: string;
 }
 
 interface GoodsReceiptScanState {
@@ -22,6 +25,20 @@ interface GoodsReceiptScanState {
 }
 
 export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanProps, GoodsReceiptScanState> {
+    colorSuccess = '#5cb85c';
+    colorSuccessDisabled = '#78C589';
+    colorDanger = '#DC3545';
+    colorDangerDisabled = '#E77D89';
+
+    theme = {
+        Button: {
+            iconContainerStyle: { marginRight: 5 },
+        },
+        Icon: {
+            type: 'font-awesome',
+        },
+    };
+
     scanner?: Scanner2;
     state: GoodsReceiptScanState = {
         product: undefined,
@@ -32,6 +49,18 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     constructor(props: GoodsReceiptScanProps) {
         super(props);
         Navigation.events().bindComponent(this);
+    }
+
+    componentDidMount(): void {
+        if (this.props.preselectedProductBarcode) {
+            const barcode: Barcode = {
+                data: this.props.preselectedProductBarcode,
+                dataRaw: this.props.preselectedProductBarcode,
+                type: 'PRODUCT',
+                bounds: { size: { width: 0, height: 0 }, origin: { x: 0, y: 0 } },
+            };
+            this.didScanBarcode(barcode);
+        }
     }
 
     static options(): Options {
@@ -62,6 +91,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             .then((product: ProductProduct | null) => {
                 if (product === null) {
                     AppLogger.getLogger().debug(`Product with barcode '${barcode.data}' not found`);
+                    alert(`Produit avec le code barre ${barcode.data} non trouvé`);
                     return;
                 }
                 AppLogger.getLogger().debug(`Found Product '${product.barcode}' => '${product.name}'`);
@@ -82,6 +112,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                             product: product,
                             goodsReceiptEntry: entry,
                         });
+                    })
+                    .catch(() => {
+                        alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
                     });
             });
     }
@@ -97,6 +130,10 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             getRepository(GoodsReceiptEntry)
                 .save(goodsReceiptEntry)
                 .then(() => {
+                    if (this.props.preselectedProductBarcode) {
+                        Navigation.dismissModal(this.props.componentId);
+                        return;
+                    }
                     this.setState({
                         product: undefined,
                         goodsReceiptEntry: undefined,
@@ -113,11 +150,23 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         });
     }
 
+    didTapCancel(): void {
+        if (this.props.preselectedProductBarcode) {
+            Navigation.dismissModal(this.props.componentId);
+            return;
+        }
+        this.setState({
+            product: undefined,
+            goodsReceiptEntry: undefined,
+        });
+    }
+
     renderInvalid(): React.ReactNode {
         if (this.state.isValid === false) {
             return (
-                <View>
-                    <TextInput
+                <ScrollView style={{ height: '100%' }}>
+                    <Input
+                        placeholder="Quantité reçue"
                         onChangeText={(receivedQtyStr): void => {
                             const receivedQty = toNumber(receivedQtyStr);
                             AppLogger.getLogger().debug(`New receivedQty: ${receivedQtyStr} => ${receivedQty}`);
@@ -151,7 +200,8 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                             value={UnitOfMesurement.kg}
                         />
                     </Picker>
-                    <TextInput
+                    <Input
+                        placeholder="Commentaire (optionnel)"
                         multiline={true}
                         numberOfLines={4}
                         onChangeText={(invalidReason): void => {
@@ -171,6 +221,10 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                 getRepository(GoodsReceiptEntry)
                                     .save(goodsReceiptEntry)
                                     .then(() => {
+                                        if (this.props.preselectedProductBarcode) {
+                                            Navigation.dismissModal(this.props.componentId);
+                                            return;
+                                        }
                                         this.setState({
                                             product: undefined,
                                             goodsReceiptEntry: undefined,
@@ -180,7 +234,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                             }
                         }}
                     />
-                </View>
+                </ScrollView>
             );
         }
     }
@@ -189,16 +243,50 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         return (
             <View>
                 <Image source={{ uri: this.state.product && this.state.product.image }} />
-                <Text>{this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}</Text>
-                <Text>
-                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQty}
+                <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
+                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
+                </Text>
+                <Text style={{ fontSize: 45, margin: 5, textAlign: 'center' }}>
+                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQty}{' '}
                     {ProductProduct.quantityUnitAsString(
-                        this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productUom,
+                        this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductUom,
                     )}
                 </Text>
-                <View>
-                    <Button title="Correct" onPress={(): void => this.didTapValid()} />
-                    <Button title="Erreur" onPress={(): void => this.didTapInvalid()} />
+                <View
+                    style={{
+                        padding: 8,
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#CCCCCC',
+                    }}
+                >
+                    <Button
+                        title=" Correct"
+                        onPress={(): void => this.didTapValid()}
+                        buttonStyle={{
+                            backgroundColor:
+                                this.state.isValid === false ? this.colorSuccessDisabled : this.colorSuccess,
+                        }}
+                        icon={<Icon name="check" color="white" />}
+                    />
+                    <Button
+                        title=" Erreur"
+                        onPress={(): void => this.didTapInvalid()}
+                        buttonStyle={{
+                            backgroundColor: this.state.isValid === true ? this.colorDangerDisabled : this.colorDanger,
+                        }}
+                        icon={<Icon name="times" color="white" />}
+                    />
+                    <Button
+                        title="Annuler"
+                        onPress={(): void => {
+                            this.didTapCancel();
+                        }}
+                        buttonStyle={{
+                            backgroundColor: 'grey',
+                        }}
+                    />
                 </View>
                 {this.renderInvalid()}
             </View>
@@ -221,7 +309,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{ height: '100%' }}>
-                {this.state.goodsReceiptEntry ? this.renderEntry() : this.renderCamera()}
+                <ThemeProvider theme={this.theme}>
+                    {this.state.goodsReceiptEntry ? this.renderEntry() : this.renderCamera()}
+                </ThemeProvider>
             </SafeAreaView>
         );
     }
