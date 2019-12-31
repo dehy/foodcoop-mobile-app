@@ -45,7 +45,7 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
     constructor(props: InventoryNewProps) {
         super(props);
         Navigation.events().bindComponent(this);
-        console.debug('DateInputFormat', moment().format('DD MMMM YYYY'));
+        // console.debug('DateInputFormat', moment().format('DD MMMM YYYY'));
     }
 
     static options(): Options {
@@ -82,7 +82,7 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
     hideDateTimePicker = (): void => this.setState({ isDateTimePickerVisible: false });
 
     handleDatePicked = (date: Date): void => {
-        console.debug('A date has been picked: ', date);
+        // console.debug('A date has been picked: ', date);
         this.setState({
             date: moment(date),
         });
@@ -94,7 +94,7 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
     };
 
     updateDateInput = (): void => {
-        console.debug(this.state.date.format('DD MMMM YYYY'));
+        // console.debug(this.state.date.format('DD MMMM YYYY'));
         this.setState({
             dateInputValue: this.state.date.format('DD MMMM YYYY'),
         });
@@ -116,9 +116,9 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
             Alert.alert('Erreur de saisie', 'Le numéro de zone est incorrect');
             return;
         }
-        console.debug('Form values:');
-        console.debug(this.state.date.unix());
-        console.debug(this.state.zone);
+        // console.debug('Form values:');
+        // console.debug(this.state.date.unix());
+        // console.debug(this.state.zone);
 
         const inventorySession = new InventorySession();
         inventorySession.date = this.state.date;

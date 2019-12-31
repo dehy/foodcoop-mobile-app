@@ -237,9 +237,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             }
         });
         this.beepSound.stop();
-        this.camera?.getSupportedRatiosAsync().then((ratios: string[]): void => {
-            console.log(ratios);
-        });
     }
 
     findBestRatio = async (): Promise<void> => {
