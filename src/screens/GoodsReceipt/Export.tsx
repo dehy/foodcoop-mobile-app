@@ -59,7 +59,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         };
 
         this.generateCSVFile().then(filePath => {
-            console.log(filePath);
+            // console.log(filePath);
             this.setState({
                 filePath,
             });
@@ -102,7 +102,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 cancelButtonIndex: recipientsIos.length - 1,
             },
             buttonIndex => {
-                console.log('button clicked :', buttonIndex);
+                //console.log('button clicked :', buttonIndex);
                 this.setState({
                     selectedGamme: Object.keys(this.gammes)[buttonIndex],
                 });

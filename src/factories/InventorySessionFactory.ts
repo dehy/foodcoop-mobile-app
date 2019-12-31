@@ -47,7 +47,7 @@ export default class InventoryFactory {
 
     async persist(object: InventorySession): Promise<void> {
         const params = this._objectToParams(object);
-        console.log(params);
+        // console.log(params);
 
         await this.db.executeQuery(
             'INSERT OR REPLACE INTO `inventories` (id, date, zone, last_modified_at, last_sent_at) VALUES (?, ?, ?, ?, ?)',
