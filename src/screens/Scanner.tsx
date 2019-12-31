@@ -280,7 +280,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
     }
 
     didScanBarcode(barcode: Barcode): void {
-        console.debug('didScanBarcode()', barcode.data, barcode.type);
+        // console.debug('didScanBarcode()', barcode.data, barcode.type);
         if (barcode.type !== 'PRODUCT' || !(barcode.data.length !== 13)) {
             this.lookupForBarcode(barcode.data);
             return;

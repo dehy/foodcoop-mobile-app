@@ -48,7 +48,7 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
         const cookieItemList: CookiesMaintenanceFlatListItem[] = [];
         if (Platform.OS == 'ios') {
             CookieManager.getAll().then(cookies => {
-                console.debug('CookieManager.getAll =>', cookies);
+                // console.debug('CookieManager.getAll =>', cookies);
                 this.cookies = cookies;
                 for (const cookieKey in cookies) {
                     const cookie = cookies[cookieKey];
@@ -71,7 +71,7 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
     }
 
     didTapCookieItem = (key: number): void => {
-        console.debug('didTapCookieItem()', key);
+        // console.debug('didTapCookieItem()', key);
         if (this.cookies[key]) {
             const cookie = this.cookies[key];
             const alertBody = `domain: ${cookie.domain}
@@ -106,7 +106,7 @@ path: ${cookie.path}`;
     };
 
     renderCookieList(): React.ReactElement {
-        console.debug(this.state.cookieItemList);
+        // console.debug(this.state.cookieItemList);
 
         return (
             <FlatList

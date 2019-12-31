@@ -64,7 +64,7 @@ export default class Odoo {
     //     if (response.success !== true) {
     //         console.error(response);
     //     }
-    //     console.debug(response);
+    //     // console.debug(response);
     // }
 
     // async fetchProductFromBarcodeBase(barcodeBase, barcodeRuleId) {
@@ -90,7 +90,7 @@ export default class Odoo {
     //     if (response.success !== true) {
     //         console.error(response);
     //     }
-    //     console.debug(response);
+    //     // console.debug(response);
     //     if (response.data.length > 0) {
     //         return new ProductProduct(response.data[0]);
     //     }
@@ -106,10 +106,10 @@ export default class Odoo {
     }
 
     assertApiResponse(response: OdooApiResponse): void {
-        console.debug('assertApiResponse()');
-        console.debug(response);
+        // console.debug('assertApiResponse()');
+        // console.debug(response);
         CookieManager.get(Odoo.odooEnpoint).then(res => {
-            console.debug('CookieManager.get => ', res);
+            // console.debug('CookieManager.get => ', res);
         });
         if (response.success == true) {
             return;
@@ -224,7 +224,7 @@ export default class Odoo {
 
         const response = await this.odooApi.search_read('purchase.order.line', params);
         this.assertApiResponse(response);
-        console.log('fetchPurchaseOrderLinesForPurchaseOrder');
+        //console.log('fetchPurchaseOrderLinesForPurchaseOrder');
         if (response.data.length > 0) {
             const purchaseOrderLines: PurchaseOrderLine[] = [];
             response.data.forEach((element: OdooApiPurchaseOrderLine) => {
@@ -240,7 +240,7 @@ export default class Odoo {
     }
 
     async fetchProductFromIds(ids: number[]): Promise<ProductProduct[] | undefined> {
-        console.debug('[Odoo] fetchProductFromIds()');
+        // console.debug('[Odoo] fetchProductFromIds()');
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(this.odooApi);
@@ -252,8 +252,8 @@ export default class Odoo {
             fields: Odoo.FETCH_FIELDS_PRODUCT,
         }; //params
 
-        console.debug('[Odoo] search_read(product.product) with params:');
-        console.debug(params);
+        // console.debug('[Odoo] search_read(product.product) with params:');
+        // console.debug(params);
         const response = await this.odooApi.get('product.product', params);
         this.assertApiResponse(response);
         const products: ProductProduct[] = [];
@@ -267,7 +267,7 @@ export default class Odoo {
     }
 
     async fetchProductFromBarcode(barcode: string): Promise<ProductProduct | null> {
-        console.debug('[Odoo] fetchProductFromBarcode()');
+        // console.debug('[Odoo] fetchProductFromBarcode()');
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(this.odooApi);
@@ -285,8 +285,8 @@ export default class Odoo {
             offset: 0,
         }; //params
 
-        console.debug('[Odoo] search_read(product.product) with params:');
-        console.debug(params);
+        // console.debug('[Odoo] search_read(product.product) with params:');
+        // console.debug(params);
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
         if (response.data.length > 0) {
@@ -296,7 +296,7 @@ export default class Odoo {
     }
 
     async fetchImageForProductProduct(odooProduct: ProductProduct): Promise<string | null> {
-        console.debug('fetchImageForProductProduct()');
+        // console.debug('fetchImageForProductProduct()');
         if ((await this.assertConnect()) !== true) {
             throw new Error('Odoo is not connected');
         }
@@ -315,32 +315,32 @@ export default class Odoo {
     }
 
     assertConnect = async (): Promise<boolean> => {
-        console.debug('[Odoo] assertConnect()');
+        // console.debug('[Odoo] assertConnect()');
         return new Promise<boolean>((resolve, reject) => {
             if (!this.isConnected) {
-                console.debug('[Odoo] not connected, connecting...');
+                // console.debug('[Odoo] not connected, connecting...');
                 this.odooApi
                     .connect()
                     .then(response => {
                         this.assertApiResponse(response);
                         if (isInt(response.data.uid) && response.data.uid > 0) {
-                            console.debug('[Odoo] connection ok');
-                            // console.debug(context.odooApi);
+                            // console.debug('[Odoo] connection ok');
+                            // // console.debug(context.odooApi);
                             this.isConnected = true;
                             resolve(true);
                         } else {
-                            console.debug('[Odoo] connection ko');
+                            // console.debug('[Odoo] connection ko');
                             this.isConnected = false;
                             console.error(response);
                             reject(false);
                         }
                     })
                     .catch(reason => {
-                        console.debug('[Odoo] odoo connect failed');
+                        // console.debug('[Odoo] odoo connect failed');
                         reject(reason);
                     });
             } else {
-                console.debug('[Odoo] alreay connected');
+                // console.debug('[Odoo] alreay connected');
                 resolve(true);
             }
         }).catch(e => {

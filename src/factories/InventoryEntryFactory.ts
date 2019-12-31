@@ -94,7 +94,7 @@ export default class InventoryEntryFactory {
 
     async update(object: InventoryEntry): Promise<void> {
         const params = this._objectToParams(object);
-        console.log(params);
+        // console.log(params);
 
         await this.db.executeQuery('INSERT INTO `inventories_entries` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', params);
 
@@ -113,7 +113,7 @@ export default class InventoryEntryFactory {
     }
 
     _rowToObject(row: InventoryEntryTableDefinition): InventoryEntry {
-        console.debug('inventories_entries row', row);
+        // console.debug('inventories_entries row', row);
         const entry = new InventoryEntry();
         entry.id = row.id;
         entry.inventoryId = row.inventory_id;

@@ -39,7 +39,7 @@ export default class Google {
     }
 
     setCurrentUser(user: User | undefined): void {
-        console.debug(user);
+        // console.debug(user);
         this.currentUser = user;
         // Sentry.setUserContext({
         //     email: this.currentUser ? this.currentUser.email : null
@@ -88,9 +88,9 @@ export default class Google {
     async getAccessToken(): Promise<string | null> {
         if (this.currentUser !== undefined) {
             const tokens = await GoogleSignin.getTokens();
-            console.debug('tokens: ', tokens);
+            // console.debug('tokens: ', tokens);
             if (tokens) {
-                console.debug('accessToken: ', tokens.accessToken);
+                // console.debug('accessToken: ', tokens.accessToken);
                 return tokens.accessToken;
             }
         }
@@ -139,7 +139,7 @@ export default class Google {
 
     /* Email Part */
     async sendEmail(to: string, subject: string, body: string, attachments: Array<MailAttachment> = []): Promise<void> {
-        console.debug(to, subject, body, attachments);
+        // console.debug(to, subject, body, attachments);
 
         const from = this.getEmail();
         subject = __DEV__ ? '[Test]' + subject : subject;
@@ -163,10 +163,10 @@ Content-Transfer-Encoding: base64
 ${bodyBase64}`;
 
         for (const key in attachments) {
-            console.debug('Attachment key:', key);
+            // console.debug('Attachment key:', key);
             if (attachments.hasOwnProperty(key)) {
                 const attachment = attachments[key];
-                console.debug('Attachment: ', attachment);
+                // console.debug('Attachment: ', attachment);
                 const fileContentBase64 = Base64.encode(await RNFS.readFile(attachment.filepath));
                 const filename = attachment.filename || attachment.filepath.split('/').pop();
                 const filetype = attachment.filetype || mime.lookup(attachment.filepath);

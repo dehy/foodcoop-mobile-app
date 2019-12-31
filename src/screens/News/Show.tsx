@@ -24,7 +24,7 @@ export default class NewsShow extends React.Component<NewsShowProps, NewsShowSta
     constructor(props: NewsShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
-        console.debug(this.props.newsItem.url);
+        //console.debug(this.props.newsItem.url);
     }
 
     get options(): Options {

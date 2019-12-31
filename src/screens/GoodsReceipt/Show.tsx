@@ -73,7 +73,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 relations: ['goodsReceiptEntries'],
             })
             .then((session): void => {
-                console.log(session);
+                //console.log(session);
                 if (!session) {
                     throw new Error('Session not found');
                 }
