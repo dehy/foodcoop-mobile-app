@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "@react-native-community/google-signin": "^3.0.3",
-        "@sentry/react-native": "^1.1.0",
+        "@sentry/react-native": "^1.2.1",
         "@types/react-native-dialog": "^5.6.1",
         "@types/react-native-rss-parser": "^1.4.0",
         "iconv-lite": "^0.5.0",
