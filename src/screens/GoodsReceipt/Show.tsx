@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, SafeAreaView, FlatList } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
-import { Navigation, Options } from 'react-native-navigation';
+import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
@@ -27,6 +27,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             type: 'font-awesome',
         },
     };
+
+    modalDismissedListener?: EventSubscription;
 
     constructor(props: GoodsReceiptShowProps) {
         super(props);
@@ -54,6 +56,15 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
 
     componentDidMount(): void {
         this.loadData();
+        this.modalDismissedListener = Navigation.events().registerModalDismissedListener(() => {
+            this.loadData();
+        });
+    }
+
+    componentWillUnmount(): void {
+        if (this.modalDismissedListener) {
+            this.modalDismissedListener.remove();
+        }
     }
 
     loadData(): void {
