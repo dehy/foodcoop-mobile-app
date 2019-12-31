@@ -13,7 +13,7 @@ import Database from './src/utils/Database';
 moment.locale('fr');
 if (!__DEV__) {
     Sentry.init({
-        dsn: '***REMOVED***',
+        dsn: 'https://ade630e97f5947188b6bad45497c9462@sentry.admds.net/2',
     });
 }
 
