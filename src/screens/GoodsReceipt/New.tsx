@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, View, SectionList, TouchableHighlight } from 'react-native';
+import { SafeAreaView, Text, View, SectionList, TouchableHighlight, ActivityIndicator } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import Odoo from '../../utils/Odoo';
@@ -22,11 +22,13 @@ interface PurchaseOrderList {
 
 interface GoodsReceiptNewState {
     waitingPurchaseOrders: PurchaseOrderList[];
+    showLoadingModal: boolean;
 }
 
 export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProps, GoodsReceiptNewState> {
     state: GoodsReceiptNewState = {
         waitingPurchaseOrders: [],
+        showLoadingModal: false,
     };
 
     constructor(props: GoodsReceiptNewProps) {
@@ -87,6 +89,9 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
     }
 
     didTapPurchaseOrder = (props: { item: PurchaseOrder }): void => {
+        this.setState({
+            showLoadingModal: true,
+        });
         const goodsReceiptSession = new GoodsReceiptSession();
         goodsReceiptSession.poId = props.item.id;
         goodsReceiptSession.poName = props.item.name;
@@ -126,12 +131,12 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                     return;
                                 }
                                 products.forEach(product => {
-                                    console.log(product);
+                                    //console.log(product);
                                     const entry = goodsReceiptEntries[product.id!];
                                     entry.productName = product.name;
                                     entry.productBarcode = product.barcode;
                                 });
-                                console.log(goodsReceiptEntries);
+                                //console.log(goodsReceiptEntries);
                                 getRepository(GoodsReceiptEntry)
                                     .save(Object.values(goodsReceiptEntries))
                                     .then(() => {
@@ -141,6 +146,33 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                     });
             });
     };
+
+    renderLoadingModal(): React.ReactNode {
+        if (this.state.showLoadingModal == true) {
+            return (
+                <View
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        alignContent: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(52, 52, 52, 0.7)',
+                    }}
+                >
+                    <View>
+                        <ActivityIndicator size="large" />
+                        <Text style={{ color: 'white', textAlign: 'center', marginTop: 8 }}>
+                            Enregistrement du PO...
+                        </Text>
+                    </View>
+                </View>
+            );
+        }
+        return;
+    }
 
     render(): React.ReactNode {
         return (
@@ -179,6 +211,7 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                         </TouchableHighlight>
                     )}
                 />
+                {this.renderLoadingModal()}
             </SafeAreaView>
         );
     }
