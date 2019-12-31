@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableHighlight, SafeAreaView, SectionList } from 'react-native';
+import { View, Text, TouchableHighlight, SafeAreaView, SectionList, EmitterSubscription } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
@@ -40,6 +40,8 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         },
     };
 
+    modalDismissedListener?: EmitterSubscription;
+
     constructor(props: GoodsReceiptListProps) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -67,7 +69,17 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
     }
 
     componentDidMount(): void {
+        this.modalDismissedListener = Navigation.events().registerModalDismissedListener(() => {
+            this.loadData();
+        });
+
         this.loadData();
+    }
+
+    componentWillUnmount(): void {
+        if (this.modalDismissedListener) {
+            this.modalDismissedListener.remove();
+        }
     }
 
     loadTodaysGoodsReceipt(): void {
@@ -117,7 +129,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                         });
                     }
                 });
-                console.log(goodsReceiptSessionsData);
+                //console.log(goodsReceiptSessionsData);
                 this.setState({
                     goodsReceiptsData: goodsReceiptSessionsData,
                 });
@@ -145,7 +157,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
     }
 
     didTapGoodsReceiptSessionItem = (props: GoodsReceiptSessionTapProps): void => {
-        console.log(props);
+        //console.log(props);
         Navigation.push(props.componentId, {
             component: {
                 name: 'GoodsReceipt/Show',
