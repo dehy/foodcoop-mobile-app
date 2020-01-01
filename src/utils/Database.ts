@@ -37,8 +37,8 @@ export default class Database {
             type: 'react-native',
             database: 'supercoop',
             location: 'Documents',
-            logging: ['error', 'query', 'schema'],
-            dropSchema: false,
+            logging: true,
+            dropSchema: true,
             synchronize: true,
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
         });
