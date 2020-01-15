@@ -536,3 +536,5 @@ android/app/src/main/res/drawable-mdpi/
 android/app/src/main/res/drawable-xhdpi/
 
 android/app/src/main/res/drawable-xxhdpi/
+
+*.sqlite
