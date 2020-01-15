@@ -113,7 +113,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     async generateCSVFile(): Promise<string> {
         const sessionData: CSVData[] = [];
         this.receiptEntries?.forEach(entry => {
-            if (!entry.productBarcode || !entry.expectedProductQty || !entry.productName) {
+            if (!entry.productBarcode || entry.expectedProductQty == undefined || !entry.productName) {
                 throw new Error('Missing mandatory entry parameters');
             }
             const entryData: CSVData = {
