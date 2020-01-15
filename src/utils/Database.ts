@@ -3,6 +3,7 @@ import { toNumber } from './helpers';
 import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
+import { Init1579126631287 } from '../migrations/1579126631287-Init';
 
 interface EntityDefinition {
     name: string;
@@ -33,14 +34,26 @@ export default class Database {
     }
 
     static connect(): Promise<Connection> {
+        let dropSchema = false;
+        let synchronize = false;
+        let migrationsRun = true;
+        if (__DEV__) {
+            dropSchema = false;
+            synchronize = false;
+            migrationsRun = true;
+        }
+
         return createConnection({
             type: 'react-native',
-            database: 'supercoop',
+            database: 'supercoop.sqlite',
             location: 'Documents',
             logging: true,
-            dropSchema: true,
-            synchronize: true,
+            dropSchema: dropSchema,
+            synchronize: synchronize,
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
+            migrationsRun: migrationsRun,
+            migrationsTableName: 'migrations',
+            migrations: [Init1579126631287],
         });
     }
 
