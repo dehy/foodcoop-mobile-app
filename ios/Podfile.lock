@@ -259,9 +259,6 @@ PODS:
     - React
   - RNKeychain (4.0.4):
     - React
-  - RNSentry (1.2.1):
-    - React
-    - Sentry (~> 4.4.0)
   - RNSound (0.11.0):
     - React
     - RNSound/Core (= 0.11.0)
@@ -278,9 +275,6 @@ PODS:
   - RNZipArchive/Core (5.0.0):
     - React
     - SSZipArchive (= 2.2.2)
-  - Sentry (4.4.3):
-    - Sentry/Core (= 4.4.3)
-  - Sentry/Core (4.4.3)
   - SSZipArchive (2.2.2)
   - Yoga (1.14.0)
 
@@ -321,7 +315,6 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNKeychain (from `../node_modules/react-native-keychain`)
-  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -335,7 +328,6 @@ SPEC REPOS:
     - GoogleSignIn
     - GTMAppAuth
     - GTMSessionFetcher
-    - Sentry
     - SSZipArchive
 
 EXTERNAL SOURCES:
@@ -405,8 +397,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/google-signin"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
-  RNSentry:
-    :path: "../node_modules/@sentry/react-native"
   RNSound:
     :path: "../node_modules/react-native-sound"
   RNSVG:
@@ -457,12 +447,10 @@ SPEC CHECKSUMS:
   RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
   RNGoogleSignin: a10b849c165088c737d4465de6c2062f24d06002
   RNKeychain: 79cfca6cd5030bbabcd1a2c009531b84e358116d
-  RNSentry: 9b1d983b2d5d1c215ba6490348fd2a4cc23a8a9d
   RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNZipArchive: be636657a6630e9771d4a3223dc8fd0bd0137b55
-  Sentry: 14bdd673870e8cf64932b149fad5bbbf39a9b390
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 

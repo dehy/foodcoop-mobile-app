@@ -2,7 +2,7 @@ import { GoogleSignin, User } from '@react-native-community/google-signin';
 import { Base64 } from 'js-base64';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
-import * as Sentry from '@sentry/react-native';
+// import * as Sentry from '@sentry/react-native';
 
 export interface MailAttachment {
     filepath: string;
@@ -42,12 +42,9 @@ export default class Google {
     setCurrentUser(user: User | undefined): void {
         // console.debug(user);
         this.currentUser = user;
-        Sentry.setUser({
-            email: this.currentUser?.user.email,
-        });
-        // Sentry.setUserContext({
-        //     email: this.currentUser ? this.currentUser.email : null
-        // })
+        // Sentry.setUser({
+        //     email: this.currentUser?.user.email,
+        // });
     }
 
     async signInSilently(): Promise<void> {
@@ -134,7 +131,7 @@ export default class Google {
     async signOut(): Promise<void> {
         await GoogleSignin.signOut();
         // await GoogleSignin.revokeAccess();
-        Sentry.setUser(null);
+        // Sentry.setUser(null);
         this.setCurrentUser(undefined);
     }
 
