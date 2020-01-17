@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-    View,
-    Text,
-    TouchableHighlight,
-    SafeAreaView,
-    SectionList,
-    EmitterSubscription,
-    ScrollView,
-} from 'react-native';
+import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
@@ -16,8 +8,7 @@ import GoodsReceiptService from '../../services/GoodsReceiptService';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
 import moment from 'moment';
 import styles from '../../styles/material';
-import { ThemeProvider, Button, Icon } from 'react-native-elements';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
+import { ThemeProvider, ListItem, Button, Icon } from 'react-native-elements';
 
 export interface GoodsReceiptListProps {
     componentId: string;
@@ -195,6 +186,26 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         }
     }
 
+    renderItem = ({ item }: { item: GoodsReceiptSession }): React.ReactElement => {
+        return (
+            <ListItem
+                onPress={(): void => {
+                    const inventorySessionTapProps: GoodsReceiptSessionTapProps = {
+                        componentId: this.props.componentId,
+                        session: item,
+                    };
+                    this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
+                }}
+                title={item.poName}
+                subtitle={item.partnerName}
+                rightTitle={item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
+                rightTitleStyle={{ color: item.lastSentAt == undefined ? 'black' : 'green' }}
+                bottomDivider
+                chevron
+            />
+        );
+    };
+
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
@@ -221,29 +232,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                             renderSectionHeader={({ section: { title } }): React.ReactElement => (
                                 <Text style={styles.listHeader}>{title}</Text>
                             )}
-                            renderItem={({ item }): React.ReactElement => (
-                                <TouchableHighlight
-                                    onPress={(): void => {
-                                        const inventorySessionTapProps: GoodsReceiptSessionTapProps = {
-                                            componentId: this.props.componentId,
-                                            session: item,
-                                        };
-                                        this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
-                                    }}
-                                    underlayColor="#BCBCBC"
-                                >
-                                    <View style={styles.row}>
-                                        {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
-                                        <View style={styles.rowContent}>
-                                            <Text style={styles.rowTitle}>{item.poName}</Text>
-                                            <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
-                                        </View>
-                                        <Text style={styles.rowDetailText}>
-                                            {item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
-                                        </Text>
-                                    </View>
-                                </TouchableHighlight>
-                            )}
+                            renderItem={this.renderItem}
                         />
                     </ScrollView>
                 </SafeAreaView>

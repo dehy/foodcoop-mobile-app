@@ -8,6 +8,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import { registerScreens } from './src/utils/screens';
 // import * as Sentry from '@sentry/react-native';
 import moment from 'moment';
+import 'moment/locale/fr';
 import Database from './src/utils/Database';
 // import DeviceInfo from 'react-native-device-info';
 

@@ -1,7 +1,6 @@
 import { Navigation } from 'react-native-navigation';
 
 export function registerScreens(): void {
-    Navigation.registerComponent('News', () => require('../screens/News').default);
     Navigation.registerComponent('News/List', () => require('../screens/News/List').default);
     Navigation.registerComponent('News/Show', () => require('../screens/News/Show').default);
     Navigation.registerComponent('Plus', () => require('../screens/Plus').default);

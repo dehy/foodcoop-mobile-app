@@ -6,13 +6,14 @@ import CookieManager from 'react-native-cookies';
 import Odoo from '../../../utils/Odoo';
 import { Navigation, Options } from 'react-native-navigation';
 import { toNumber } from '../../../utils/helpers';
+import { ListItem } from 'react-native-elements';
 
 interface CookiesMaintenanceState {
     cookieItemList: CookiesMaintenanceFlatListItem[];
 }
 
 interface CookiesMaintenanceFlatListItem {
-    key: number;
+    key: string;
     title: string;
     subtitle: string;
 }
@@ -52,7 +53,11 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
                 this.cookies = cookies;
                 for (const cookieKey in cookies) {
                     const cookie = cookies[cookieKey];
-                    cookieItemList.push({ key: toNumber(cookieKey), title: cookie.name, subtitle: cookie.domain });
+                    cookieItemList.push({
+                        key: cookieKey,
+                        title: cookie.name,
+                        subtitle: cookie.domain,
+                    });
                 }
                 this.setState({ cookieItemList: cookieItemList });
             });
@@ -70,7 +75,7 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
         });
     }
 
-    didTapCookieItem = (key: number): void => {
+    didTapCookieItem = (key: string): void => {
         // console.debug('didTapCookieItem()', key);
         if (this.cookies[key]) {
             const cookie = this.cookies[key];
@@ -106,25 +111,22 @@ path: ${cookie.path}`;
     };
 
     renderCookieList(): React.ReactElement {
-        // console.debug(this.state.cookieItemList);
+        console.debug(this.state.cookieItemList);
 
         return (
             <FlatList
                 scrollEnabled={false}
                 data={this.state.cookieItemList}
-                renderItem={({ item, separators }): React.ReactElement => (
-                    <TouchableHighlight
+                keyExtractor={(item): string => {
+                    return item.title;
+                }}
+                renderItem={({ item }): React.ReactElement => (
+                    <ListItem
                         onPress={(): void => this.didTapCookieItem(item.key)}
-                        onShowUnderlay={separators.highlight}
-                        onHideUnderlay={separators.unhighlight}
-                    >
-                        <View style={materialStyle.row}>
-                            <View style={materialStyle.rowContent}>
-                                <Text style={materialStyle.rowTitle}>{item.title}</Text>
-                                <Text style={materialStyle.rowSubtitle}>{item.subtitle}</Text>
-                            </View>
-                        </View>
-                    </TouchableHighlight>
+                        title={item.title}
+                        rightTitle={item.subtitle}
+                        bottomDivider
+                    />
                 )}
             />
         );
@@ -140,22 +142,12 @@ path: ${cookie.path}`;
                         <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
                     )}
                     data={[{ title: 'Effacer les cookies', key: 'clear-cookies', color: 'red' }]}
-                    renderItem={({ item, separators }): React.ReactElement => (
-                        <TouchableHighlight
+                    renderItem={({ item }): React.ReactElement => (
+                        <ListItem
                             onPress={(): void => this.didTapActionItem(item.key)}
-                            onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}
-                        >
-                            <View style={materialStyle.row}>
-                                <View style={materialStyle.rowContent}>
-                                    <Text
-                                        style={[materialStyle.rowTitle, { color: item.color ? item.color : 'black' }]}
-                                    >
-                                        {item.title}
-                                    </Text>
-                                </View>
-                            </View>
-                        </TouchableHighlight>
+                            title={item.title}
+                            titleStyle={{ color: item.color ?? 'black' }}
+                        />
                     )}
                 />
             </SafeAreaView>
