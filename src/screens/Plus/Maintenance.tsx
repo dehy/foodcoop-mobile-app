@@ -3,6 +3,7 @@ import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighligh
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import materialStyle from '../../styles/material';
+import { ListItem } from 'react-native-elements';
 
 export interface MaintenanceProps {
     componentId: string;
@@ -97,25 +98,13 @@ export default class Maintenance extends React.Component<MaintenanceProps, {}> {
                             <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
                         )}
                         data={this.flatListItems}
-                        renderItem={({ item, separators }): React.ReactElement => (
-                            <TouchableHighlight
+                        renderItem={({ item }): React.ReactElement => (
+                            <ListItem
                                 onPress={(): void => this._onPress(item.key)}
-                                onShowUnderlay={separators.highlight}
-                                onHideUnderlay={separators.unhighlight}
-                            >
-                                <View style={materialStyle.row}>
-                                    <View style={materialStyle.rowContent}>
-                                        <Text
-                                            style={[
-                                                materialStyle.rowTitle,
-                                                { color: item.color ? item.color : 'black' },
-                                            ]}
-                                        >
-                                            {item.title}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </TouchableHighlight>
+                                title={item.title}
+                                bottomDivider
+                                chevron
+                            />
                         )}
                     />
                 </ScrollView>

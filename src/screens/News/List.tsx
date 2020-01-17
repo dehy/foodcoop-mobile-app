@@ -6,6 +6,7 @@ import * as rssParser from 'react-native-rss-parser';
 import styles from '../../styles/material';
 import moment from 'moment';
 import { NewsItem } from './Show';
+import { ListItem } from 'react-native-elements';
 
 export interface NewsListProps {
     componentId: string;
@@ -71,21 +72,15 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
                     style={{ backgroundColor: 'white' }}
                     data={this.state.news}
                     renderItem={({ item }): React.ReactElement => (
-                        <TouchableHighlight
+                        <ListItem
                             onPress={(): void => {
                                 this.didTapNewsItem(item);
                             }}
-                            underlayColor="#BCBCBC"
-                        >
-                            <View style={styles.row}>
-                                <View style={styles.rowContent}>
-                                    <Text style={styles.rowTitle}>{item.title}</Text>
-                                    <Text style={styles.rowSubtitle}>
-                                        publié le {item.published.format('DD MMMM YYYY')}
-                                    </Text>
-                                </View>
-                            </View>
-                        </TouchableHighlight>
+                            title={item.title}
+                            subtitle={`publié le ${item.published.format('DD MMMM YYYY')}`}
+                            bottomDivider
+                            chevron
+                        />
                     )}
                 />
             </SafeAreaView>

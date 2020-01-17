@@ -8,6 +8,7 @@ import { getRepository } from 'typeorm';
 import { Button, Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
 import moment from 'moment';
+import { displayNumber } from '../../utils/helpers';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -148,15 +149,21 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         let correctQty;
         if (false === entry.isValid()) {
             correctQty = (
-                <Text>
-                    {entry.productQty} {ProductProduct.quantityUnitAsString(entry.productUom)}
+                <Text style={{ fontSize: 16 }}>
+                    {displayNumber(entry.productQty)} {ProductProduct.quantityUnitAsString(entry.productUom)}
                 </Text>
             );
         }
         return (
-            <View>
-                <Text style={{ textDecorationLine: false === entry.isValid() ? 'line-through' : 'none' }}>
-                    {entry.expectedProductQty} {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
+            <View style={{ alignItems: 'flex-end' }}>
+                <Text
+                    style={{
+                        fontSize: false === entry.isValid() ? 12 : 16,
+                        textDecorationLine: false === entry.isValid() ? 'line-through' : 'none',
+                    }}
+                >
+                    {displayNumber(entry.expectedProductQty)}{' '}
+                    {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
                 {correctQty}
             </View>

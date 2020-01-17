@@ -10,7 +10,7 @@ import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductPro
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import AppLogger from '../../utils/AppLogger';
-import { toNumber } from '../../utils/helpers';
+import { toNumber, displayNumber } from '../../utils/helpers';
 import { Button, Icon, Input, ListItem, ThemeProvider } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -296,7 +296,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
                 </Text>
                 <Text style={{ fontSize: 45, margin: 5, textAlign: 'center' }}>
-                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQty}{' '}
+                    {this.state.goodsReceiptEntry && displayNumber(this.state.goodsReceiptEntry.expectedProductQty)}{' '}
                     {ProductProduct.quantityUnitAsString(
                         this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductUom,
                     )}
