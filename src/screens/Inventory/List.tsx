@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableHighlight, SafeAreaView, FlatList } from 'react-native';
+import { View, SafeAreaView, FlatList, ScrollView } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
-import styles from '../../styles/material';
 import InventorySession from '../../entities/InventorySession';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { ListItem, Button, Icon, ThemeProvider } from 'react-native-elements';
 
 export interface InventoryListProps {
     componentId: string;
@@ -32,6 +31,15 @@ interface InventorySessionTapProps {
 }
 
 export default class InventoryList extends React.Component<InventoryListProps, InventoryListState> {
+    theme = {
+        Button: {
+            iconContainerStyle: { marginRight: 5 },
+        },
+        Icon: {
+            type: 'font-awesome',
+        },
+    };
+
     constructor(props: InventoryListProps) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -128,39 +136,39 @@ export default class InventoryList extends React.Component<InventoryListProps, I
 
     render(): React.ReactNode {
         return (
-            <SafeAreaView>
-                <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
-                    <Icon.Button name="plus-circle" solid style={{}} onPress={this.openNewInventoryModal}>
-                        Nouvel inventaire
-                    </Icon.Button>
-                </View>
-                <FlatList
-                    style={{ backgroundColor: 'white' }}
-                    data={this.state.inventoriesData}
-                    renderItem={({ item }): React.ReactElement => (
-                        <TouchableHighlight
-                            onPress={(): void => {
-                                const inventorySessionTapProps: InventorySessionTapProps = {
-                                    componentId: this.props.componentId,
-                                    item: item,
-                                };
-                                this.didTapInventoryEntry(inventorySessionTapProps);
-                            }}
-                            underlayColor="#BCBCBC"
-                        >
-                            <View style={styles.row}>
-                                {/* <Icon name="clipboard" style={styles.rowIcon} /> */}
-                                <View style={styles.rowContent}>
-                                    <Text style={styles.rowTitle}>{item.title}</Text>
-                                    <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
-                                </View>
-                                <Text style={styles.rowDetailText}>{item.detailText}</Text>
-                                {/* <Icon name="info-circle" style={styles.rowActionIcon} /> */}
-                            </View>
-                        </TouchableHighlight>
-                    )}
-                />
-            </SafeAreaView>
+            <ThemeProvider theme={this.theme}>
+                <SafeAreaView>
+                    <ScrollView style={{ height: '100%' }}>
+                        <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
+                            <Button
+                                title=" Nouvel inventaire"
+                                icon={<Icon name="plus-circle" color="white" />}
+                                onPress={this.openNewInventoryModal}
+                            />
+                        </View>
+                        <FlatList
+                            style={{ backgroundColor: 'white' }}
+                            data={this.state.inventoriesData}
+                            renderItem={({ item }): React.ReactElement => (
+                                <ListItem
+                                    onPress={(): void => {
+                                        const inventorySessionTapProps: InventorySessionTapProps = {
+                                            componentId: this.props.componentId,
+                                            item: item,
+                                        };
+                                        this.didTapInventoryEntry(inventorySessionTapProps);
+                                    }}
+                                    title={item.title}
+                                    subtitle={item.subtitle}
+                                    rightTitle={item.detailText}
+                                    bottomDivider
+                                    chevron
+                                />
+                            )}
+                        />
+                    </ScrollView>
+                </SafeAreaView>
+            </ThemeProvider>
         );
     }
 }

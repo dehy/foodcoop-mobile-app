@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
-import { Avatar } from 'react-native-elements';
+import { Avatar, ListItem } from 'react-native-elements';
 import { goToAuth } from '../utils/navigation';
 import Google from '../utils/Google';
 import { Navigation } from 'react-native-navigation';
@@ -119,27 +119,16 @@ export default class Plus extends React.Component<PlusProps> {
                         data={[
                             { title: 'À propos', key: 'about' },
                             { title: 'Maintenance', key: 'maintenance' },
-                            { title: 'Se déconnecter', key: 'logout', color: 'red' },
+                            { title: 'Se déconnecter', key: 'logout', color: 'red', chevron: false },
                         ]}
-                        renderItem={({ item, separators }): React.ReactElement => (
-                            <TouchableHighlight
+                        renderItem={({ item }): React.ReactElement => (
+                            <ListItem
                                 onPress={(): void => this._onPress(item.key)}
-                                onShowUnderlay={separators.highlight}
-                                onHideUnderlay={separators.unhighlight}
-                            >
-                                <View style={materialStyle.row}>
-                                    <View style={materialStyle.rowContent}>
-                                        <Text
-                                            style={[
-                                                materialStyle.rowTitle,
-                                                { color: item.color ? item.color : 'black' },
-                                            ]}
-                                        >
-                                            {item.title}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </TouchableHighlight>
+                                title={item.title}
+                                titleStyle={{ color: item.color ?? 'black' }}
+                                topDivider
+                                chevron={item.chevron ?? true}
+                            />
                         )}
                     />
                 </ScrollView>
