@@ -67,7 +67,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     }
 
     static options(): Options {
-        const options = defaultScreenOptions('Envoi de réception');
+        const options = defaultScreenOptions('Envoi');
         options.topBar = {
             rightButtons: [
                 {
@@ -117,9 +117,12 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 throw new Error('Missing mandatory entry parameters');
             }
             const entryData: CSVData = {
+                status: entry.isValid() ? 'OK' : 'ERREUR',
                 barcode: entry.productBarcode,
                 expectedQty: entry.expectedProductQty,
                 receivedQty: entry.productQty,
+                expectedUom: entry.expectedProductUom,
+                receivedUom: entry.productUom,
                 comment: entry.comment,
                 product: entry.productName,
             };
@@ -178,7 +181,7 @@ ${entriesCount} produits traités`;
             .then(async () => {
                 this.props.session.lastSentAt = moment().toDate();
                 await getRepository(GoodsReceiptSession).save(this.props.session);
-                Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
+                Alert.alert('Envoyé', 'Ton compte-rendu a bien été envoyé. Merci !');
             })
             .catch((e: Error) => {
                 if (__DEV__) {
@@ -232,7 +235,7 @@ ${entriesCount} produits traités`;
         }
 
         return (
-            <SafeAreaView style={{ backgroundColor: 'white' }}>
+            <SafeAreaView style={{ backgroundColor: 'white', height: '100%' }}>
                 <ThemeProvider>
                     <ScrollView>
                         <Text style={{ fontSize: 16, margin: 16 }}>
