@@ -59,6 +59,6 @@ export default class GoodsReceiptEntry {
         if (null === this.productQty) {
             return null;
         }
-        return this.expectedProductQty === this.productQty;
+        return this.expectedProductQty === this.productQty && this.expectedProductUom === this.productUom;
     }
 }

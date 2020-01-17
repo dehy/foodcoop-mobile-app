@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableHighlight, SafeAreaView, SectionList, EmitterSubscription } from 'react-native';
+import {
+    View,
+    Text,
+    TouchableHighlight,
+    SafeAreaView,
+    SectionList,
+    EmitterSubscription,
+    ScrollView,
+} from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
@@ -190,51 +198,54 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
-                <SafeAreaView>
-                    {this.renderTodaysGoodsReceipts()}
-                    <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
-                        <Button
-                            title=" Nouvelle réception"
-                            icon={<Icon name="plus-circle" color="white" />}
-                            onPress={this.openNewGoodsReceiptSessionModal}
-                        />
-                    </View>
-                    <SectionList
-                        style={{ backgroundColor: 'white', height: '100%' }}
-                        sections={this.state.goodsReceiptsData}
-                        keyExtractor={(item): string => {
-                            if (item.id && item.id.toString()) {
-                                return item.id.toString();
-                            }
-                            return '';
-                        }}
-                        renderSectionHeader={({ section: { title } }): React.ReactElement => (
-                            <Text style={styles.listHeader}>{title}</Text>
-                        )}
-                        renderItem={({ item }): React.ReactElement => (
-                            <TouchableHighlight
-                                onPress={(): void => {
-                                    const inventorySessionTapProps: GoodsReceiptSessionTapProps = {
-                                        componentId: this.props.componentId,
-                                        session: item,
-                                    };
-                                    this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
-                                }}
-                                underlayColor="#BCBCBC"
-                            >
-                                <View style={styles.row}>
-                                    {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
-                                    <View style={styles.rowContent}>
-                                        <Text style={styles.rowTitle}>{item.poName}</Text>
-                                        <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
+                <SafeAreaView style={{ height: '100%' }}>
+                    <ScrollView>
+                        {this.renderTodaysGoodsReceipts()}
+                        <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
+                            <Button
+                                title=" Nouvelle réception"
+                                icon={<Icon name="plus-circle" color="white" />}
+                                onPress={this.openNewGoodsReceiptSessionModal}
+                            />
+                        </View>
+                        <SectionList
+                            scrollEnabled={false}
+                            style={{ backgroundColor: 'white', height: '100%' }}
+                            sections={this.state.goodsReceiptsData}
+                            keyExtractor={(item): string => {
+                                if (item.id && item.id.toString()) {
+                                    return item.id.toString();
+                                }
+                                return '';
+                            }}
+                            renderSectionHeader={({ section: { title } }): React.ReactElement => (
+                                <Text style={styles.listHeader}>{title}</Text>
+                            )}
+                            renderItem={({ item }): React.ReactElement => (
+                                <TouchableHighlight
+                                    onPress={(): void => {
+                                        const inventorySessionTapProps: GoodsReceiptSessionTapProps = {
+                                            componentId: this.props.componentId,
+                                            session: item,
+                                        };
+                                        this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
+                                    }}
+                                    underlayColor="#BCBCBC"
+                                >
+                                    <View style={styles.row}>
+                                        {/* <Icon name={item.lastSentAt == undefined ? "clipboard-list" : "clipboard-check"} style={styles.rowIcon} /> */}
+                                        <View style={styles.rowContent}>
+                                            <Text style={styles.rowTitle}>{item.poName}</Text>
+                                            <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
+                                        </View>
+                                        <Text style={styles.rowDetailText}>
+                                            {item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
+                                        </Text>
                                     </View>
-                                    <Text style={styles.rowDetailText}>
-                                        {item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-                        )}
-                    />
+                                </TouchableHighlight>
+                            )}
+                        />
+                    </ScrollView>
                 </SafeAreaView>
             </ThemeProvider>
         );
