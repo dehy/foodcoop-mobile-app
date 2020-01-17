@@ -1,7 +1,9 @@
 import { GoogleSignin, User } from '@react-native-community/google-signin';
 import { Base64 } from 'js-base64';
+import base64url from 'base64url';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
+import AppLogger from './AppLogger';
 // import * as Sentry from '@sentry/react-native';
 
 export interface MailAttachment {
@@ -193,7 +195,7 @@ ${fileContentBase64}`;
 
         const endpoint = 'https://www.googleapis.com/gmail/v1/users/{userId}/messages/send';
         const url = endpoint.replace(/\{userId\}/, 'me');
-        const rfc822MessageBase64 = Base64.encode(rfc822Message);
+        const rfc822MessageBase64 = base64url.encode(rfc822Message);
 
         const requestBody = `{
     "raw": "${rfc822MessageBase64}"
@@ -213,6 +215,9 @@ ${fileContentBase64}`;
         if (result.ok) {
             return;
         }
+        result.text().then(string => {
+            AppLogger.getLogger().error(string);
+        });
         throw new Error();
     }
 }

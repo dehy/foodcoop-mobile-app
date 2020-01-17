@@ -1,17 +1,18 @@
 import React from 'react';
-import { Image, SafeAreaView, Text, View, Picker, ScrollView } from 'react-native';
+import { Image, Platform, SafeAreaView, Text, TextInput, View, ScrollView } from 'react-native';
+import ActionSheet from 'react-native-action-sheet';
 import Scanner2 from '../Scanner2';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
-import { Barcode, BarcodeType } from 'react-native-camera/types';
+import { Barcode } from 'react-native-camera/types';
 import Odoo from '../../utils/Odoo';
 import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import AppLogger from '../../utils/AppLogger';
 import { toNumber } from '../../utils/helpers';
-import { Input } from 'react-native-elements';
-import { Button, Icon, ThemeProvider } from 'react-native-elements';
+import { Button, Icon, Input, ListItem, ThemeProvider } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface GoodsReceiptScanProps {
     componentId: string;
@@ -22,13 +23,18 @@ interface GoodsReceiptScanState {
     product?: ProductProduct;
     goodsReceiptEntry?: GoodsReceiptEntry;
     isValid?: boolean;
+    commentInputHeight: number;
 }
 
 export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanProps, GoodsReceiptScanState> {
     colorSuccess = '#5cb85c';
-    colorSuccessDisabled = '#78C589';
+    colorSuccessDisabled = '#D6EDDB';
     colorDanger = '#DC3545';
-    colorDangerDisabled = '#E77D89';
+    colorDangerDisabled = '#F7D8DB';
+    uomList: { [k: string]: number } = {
+        unités: UnitOfMesurement.unit,
+        kg: UnitOfMesurement.kg,
+    };
 
     theme = {
         Button: {
@@ -40,10 +46,13 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     };
 
     scanner?: Scanner2;
+    receivedQuantityInput?: TextInput;
+
     state: GoodsReceiptScanState = {
         product: undefined,
         goodsReceiptEntry: undefined,
         isValid: undefined,
+        commentInputHeight: 35,
     };
 
     constructor(props: GoodsReceiptScanProps) {
@@ -127,6 +136,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         if (this.state.goodsReceiptEntry) {
             const goodsReceiptEntry = this.state.goodsReceiptEntry;
             goodsReceiptEntry.productQty = this.state.goodsReceiptEntry.expectedProductQty;
+            goodsReceiptEntry.productUom = this.state.goodsReceiptEntry.expectedProductUom;
             getRepository(GoodsReceiptEntry)
                 .save(goodsReceiptEntry)
                 .then(() => {
@@ -145,8 +155,13 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     didTapInvalid(): void {
         AppLogger.getLogger().debug('Did tap invalid');
+        const goodsReceiptEntry = this.state.goodsReceiptEntry;
+        if (goodsReceiptEntry) {
+            goodsReceiptEntry.productUom = goodsReceiptEntry?.expectedProductUom;
+        }
         this.setState({
             isValid: false,
+            goodsReceiptEntry: goodsReceiptEntry,
         });
     }
 
@@ -161,50 +176,75 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         });
     }
 
+    chooseUom = (): void => {
+        const uomsAndroid: string[] = Object.keys(this.uomList);
+        const uomsIos: string[] = uomsAndroid;
+        uomsIos.push('Annuler');
+
+        ActionSheet.showActionSheetWithOptions(
+            {
+                options: Platform.OS == 'ios' ? uomsIos : uomsAndroid,
+                cancelButtonIndex: uomsIos.length - 1,
+            },
+            buttonIndex => {
+                AppLogger.getLogger().debug(`button clicked: ${buttonIndex}`);
+                const receivedUom = Object.values(this.uomList)[buttonIndex];
+                AppLogger.getLogger().debug(`receivedUom: ${receivedUom}`);
+                const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                if (goodsReceiptEntry) {
+                    goodsReceiptEntry.productUom = receivedUom;
+                    this.setState({ goodsReceiptEntry });
+                }
+            },
+        );
+    };
+
     renderInvalid(): React.ReactNode {
         if (this.state.isValid === false) {
             return (
-                <ScrollView style={{ height: '100%' }}>
-                    <Input
-                        placeholder="Quantité reçue"
-                        onChangeText={(receivedQtyStr): void => {
-                            const receivedQty = toNumber(receivedQtyStr);
-                            AppLogger.getLogger().debug(`New receivedQty: ${receivedQtyStr} => ${receivedQty}`);
-                            const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                            if (goodsReceiptEntry) {
-                                goodsReceiptEntry.productQty = receivedQty;
-                                this.setState({ goodsReceiptEntry });
-                            }
+                <View style={{ height: '100%' }}>
+                    <ListItem
+                        title="Quantité reçue"
+                        rightElement={
+                            <TextInput
+                                onChangeText={(receivedQtyStr: string): void => {
+                                    const receivedQty = toNumber(receivedQtyStr);
+                                    AppLogger.getLogger().debug(`New receivedQty: ${receivedQtyStr} => ${receivedQty}`);
+                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                    if (goodsReceiptEntry) {
+                                        goodsReceiptEntry.productQty = receivedQty;
+                                        this.setState({ goodsReceiptEntry });
+                                    }
+                                }}
+                                placeholder="Inconnue"
+                                keyboardType="decimal-pad"
+                                ref={(input: TextInput): void => {
+                                    this.receivedQuantityInput = input;
+                                }}
+                                autoFocus={true}
+                            />
+                        }
+                        onPress={(): void => {
+                            this.receivedQuantityInput?.focus();
                         }}
+                        bottomDivider
                     />
-                    <Picker
-                        onValueChange={(receivedUomStr: string): void => {
-                            const receivedUom = toNumber(receivedUomStr);
-                            AppLogger.getLogger().debug(
-                                `New receivedUom: ${ProductProduct.quantityUnitAsString(receivedUom)}`,
-                            );
-                            const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                            if (goodsReceiptEntry) {
-                                goodsReceiptEntry.productUom = receivedUom;
-                                this.setState({ goodsReceiptEntry });
-                            }
+                    <ListItem
+                        title="Unité de mesure"
+                        rightElement={
+                            <Text>{ProductProduct.quantityUnitAsString(this.state.goodsReceiptEntry?.productUom)}</Text>
+                        }
+                        onPress={(): void => {
+                            this.chooseUom();
                         }}
-                        selectedValue={this.state.goodsReceiptEntry?.productUom}
-                    >
-                        <Picker.Item
-                            label={ProductProduct.quantityUnitAsString(UnitOfMesurement.unit)}
-                            value={UnitOfMesurement.unit}
-                        />
-                        <Picker.Item
-                            label={ProductProduct.quantityUnitAsString(UnitOfMesurement.kg)}
-                            value={UnitOfMesurement.kg}
-                        />
-                    </Picker>
+                        bottomDivider
+                        chevron
+                    />
                     <Input
                         placeholder="Commentaire (optionnel)"
                         multiline={true}
                         numberOfLines={4}
-                        onChangeText={(invalidReason): void => {
+                        onChangeText={(invalidReason: string): void => {
                             AppLogger.getLogger().debug(`New reason: ${invalidReason}`);
                             const goodsReceiptEntry = this.state.goodsReceiptEntry;
                             if (goodsReceiptEntry) {
@@ -212,36 +252,45 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                 this.setState({ goodsReceiptEntry });
                             }
                         }}
-                    />
-                    <Button
-                        title="Valider"
-                        onPress={(): void => {
-                            if (this.state.goodsReceiptEntry) {
-                                const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                getRepository(GoodsReceiptEntry)
-                                    .save(goodsReceiptEntry)
-                                    .then(() => {
-                                        if (this.props.preselectedProductBarcode) {
-                                            Navigation.dismissModal(this.props.componentId);
-                                            return;
-                                        }
-                                        this.setState({
-                                            product: undefined,
-                                            goodsReceiptEntry: undefined,
-                                            isValid: undefined,
-                                        });
-                                    });
-                            }
+                        style={{ height: this.state.commentInputHeight }}
+                        inputContainerStyle={{ borderBottomWidth: 0, marginTop: 5 }}
+                        onContentSizeChange={(event): void => {
+                            this.setState({ commentInputHeight: Math.max(35, event.nativeEvent.contentSize.height) });
                         }}
                     />
-                </ScrollView>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Button
+                            title="Enregistrer"
+                            onPress={(): void => {
+                                if (this.state.goodsReceiptEntry) {
+                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                    getRepository(GoodsReceiptEntry)
+                                        .save(goodsReceiptEntry)
+                                        .then(() => {
+                                            if (this.props.preselectedProductBarcode) {
+                                                Navigation.dismissModal(this.props.componentId);
+                                                return;
+                                            }
+                                            this.setState({
+                                                product: undefined,
+                                                goodsReceiptEntry: undefined,
+                                                isValid: undefined,
+                                            });
+                                        });
+                                }
+                            }}
+                            style={{ marginVertical: 16 }}
+                            disabled={this.state.goodsReceiptEntry?.productQty == undefined}
+                        />
+                    </View>
+                </View>
             );
         }
     }
 
     renderEntry(): React.ReactNode {
         return (
-            <View>
+            <KeyboardAwareScrollView style={{ height: '100%' }}>
                 <Image source={{ uri: this.state.product && this.state.product.image }} />
                 <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
@@ -289,7 +338,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     />
                 </View>
                 {this.renderInvalid()}
-            </View>
+            </KeyboardAwareScrollView>
         );
     }
 
@@ -310,7 +359,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         return (
             <SafeAreaView style={{ height: '100%' }}>
                 <ThemeProvider theme={this.theme}>
-                    {this.state.goodsReceiptEntry ? this.renderEntry() : this.renderCamera()}
+                    {this.state.goodsReceiptEntry || this.props.preselectedProductBarcode
+                        ? this.renderEntry()
+                        : this.renderCamera()}
                 </ThemeProvider>
             </SafeAreaView>
         );
