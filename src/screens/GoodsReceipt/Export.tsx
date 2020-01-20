@@ -261,7 +261,11 @@ ${entriesCount} produits traités`;
                         <ListItem title="État" rightElement={ReceiptCheck} bottomDivider />
                         <ListItem
                             title="Destinataire"
-                            rightElement={<Text>{this.state.selectedGamme || 'À Choisir'}</Text>}
+                            rightElement={
+                                <Text style={{ color: this.state.selectedGamme ? 'black' : 'red' }}>
+                                    {this.state.selectedGamme || 'À Choisir'}
+                                </Text>
+                            }
                             onPress={(): void => {
                                 this.chooseRecipient();
                             }}
