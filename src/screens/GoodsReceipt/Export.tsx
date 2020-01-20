@@ -38,6 +38,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     private senderNameInput?: string;
 
     private gammes: { [k: string]: string } = {
+        'Groupe Achats': 'achats@supercoop.fr',
         'Gamme Boisson': 'gamme-boisson@supercoop.fr',
         'Gamme Droguerie': 'gamme-droguerie@supercoop.fr',
         'Gamme Épicerie': 'gamme-epicerie@supercoop.fr',
