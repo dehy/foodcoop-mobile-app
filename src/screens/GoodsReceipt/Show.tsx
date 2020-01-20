@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
@@ -119,6 +119,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     openGoodsReceiptExport = (): void => {
+        if (false == this.state.session.isReadyForExport()) {
+            Alert.alert(`Au moins un des produits n'a pas été scanné. Merci de finir la réception.`);
+            return;
+        }
         Navigation.showModal({
             stack: {
                 children: [

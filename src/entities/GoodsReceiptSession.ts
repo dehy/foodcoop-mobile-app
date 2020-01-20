@@ -42,4 +42,19 @@ export default class GoodsReceiptSession {
         goodsReceiptEntry => goodsReceiptEntry.goodsReceiptSession,
     )
     goodsReceiptEntries?: GoodsReceiptEntry[];
+
+    isReadyForExport = (): boolean => {
+        if (undefined == this.goodsReceiptEntries) {
+            return false;
+        }
+        for (const entry of this.goodsReceiptEntries) {
+            if (undefined == entry.productQty) {
+                return false;
+            }
+            if (undefined == entry.productUom) {
+                return false;
+            }
+        }
+        return true;
+    };
 }
