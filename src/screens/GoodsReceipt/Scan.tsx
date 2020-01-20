@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Platform, SafeAreaView, Text, TextInput, View, ScrollView } from 'react-native';
+import { Image, Platform, SafeAreaView, Text, TextInput, View, ScrollView, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import Scanner2 from '../Scanner2';
 import { Navigation, Options } from 'react-native-navigation';
@@ -10,7 +10,7 @@ import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductPro
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import AppLogger from '../../utils/AppLogger';
-import { toNumber, displayNumber } from '../../utils/helpers';
+import { toNumber, displayNumber, isFloat } from '../../utils/helpers';
 import { Button, Icon, Input, ListItem, ThemeProvider } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -158,6 +158,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         const goodsReceiptEntry = this.state.goodsReceiptEntry;
         if (goodsReceiptEntry) {
             goodsReceiptEntry.productUom = goodsReceiptEntry?.expectedProductUom;
+            goodsReceiptEntry.productQty = undefined;
         }
         this.setState({
             isValid: false,
@@ -188,6 +189,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             },
             buttonIndex => {
                 AppLogger.getLogger().debug(`button clicked: ${buttonIndex}`);
+                if (Platform.OS == 'ios' && buttonIndex == uomsIos.length - 1) {
+                    return;
+                }
                 const receivedUom = Object.values(this.uomList)[buttonIndex];
                 AppLogger.getLogger().debug(`receivedUom: ${receivedUom}`);
                 const goodsReceiptEntry = this.state.goodsReceiptEntry;
@@ -199,6 +203,29 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         );
     };
 
+    revisedGoodsReceiptEntryIsValid = (): boolean => {
+        const goodsReceiptEntry = this.state.goodsReceiptEntry;
+        if (goodsReceiptEntry == undefined) {
+            return false;
+        }
+        const productQty = goodsReceiptEntry.productQty;
+        if (productQty == undefined || productQty < 0) {
+            Alert.alert('La quantité ne peut être inférieur à 0 !');
+            return false;
+        }
+        const productUom = goodsReceiptEntry.productUom;
+        const unitOfMesurements = [UnitOfMesurement.unit, UnitOfMesurement.kg];
+        if (productUom == undefined || !unitOfMesurements.includes(productUom)) {
+            Alert.alert(`Unité de messure inconnue: ${productUom}`);
+            return false;
+        }
+        if (productUom == UnitOfMesurement.unit && isFloat(productQty)) {
+            Alert.alert('Impossible d\'avoir un nombre à virgule pour l\'unité de mesure "unités".');
+            return false;
+        }
+        return true;
+    };
+
     renderInvalid(): React.ReactNode {
         if (this.state.isValid === false) {
             return (
@@ -208,8 +235,15 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         rightElement={
                             <TextInput
                                 onChangeText={(receivedQtyStr: string): void => {
-                                    const receivedQty = toNumber(receivedQtyStr);
-                                    AppLogger.getLogger().debug(`New receivedQty: ${receivedQtyStr} => ${receivedQty}`);
+                                    let receivedQty: number | undefined;
+                                    receivedQty = toNumber(receivedQtyStr);
+                                    console.log(receivedQty);
+                                    if (isNaN(receivedQty)) {
+                                        receivedQty = undefined;
+                                    }
+                                    AppLogger.getLogger().debug(
+                                        `New receivedQty: '${receivedQtyStr}' => ${receivedQty}`,
+                                    );
                                     const goodsReceiptEntry = this.state.goodsReceiptEntry;
                                     if (goodsReceiptEntry) {
                                         goodsReceiptEntry.productQty = receivedQty;
@@ -245,7 +279,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         multiline={true}
                         numberOfLines={4}
                         onChangeText={(invalidReason: string): void => {
-                            AppLogger.getLogger().debug(`New reason: ${invalidReason}`);
+                            AppLogger.getLogger().debug(`New reason: '${invalidReason}'`);
                             const goodsReceiptEntry = this.state.goodsReceiptEntry;
                             if (goodsReceiptEntry) {
                                 goodsReceiptEntry.comment = invalidReason;
@@ -262,21 +296,23 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         <Button
                             title="Enregistrer"
                             onPress={(): void => {
-                                if (this.state.goodsReceiptEntry) {
-                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                    getRepository(GoodsReceiptEntry)
-                                        .save(goodsReceiptEntry)
-                                        .then(() => {
-                                            if (this.props.preselectedProductBarcode) {
-                                                Navigation.dismissModal(this.props.componentId);
-                                                return;
-                                            }
-                                            this.setState({
-                                                product: undefined,
-                                                goodsReceiptEntry: undefined,
-                                                isValid: undefined,
+                                if (this.revisedGoodsReceiptEntryIsValid()) {
+                                    if (this.state.goodsReceiptEntry) {
+                                        const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                        getRepository(GoodsReceiptEntry)
+                                            .save(goodsReceiptEntry)
+                                            .then(() => {
+                                                if (this.props.preselectedProductBarcode) {
+                                                    Navigation.dismissModal(this.props.componentId);
+                                                    return;
+                                                }
+                                                this.setState({
+                                                    product: undefined,
+                                                    goodsReceiptEntry: undefined,
+                                                    isValid: undefined,
+                                                });
                                             });
-                                        });
+                                    }
                                 }
                             }}
                             style={{ marginVertical: 16 }}
