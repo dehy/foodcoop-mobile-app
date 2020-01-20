@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Platform, SafeAreaView, Text, TextInput, View, ScrollView, Alert } from 'react-native';
+import { Image, Platform, SafeAreaView, Text, TextInput, View, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import Scanner2 from '../Scanner2';
 import { Navigation, Options } from 'react-native-navigation';
