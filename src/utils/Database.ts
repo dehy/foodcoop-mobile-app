@@ -4,6 +4,7 @@ import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1579126631287 } from '../migrations/1579126631287-Init';
+import { HiddenGoodsReceipts1580064637315 } from '../migrations/1580064637315-HiddenGoodsReceipts';
 
 interface EntityDefinition {
     name: string;
@@ -53,7 +54,7 @@ export default class Database {
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
-            migrations: [Init1579126631287],
+            migrations: [Init1579126631287, HiddenGoodsReceipts1580064637315],
         });
     }
 

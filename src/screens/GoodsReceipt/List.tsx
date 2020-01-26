@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView, Platform } from 'react-native';
+import ActionSheet from 'react-native-action-sheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
@@ -8,7 +9,8 @@ import GoodsReceiptService from '../../services/GoodsReceiptService';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
 import moment from 'moment';
 import styles from '../../styles/material';
-import { ThemeProvider, ListItem, Button, Icon } from 'react-native-elements';
+import { Icon, ThemeProvider, ListItem } from 'react-native-elements';
+import AppLogger from '../../utils/AppLogger';
 
 export interface GoodsReceiptListProps {
     componentId: string;
@@ -22,6 +24,7 @@ interface GoodsReceiptSessionsData {
 interface GoodsReceiptListState {
     goodsReceiptsData: GoodsReceiptSessionsData[];
     todaysGoodsReceipts: PurchaseOrder[];
+    showHidden: boolean;
 }
 
 interface GoodsReceiptSessionTapProps {
@@ -47,23 +50,26 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         this.state = {
             goodsReceiptsData: [],
             todaysGoodsReceipts: [],
+            showHidden: false,
         };
     }
 
     static options(): Options {
-        const options = defaultScreenOptions('Réceptions');
-        // options.topBar.rightButtons = [
-        //     {
-        //         id: 'inventory-new',
-        //         text: 'Nouveau'
-        //     }
-        // ]
+        const options = defaultScreenOptions('Mes réceptions');
+        const topBar = options.topBar ?? {};
+        topBar.rightButtons = [
+            {
+                id: 'goodsreceipt-new',
+                icon: require('../../../assets/icons/plus-regular.png'),
+            },
+        ];
 
         return options;
     }
 
     componentDidAppear(): void {
         this.loadData();
+        this.renderHideIcon();
         this.loadTodaysGoodsReceipt();
     }
 
@@ -93,11 +99,13 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
 
     loadData(): void {
         const goodsReceiptSessionRepository = getConnection().getRepository(GoodsReceiptSession);
+        const whereOptions = this.state.showHidden ? {} : { hidden: false };
         goodsReceiptSessionRepository
             .find({
                 order: {
                     createdAt: 'DESC',
                 },
+                where: whereOptions,
             })
             .then(goodsReceiptSessions => {
                 const goodsReceiptSessionsData: GoodsReceiptSessionsData[] = [];
@@ -135,6 +143,39 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
             });
     }
 
+    renderHideIcon(): void {
+        const showHidden = this.state.showHidden;
+        let icon;
+        if (showHidden === true) {
+            icon = require('../../../assets/icons/eye-slash-regular.png');
+        } else {
+            icon = require('../../../assets/icons/eye-regular.png');
+        }
+        Navigation.mergeOptions(this.props.componentId, {
+            topBar: {
+                leftButtons: [
+                    {
+                        id: 'hide-toggle',
+                        icon: icon,
+                    },
+                ],
+            },
+        });
+    }
+
+    toggleHide(): void {
+        const showHidden = !this.state.showHidden;
+        this.setState(
+            {
+                showHidden: showHidden,
+            },
+            () => {
+                this.loadData();
+                this.renderHideIcon();
+            },
+        );
+    }
+
     openNewGoodsReceiptSessionModal(): void {
         Navigation.showModal({
             stack: {
@@ -150,7 +191,10 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
-        if (buttonId === 'receipt-new') {
+        if (buttonId === 'hide-toggle') {
+            this.toggleHide();
+        }
+        if (buttonId === 'goodsreceipt-new') {
             this.openNewGoodsReceiptSessionModal();
         }
     }
@@ -186,6 +230,17 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         }
     }
 
+    renderHiddenMessage(): React.ReactNode {
+        return (
+            <View style={{ padding: 8, margin: 8, backgroundColor: '#17a2b8' }}>
+                <Text style={{ color: 'white' }}>
+                    Des réceptions sont peut être cachées. Pour les afficher, taper l&apos;icone en forme d&apos;oeil en
+                    haut à gauche.
+                </Text>
+            </View>
+        );
+    }
+
     renderItem = ({ item }: { item: GoodsReceiptSession }): React.ReactElement => {
         return (
             <ListItem
@@ -196,6 +251,31 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                     };
                     this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
                 }}
+                onLongPress={(): void => {
+                    const optionsAndroid: string[] = [item.hidden ? 'Rétablir' : 'Cacher'];
+                    const optionsIos: string[] = optionsAndroid;
+                    optionsIos.push('Annuler');
+
+                    ActionSheet.showActionSheetWithOptions(
+                        {
+                            options: Platform.OS == 'ios' ? optionsIos : optionsAndroid,
+                            cancelButtonIndex: optionsIos.length - 1,
+                        },
+                        buttonIndex => {
+                            AppLogger.getLogger().debug(`button clicked: ${buttonIndex}`);
+                            if (Platform.OS == 'ios' && buttonIndex == optionsIos.length - 1) {
+                                return;
+                            }
+                            const hiddenStatus = !item.hidden;
+                            item.hidden = hiddenStatus;
+                            const goodsReceiptSessionRepository = getConnection().getRepository(GoodsReceiptSession);
+                            goodsReceiptSessionRepository.save(item).then(() => {
+                                this.loadData();
+                            });
+                        },
+                    );
+                }}
+                leftIcon={item.hidden ? <Icon name="eye-slash" /> : undefined}
                 title={item.poName}
                 subtitle={item.partnerName}
                 rightTitle={item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
@@ -212,13 +292,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                 <SafeAreaView style={{ height: '100%' }}>
                     <ScrollView>
                         {this.renderTodaysGoodsReceipts()}
-                        <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
-                            <Button
-                                title=" Nouvelle réception"
-                                icon={<Icon name="plus-circle" color="white" />}
-                                onPress={this.openNewGoodsReceiptSessionModal}
-                            />
-                        </View>
+                        {this.renderHiddenMessage()}
                         <SectionList
                             scrollEnabled={false}
                             style={{ backgroundColor: 'white', height: '100%' }}
