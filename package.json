@@ -28,6 +28,7 @@
         "react": "16.9.0",
         "react-native": "0.61.5",
         "react-native-action-sheet": "^2.2.0",
+        "react-native-alert-async": "^1.0.5",
         "react-native-barcode-mask": "^1.1.0",
         "react-native-camera": "^3.13.0",
         "react-native-cookies": "^3.3.0",

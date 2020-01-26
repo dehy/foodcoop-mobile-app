@@ -36,6 +36,9 @@ export default class GoodsReceiptSession {
     })
     comment?: string;
 
+    @Column('boolean')
+    hidden = false;
+
     @OneToMany(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => GoodsReceiptEntry,

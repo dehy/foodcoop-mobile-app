@@ -12,6 +12,7 @@ import ActionSheet from 'react-native-action-sheet';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { Button, ThemeProvider, ListItem } from 'react-native-elements';
 import Dialog from 'react-native-dialog';
+import AlertAsync from 'react-native-alert-async';
 
 export interface GoodsReceiptExportProps {
     componentId: string;
@@ -181,8 +182,11 @@ ${entriesCount} produits traités`;
             .sendEmail(to, subject, body, attachments)
             .then(async () => {
                 this.props.session.lastSentAt = moment().toDate();
+                this.props.session.hidden = true;
                 await getRepository(GoodsReceiptSession).save(this.props.session);
-                Alert.alert('Envoyé', 'Ton compte-rendu a bien été envoyé. Merci !');
+                AlertAsync('Envoyé', 'Ton compte-rendu a bien été envoyé. Merci !').then(() => {
+                    Navigation.dismissModal(this.props.componentId);
+                });
             })
             .catch((e: Error) => {
                 if (__DEV__) {
@@ -206,6 +210,16 @@ ${entriesCount} produits traités`;
         }
         return false;
     };
+
+    renderAlreadySent(): React.ReactNode {
+        return (
+            <View style={{ padding: 8, margin: 8, backgroundColor: '#17a2b8' }}>
+                <Text style={{ color: 'white' }}>
+                    Cette réception a déjà été envoyée le {this.props.session.lastSentAt?.toLocaleString()}
+                </Text>
+            </View>
+        );
+    }
 
     render(): React.ReactNode {
         let ReceiptCheck: React.ReactElement | undefined = undefined;
@@ -239,6 +253,7 @@ ${entriesCount} produits traités`;
             <SafeAreaView style={{ backgroundColor: 'white', height: '100%' }}>
                 <ThemeProvider>
                     <ScrollView>
+                        {this.renderAlreadySent()}
                         <Text style={{ fontSize: 16, margin: 16 }}>
                             Tu es sur le point d&apos;envoyer ta réception du{' '}
                             {this.props.session.createdAt &&
