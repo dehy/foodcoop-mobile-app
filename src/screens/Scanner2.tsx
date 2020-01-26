@@ -583,6 +583,8 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                 }}
                 textInputProps={{
                     keyboardType: 'number-pad',
+                    returnKeyLabel: 'done',
+                    returnKeyType: 'done',
                 }}
                 cancelText="Annuler"
                 submitText="Chercher"

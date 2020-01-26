@@ -41,12 +41,17 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
 
     static options(): Options {
         const options = defaultScreenOptions('');
-        // options.topBar.rightButtons = [
-        //     {
-        //         id: 'inventory-new',
-        //         text: 'Nouveau'
-        //     }
-        // ]
+        const topBar = options.topBar ?? {};
+        topBar.rightButtons = [
+            {
+                id: 'export',
+                icon: require('../../../assets/icons/paper-plane-regular.png'),
+            },
+            {
+                id: 'scan',
+                icon: require('../../../assets/icons/barcode-read-regular.png'),
+            },
+        ];
 
         return options;
     }
@@ -84,11 +89,14 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             });
     }
 
-    // navigationButtonPressed({ buttonId }: { buttonId: string }): void {
-    //     if (buttonId === "receipt-new") {
-    //       this.openNewGoodsReceiptSessionModal();
-    //     }
-    // }
+    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+        if (buttonId === 'scan') {
+            this.openGoodsReceiptScan();
+        }
+        if (buttonId === 'export') {
+            this.openGoodsReceiptExport();
+        }
+    }
 
     //   didTapGoodsReceiptSessionItem = (props: GoodsReceiptSessionTapProps) => {
     //     Navigation.push(props.componentId, {
@@ -181,32 +189,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                     <ScrollView>
                         <View>
                             <Text style={{ fontSize: 25, margin: 5 }}>{this.props.session.partnerName}</Text>
-                            <Text style={{ fontSize: 15, margin: 5 }}>
+                            <Text style={{ fontSize: 15, margin: 5, fontStyle: 'italic' }}>
                                 {this.props.session.poName} -{' '}
                                 {moment(this.props.session.createdAt).format('DD MMMM YYYY')}
                             </Text>
-                        </View>
-                        <View
-                            style={{
-                                padding: 8,
-                                flexDirection: 'row',
-                                justifyContent: 'space-around',
-                                borderBottomWidth: 1,
-                                borderBottomColor: '#CCCCCC',
-                            }}
-                        >
-                            <Button
-                                title=" Scanner"
-                                onPress={(): void => {
-                                    this.openGoodsReceiptScan();
-                                }}
-                                icon={<Icon name="barcode" color="white" />}
-                            />
-                            <Button
-                                title=" Envoyer"
-                                onPress={this.openGoodsReceiptExport}
-                                icon={<Icon name="paper-plane" color="white" />}
-                            />
                         </View>
                         <FlatList
                             scrollEnabled={false}
@@ -227,7 +213,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                     onPress={(): void => {
                                         this.openGoodsReceiptScan(item.productBarcode);
                                     }}
-                                    bottomDivider
+                                    topDivider
                                 />
                             )}
                         />
