@@ -127,10 +127,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     openGoodsReceiptExport = (): void => {
-        if (false == this.state.session.isReadyForExport()) {
-            Alert.alert(`Au moins un des produits n'a pas été scanné. Merci de finir la réception.`);
-            return;
-        }
+        // if (false == this.state.session.isReadyForExport()) {
+        //     Alert.alert(`Au moins un des produits n'a pas été scanné. Merci de finir la réception.`);
+        //     return;
+        // }
         Navigation.showModal({
             stack: {
                 children: [
