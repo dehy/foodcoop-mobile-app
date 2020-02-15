@@ -5,7 +5,7 @@ import { Navigation, Options, EventSubscription } from 'react-native-navigation'
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
-import { Button, Icon, ListItem, ThemeProvider } from 'react-native-elements';
+import { ListItem, ThemeProvider } from 'react-native-elements';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
 import moment from 'moment';
 import { displayNumber } from '../../utils/helpers';
@@ -208,7 +208,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                 <ListItem
                                     containerStyle={{ backgroundColor: this.itemBackgroundColor(item) }}
                                     title={item.productName}
-                                    subtitle={item.productBarcode && item.productBarcode.toString()}
+                                    subtitle={
+                                        item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'
+                                    }
+                                    subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
                                     rightElement={this.renderEntryQty(item)}
                                     onPress={(): void => {
                                         this.openGoodsReceiptScan(item.productId);
