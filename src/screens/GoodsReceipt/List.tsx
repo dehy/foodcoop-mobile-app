@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView, Platform } from 'react-native';
+import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView, Platform, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
+import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import { getConnection } from 'typeorm';
 import GoodsReceiptService from '../../services/GoodsReceiptService';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
@@ -252,7 +253,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                     this.didTapGoodsReceiptSessionItem(inventorySessionTapProps);
                 }}
                 onLongPress={(): void => {
-                    const optionsAndroid: string[] = [item.hidden ? 'Rétablir' : 'Cacher'];
+                    const optionsAndroid: string[] = [item.hidden ? 'Rétablir' : 'Cacher', 'Supprimer'];
                     const optionsIos: string[] = optionsAndroid;
                     optionsIos.push('Annuler');
 
@@ -266,12 +267,42 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                             if (Platform.OS == 'ios' && buttonIndex == optionsIos.length - 1) {
                                 return;
                             }
-                            const hiddenStatus = !item.hidden;
-                            item.hidden = hiddenStatus;
                             const goodsReceiptSessionRepository = getConnection().getRepository(GoodsReceiptSession);
-                            goodsReceiptSessionRepository.save(item).then(() => {
-                                this.loadData();
-                            });
+                            if (buttonIndex == 0) {
+                                const hiddenStatus = !item.hidden;
+                                item.hidden = hiddenStatus;
+                                goodsReceiptSessionRepository.save(item).then(() => {
+                                    this.loadData();
+                                });
+                            }
+                            if (buttonIndex == 1) {
+                                Alert.alert(
+                                    "Suppression d'une réception",
+                                    `Es-tu vraiment sûr(e) de vouloir supprimer la réception de ${item.partnerName} (${item.poName}) ?`,
+                                    [
+                                        { text: 'Non' },
+                                        {
+                                            text: 'Oui, supprimer',
+                                            onPress: (): void => {
+                                                const goodsReceiptEntryRepository = getConnection().getRepository(
+                                                    GoodsReceiptEntry,
+                                                );
+                                                goodsReceiptEntryRepository
+                                                    .find({
+                                                        goodsReceiptSession: item,
+                                                    })
+                                                    .then(entries => {
+                                                        goodsReceiptEntryRepository.remove(entries).then(() => {
+                                                            goodsReceiptSessionRepository.remove(item).then(() => {
+                                                                this.loadData();
+                                                            });
+                                                        });
+                                                    });
+                                            },
+                                        },
+                                    ],
+                                );
+                            }
                         },
                     );
                 }}
