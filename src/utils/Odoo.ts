@@ -169,7 +169,7 @@ export default class Odoo {
                     'date_planned',
                     '>',
                     moment()
-                        .subtract(1, 'months')
+                        .subtract(2, 'week')
                         .format(Odoo.DATETIME_FORMAT),
                 ],
             ],
