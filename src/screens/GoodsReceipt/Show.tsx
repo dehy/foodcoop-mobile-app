@@ -51,6 +51,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 id: 'scan',
                 icon: require('../../../assets/icons/barcode-read-regular.png'),
             },
+            {
+                id: 'add-extra',
+                icon: require('../../../assets/icons/cart-plus-regular.png'),
+            },
         ];
 
         return options;
@@ -90,6 +94,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+        if (buttonId === 'add-extra') {
+            this.searchExtraItem();
+        }
         if (buttonId === 'scan') {
             this.openGoodsReceiptScan();
         }
@@ -146,6 +153,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             },
         });
     };
+
+    searchExtraItem(): void {
+        Alert.alert('Développement en cours');
+    }
 
     itemBackgroundColor(entry: GoodsReceiptEntry): string {
         if (true === entry.isValid()) {
