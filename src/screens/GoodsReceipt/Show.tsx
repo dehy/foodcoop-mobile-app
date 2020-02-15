@@ -109,7 +109,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     //     });
     //   };
 
-    openGoodsReceiptScan(productBarcode?: string): void {
+    openGoodsReceiptScan(productId?: number): void {
         Navigation.showModal({
             stack: {
                 children: [
@@ -117,7 +117,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Scan',
                             passProps: {
-                                preselectedProductBarcode: productBarcode,
+                                preselectedProductId: productId,
                             },
                         },
                     },
@@ -211,7 +211,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                     subtitle={item.productBarcode && item.productBarcode.toString()}
                                     rightElement={this.renderEntryQty(item)}
                                     onPress={(): void => {
-                                        this.openGoodsReceiptScan(item.productBarcode);
+                                        this.openGoodsReceiptScan(item.productId);
                                     }}
                                     topDivider
                                 />
