@@ -16,7 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 interface GoodsReceiptScanProps {
     componentId: string;
-    preselectedProductBarcode?: string;
+    preselectedProductId?: number;
 }
 
 interface GoodsReceiptScanState {
@@ -61,14 +61,15 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     }
 
     componentDidMount(): void {
-        if (this.props.preselectedProductBarcode) {
-            const barcode: Barcode = {
-                data: this.props.preselectedProductBarcode,
-                dataRaw: this.props.preselectedProductBarcode,
-                type: 'PRODUCT',
-                bounds: { size: { width: 0, height: 0 }, origin: { x: 0, y: 0 } },
-            };
-            this.didScanBarcode(barcode);
+        if (this.props.preselectedProductId) {
+            // const barcode: Barcode = {
+            //     data: this.props.preselectedProductBarcode,
+            //     dataRaw: this.props.preselectedProductBarcode,
+            //     type: 'PRODUCT',
+            //     bounds: { size: { width: 0, height: 0 }, origin: { x: 0, y: 0 } },
+            // };
+            this.loadProductWithId(this.props.preselectedProductId);
+            // this.didScanBarcode(barcode);
         }
     }
 
@@ -91,6 +92,42 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             Navigation.dismissModal(this.props.componentId);
             return;
         }
+    }
+
+    loadProductWithId(id: number): void {
+        AppLogger.getLogger().debug(`Loading product #'${id}'`);
+        Odoo.getInstance()
+            .fetchProductFromIds([id])
+            .then((products: ProductProduct[] | undefined) => {
+                if (products === undefined || products.length === 0) {
+                    AppLogger.getLogger().debug(`Product with id '${id}' not found`);
+                    alert(`Produit avec l'id' ${id} non trouvé`);
+                    return;
+                }
+                const product = products[0];
+                AppLogger.getLogger().debug(`Found Product #${id} => '${product.name}'`);
+                getConnection()
+                    .getRepository(GoodsReceiptEntry)
+                    .findOneOrFail({
+                        where: {
+                            productId: id,
+                        },
+                    })
+                    .then((entry: GoodsReceiptEntry) => {
+                        AppLogger.getLogger().debug(
+                            `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
+                                entry.expectedProductQty
+                            } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)})`,
+                        );
+                        this.setState({
+                            product: product,
+                            goodsReceiptEntry: entry,
+                        });
+                    })
+                    .catch(() => {
+                        alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
+                    });
+            });
     }
 
     didScanBarcode(barcode: Barcode): void {
@@ -140,7 +177,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             getRepository(GoodsReceiptEntry)
                 .save(goodsReceiptEntry)
                 .then(() => {
-                    if (this.props.preselectedProductBarcode) {
+                    if (this.props.preselectedProductId) {
                         Navigation.dismissModal(this.props.componentId);
                         return;
                     }
@@ -167,7 +204,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     }
 
     didTapCancel(): void {
-        if (this.props.preselectedProductBarcode) {
+        if (this.props.preselectedProductId) {
             Navigation.dismissModal(this.props.componentId);
             return;
         }
@@ -302,7 +339,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                         getRepository(GoodsReceiptEntry)
                                             .save(goodsReceiptEntry)
                                             .then(() => {
-                                                if (this.props.preselectedProductBarcode) {
+                                                if (this.props.preselectedProductId) {
                                                     Navigation.dismissModal(this.props.componentId);
                                                     return;
                                                 }
@@ -395,7 +432,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         return (
             <SafeAreaView style={{ height: '100%' }}>
                 <ThemeProvider theme={this.theme}>
-                    {this.state.goodsReceiptEntry || this.props.preselectedProductBarcode
+                    {this.state.goodsReceiptEntry || this.props.preselectedProductId
                         ? this.renderEntry()
                         : this.renderCamera()}
                 </ThemeProvider>
