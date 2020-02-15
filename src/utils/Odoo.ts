@@ -29,7 +29,7 @@ export default class Odoo {
     public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
     private static instance: Odoo;
-    private static odooEnpoint = 'labo.supercoop.fr';
+    private static odooEnpoint = '***REMOVED***';
     private isConnected: boolean;
     private odooApi: OdooApi;
 
