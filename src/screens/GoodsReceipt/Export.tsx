@@ -212,13 +212,15 @@ ${entriesCount} produits traités`;
     };
 
     renderAlreadySent(): React.ReactNode {
-        return (
-            <View style={{ padding: 8, margin: 8, backgroundColor: '#17a2b8' }}>
-                <Text style={{ color: 'white' }}>
-                    Cette réception a déjà été envoyée le {this.props.session.lastSentAt?.toLocaleString()}
-                </Text>
-            </View>
-        );
+        if (this.props.session.lastSentAt) {
+            return (
+                <View style={{ padding: 8, margin: 8, backgroundColor: '#17a2b8' }}>
+                    <Text style={{ color: 'white' }}>
+                        Cette réception a déjà été envoyée le {this.props.session.lastSentAt?.toLocaleString()}
+                    </Text>
+                </View>
+            );
+        }
     }
 
     render(): React.ReactNode {
