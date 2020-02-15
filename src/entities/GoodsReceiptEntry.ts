@@ -48,6 +48,9 @@ export default class GoodsReceiptEntry {
     })
     public comment?: string;
 
+    @Column('boolean')
+    public isExtra = false;
+
     @ManyToOne(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => GoodsReceiptSession,
