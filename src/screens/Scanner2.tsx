@@ -576,6 +576,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                         type: RNCamera.Constants.BarCodeType.ean13,
                         bounds: { origin: { x: '0', y: '0' }, size: { width: '0', height: '0' } },
                     };
+                    this.hideManualSearchView();
                     this.barcodeRecognized(barcode);
                 }}
                 closeDialog={(): void => {

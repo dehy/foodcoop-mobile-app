@@ -10,7 +10,7 @@ export default class ProductProductFactory {
         product.name = response.name;
         product.image = response.image != null ? response.image : undefined;
         product.qty_available = response.qty_available;
-        product.uom_id = response.uom_id;
+        product.uom_id = response.uom_id[0];
         product.lst_price = response.lst_price;
         product.weight_net = response.weight_net;
         product.volume = response.volume;
