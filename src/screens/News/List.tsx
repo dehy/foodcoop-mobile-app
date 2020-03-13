@@ -1,9 +1,8 @@
 import React from 'react';
-import { Text, View, SafeAreaView, TouchableHighlight, FlatList } from 'react-native';
+import { SafeAreaView, FlatList } from 'react-native';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import * as rssParser from 'react-native-rss-parser';
-import styles from '../../styles/material';
 import moment from 'moment';
 import { NewsItem } from './Show';
 import { ListItem } from 'react-native-elements';

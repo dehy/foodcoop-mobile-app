@@ -17,23 +17,14 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
-
-#ifdef DEBUG
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-#else
-  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
-
+  #if DEBUG
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
+    jsCodeLocation=  [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #endif
   [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
-  
-  return YES;
-}
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
-{
-      return [RNGoogleSignin application:application openURL:url options:options];
-  
-  return true;
+  return YES;
 }
 
 @end
