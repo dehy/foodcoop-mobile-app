@@ -27,4 +27,11 @@
   return YES;
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+      return [RNGoogleSignin application:application openURL:url options:options];
+  
+  return true;
+}
+
 @end
