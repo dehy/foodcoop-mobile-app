@@ -87,6 +87,18 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 if (!session) {
                     throw new Error('Session not found');
                 }
+                if (session.goodsReceiptEntries && session.goodsReceiptEntries.length > 0) {
+                    session.goodsReceiptEntries = session.goodsReceiptEntries.sort((entry1,entry2) => {
+                        if (entry1.productName && entry2.productName && entry1.productName.trim() > entry2.productName.trim()) {
+                            return 1;
+                        }
+                        if (entry1.productName && entry2.productName && entry1.productName.trim() < entry2.productName.trim()) {
+                            return -1;
+                        }
+                    
+                        return 0;
+                    });
+                }
                 this.setState({
                     session,
                 });
