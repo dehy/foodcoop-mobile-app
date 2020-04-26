@@ -6427,10 +6427,15 @@ react-devtools-core@^3.6.3:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
-react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.3, react-is@^16.8.4:
+react-is@^16.12.0, react-is@^16.8.3, react-is@^16.8.4:
   version "16.13.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
   integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
+
+react-is@^16.7.0, react-is@^16.8.1:
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
+  integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-lifecycles-compat@2.0.0:
   version "2.0.0"
@@ -6573,9 +6578,9 @@ react-native-modal@^9.0.0:
     react-native-animatable "^1.2.4"
 
 react-native-navigation@^6.1.1:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-6.2.0.tgz#b80e058036a5d88e8d002b93ff4d93d5cb0b1b4a"
-  integrity sha512-lENRSm9hTkhB2zLR9bycyVZQLuNxGrDeXBCQWsbsPnRDANdzGZxr/+JSTBF1GiqywlALuAZrFe1dI8cwXTY5yw==
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-6.4.0.tgz#bc7af1b32cc69143e186c4996b787a58a600776f"
+  integrity sha512-VOtmr5FDVWo0YzR+yV3M0BPe0YhJdIYiUBPrHzhKyV5vASb0hbMA32H8wsbX5NYgGjr4vhXcpPYdpXIAa9A9eA==
   dependencies:
     hoist-non-react-statics "3.x.x"
     lodash "4.17.x"
