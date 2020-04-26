@@ -539,3 +539,9 @@ android/app/src/main/res/drawable-xxhdpi/
 
 *.sqlite
 .xcodebuild
+
+# Yarn v2
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
