@@ -5,7 +5,7 @@ import { Navigation, Options, EventSubscription } from 'react-native-navigation'
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
-import { ListItem, ThemeProvider } from 'react-native-elements';
+import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
 import moment from 'moment';
 import { displayNumber } from '../../utils/helpers';
@@ -13,10 +13,12 @@ import { displayNumber } from '../../utils/helpers';
 export interface GoodsReceiptShowProps {
     componentId: string;
     session: GoodsReceiptSession;
+    arrayHolder: [];
 }
 
 interface GoodsReceiptShowState {
     session: GoodsReceiptSession;
+    filter:string;
 }
 
 export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowProps, GoodsReceiptShowState> {
@@ -30,12 +32,15 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     };
 
     modalDismissedListener?: EventSubscription;
+    
+    arrayholder: GoodsReceiptEntry[]=[];
 
     constructor(props: GoodsReceiptShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
             session: props.session,
+            filter:''
         };
     }
 
@@ -86,6 +91,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 //console.log(session);
                 if (!session) {
                     throw new Error('Session not found');
+                }
+                if (session.goodsReceiptEntries) {
+                    this.arrayholder = session.goodsReceiptEntries;
                 }
                 this.setState({
                     session,
@@ -183,6 +191,38 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return []
     }
 
+    searchFilterFunction(text: string):void {
+        this.setState({
+          filter: text,
+        });
+    
+        const newData = this.arrayholder.filter(item => {
+          const textData = text.toUpperCase();
+          return item.productName ? item.productName.toUpperCase().indexOf(textData) > -1 : 0;
+        });
+        
+        let newSession:GoodsReceiptSession = this.state.session;
+        newSession.goodsReceiptEntries = newData
+
+        this.setState({
+          session: newSession,
+        });
+      };
+    
+
+    renderHeader = () => {
+        return (
+          <SearchBar
+            placeholder="Filter ici ..."
+            lightTheme
+            round
+            onChangeText={text => this.searchFilterFunction(text)}
+            autoCorrect={false}
+            value={this.state.filter}
+          />
+        );
+      };
+
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
         if (false === entry.isValid()) {
@@ -245,6 +285,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                     topDivider
                                 />
                             )}
+                            ListHeaderComponent={this.renderHeader}
                         />
                     </ScrollView>
                 </ThemeProvider>
