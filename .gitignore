@@ -540,6 +540,8 @@ android/app/src/main/res/drawable-xxhdpi/
 *.sqlite
 .xcodebuild
 
+GoogleService-Info.plist
+
 # Yarn v2
 .yarn/*
 !.yarn/releases
