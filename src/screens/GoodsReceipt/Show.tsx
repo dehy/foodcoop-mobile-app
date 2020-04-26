@@ -87,18 +87,6 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 if (!session) {
                     throw new Error('Session not found');
                 }
-                if (session.goodsReceiptEntries && session.goodsReceiptEntries.length > 0) {
-                    session.goodsReceiptEntries = session.goodsReceiptEntries.sort((entry1,entry2) => {
-                        if (entry1.productName && entry2.productName && entry1.productName.trim() > entry2.productName.trim()) {
-                            return 1;
-                        }
-                        if (entry1.productName && entry2.productName && entry1.productName.trim() < entry2.productName.trim()) {
-                            return -1;
-                        }
-                    
-                        return 0;
-                    });
-                }
                 this.setState({
                     session,
                 });
@@ -180,6 +168,21 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return 'transparent';
     }
 
+    orderedReceiptEntries(entries: GoodsReceiptEntry[] | undefined) :GoodsReceiptEntry[] {
+        if (entries && entries.length > 0) {
+            return entries.sort((entry1,entry2) => {
+                if (entry1.productName && entry2.productName && entry1.productName.trim() > entry2.productName.trim()) {
+                    return 1;
+                }
+                if (entry1.productName && entry2.productName && entry1.productName.trim() < entry2.productName.trim()) {
+                    return -1;
+                }
+                return 0;
+            });
+        }
+        return []
+    }
+
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
         if (false === entry.isValid()) {
@@ -220,7 +223,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         <FlatList
                             scrollEnabled={false}
                             style={{ backgroundColor: 'white' }}
-                            data={this.state.session.goodsReceiptEntries || []}
+                            data={ this.orderedReceiptEntries(this.state.session.goodsReceiptEntries)}
                             keyExtractor={(item): string => {
                                 if (item.id && item.id.toString()) {
                                     return item.id.toString();
