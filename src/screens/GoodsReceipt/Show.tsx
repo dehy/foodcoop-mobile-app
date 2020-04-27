@@ -18,7 +18,7 @@ export interface GoodsReceiptShowProps {
 
 interface GoodsReceiptShowState {
     session: GoodsReceiptSession;
-    filter:string;
+    filter: string;
 }
 
 export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowProps, GoodsReceiptShowState> {
@@ -32,15 +32,15 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     };
 
     modalDismissedListener?: EventSubscription;
-    
-    arrayholder: GoodsReceiptEntry[]=[];
+
+    arrayholder: GoodsReceiptEntry[] = [];
 
     constructor(props: GoodsReceiptShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
             session: props.session,
-            filter:''
+            filter: '',
         };
     }
 
@@ -176,9 +176,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return 'transparent';
     }
 
-    orderedReceiptEntries(entries: GoodsReceiptEntry[] | undefined) :GoodsReceiptEntry[] {
+    orderedReceiptEntries(entries: GoodsReceiptEntry[] | undefined): GoodsReceiptEntry[] {
         if (entries && entries.length > 0) {
-            return entries.sort((entry1,entry2) => {
+            return entries.sort((entry1, entry2) => {
                 if (entry1.productName && entry2.productName && entry1.productName.trim() > entry2.productName.trim()) {
                     return 1;
                 }
@@ -188,40 +188,39 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 return 0;
             });
         }
-        return []
+        return [];
     }
 
-    searchFilterFunction(text: string):void {
+    searchFilterFunction(text: string): void {
         this.setState({
-          filter: text,
+            filter: text,
         });
-    
+
         const newData = this.arrayholder.filter(item => {
-          const textData = text.toUpperCase();
-          return item.productName ? item.productName.toUpperCase().indexOf(textData) > -1 : 0;
+            const textData = text.toUpperCase();
+            return item.productName ? item.productName.toUpperCase().indexOf(textData) > -1 : 0;
         });
-        
-        let newSession:GoodsReceiptSession = this.state.session;
-        newSession.goodsReceiptEntries = newData
+
+        const newSession: GoodsReceiptSession = this.state.session;
+        newSession.goodsReceiptEntries = newData;
 
         this.setState({
-          session: newSession,
+            session: newSession,
         });
-      };
-    
+    }
 
-    renderHeader = () => {
+    renderHeader = (): React.ReactElement => {
         return (
-          <SearchBar
-            placeholder="Filter ici ..."
-            lightTheme
-            round
-            onChangeText={text => this.searchFilterFunction(text)}
-            autoCorrect={false}
-            value={this.state.filter}
-          />
+            <SearchBar
+                placeholder="Filter ici ..."
+                lightTheme
+                round
+                onChangeText={(text: string): void => this.searchFilterFunction(text)}
+                autoCorrect={false}
+                value={this.state.filter}
+            />
         );
-      };
+    };
 
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
@@ -263,7 +262,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         <FlatList
                             scrollEnabled={false}
                             style={{ backgroundColor: 'white' }}
-                            data={ this.orderedReceiptEntries(this.state.session.goodsReceiptEntries)}
+                            data={this.orderedReceiptEntries(this.state.session.goodsReceiptEntries)}
                             keyExtractor={(item): string => {
                                 if (item.id && item.id.toString()) {
                                     return item.id.toString();
