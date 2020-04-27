@@ -10,6 +10,7 @@ L'application Supercoop est développé en React Native. Le projet utilise les l
 
 -   [Yarn](https://yarnpkg.com/getting-started/install) - gestionnaire des librairies javascript
 -   IDE de votre choix (ex. [Visual Studio Code](https://code.visualstudio.com/))
+-   Plugin [ESLint](https://eslint.org/) pour votre IDE ([ESLint pour VScode](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint))
 
 _Android_
 
@@ -35,6 +36,10 @@ _Bonus (facultatif)_
 ```sh
 $ yarn install
 ```
+
+#### Linting / Formattage
+
+ESLint est le linter utilisé dans ce projet. Prettier est le formatteur. Tous deux sont déjà installés en dépendances et configurés (`.eslintrs.js` et `.prettierrc.js`). Cependant, vous avez besoin d'un plugin ESLint pour votre IDE afin que celui-çi lise la configuration et exécute le formattage.
 
 #### Développement Android
 
