@@ -458,7 +458,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
             if (!this.articleQuantityValue) {
                 throw new Error();
             }
-            quantity = parseFloat(this.articleQuantityValue);
+            quantity = parseFloat(this.articleQuantityValue.replace(',', '.'));
         } catch (e) {
             Alert.alert('Valeur incorrecte', 'Cela ne ressemble pas à un nombre.');
             return;
