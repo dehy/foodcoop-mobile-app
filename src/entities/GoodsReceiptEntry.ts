@@ -24,7 +24,10 @@ export default class GoodsReceiptEntry {
     @Column('text')
     public productName?: string;
 
-    @Column('text')
+    @Column({
+        type: 'text',
+        nullable: true,
+    })
     public productPartnerRef?: string;
 
     @Column('int')
