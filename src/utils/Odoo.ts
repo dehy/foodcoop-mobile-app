@@ -24,6 +24,7 @@ export default class Odoo {
         'uom_id',
         'weight_net',
         'volume',
+        'partner_ref',
     ];
 
     public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
@@ -259,6 +260,8 @@ export default class Odoo {
         const products: ProductProduct[] = [];
         if (response.data.length > 0) {
             response.data.forEach((element: OdooApiProductProduct) => {
+                // console.log('Product');
+                // console.log(element);
                 products.push(ProductProductFactory.ProductProductFromResponse(element));
             });
             return products;
