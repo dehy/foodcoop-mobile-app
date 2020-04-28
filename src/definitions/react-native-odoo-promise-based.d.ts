@@ -16,6 +16,7 @@ interface OdooApiProductProduct {
     lst_price?: number;
     weight_net?: number;
     volume?: number;
+    partner_ref?: string;
 }
 
 interface OdooApiPurchaseOrder {

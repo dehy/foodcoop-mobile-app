@@ -14,6 +14,7 @@ export default class ProductProductFactory {
         product.lst_price = response.lst_price;
         product.weight_net = response.weight_net;
         product.volume = response.volume;
+        product.partner_ref = response.partner_ref;
 
         return product;
     }
