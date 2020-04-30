@@ -1,0 +1,28 @@
+{
+  "name": "react-native-keep-awake",
+  "version": "1.0.3",
+  "summary": "Keep the screen from going to sleep. iOS, Android and Web.",
+  "description": "Keep the screen from going to sleep. iOS, Android and Web.",
+  "license": "MIT",
+  "authors": "Sayem Chowdhury",
+  "homepage": "https://github.com/sayem314/react-native-keep-awake",
+  "source": {
+    "git": "git+https://github.com/sayem314/react-native-keep-awake.git",
+    "tag": "1.0.3"
+  },
+  "requires_arc": true,
+  "platforms": {
+    "ios": "8.0"
+  },
+  "preserve_paths": [
+    "README.md",
+    "package.json",
+    "index.js"
+  ],
+  "source_files": "ios/*.{h,m}",
+  "dependencies": {
+    "React": [
+
+    ]
+  }
+}
