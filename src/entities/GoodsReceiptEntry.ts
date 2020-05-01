@@ -28,7 +28,7 @@ export default class GoodsReceiptEntry {
         type: 'text',
         nullable: true,
     })
-    public productPartnerRef?: string;
+    public productSupplierCode?: string;
 
     @Column('int')
     public expectedProductQty?: number;
