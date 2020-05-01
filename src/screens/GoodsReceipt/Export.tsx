@@ -121,7 +121,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
             const entryData: CSVData = {
                 status: entry.isValid() ? 'OK' : 'ERREUR',
                 product: entry.productName,
-                partnerRef: entry.productPartnerRef,
+                supplierCode: entry.productSupplierCode,
                 expectedQty: entry.expectedProductQty,
                 receivedQty: entry.productQty,
                 expectedUom: entry.expectedProductUom,
