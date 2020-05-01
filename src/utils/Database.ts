@@ -13,9 +13,6 @@ interface EntityDefinition {
 export default class Database {
     static TARGET_SCHEMA_VERSION = 2;
 
-    public static DATE_FORMAT = 'YYYY-MM-DD';
-    public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-
     private static instance: Database;
     private db?: SQLite.SQLiteDatabase;
 
