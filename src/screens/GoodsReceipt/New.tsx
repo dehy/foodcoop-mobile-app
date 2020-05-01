@@ -130,17 +130,32 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                 if (!products) {
                                     return;
                                 }
+
                                 products.forEach(product => {
-                                    //console.log(product);
                                     const entry = goodsReceiptEntries[product.id!];
                                     entry.productName = product.name;
                                     entry.productBarcode = product.barcode;
                                 });
-                                //console.log(goodsReceiptEntries);
-                                getRepository(GoodsReceiptEntry)
-                                    .save(Object.values(goodsReceiptEntries))
-                                    .then(() => {
-                                        Navigation.dismissModal(this.props.componentId);
+
+                                Odoo.getInstance()
+                                    .fetchProductSupplierInfoFromProductTemplateIds(
+                                        products.map(p => (p.template_id ? p.template_id : 0)),
+                                        goodsReceiptSession.partnerId!,
+                                    )
+                                    .then(res => {
+                                        if (res) {
+                                            products.forEach(product => {
+                                                goodsReceiptEntries[product.id!].productSupplierCode =
+                                                    res[product.template_id!];
+                                                // console.log('goodsReceiptEntry');
+                                                // console.log(goodsReceiptEntries[product.id!]);
+                                            });
+                                        }
+                                        getRepository(GoodsReceiptEntry)
+                                            .save(Object.values(goodsReceiptEntries))
+                                            .then(() => {
+                                                Navigation.dismissModal(this.props.componentId);
+                                            });
                                     });
                             });
                     });
