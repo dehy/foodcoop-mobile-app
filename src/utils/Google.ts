@@ -142,7 +142,13 @@ export default class Google {
     }
 
     /* Email Part */
-    async sendEmail(to: string, subject: string, body: string, attachments: Array<MailAttachment> = []): Promise<void> {
+    async sendEmail(
+        to: string,
+        cc: string,
+        subject: string,
+        body: string,
+        attachments: Array<MailAttachment> = [],
+    ): Promise<void> {
         // console.debug(to, subject, body, attachments);
 
         const from = this.getEmail();
@@ -156,7 +162,12 @@ export default class Google {
             .substr(0, 32);
         let rfc822Message = `From: ${from}
 To: ${__DEV__ ? from : to}
-Subject: ${subjectBase64}
+`;
+        if (cc != null) {
+            rfc822Message += `Cc: ${__DEV__ ? from : cc}
+`;
+        }
+        rfc822Message += `Subject: ${subjectBase64}
 Content-Type: multipart/mixed; charset=utf-8; boundary="${messageBoundary}"
 MIME-Version: 1.0
 
