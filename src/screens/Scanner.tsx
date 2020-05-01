@@ -435,7 +435,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
 Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         try {
             Google.getInstance()
-                .sendEmail(to, subject, body)
+                .sendEmail(to, null, subject, body)
                 .then(() => {
                     Alert.alert('Mail envoyé', 'Merci pour le signalement ! 🎉');
                 });
