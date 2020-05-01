@@ -9,6 +9,7 @@ export enum UnitOfMesurement {
 
 export default class ProductProduct {
     public id?: number;
+    public template_id?: number;
     public barcode?: string;
     public name?: string;
     public image?: string;
@@ -17,7 +18,6 @@ export default class ProductProduct {
     public lst_price?: number;
     public weight_net?: number;
     public volume?: number;
-    public partner_ref?: string;
 
     static imageFromOdooBase64(imageBase64: string): string {
         return 'data:image/png;base64,' + imageBase64;
