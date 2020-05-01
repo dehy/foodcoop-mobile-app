@@ -130,7 +130,6 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                 if (!products) {
                                     return;
                                 }
-
                                 products.forEach(product => {
                                     const entry = goodsReceiptEntries[product.id!];
                                     entry.productName = product.name;
@@ -147,8 +146,6 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                             products.forEach(product => {
                                                 goodsReceiptEntries[product.id!].productSupplierCode =
                                                     res[product.template_id!];
-                                                // console.log('goodsReceiptEntry');
-                                                // console.log(goodsReceiptEntries[product.id!]);
                                             });
                                         }
                                         getRepository(GoodsReceiptEntry)
