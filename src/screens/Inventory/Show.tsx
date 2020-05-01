@@ -31,6 +31,8 @@ interface InventoryData {
 }
 
 export default class InventoryShow extends React.Component<InventoryShowProps, InventoryShowState> {
+    modalDismissedListener?: EmitterSubscription;
+
     constructor(props: InventoryShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -45,6 +47,20 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
         const options = defaultScreenOptions('Inventaire');
 
         return options;
+    }
+
+    componentDidMount(): void {
+        this.modalDismissedListener = Navigation.events().registerModalDismissedListener(() => {
+            this.loadInventorySession();
+        });
+
+        this.loadInventorySession();
+    }
+
+    componentWillUnmount(): void {
+        if (this.modalDismissedListener) {
+            this.modalDismissedListener.remove();
+        }
     }
 
     componentDidAppear(): void {
