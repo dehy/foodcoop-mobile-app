@@ -34,6 +34,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     uomList: { [k: string]: number } = {
         unités: UnitOfMesurement.unit,
         kg: UnitOfMesurement.kg,
+        litre: UnitOfMesurement.litre,
     };
 
     theme = {
@@ -251,7 +252,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             return false;
         }
         const productUom = goodsReceiptEntry.productUom;
-        const unitOfMesurements = [UnitOfMesurement.unit, UnitOfMesurement.kg];
+        const unitOfMesurements = [UnitOfMesurement.unit, UnitOfMesurement.kg, UnitOfMesurement.litre];
         if (productUom == undefined || !unitOfMesurements.includes(productUom)) {
             Alert.alert(`Unité de messure inconnue: ${productUom}`);
             return false;
