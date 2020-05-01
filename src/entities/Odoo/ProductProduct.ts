@@ -5,6 +5,7 @@ import { isFloat } from '../../utils/helpers';
 export enum UnitOfMesurement {
     unit = 1,
     kg = 3,
+    litre = 11,
 }
 
 export default class ProductProduct {
@@ -30,6 +31,9 @@ export default class ProductProduct {
                 break;
             case UnitOfMesurement.kg:
                 string = 'kg';
+                break;
+            case UnitOfMesurement.litre:
+                string = 'litre';
                 break;
         }
 
