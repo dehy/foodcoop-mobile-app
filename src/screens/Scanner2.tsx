@@ -20,6 +20,7 @@ import {
 import BarcodeMask from 'react-native-barcode-mask';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Sound from 'react-native-sound';
+import KeepAwake from '@sayem314/react-native-keep-awake';
 
 // const flashModeOrder: { [key: string]: keyof FlashMode } = {
 //     off: RNCamera.Constants.FlashMode.on,
@@ -679,6 +680,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     render(): React.ReactNode {
         return (
             <View style={styles.container}>
+                <KeepAwake />
                 {this.renderManualSearchView()}
                 {this.state.displayCamera ? this.renderCamera() : undefined}
             </View>
