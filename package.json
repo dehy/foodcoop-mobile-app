@@ -9,7 +9,7 @@
         "ios:beta": "fastlane ios beta",
         "android:beta": "fastlane android beta",
         "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-        "typeorm": "ts-node ./node_modules/.bin/typeorm"
+        "typeorm": "ts-node ./node_modules/typeorm/cli.js"
     },
     "dependencies": {
         "@react-native-community/google-signin": "^4.0.0",
