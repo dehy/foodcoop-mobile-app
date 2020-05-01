@@ -5,7 +5,7 @@
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
         "test": "jest",
-        "postinstall": "patch-package && [[ \"$(uname -s)\" == \"Darwin\" ]] && pod update --project-directory=./ios/ || true",
+        "postinstall": "sh postinstall.sh",
         "ios:beta": "fastlane ios beta",
         "android:beta": "fastlane android beta",
         "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
