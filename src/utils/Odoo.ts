@@ -24,7 +24,7 @@ export default class Odoo {
         'uom_id',
         'weight_net',
         'volume',
-        'partner_ref',
+        'product_tmpl_id',
     ];
 
     public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
@@ -190,6 +190,36 @@ export default class Odoo {
             return purchaseOrders;
         }
         return [];
+    }
+
+    async fetchProductSupplierInfoFromProductTemplateIds(
+        productTemplateIds: number[],
+        partnerId: number,
+    ): Promise<{ [id: number]: string } | undefined> {
+        await this.assertConnect();
+
+        const params = {
+            domain: [
+                ['product_tmpl_id.id', '=', productTemplateIds],
+                ['name', '=', partnerId],
+            ],
+            fields: ['product_tmpl_id', 'product_name', 'product_code'],
+            offset: 0,
+        };
+
+        const response = await this.odooApi.search_read('product.supplierinfo', params);
+        this.assertApiResponse(response);
+
+        const mapSupplierCode: { [productId: number]: string } = {};
+        if (response.data.length > 0) {
+            response.data.forEach((entry: OdooApiProductSupplierInfo) => {
+                if (entry.product_tmpl_id) {
+                    mapSupplierCode[entry.product_tmpl_id[0]] = entry.product_code ? entry.product_code : '';
+                }
+            });
+            return mapSupplierCode;
+        }
+        return undefined;
     }
 
     async fetchPurchaseOrderFromName(poName: string): Promise<PurchaseOrder | undefined> {
