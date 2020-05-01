@@ -1,6 +1,7 @@
 'use strict';
 
 import Database from '../utils/Database';
+import Dates from '../utils/Dates';
 import InventorySession from '../entities/InventorySession';
 import moment from 'moment';
 import InventoryEntry from '../entities/InventoryEntry';
@@ -122,9 +123,9 @@ export default class InventoryEntryFactory {
         entry.articleImage = row.article_image;
         entry.articleUnit = row.article_unit;
         entry.articlePrice = row.article_price;
-        entry.scannedAt = moment(row.scanned_at, Database.DATETIME_FORMAT);
+        entry.scannedAt = moment(row.scanned_at, Dates.DATABASE_DATETIME_FORMAT);
         entry.articleQuantity = row.article_quantity;
-        entry.savedAt = moment(row.saved_at, Database.DATETIME_FORMAT);
+        entry.savedAt = moment(row.saved_at, Dates.DATABASE_DATETIME_FORMAT);
 
         return entry;
     }
@@ -138,9 +139,9 @@ export default class InventoryEntryFactory {
             article_image: null,
             article_unit: object.articleUnit,
             article_price: object.articlePrice,
-            scanned_at: object.scannedAt ? object.scannedAt.format(Database.DATETIME_FORMAT) : null,
+            scanned_at: object.scannedAt ? object.scannedAt.format(Dates.DATABASE_DATETIME_FORMAT) : null,
             article_quantity: object.articleQuantity,
-            saved_at: object.savedAt ? object.savedAt.format(Database.DATETIME_FORMAT) : null,
+            saved_at: object.savedAt ? object.savedAt.format(Dates.DATABASE_DATETIME_FORMAT) : null,
         };
 
         const params = Object.values(row);

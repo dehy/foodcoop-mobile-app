@@ -11,11 +11,9 @@ import moment from 'moment';
 import PurchaseOrderLine from '../entities/Odoo/PurchaseOrderLine';
 import PurchaseOrderLineFactory from '../factories/Odoo/PurchaseOrderLineFactory';
 import iconv from 'iconv-lite';
+import Dates from './Dates';
 
 export default class Odoo {
-    private static UNIT_UNIT = 1;
-    private static UNIT_KG = 2;
-
     private static FETCH_FIELDS_PRODUCT = [
         'name',
         'barcode',
@@ -25,8 +23,6 @@ export default class Odoo {
         'weight_net',
         'volume',
     ];
-
-    public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
     private static instance: Odoo;
     private static odooEnpoint = '***REMOVED***';
@@ -133,14 +129,14 @@ export default class Odoo {
                     '>=',
                     moment()
                         .startOf('day')
-                        .format(Odoo.DATETIME_FORMAT),
+                        .format(Dates.ODOO_DATETIME_FORMAT),
                 ],
                 [
                     'date_planned',
                     '<',
                     moment()
                         .endOf('day')
-                        .format(Odoo.DATETIME_FORMAT),
+                        .format(Dates.ODOO_DATETIME_FORMAT),
                 ],
             ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
@@ -170,7 +166,7 @@ export default class Odoo {
                     '>',
                     moment()
                         .subtract(2, 'week')
-                        .format(Odoo.DATETIME_FORMAT),
+                        .format(Dates.ODOO_DATETIME_FORMAT),
                 ],
             ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
