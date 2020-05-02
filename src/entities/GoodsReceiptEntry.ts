@@ -24,6 +24,12 @@ export default class GoodsReceiptEntry {
     @Column('text')
     public productName?: string;
 
+    @Column({
+        type: 'text',
+        nullable: true,
+    })
+    public productSupplierCode?: string;
+
     @Column('int')
     public expectedProductQty?: number;
 
