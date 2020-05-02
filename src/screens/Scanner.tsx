@@ -472,7 +472,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                 );
                 return;
             }
-            if (unit === UnitOfMesurement.kg) {
+            if (unit === UnitOfMesurement.kg || UnitOfMesurement.litre) {
                 // Float authorized
             }
         }
