@@ -49,6 +49,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         const topBar = options.topBar ?? {};
         topBar.rightButtons = [
             {
+                id: 'add-photo',
+                icon: require('../../../assets/icons/add_a_photo.png'),
+            },
+            {
                 id: 'export',
                 icon: require('../../../assets/icons/paper-plane-regular.png'),
             },
@@ -102,6 +106,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+        if (buttonId === 'add-photo') {
+            this.addPhoto();
+        }
         if (buttonId === 'add-extra') {
             this.searchExtraItem();
         }
@@ -161,6 +168,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             },
         });
     };
+
+    addPhoto(): void {
+        Alert.alert('Développement en cours');
+    }
 
     searchExtraItem(): void {
         Alert.alert('Développement en cours');
