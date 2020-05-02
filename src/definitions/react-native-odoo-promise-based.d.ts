@@ -8,6 +8,7 @@ interface OdooApiResponse {
 
 interface OdooApiProductProduct {
     id?: number;
+    product_tmpl_id?:[number!, string!];
     barcode?: string;
     name?: string;
     image?: string|null;
@@ -16,6 +17,14 @@ interface OdooApiProductProduct {
     lst_price?: number;
     weight_net?: number;
     volume?: number;
+}
+
+interface OdooApiProductSupplierInfo {
+    id?: number;
+    name?: [number!, string!];
+    product_tmpl_id?: [number!, string!];
+    product_name?: string;
+    product_code?: string;
 }
 
 interface OdooApiPurchaseOrder {

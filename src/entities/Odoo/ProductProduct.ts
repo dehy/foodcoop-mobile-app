@@ -10,6 +10,7 @@ export enum UnitOfMesurement {
 
 export default class ProductProduct {
     public id?: number;
+    public template_id?: number;
     public barcode?: string;
     public name?: string;
     public image?: string;

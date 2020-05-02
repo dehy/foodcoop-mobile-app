@@ -120,13 +120,14 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
             }
             const entryData: CSVData = {
                 status: entry.isValid() ? 'OK' : 'ERREUR',
-                barcode: entry.productBarcode,
+                product: entry.productName,
+                supplierCode: entry.productSupplierCode,
                 expectedQty: entry.expectedProductQty,
                 receivedQty: entry.productQty,
                 expectedUom: entry.expectedProductUom,
                 receivedUom: entry.productUom,
                 comment: entry.comment,
-                product: entry.productName,
+                barcode: entry.productBarcode,
             };
             sessionData.push(entryData);
         });
