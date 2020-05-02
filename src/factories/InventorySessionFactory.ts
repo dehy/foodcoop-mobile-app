@@ -1,6 +1,7 @@
 'use strict';
 
 import Database from '../utils/Database';
+import Dates from '../utils/Dates';
 import InventorySession from '../entities/InventorySession';
 import moment, { Moment } from 'moment';
 
@@ -59,7 +60,7 @@ export default class InventoryFactory {
 
     async updateLastModifiedAt(inventorySession: InventorySession, date: Moment): Promise<void> {
         const id = inventorySession.id;
-        const lastModifiedAt = date.format(Database.DATETIME_FORMAT);
+        const lastModifiedAt = date.format(Dates.DATABASE_DATETIME_FORMAT);
         await this.db.executeQuery(`UPDATE inventories SET last_modified_at = ? WHERE id = ?;`, [lastModifiedAt, id]);
 
         return;
@@ -67,7 +68,7 @@ export default class InventoryFactory {
 
     async updateLastSentAt(inventorySession: InventorySession, date: Moment): Promise<void> {
         const id = inventorySession.id;
-        const lastSentAt = date.format(Database.DATETIME_FORMAT);
+        const lastSentAt = date.format(Dates.DATABASE_DATETIME_FORMAT);
         await this.db.executeQuery(`UPDATE inventories SET last_sent_at = ? WHERE id = ?;`, [lastSentAt, id]);
 
         return;
@@ -76,12 +77,14 @@ export default class InventoryFactory {
     _rowToObject(row: InventorySessionDatabaseDefinition): InventorySession {
         const inventorySession = new InventorySession();
         inventorySession.id = row.id;
-        inventorySession.date = moment(row.date, Database.DATETIME_FORMAT);
+        inventorySession.date = moment(row.date, Dates.DATABASE_DATETIME_FORMAT);
         inventorySession.zone = row.zone;
         inventorySession.lastModifiedAt = row.last_modified_at
-            ? moment(row.last_modified_at, Database.DATETIME_FORMAT)
+            ? moment(row.last_modified_at, Dates.DATABASE_DATETIME_FORMAT)
             : undefined;
-        inventorySession.lastSentAt = row.last_sent_at ? moment(row.last_sent_at, Database.DATETIME_FORMAT) : undefined;
+        inventorySession.lastSentAt = row.last_sent_at
+            ? moment(row.last_sent_at, Dates.DATABASE_DATETIME_FORMAT)
+            : undefined;
 
         return inventorySession;
     }
@@ -89,10 +92,12 @@ export default class InventoryFactory {
     _objectToParams(object: InventorySession): any[] {
         const row = {
             id: object.id,
-            date: object.date ? object.date.format(Database.DATETIME_FORMAT) : null,
+            date: object.date ? object.date.format(Dates.DATABASE_DATETIME_FORMAT) : null,
             zone: object.zone,
-            last_modified_at: object.lastModifiedAt ? object.lastModifiedAt.format(Database.DATETIME_FORMAT) : null,
-            last_sent_at: object.lastSentAt ? object.lastSentAt.format(Database.DATETIME_FORMAT) : null,
+            last_modified_at: object.lastModifiedAt
+                ? object.lastModifiedAt.format(Dates.DATABASE_DATETIME_FORMAT)
+                : null,
+            last_sent_at: object.lastSentAt ? object.lastSentAt.format(Dates.DATABASE_DATETIME_FORMAT) : null,
         };
 
         const params = Object.values(row);
