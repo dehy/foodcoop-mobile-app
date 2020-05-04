@@ -2,9 +2,11 @@ import SQLite from 'react-native-sqlite-storage';
 import { toNumber } from './helpers';
 import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
+import Attachment from '../entities/Attachment';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
+import { AddSessionAttachment1588584092064 } from '../migrations/1588584092064-AddSessionAttachment';
 
 interface EntityDefinition {
     name: string;
@@ -48,10 +50,10 @@ export default class Database {
             logging: true,
             dropSchema: dropSchema,
             synchronize: synchronize,
-            entities: [GoodsReceiptSession, GoodsReceiptEntry],
+            entities: [GoodsReceiptSession, GoodsReceiptEntry, Attachment],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
-            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098],
+            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098, AddSessionAttachment1588584092064],
         });
     }
 
