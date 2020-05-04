@@ -1,6 +1,11 @@
 'use strict';
 
+import { Platform } from 'react-native';
 import { string } from 'prop-types';
+import DeviceInfo from 'react-native-device-info';
+
+export const readableVersion = DeviceInfo.getReadableVersion();
+export const systemName = DeviceInfo.getSystemName();
 
 export function isInt(n: number): boolean {
     return n % 1 === 0;
