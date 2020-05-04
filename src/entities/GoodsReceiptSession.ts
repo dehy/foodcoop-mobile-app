@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import GoodsReceiptEntry from './GoodsReceiptEntry';
+import Attachment from './Attachment';
 
 @Entity()
 export default class GoodsReceiptSession {
@@ -45,6 +46,13 @@ export default class GoodsReceiptSession {
         goodsReceiptEntry => goodsReceiptEntry.goodsReceiptSession,
     )
     goodsReceiptEntries?: GoodsReceiptEntry[];
+
+    @OneToMany(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        type => Attachment,
+        attachment => attachment.goodsReceiptSession,
+    )
+    attachments?: Attachment[];
 
     isReadyForExport = (): boolean => {
         if (undefined == this.goodsReceiptEntries) {
