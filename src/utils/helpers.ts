@@ -1,6 +1,5 @@
 'use strict';
 
-import { Platform } from 'react-native';
 import { string } from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 
