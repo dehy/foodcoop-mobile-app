@@ -1,18 +1,19 @@
 import React, { ReactElement } from 'react';
 import { ActivityIndicator, Alert, Platform, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
-import { defaultScreenOptions } from '../../utils/navigation';
+import { Button, ThemeProvider, ListItem } from 'react-native-elements';
+import AlertAsync from 'react-native-alert-async';
 import { Navigation, Options } from 'react-native-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import moment from 'moment';
+import Dialog from 'react-native-dialog';
+import ActionSheet from 'react-native-action-sheet';
+import { getRepository } from 'typeorm';
+import { defaultScreenOptions } from '../../utils/navigation';
 import CSVGenerator, { CSVData } from '../../utils/CSVGenerator';
 import Google, { MailAttachment } from '../../utils/Google';
-import moment from 'moment';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
-import { getRepository } from 'typeorm';
-import ActionSheet from 'react-native-action-sheet';
+import Attachment from '../../entities/Attachment';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import { Button, ThemeProvider, ListItem } from 'react-native-elements';
-import Dialog from 'react-native-dialog';
-import AlertAsync from 'react-native-alert-async';
 
 export interface GoodsReceiptExportProps {
     componentId: string;
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
 
 export default class GoodsReceiptExport extends React.Component<GoodsReceiptExportProps, GoodsReceiptExportState> {
     private receiptEntries: Array<GoodsReceiptEntry> = [];
+    private images: Array<Attachment> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
     private senderNameInput?: string;
 
@@ -53,6 +55,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         Navigation.events().bindComponent(this);
 
         this.receiptEntries = props.session.goodsReceiptEntries || [];
+        this.images = props.session.attachments || [];
 
         this.state = {
             isSendingMail: false,
@@ -171,17 +174,8 @@ Fournisseur: ${partnerName}
 Réception effectuée le: ${date} à ${time}
 ${entriesCount} produits traités`;
 
-        const csvFilenameDateTime = moment(this.props.session.updatedAt).format('YYYYMMDDHHmmss');
-        const csvFilename = `reception-${poName}-${csvFilenameDateTime}.csv`;
-        const attachments: MailAttachment[] = [
-            {
-                filename: csvFilename,
-                filepath: this.state.filePath,
-            },
-        ];
-
         Google.getInstance()
-            .sendEmail(to, cc, subject, body, attachments)
+            .sendEmail(to, cc, subject, body, this.getMailAttachments())
             .then(async () => {
                 this.props.session.lastSentAt = moment().toDate();
                 this.props.session.hidden = true;
@@ -205,6 +199,26 @@ ${entriesCount} produits traités`;
                 });
             });
     }
+
+    getMailAttachments = (): MailAttachment[] => {
+        const csvFilenameDateTime = moment(this.props.session.updatedAt).format('YYYYMMDDHHmmss');
+        const csvFilename = `reception-${this.props.session.poName}-${csvFilenameDateTime}.csv`;
+
+        const attachments: MailAttachment[] = this.images.map((file: Attachment) => {
+            if (file.path && file.name)
+                return { filepath: file.path || '', filename: file.name, filetype: file.type, encoding: 'base64' };
+        });
+
+        if (this.state.filePath) {
+            attachments.push({
+                filename: csvFilename,
+                filepath: this.state.filePath,
+                encoding: 'utf8',
+            });
+        }
+
+        return attachments;
+    };
 
     isReady = (): boolean => {
         if (this.state.filePath && this.state.selectedGamme) {
