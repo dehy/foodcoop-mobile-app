@@ -5,6 +5,7 @@ import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
+import { DeleteCascade1588861598725 } from '../migrations/1588861598725-DeleteCascade';
 
 interface EntityDefinition {
     name: string;
@@ -51,7 +52,7 @@ export default class Database {
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
-            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098],
+            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098, DeleteCascade1588861598725],
         });
     }
 
@@ -180,7 +181,7 @@ export default class Database {
         try {
             for (const entity of entities) {
                 const repository = await getRepository(entity.name);
-                await repository.query(`TRUNCATE TABLE \`${entity.tableName}\`;`);
+                await repository.query(`DELETE FROM \`${entity.tableName}\`;`);
             }
         } catch (error) {
             throw new Error(`ERROR: Cleaning test db: ${error}`);
