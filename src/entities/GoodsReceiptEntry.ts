@@ -77,19 +77,25 @@ export default class GoodsReceiptEntry {
         return this.expectedProductQty === this.productQty;
     }
 
-    public isValidUom(): boolean {
+    public isValidUom(): boolean | null {
+        if (null === this.productUom) {
+            return null;
+        }
         return this.expectedProductUom === this.productUom;
     }
 
     public hasComment(): boolean {
-        return this.comment && this.comment.length > 0;
+        if (!this.comment) {
+            return false;
+        }
+        return this.comment.length > 0;
     }
 
     public getStatus(): EntryStatus {
         if (false === this.isValidQuantity()) {
             return EntryStatus.ERROR;
         }
-        if (!this.isValidUom() || this.hasComment()) {
+        if (false === this.isValidUom() || this.hasComment()) {
             return EntryStatus.WARNING;
         }
         return EntryStatus.VALID;
