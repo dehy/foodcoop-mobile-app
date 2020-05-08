@@ -5,12 +5,14 @@ import { Navigation, Options, EventSubscription } from 'react-native-navigation'
 import ImagePicker from 'react-native-image-picker';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
+import GoodsReceiptService from '../../services/GoodsReceiptService';
 import Attachment from '../../entities/Attachment';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { displayNumber } from '../../utils/helpers';
 import { getRepository } from 'typeorm';
 import moment from 'moment';
+import * as RNFS from 'react-native-fs';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -197,30 +199,25 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             } else {
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+                const session: GoodsReceiptSession = this.state.session;
 
-                if (response.path) {
-                    const session: GoodsReceiptSession = this.state.session;
+                GoodsReceiptService
+                    .getInstance()
+                    .attachementFromImagePicker(session, response)
+                    .then(attachement => {
+                        getRepository(Attachment)
+                            .save(attachement)
+                            .then(attachement => {
+                                if (!session.attachments) {
+                                    session.attachments = [];
+                                }
+                                session.attachments?.push(attachement);
 
-                    const image: Attachment = {
-                        path: response.path,
-                        type: response.type,
-                        name: response.fileName,
-                        goodsReceiptSession: session,
-                    };
-
-                    getRepository(Attachment)
-                        .save(image)
-                        .then(image => {
-                            if (!session.attachments) {
-                                session.attachments = [];
-                            }
-                            session.attachments?.push(image);
-
-                            this.setState({
-                                session,
+                                this.setState({
+                                    session,
+                                });
                             });
-                        });
-                }
+                    });
             }
         });
     }
