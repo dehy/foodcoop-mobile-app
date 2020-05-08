@@ -209,6 +209,8 @@ PODS:
     - React
   - react-native-cookies (3.2.0):
     - React
+  - react-native-image-picker (2.3.1):
+    - React
   - react-native-keep-awake (1.0.3):
     - React
   - react-native-sqlite-storage (4.1.0):
@@ -309,6 +311,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-keep-awake (from `../node_modules/@sayem314/react-native-keep-awake`)"
   - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -379,6 +382,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-cookies:
     :path: "../node_modules/react-native-cookies/ios"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-keep-awake:
     :path: "../node_modules/@sayem314/react-native-keep-awake"
   react-native-sqlite-storage:
@@ -452,6 +457,7 @@ SPEC CHECKSUMS:
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-camera: 1b52abea404d04e040edb3e74b7c5523c01a3089
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
+  react-native-image-picker: 6a850c41f57f0848d918c2a77aedd7aa272ffa30
   react-native-keep-awake: 4f10247f33d1c653603f70754a498f635f114b02
   react-native-sqlite-storage: f06bfba10f67f989c00b6a699b9c2b80a816edbe
   react-native-webview: 160ac8d6bb974e2933f2de6bb7464a8e934ff31d
