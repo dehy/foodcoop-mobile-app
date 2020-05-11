@@ -15,10 +15,16 @@ export default class GoodsReceiptEntry {
     @Column('text')
     public name?: string;
 
-    @Column('int')
+    @Column({
+        type: 'int',
+        nullable: true,
+    })
     public packageQty?: number; // Colisage (nombre de produits par colis)
 
-    @Column('int')
+    @Column({
+        type: 'int',
+        nullable: true,
+    })
     public productQtyPackage?: number; // Nombre de colis
 
     @Column('text')
@@ -35,6 +41,12 @@ export default class GoodsReceiptEntry {
         nullable: true,
     })
     public productSupplierCode?: string;
+
+    @Column('int')
+    public expectedPackageQty?: number; // Colisage (nombre de produits par colis)
+
+    @Column('int')
+    public expectedProductQtyPackage?: number; // Nombre de colis
 
     @Column('int')
     public expectedProductQty?: number;
@@ -70,6 +82,20 @@ export default class GoodsReceiptEntry {
     )
     public goodsReceiptSession?: GoodsReceiptSession;
 
+    public isValidPackageQty(): boolean | null {
+        if (null === this.packageQty) {
+            return null;
+        }
+        return this.expectedPackageQty === this.packageQty;
+    }
+
+    public isValidProductQtyPackage(): boolean | null {
+        if (null === this.productQtyPackage) {
+            return null;
+        }
+        return this.expectedProductQtyPackage === this.productQtyPackage;
+    }
+
     public isValidQuantity(): boolean | null {
         if (null === this.productQty) {
             return null;
@@ -95,7 +121,12 @@ export default class GoodsReceiptEntry {
         if (false === this.isValidQuantity()) {
             return EntryStatus.ERROR;
         }
-        if (false === this.isValidUom() || this.hasComment()) {
+        if (
+            false === this.isValidUom() ||
+            this.hasComment() ||
+            false === this.isValidPackageQty() ||
+            false === this.isValidProductQtyPackage()
+        ) {
             return EntryStatus.WARNING;
         }
         return EntryStatus.VALID;
