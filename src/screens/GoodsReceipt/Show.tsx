@@ -259,6 +259,35 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         );
     }
 
+    renderPackageQty(entry: GoodsReceiptEntry): React.ReactElement {
+        let correctPackageQty;
+        if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
+            correctPackageQty = (
+                <Text style={{ fontSize: 16 }}>
+                    {entry.packageQty} colis de {entry.productQtyPackage} article(s)
+                </Text>
+            );
+        }
+        return (
+            <View style={{ alignItems: 'flex-end' }}>
+                <Text
+                    style={{
+                        fontSize:
+                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage() ? 12 : 16,
+                        textDecorationLine:
+                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()
+                                ? 'line-through'
+                                : 'none',
+                    }}
+                >
+                    {entry.expectedPackageQty} colis de {entry.expectedProductQtyPackage} article
+                    {entry.expectedProductQtyPackage > 1 ? 's' : ''}
+                </Text>
+                {correctPackageQty}
+            </View>
+        );
+    }
+
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{ height: '100%' }}>
@@ -290,6 +319,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                     }
                                     subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
                                     rightElement={this.renderEntryQty(item)}
+                                    rightSubtitle={this.renderPackageQty(item)}
                                     onPress={(): void => {
                                         this.openGoodsReceiptScan(item.productId);
                                     }}
