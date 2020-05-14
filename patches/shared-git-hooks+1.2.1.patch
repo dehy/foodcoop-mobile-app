@@ -1,0 +1,13 @@
+diff --git a/node_modules/shared-git-hooks/index.js b/node_modules/shared-git-hooks/index.js
+index ad1f5f0..356778f 100644
+--- a/node_modules/shared-git-hooks/index.js
++++ b/node_modules/shared-git-hooks/index.js
+@@ -33,7 +33,7 @@ function installHook (hookName, projectPath) {
+ 
+   if (isAlreadyInstalled(path)) {
+     exports.log(` [ = ] ${hookName}`)
+-    return false
++    return true
+   }
+   if (doesPathExist(path)) {
+     exports.log(` [ ➜ ] ${hookName}.bak`)
