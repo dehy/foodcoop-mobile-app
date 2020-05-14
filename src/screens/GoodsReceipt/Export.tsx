@@ -220,6 +220,13 @@ ${entriesCount} produits traités`;
         return attachments;
     };
 
+    buttonTitle = (): string => {
+        if (this.state.isSendingMail) {
+            return 'Envoi en cours ...';
+        }
+        return 'Envoyer maintenant';
+    };
+
     isReady = (): boolean => {
         if (this.state.filePath && this.state.selectedGamme) {
             return true;
@@ -311,7 +318,7 @@ ${entriesCount} produits traités`;
                                 onPress={(): void => {
                                     this.sendReceipt();
                                 }}
-                                title="Envoyer maintenant"
+                                title={this.buttonTitle()}
                                 disabled={this.state.isSendingMail || !this.isReady()}
                             />
                         </View>
