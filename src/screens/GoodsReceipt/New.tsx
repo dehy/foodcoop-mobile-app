@@ -138,14 +138,14 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
 
                                 Odoo.getInstance()
                                     .fetchProductSupplierInfoFromProductTemplateIds(
-                                        products.map(p => (p.template_id ? p.template_id : 0)),
+                                        products.map(p => (p.templateId ? p.templateId : 0)),
                                         goodsReceiptSession.partnerId!,
                                     )
                                     .then(res => {
                                         if (res) {
                                             products.forEach(product => {
                                                 goodsReceiptEntries[product.id!].productSupplierCode =
-                                                    res[product.template_id!];
+                                                    res[product.templateId!];
                                             });
                                         }
                                         getRepository(GoodsReceiptEntry)

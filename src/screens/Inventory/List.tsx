@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { EmitterSubscription, View, SafeAreaView, FlatList, ScrollView } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';

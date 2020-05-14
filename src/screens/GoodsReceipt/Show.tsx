@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
-import { GoodsReceiptEntry, EntryStatus } from '../../entities/GoodsReceiptEntry';
+import GoodsReceiptEntry, { EntryStatus } from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
 import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
