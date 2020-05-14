@@ -4,6 +4,7 @@ import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
+import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
 
 interface EntityDefinition {
     name: string;
@@ -12,9 +13,6 @@ interface EntityDefinition {
 
 export default class Database {
     static TARGET_SCHEMA_VERSION = 2;
-
-    public static DATE_FORMAT = 'YYYY-MM-DD';
-    public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
     private static instance: Database;
     private db?: SQLite.SQLiteDatabase;
@@ -53,7 +51,7 @@ export default class Database {
             entities: [GoodsReceiptSession, GoodsReceiptEntry],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
-            migrations: [Init1580395050084],
+            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098],
         });
     }
 

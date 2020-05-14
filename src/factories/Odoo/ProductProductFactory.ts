@@ -6,6 +6,7 @@ export default class ProductProductFactory {
     public static ProductProductFromResponse(response: OdooApiProductProduct): ProductProduct {
         const product = new ProductProduct();
         product.id = response.id;
+        product.template_id = response.product_tmpl_id[0];
         product.barcode = response.barcode;
         product.name = response.name;
         product.image = response.image != null ? response.image : undefined;

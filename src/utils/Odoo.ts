@@ -11,11 +11,9 @@ import moment from 'moment';
 import PurchaseOrderLine from '../entities/Odoo/PurchaseOrderLine';
 import PurchaseOrderLineFactory from '../factories/Odoo/PurchaseOrderLineFactory';
 import iconv from 'iconv-lite';
+import Dates from './Dates';
 
 export default class Odoo {
-    private static UNIT_UNIT = 1;
-    private static UNIT_KG = 2;
-
     private static FETCH_FIELDS_PRODUCT = [
         'name',
         'barcode',
@@ -24,9 +22,8 @@ export default class Odoo {
         'uom_id',
         'weight_net',
         'volume',
+        'product_tmpl_id',
     ];
-
-    public static DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
     private static instance: Odoo;
     private static odooEnpoint = '***REMOVED***';
@@ -133,14 +130,14 @@ export default class Odoo {
                     '>=',
                     moment()
                         .startOf('day')
-                        .format(Odoo.DATETIME_FORMAT),
+                        .format(Dates.ODOO_DATETIME_FORMAT),
                 ],
                 [
                     'date_planned',
                     '<',
                     moment()
                         .endOf('day')
-                        .format(Odoo.DATETIME_FORMAT),
+                        .format(Dates.ODOO_DATETIME_FORMAT),
                 ],
             ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
@@ -170,7 +167,7 @@ export default class Odoo {
                     '>',
                     moment()
                         .subtract(2, 'week')
-                        .format(Odoo.DATETIME_FORMAT),
+                        .format(Dates.ODOO_DATETIME_FORMAT),
                 ],
             ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
@@ -189,6 +186,36 @@ export default class Odoo {
             return purchaseOrders;
         }
         return [];
+    }
+
+    async fetchProductSupplierInfoFromProductTemplateIds(
+        productTemplateIds: number[],
+        partnerId: number,
+    ): Promise<{ [id: number]: string } | undefined> {
+        await this.assertConnect();
+
+        const params = {
+            domain: [
+                ['product_tmpl_id.id', '=', productTemplateIds],
+                ['name', '=', partnerId],
+            ],
+            fields: ['product_tmpl_id', 'product_name', 'product_code'],
+            offset: 0,
+        };
+
+        const response = await this.odooApi.search_read('product.supplierinfo', params);
+        this.assertApiResponse(response);
+
+        const mapSupplierCode: { [productId: number]: string } = {};
+        if (response.data.length > 0) {
+            response.data.forEach((entry: OdooApiProductSupplierInfo) => {
+                if (entry.product_tmpl_id) {
+                    mapSupplierCode[entry.product_tmpl_id[0]] = entry.product_code ? entry.product_code : '';
+                }
+            });
+            return mapSupplierCode;
+        }
+        return undefined;
     }
 
     async fetchPurchaseOrderFromName(poName: string): Promise<PurchaseOrder | undefined> {
@@ -259,6 +286,8 @@ export default class Odoo {
         const products: ProductProduct[] = [];
         if (response.data.length > 0) {
             response.data.forEach((element: OdooApiProductProduct) => {
+                // console.log('Product');
+                // console.log(element);
                 products.push(ProductProductFactory.ProductProductFromResponse(element));
             });
             return products;

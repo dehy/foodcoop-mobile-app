@@ -120,13 +120,14 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
             }
             const entryData: CSVData = {
                 status: entry.isValid() ? 'OK' : 'ERREUR',
-                barcode: entry.productBarcode,
+                product: entry.productName,
+                supplierCode: entry.productSupplierCode,
                 expectedQty: entry.expectedProductQty,
                 receivedQty: entry.productQty,
                 expectedUom: entry.expectedProductUom,
                 receivedUom: entry.productUom,
                 comment: entry.comment,
-                product: entry.productName,
+                barcode: entry.productBarcode,
             };
             sessionData.push(entryData);
         });
@@ -161,6 +162,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         const entriesCount = this.receiptEntries.length;
 
         const to = this.gammes[this.state.selectedGamme];
+        const cc = 'stockin@supercoop.fr';
         const subject = `[${poName}][${partnerName}] Rapport de livraison`;
         const body = `Réception de livraison faite par ${userName} <${userEmail}>.
 
@@ -179,7 +181,7 @@ ${entriesCount} produits traités`;
         ];
 
         Google.getInstance()
-            .sendEmail(to, subject, body, attachments)
+            .sendEmail(to, cc, subject, body, attachments)
             .then(async () => {
                 this.props.session.lastSentAt = moment().toDate();
                 this.props.session.hidden = true;

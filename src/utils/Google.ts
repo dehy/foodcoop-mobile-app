@@ -5,6 +5,7 @@ import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
 import AppLogger from './AppLogger';
 import * as Sentry from '@sentry/react-native';
+import { readableVersion, systemName } from './helpers';
 
 export interface MailAttachment {
     filepath: string;
@@ -142,7 +143,13 @@ export default class Google {
     }
 
     /* Email Part */
-    async sendEmail(to: string, subject: string, body: string, attachments: Array<MailAttachment> = []): Promise<void> {
+    async sendEmail(
+        to: string,
+        cc: string,
+        subject: string,
+        body: string,
+        attachments: Array<MailAttachment> = [],
+    ): Promise<void> {
         // console.debug(to, subject, body, attachments);
 
         const from = this.getEmail();
@@ -154,9 +161,16 @@ export default class Google {
             .toString(36)
             .replace(/[^a-z]+/g, '')
             .substr(0, 32);
-        let rfc822Message = `From: ${from}
+        let rfc822Message = `X-Supercoop-App-Version: ${readableVersion}
+X-Supercoop-App-Platform: ${systemName}
+From: ${from}
 To: ${__DEV__ ? from : to}
-Subject: ${subjectBase64}
+`;
+        if (cc != null) {
+            rfc822Message += `Cc: ${__DEV__ ? from : cc}
+`;
+        }
+        rfc822Message += `Subject: ${subjectBase64}
 Content-Type: multipart/mixed; charset=utf-8; boundary="${messageBoundary}"
 MIME-Version: 1.0
 

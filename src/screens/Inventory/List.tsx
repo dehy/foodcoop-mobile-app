@@ -40,6 +40,8 @@ export default class InventoryList extends React.Component<InventoryListProps, I
         },
     };
 
+    modalDismissedListener?: EmitterSubscription;
+
     constructor(props: InventoryListProps) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -65,7 +67,17 @@ export default class InventoryList extends React.Component<InventoryListProps, I
     }
 
     componentDidMount(): void {
-        // this.loadData();
+        this.modalDismissedListener = Navigation.events().registerModalDismissedListener(() => {
+            this.loadData();
+        });
+
+        this.loadData();
+    }
+
+    componentWillUnmount(): void {
+        if (this.modalDismissedListener) {
+            this.modalDismissedListener.remove();
+        }
     }
 
     loadData(): void {
