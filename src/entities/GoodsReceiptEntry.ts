@@ -61,6 +61,7 @@ export default class GoodsReceiptEntry {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => GoodsReceiptSession,
         goodsReceiptSession => goodsReceiptSession.goodsReceiptEntries,
+        { onDelete: 'CASCADE' },
     )
     public goodsReceiptSession?: GoodsReceiptSession;
 
