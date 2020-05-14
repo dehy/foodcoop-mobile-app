@@ -132,6 +132,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Scan',
                             passProps: {
+                                session: this.props.session,
                                 preselectedProductId: productId,
                             },
                         },
