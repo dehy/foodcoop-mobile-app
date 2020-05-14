@@ -1,6 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import GoodsReceiptSession from './GoodsReceiptSession';
 
+export enum EntryStatus {
+    VALID = 'OK',
+    WARNING = 'ATTENTION',
+    ERROR = 'ERREUR',
+}
+
 @Entity()
 export default class GoodsReceiptEntry {
     @PrimaryGeneratedColumn()
@@ -64,10 +70,34 @@ export default class GoodsReceiptEntry {
     )
     public goodsReceiptSession?: GoodsReceiptSession;
 
-    public isValid(): boolean | null {
+    public isValidQuantity(): boolean | null {
         if (null === this.productQty) {
             return null;
         }
-        return this.expectedProductQty === this.productQty && this.expectedProductUom === this.productUom;
+        return this.expectedProductQty === this.productQty;
+    }
+
+    public isValidUom(): boolean | null {
+        if (null === this.productUom) {
+            return null;
+        }
+        return this.expectedProductUom === this.productUom;
+    }
+
+    public hasComment(): boolean {
+        if (!this.comment) {
+            return false;
+        }
+        return this.comment.length > 0;
+    }
+
+    public getStatus(): EntryStatus {
+        if (false === this.isValidQuantity()) {
+            return EntryStatus.ERROR;
+        }
+        if (false === this.isValidUom() || this.hasComment()) {
+            return EntryStatus.WARNING;
+        }
+        return EntryStatus.VALID;
     }
 }
