@@ -119,7 +119,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 throw new Error('Missing mandatory entry parameters');
             }
             const entryData: CSVData = {
-                status: entry.isValid() ? 'OK' : 'ERREUR',
+                status: entry.getStatus().toString(),
                 product: entry.productName,
                 supplierCode: entry.productSupplierCode,
                 expectedQty: entry.expectedProductQty,

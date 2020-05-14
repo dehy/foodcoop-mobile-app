@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
-import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
+import { GoodsReceiptEntry, EntryStatus } from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
 import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
@@ -167,13 +167,24 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     itemBackgroundColor(entry: GoodsReceiptEntry): string {
-        if (true === entry.isValid()) {
-            return '#5cb85c';
+        if (entry.productQty === null) {
+            return 'transparent';
         }
-        if (false === entry.isValid()) {
-            return '#d9534f';
+
+        switch (entry.getStatus()) {
+            case EntryStatus.ERROR:
+                return '#d9534f';
+                break;
+            case EntryStatus.WARNING:
+                return '#ffc30f';
+                break;
+            case EntryStatus.VALID:
+                return '#5cb85c';
+                break;
+            default:
+                return 'transparent';
+                break;
         }
-        return 'transparent';
     }
 
     orderedReceiptEntries(entries: GoodsReceiptEntry[] | undefined): GoodsReceiptEntry[] {
@@ -224,7 +235,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
 
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
-        if (false === entry.isValid()) {
+        if (false === entry.isValidQuantity() || false === entry.isValidUom()) {
             correctQty = (
                 <Text style={{ fontSize: 16 }}>
                     {displayNumber(entry.productQty)} {ProductProduct.quantityUnitAsString(entry.productUom)}
@@ -235,8 +246,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             <View style={{ alignItems: 'flex-end' }}>
                 <Text
                     style={{
-                        fontSize: false === entry.isValid() ? 12 : 16,
-                        textDecorationLine: false === entry.isValid() ? 'line-through' : 'none',
+                        fontSize: false === entry.isValidQuantity() || false === entry.isValidUom() ? 12 : 16,
+                        textDecorationLine:
+                            false === entry.isValidQuantity() || false === entry.isValidUom() ? 'line-through' : 'none',
                     }}
                 >
                     {displayNumber(entry.expectedProductQty)}{' '}
