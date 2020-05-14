@@ -9,6 +9,7 @@ import Odoo from '../../utils/Odoo';
 import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
+import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import AppLogger from '../../utils/AppLogger';
 import { toNumber, displayNumber, isFloat } from '../../utils/helpers';
 import { Button, Icon, Input, ListItem, ThemeProvider } from 'react-native-elements';
@@ -138,7 +139,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
                         entry.expectedProductQty
                     } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)}) for session #${
-                        entry.goodsReceiptSession.id
+                        entry.goodsReceiptSession ? entry.goodsReceiptSession.id : 'inconnue'
                     }`,
                 );
                 this.setState({

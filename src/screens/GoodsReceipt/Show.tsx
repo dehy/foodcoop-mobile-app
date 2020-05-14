@@ -38,7 +38,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
-            session: props.session,
+            sessionEntries: [],
+            entriesToDisplay: [],
             filter: '',
         };
     }
@@ -92,13 +93,13 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                     throw new Error('Session not found');
                 }
                 this.setState({
-                    sessionEntries: session.goodsReceiptEntries,
+                    sessionEntries: session.goodsReceiptEntries ?? [],
                     entriesToDisplay: this.entriesAfterFilter(session.goodsReceiptEntries, this.state.filter),
                 });
             });
     }
 
-    filterEntriesWith(text: string) {
+    filterEntriesWith(text: string): void {
         this.setState({
             filter: text,
             entriesToDisplay: this.entriesAfterFilter(this.state.sessionEntries, text),
@@ -158,7 +159,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Export',
                             passProps: {
-                                session: this.state.session,
+                                session: this.props.session,
                             },
                         },
                     },
