@@ -53,20 +53,24 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         const topBar = options.topBar ?? {};
         topBar.rightButtons = [
             {
-                id: 'export',
-                icon: require('../../../assets/icons/paper-plane-regular.png'),
-            },
-            {
-                id: 'scan',
-                icon: require('../../../assets/icons/barcode-read-regular.png'),
-            },
-            {
                 id: 'add-photo',
                 icon: require('../../../assets/icons/add-a-photo-regular.png'),
+                text: 'Ajouter une photo',
             },
             {
                 id: 'add-extra',
                 icon: require('../../../assets/icons/cart-plus-regular.png'),
+                text: 'Ajouter un article',
+            },
+            {
+                id: 'scan',
+                icon: require('../../../assets/icons/barcode-read-regular.png'),
+                text: 'Scanner un article',
+            },
+            {
+                id: 'export',
+                icon: require('../../../assets/icons/paper-plane-regular.png'),
+                text: 'Envoyer',
             },
         ];
 
@@ -201,8 +205,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
                 const session: GoodsReceiptSession = this.state.session;
 
-                GoodsReceiptService
-                    .getInstance()
+                GoodsReceiptService.getInstance()
                     .attachementFromImagePicker(session, response)
                     .then(attachement => {
                         getRepository(Attachment)
