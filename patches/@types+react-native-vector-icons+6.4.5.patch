@@ -1,0 +1,32 @@
+diff --git a/node_modules/@types/react-native-vector-icons/Icon.d.ts b/node_modules/@types/react-native-vector-icons/Icon.d.ts
+index 1220a42..acf3b3a 100644
+--- a/node_modules/@types/react-native-vector-icons/Icon.d.ts
++++ b/node_modules/@types/react-native-vector-icons/Icon.d.ts
+@@ -30,6 +30,27 @@ export interface IconProps extends TextProps {
+    *
+    */
+   color?: string;
++
++  /**
++   * Light variant
++   *
++   * @default true
++   */
++  light?: boolean;
++
++  /**
++   * Solid variant
++   *
++   * @default false
++   */
++  solid?: boolean;
++
++  /**
++   * Brand variant
++   *
++   * @default false
++   */
++  brand?: boolean;
+ }
+ 
+ export interface IconButtonProps extends IconProps, TouchableHighlightProps, TouchableNativeFeedbackProps {
