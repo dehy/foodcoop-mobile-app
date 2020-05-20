@@ -52,20 +52,11 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         super(props);
         Navigation.events().bindComponent(this);
 
-        this.receiptEntries = props.session.goodsReceiptEntries || [];
-
         this.state = {
             isSendingMail: false,
             senderName: Google.getInstance().getUsername(),
             senderNameDialogVisible: false,
         };
-
-        this.generateCSVFile().then(filePath => {
-            // console.log(filePath);
-            this.setState({
-                filePath,
-            });
-        });
     }
 
     static options(): Options {
@@ -90,7 +81,24 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     }
 
     componentDidMount(): void {
-        //
+        getRepository(GoodsReceiptSession)
+            .findOne(this.props.session.id, {
+                relations: ['goodsReceiptEntries'],
+            })
+            .then((session): void => {
+                //console.log(session);
+                if (!session) {
+                    throw new Error('Session not found');
+                }
+                this.receiptEntries = session.goodsReceiptEntries ?? [];
+
+                this.generateCSVFile().then(filePath => {
+                    // console.log(filePath);
+                    this.setState({
+                        filePath,
+                    });
+                });
+            });
     }
 
     chooseRecipient = (): void => {
