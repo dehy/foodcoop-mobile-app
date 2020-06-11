@@ -436,11 +436,15 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                 <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
                 </Text>
-                <Text style={{ fontSize: 45, margin: 5, textAlign: 'center' }}>
+                <Text style={{ fontSize: 45, marginTop: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && displayNumber(this.state.goodsReceiptEntry.expectedProductQty)}{' '}
                     {ProductProduct.quantityUnitAsString(
                         this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductUom,
                     )}
+                </Text>
+                <Text style={{ fontSize: 25, marginBottom: 5, textAlign: 'center' }}>
+                    en {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedPackageQty} colis de{' '}
+                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQtyPackage} article(s)
                 </Text>
                 <View
                     style={{
