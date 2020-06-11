@@ -31,9 +31,6 @@ export function goHome(): void {
             selectedIconColor: 'blue',
             selectedTextColor: 'blue',
         },
-        layout: {
-            orientation: ['portrait'],
-        },
     });
 
     loadBadges();
