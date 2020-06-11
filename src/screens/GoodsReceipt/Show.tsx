@@ -13,11 +13,11 @@ import { displayNumber } from '../../utils/helpers';
 export interface GoodsReceiptShowProps {
     componentId: string;
     session: GoodsReceiptSession;
-    arrayHolder: [];
 }
 
 interface GoodsReceiptShowState {
-    session: GoodsReceiptSession;
+    sessionEntries: GoodsReceiptEntry[];
+    entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
 
@@ -32,14 +32,14 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     };
 
     modalDismissedListener?: EventSubscription;
-
-    arrayholder: GoodsReceiptEntry[] = [];
+    entriesToDisplay: GoodsReceiptEntry[] = [];
 
     constructor(props: GoodsReceiptShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
-            session: props.session,
+            sessionEntries: [],
+            entriesToDisplay: [],
             filter: '',
         };
     }
@@ -92,13 +92,18 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 if (!session) {
                     throw new Error('Session not found');
                 }
-                if (session.goodsReceiptEntries) {
-                    this.arrayholder = session.goodsReceiptEntries;
-                }
                 this.setState({
-                    session,
+                    sessionEntries: session.goodsReceiptEntries ?? [],
+                    entriesToDisplay: this.entriesAfterFilter(session.goodsReceiptEntries, this.state.filter),
                 });
             });
+    }
+
+    filterEntriesWith(text: string): void {
+        this.setState({
+            filter: text,
+            entriesToDisplay: this.entriesAfterFilter(this.state.sessionEntries, text),
+        });
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
@@ -132,6 +137,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Scan',
                             passProps: {
+                                session: this.props.session,
                                 preselectedProductId: productId,
                             },
                         },
@@ -153,7 +159,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Export',
                             passProps: {
-                                session: this.state.session,
+                                session: this.props.session,
                             },
                         },
                     },
@@ -202,31 +208,28 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return [];
     }
 
-    searchFilterFunction(text: string): void {
-        this.setState({
-            filter: text,
-        });
-
-        const newData = this.arrayholder.filter(item => {
-            const textData = text.toUpperCase();
-            return item.productName ? item.productName.toUpperCase().indexOf(textData) > -1 : 0;
-        });
-
-        const newSession: GoodsReceiptSession = this.state.session;
-        newSession.goodsReceiptEntries = newData;
-
-        this.setState({
-            session: newSession,
+    entriesAfterFilter(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
+        console.debug(entries);
+        console.debug(filter);
+        if (!entries) {
+            return [];
+        }
+        if (!filter) {
+            return entries;
+        }
+        const searchString = filter.toUpperCase();
+        return entries.filter(item => {
+            return item.productName ? item.productName.toUpperCase().indexOf(searchString) > -1 : false;
         });
     }
 
     renderHeader = (): React.ReactElement => {
         return (
             <SearchBar
-                placeholder="Filter ici ..."
+                placeholder="Filtrer ici ..."
                 lightTheme
                 round
-                onChangeText={(text: string): void => this.searchFilterFunction(text)}
+                onChangeText={(text: string): void => this.filterEntriesWith(text)}
                 autoCorrect={false}
                 value={this.state.filter}
             />
@@ -303,7 +306,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         <FlatList
                             scrollEnabled={false}
                             style={{ backgroundColor: 'white' }}
-                            data={this.orderedReceiptEntries(this.state.session.goodsReceiptEntries)}
+                            data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
                             keyExtractor={(item): string => {
                                 if (item.id && item.id.toString()) {
                                     return item.id.toString();
