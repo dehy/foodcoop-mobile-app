@@ -9,6 +9,7 @@ import Odoo from '../../utils/Odoo';
 import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
+import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import AppLogger from '../../utils/AppLogger';
 import { toNumber, displayNumber, isFloat } from '../../utils/helpers';
 import { Button, Icon, Input, ListItem, ThemeProvider } from 'react-native-elements';
@@ -16,6 +17,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 interface GoodsReceiptScanProps {
     componentId: string;
+    session: GoodsReceiptSession;
     preselectedProductId?: number;
 }
 
@@ -65,14 +67,8 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     componentDidMount(): void {
         if (this.props.preselectedProductId) {
-            // const barcode: Barcode = {
-            //     data: this.props.preselectedProductBarcode,
-            //     dataRaw: this.props.preselectedProductBarcode,
-            //     type: 'PRODUCT',
-            //     bounds: { size: { width: 0, height: 0 }, origin: { x: 0, y: 0 } },
-            // };
+            // In manual selection, we load product with its productId because some products do not have barcodes.
             this.loadProductWithId(this.props.preselectedProductId);
-            // this.didScanBarcode(barcode);
         }
     }
 
@@ -98,7 +94,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     }
 
     loadProductWithId(id: number): void {
-        AppLogger.getLogger().debug(`Loading product #'${id}'`);
+        AppLogger.getLogger().debug(
+            `Loading product #'${id}' from session #${this.props.session.id} (${this.props.session.poName})`,
+        );
         Odoo.getInstance()
             .fetchProductFromIds([id])
             .then((products: ProductProduct[] | undefined) => {
@@ -109,27 +107,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                 }
                 const product = products[0];
                 AppLogger.getLogger().debug(`Found Product #${id} => '${product.name}'`);
-                getConnection()
-                    .getRepository(GoodsReceiptEntry)
-                    .findOneOrFail({
-                        where: {
-                            productId: id,
-                        },
-                    })
-                    .then((entry: GoodsReceiptEntry) => {
-                        AppLogger.getLogger().debug(
-                            `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
-                                entry.expectedProductQty
-                            } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)})`,
-                        );
-                        this.setState({
-                            product: product,
-                            goodsReceiptEntry: entry,
-                        });
-                    })
-                    .catch(() => {
-                        alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
-                    });
+                this.loadEntryFromProduct(product);
             });
     }
 
@@ -144,27 +122,35 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     return;
                 }
                 AppLogger.getLogger().debug(`Found Product '${product.barcode}' => '${product.name}'`);
-                getConnection()
-                    .getRepository(GoodsReceiptEntry)
-                    .findOneOrFail({
-                        where: {
-                            productBarcode: product.barcode,
-                        },
-                    })
-                    .then((entry: GoodsReceiptEntry) => {
-                        AppLogger.getLogger().debug(
-                            `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
-                                entry.expectedProductQty
-                            } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)})`,
-                        );
-                        this.setState({
-                            product: product,
-                            goodsReceiptEntry: entry,
-                        });
-                    })
-                    .catch(() => {
-                        alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
-                    });
+                this.loadEntryFromProduct(product);
+            });
+    }
+
+    loadEntryFromProduct(product: ProductProduct): void {
+        getConnection()
+            .getRepository(GoodsReceiptEntry)
+            .findOneOrFail({
+                where: {
+                    productBarcode: product.barcode,
+                    goodsReceiptSession: this.props.session,
+                },
+                relations: ['goodsReceiptSession'],
+            })
+            .then((entry: GoodsReceiptEntry) => {
+                AppLogger.getLogger().debug(
+                    `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
+                        entry.expectedProductQty
+                    } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)}) for session #${
+                        entry.goodsReceiptSession ? entry.goodsReceiptSession.id : 'inconnue'
+                    }`,
+                );
+                this.setState({
+                    product: product,
+                    goodsReceiptEntry: entry,
+                });
+            })
+            .catch(() => {
+                alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
             });
     }
 
