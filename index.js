@@ -27,6 +27,11 @@ Database.connect();
 EStyleSheet.build({});
 
 Navigation.events().registerAppLaunchedListener(() => {
+    Navigation.setDefaultOptions({
+        layout: {
+            orientation: ['portrait'],
+        },
+    });
     Navigation.setRoot({
         root: {
             component: {
