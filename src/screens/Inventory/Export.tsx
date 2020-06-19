@@ -127,7 +127,7 @@ ${notFoundInOdooString}`);
         ];
 
         Google.getInstance()
-            .sendEmail(to, null, subject, body, attachments)
+            .sendEmail(to, '', subject, body, attachments)
             .then(() => {
                 InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
                 Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');

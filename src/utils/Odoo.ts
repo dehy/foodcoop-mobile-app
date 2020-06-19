@@ -88,7 +88,7 @@ export default class Odoo {
     //         console.error(response);
     //     }
     //     // console.debug(response);
-    //     if (response.data.length > 0) {
+    //     if (response.data && response.data.length > 0) {
     //         return new ProductProduct(response.data[0]);
     //     }
     //     return null;
@@ -146,7 +146,7 @@ export default class Odoo {
         };
         const response = await this.odooApi.search_read('purchase.order', params);
         this.assertApiResponse(response);
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             const purchaseOrders: PurchaseOrder[] = [];
             response.data.forEach((element: OdooApiPurchaseOrder) => {
                 purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element));
@@ -178,7 +178,7 @@ export default class Odoo {
 
         const response = await this.odooApi.search_read('purchase.order', params);
         this.assertApiResponse(response);
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             const purchaseOrders: PurchaseOrder[] = [];
             response.data.forEach((element: OdooApiPurchaseOrder) => {
                 purchaseOrders.push(PurchaseOrderFactory.PurchaseOrderFromResponse(element));
@@ -207,7 +207,7 @@ export default class Odoo {
         this.assertApiResponse(response);
 
         const mapSupplierCode: { [productId: number]: string } = {};
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             response.data.forEach((entry: OdooApiProductSupplierInfo) => {
                 if (entry.product_tmpl_id) {
                     mapSupplierCode[entry.product_tmpl_id[0]] = entry.product_code ? entry.product_code : '';
@@ -230,7 +230,7 @@ export default class Odoo {
 
         const response = await this.odooApi.search_read('purchase.order', params);
         this.assertApiResponse(response);
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             return PurchaseOrderFactory.PurchaseOrderFromResponse(response.data[0]);
         }
         return undefined;
@@ -252,7 +252,7 @@ export default class Odoo {
         const response = await this.odooApi.search_read('purchase.order.line', params);
         this.assertApiResponse(response);
         //console.log('fetchPurchaseOrderLinesForPurchaseOrder');
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             const purchaseOrderLines: PurchaseOrderLine[] = [];
             response.data.forEach((element: OdooApiPurchaseOrderLine) => {
                 const purchaseOrderLine = PurchaseOrderLineFactory.PurchaseOrderLineFromResponse(element);
@@ -284,7 +284,7 @@ export default class Odoo {
         const response = await this.odooApi.get('product.product', params);
         this.assertApiResponse(response);
         const products: ProductProduct[] = [];
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             response.data.forEach((element: OdooApiProductProduct) => {
                 // console.log('Product');
                 // console.log(element);
@@ -318,7 +318,7 @@ export default class Odoo {
         // console.debug(params);
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
-        if (response.data.length > 0) {
+        if (response.data && response.data.length > 0) {
             return ProductProductFactory.ProductProductFromResponse(response.data[0]);
         }
         return null;
@@ -340,7 +340,7 @@ export default class Odoo {
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
 
-        return response.data.length > 0 ? response.data[0].image : null;
+        return response.data && response.data.length > 0 ? response.data[0].image : null;
     }
 
     assertConnect = async (): Promise<boolean> => {

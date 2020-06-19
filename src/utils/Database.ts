@@ -6,6 +6,8 @@ import Attachment from '../entities/Attachment';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
+import { DeleteCascade1588861598725 } from '../migrations/1588861598725-DeleteCascade';
+import { AddExpectedPackageQty1589031691422 } from '../migrations/1589031691422-AddExpectedPackageQty';
 import { AddSessionAttachment1588584092064 } from '../migrations/1588584092064-AddSessionAttachment';
 
 interface EntityDefinition {
@@ -53,7 +55,13 @@ export default class Database {
             entities: [GoodsReceiptSession, GoodsReceiptEntry, Attachment],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
-            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098, AddSessionAttachment1588584092064],
+            migrations: [
+                Init1580395050084,
+                UpdateGoodsReceiptEntry1588342677098,
+                DeleteCascade1588861598725,
+                AddExpectedPackageQty1589031691422,
+                AddSessionAttachment1588584092064,
+            ],
         });
     }
 
@@ -182,7 +190,7 @@ export default class Database {
         try {
             for (const entity of entities) {
                 const repository = await getRepository(entity.name);
-                await repository.query(`TRUNCATE TABLE \`${entity.tableName}\`;`);
+                await repository.query(`DELETE FROM \`${entity.tableName}\`;`);
             }
         } catch (error) {
             throw new Error(`ERROR: Cleaning test db: ${error}`);

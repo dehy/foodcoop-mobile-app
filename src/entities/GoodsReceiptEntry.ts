@@ -1,6 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import GoodsReceiptSession from './GoodsReceiptSession';
 
+export enum EntryStatus {
+    VALID = 'OK',
+    WARNING = 'ATTENTION',
+    ERROR = 'ERREUR',
+}
+
 @Entity()
 export default class GoodsReceiptEntry {
     @PrimaryGeneratedColumn()
@@ -9,10 +15,16 @@ export default class GoodsReceiptEntry {
     @Column('text')
     public name?: string;
 
-    @Column('int')
+    @Column({
+        type: 'int',
+        nullable: true,
+    })
     public packageQty?: number; // Colisage (nombre de produits par colis)
 
-    @Column('int')
+    @Column({
+        type: 'int',
+        nullable: true,
+    })
     public productQtyPackage?: number; // Nombre de colis
 
     @Column('text')
@@ -29,6 +41,12 @@ export default class GoodsReceiptEntry {
         nullable: true,
     })
     public productSupplierCode?: string;
+
+    @Column('int')
+    public expectedPackageQty?: number; // Colisage (nombre de produits par colis)
+
+    @Column('int')
+    public expectedProductQtyPackage?: number; // Nombre de colis
 
     @Column('int')
     public expectedProductQty?: number;
@@ -61,13 +79,57 @@ export default class GoodsReceiptEntry {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => GoodsReceiptSession,
         goodsReceiptSession => goodsReceiptSession.goodsReceiptEntries,
+        { onDelete: 'CASCADE' },
     )
     public goodsReceiptSession?: GoodsReceiptSession;
 
-    public isValid(): boolean | null {
+    public isValidPackageQty(): boolean | null {
+        if (null === this.packageQty) {
+            return null;
+        }
+        return this.expectedPackageQty === this.packageQty;
+    }
+
+    public isValidProductQtyPackage(): boolean | null {
+        if (null === this.productQtyPackage) {
+            return null;
+        }
+        return this.expectedProductQtyPackage === this.productQtyPackage;
+    }
+
+    public isValidQuantity(): boolean | null {
         if (null === this.productQty) {
             return null;
         }
-        return this.expectedProductQty === this.productQty && this.expectedProductUom === this.productUom;
+        return this.expectedProductQty === this.productQty;
+    }
+
+    public isValidUom(): boolean | null {
+        if (null === this.productUom) {
+            return null;
+        }
+        return this.expectedProductUom === this.productUom;
+    }
+
+    public hasComment(): boolean {
+        if (!this.comment) {
+            return false;
+        }
+        return this.comment.length > 0;
+    }
+
+    public getStatus(): EntryStatus {
+        if (false === this.isValidQuantity()) {
+            return EntryStatus.ERROR;
+        }
+        if (
+            false === this.isValidUom() ||
+            this.hasComment() ||
+            false === this.isValidPackageQty() ||
+            false === this.isValidProductQtyPackage()
+        ) {
+            return EntryStatus.WARNING;
+        }
+        return EntryStatus.VALID;
     }
 }
