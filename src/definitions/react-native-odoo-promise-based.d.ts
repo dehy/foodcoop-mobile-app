@@ -8,12 +8,12 @@ interface OdooApiResponse {
 
 interface OdooApiProductProduct {
     id?: number;
-    product_tmpl_id?:[number!, string!];
+    product_tmpl_id?: [number, string];
     barcode?: string;
     name?: string;
     image?: string|null;
     qty_available?: number;
-    uom_id?: number;
+    uom_id?: [number, string];
     lst_price?: number;
     weight_net?: number;
     volume?: number;
