@@ -1,11 +1,9 @@
 import React from 'react';
-import { Alert, FlatList, Platform, SafeAreaView, TouchableHighlight, Text, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
 import { defaultScreenOptions } from '../../../utils/navigation';
-import materialStyle from '../../../styles/material';
 import CookieManager from 'react-native-cookies';
 import Odoo from '../../../utils/Odoo';
 import { Navigation, Options } from 'react-native-navigation';
-import { toNumber } from '../../../utils/helpers';
 import { ListItem } from 'react-native-elements';
 
 interface CookiesMaintenanceState {
@@ -77,14 +75,21 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
 
     didTapCookieItem = (key: string): void => {
         // console.debug('didTapCookieItem()', key);
-        if (this.cookies[key]) {
-            const cookie = this.cookies[key];
-            const alertBody = `domain: ${cookie.domain}
+        const cookie = this.cookies.find(cookie => {
+            if (key === cookie.name) {
+                return true;
+            }
+            return false;
+        });
+        if (undefined === cookie) {
+            console.error(`Unknown cookie named ${key} tapped`);
+            return;
+        }
+        const alertBody = `domain: ${cookie.domain}
 name: ${cookie.name}
 value: ${cookie.value}
 path: ${cookie.path}`;
-            Alert.alert('Détails du cookie', alertBody);
-        }
+        Alert.alert('Détails du cookie', alertBody);
     };
 
     didTapActionItem = (key: string): void => {
