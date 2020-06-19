@@ -134,6 +134,10 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 receivedQty: entry.productQty,
                 expectedUom: entry.expectedProductUom,
                 receivedUom: entry.productUom,
+                expectedPackageQty: entry.expectedPackageQty, // Colisage (nombre de produits par colis)
+                receivedPackageQty: entry.packageQty,
+                expectedProductQtyPackage: entry.expectedProductQtyPackage, // Nombre de colis
+                receivedProductQtyPackage: entry.productQtyPackage,
                 comment: entry.comment,
                 barcode: entry.productBarcode,
             };

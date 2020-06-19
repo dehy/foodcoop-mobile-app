@@ -114,8 +114,8 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                             goodsReceiptEntry.goodsReceiptSession = session;
                             goodsReceiptEntry.name = poLine.name;
                             goodsReceiptEntry.productId = poLine.productId;
-                            goodsReceiptEntry.packageQty = poLine.packageQty;
-                            goodsReceiptEntry.productQtyPackage = poLine.productQtyPackage;
+                            goodsReceiptEntry.expectedPackageQty = poLine.packageQty;
+                            goodsReceiptEntry.expectedProductQtyPackage = poLine.productQtyPackage;
                             goodsReceiptEntry.expectedProductQty = poLine.productQty;
                             goodsReceiptEntry.expectedProductUom = poLine.productUom;
 
