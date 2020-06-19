@@ -10,14 +10,14 @@ export enum UnitOfMesurement {
 
 export default class ProductProduct {
     public id?: number;
-    public template_id?: number;
+    public templateId?: number;
     public barcode?: string;
     public name?: string;
     public image?: string;
-    public qty_available?: number;
-    public uom_id?: number;
-    public lst_price?: number;
-    public weight_net?: number;
+    public qtyAvailable?: number;
+    public uomId?: number;
+    public lstPrice?: number;
+    public weightNet?: number;
     public volume?: number;
 
     static imageFromOdooBase64(imageBase64: string): string {
@@ -42,17 +42,17 @@ export default class ProductProduct {
     }
 
     unitAsString(): string {
-        return ProductProduct.quantityUnitAsString(this.uom_id);
+        return ProductProduct.quantityUnitAsString(this.uomId);
     }
 
     quantityAsString(): string {
-        return `${String(this.qty_available)} ${this.unitAsString()}`;
+        return `${String(this.qtyAvailable)} ${this.unitAsString()}`;
     }
 
     packagingAsString(): string {
         let metricString = '';
-        if (this.weight_net) {
-            metricString = `${String(this.weight_net)} kg`;
+        if (this.weightNet) {
+            metricString = `${String(this.weightNet)} kg`;
         }
         if (this.volume) {
             metricString = `${String(this.volume)} L`;
@@ -61,10 +61,10 @@ export default class ProductProduct {
     }
 
     quantityIsValid(): boolean {
-        if (this.qty_available == undefined || this.qty_available < 0) {
+        if (this.qtyAvailable == undefined || this.qtyAvailable < 0) {
             return false;
         }
-        if (this.uom_id === UnitOfMesurement.unit && isFloat(this.qty_available)) {
+        if (this.uomId === UnitOfMesurement.unit && isFloat(this.qtyAvailable)) {
             return false;
         }
 

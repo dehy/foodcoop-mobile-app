@@ -1,5 +1,14 @@
 import React from 'react';
-import { FlatList, Platform, SafeAreaView, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import {
+    EmitterSubscription,
+    FlatList,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TouchableHighlight,
+    View,
+} from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
