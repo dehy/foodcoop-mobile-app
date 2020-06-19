@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { goHome } from '../utils/navigation';
 import { GoogleSigninButton } from '@react-native-community/google-signin';
 import Google from '../utils/Google';
-import DeviceInfo from 'react-native-device-info';
+import { readableVersion } from '../utils/helpers';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
 
 type WelcomeState = {
@@ -91,7 +91,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                     />
                 </View>
                 <Text style={styles.version}>
-                    v{DeviceInfo.getVersion()} ({DeviceInfo.getBuildNumber()})
+                    {readableVersion}
                 </Text>
             </SafeAreaView>
         );

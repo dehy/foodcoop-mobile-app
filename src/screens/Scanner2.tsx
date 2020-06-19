@@ -192,7 +192,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     private camera: RNCamera | null = null;
     private beepSound: Sound;
 
-    state = {
+    state: Scanner2State = {
         flash: RNCamera.Constants.FlashMode.off,
         zoom: 0,
         autoFocus: RNCamera.Constants.AutoFocus.on,
@@ -530,7 +530,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         const barcode = this.legacyBarcodeToBarcode(event);
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({ barcodes: [barcode] });
-        if (!previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
+        if (undefined === previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
             Vibration.vibrate(500, false);
             this.beepSound.play(() => {
                 this.beepSound.stop(); // Resets file for immediate play availability

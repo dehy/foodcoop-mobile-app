@@ -114,8 +114,8 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                             goodsReceiptEntry.goodsReceiptSession = session;
                             goodsReceiptEntry.name = poLine.name;
                             goodsReceiptEntry.productId = poLine.productId;
-                            goodsReceiptEntry.packageQty = poLine.packageQty;
-                            goodsReceiptEntry.productQtyPackage = poLine.productQtyPackage;
+                            goodsReceiptEntry.expectedPackageQty = poLine.packageQty;
+                            goodsReceiptEntry.expectedProductQtyPackage = poLine.productQtyPackage;
                             goodsReceiptEntry.expectedProductQty = poLine.productQty;
                             goodsReceiptEntry.expectedProductUom = poLine.productUom;
 
@@ -138,14 +138,14 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
 
                                 Odoo.getInstance()
                                     .fetchProductSupplierInfoFromProductTemplateIds(
-                                        products.map(p => (p.template_id ? p.template_id : 0)),
+                                        products.map(p => (p.templateId ? p.templateId : 0)),
                                         goodsReceiptSession.partnerId!,
                                     )
                                     .then(res => {
                                         if (res) {
                                             products.forEach(product => {
                                                 goodsReceiptEntries[product.id!].productSupplierCode =
-                                                    res[product.template_id!];
+                                                    res[product.templateId!];
                                             });
                                         }
                                         getRepository(GoodsReceiptEntry)

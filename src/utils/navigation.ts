@@ -103,7 +103,7 @@ export function goHome(): void {
                             ],
                             options: {
                                 bottomTab: {
-                                    text: 'Livraisons',
+                                    text: 'Réceptions',
                                     icon: require('../../assets/icons/truck-loading-regular.png'),
                                 },
                             },

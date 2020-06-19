@@ -10,10 +10,9 @@ import {
     Text,
     TextInput,
     View,
-    EventSubscription,
 } from 'react-native';
 import { defaultScreenOptions } from '../utils/navigation';
-import { Navigation, Options } from 'react-native-navigation';
+import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import { RNCamera, FlashMode, AutoFocus, Barcode } from 'react-native-camera';
 import DialogInput from 'react-native-dialog-input';
 import Google from '../utils/Google';
@@ -435,7 +434,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
 Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         try {
             Google.getInstance()
-                .sendEmail(to, null, subject, body)
+                .sendEmail(to, '', subject, body)
                 .then(() => {
                     Alert.alert('Mail envoyé', 'Merci pour le signalement ! 🎉');
                 });
@@ -452,7 +451,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         if (!this.props.inventory) {
             throw new Error('No Inventory set');
         }
-        const unit = this.state.odooProductProduct.uom_id;
+        const unit = this.state.odooProductProduct.uomId;
         let quantity: number;
         try {
             if (!this.articleQuantityValue) {
@@ -604,8 +603,8 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                 <View style={{ flex: 1, flexDirection: 'column' }}>
                                     <Text style={styles.detailTitle}>Prix</Text>
                                     <Text style={styles.detailValue}>
-                                        {this.state.odooProductProduct && this.state.odooProductProduct.lst_price
-                                            ? Math.round(this.state.odooProductProduct.lst_price * 100) / 100 + ' €'
+                                        {this.state.odooProductProduct && this.state.odooProductProduct.lstPrice
+                                            ? Math.round(this.state.odooProductProduct.lstPrice * 100) / 100 + ' €'
                                             : '-'}
                                     </Text>
                                 </View>

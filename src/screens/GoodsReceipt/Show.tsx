@@ -3,8 +3,8 @@ import { View, Text, SafeAreaView, FlatList, ScrollView, Alert, Image } from 're
 import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import ImagePicker from 'react-native-image-picker';
+import GoodsReceiptEntry, { EntryStatus } from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptService from '../../services/GoodsReceiptService';
 import Attachment from '../../entities/Attachment';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
@@ -17,11 +17,11 @@ import * as RNFS from 'react-native-fs';
 export interface GoodsReceiptShowProps {
     componentId: string;
     session: GoodsReceiptSession;
-    arrayHolder: [];
 }
 
 interface GoodsReceiptShowState {
-    session: GoodsReceiptSession;
+    sessionEntries: GoodsReceiptEntry[];
+    entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
 
@@ -36,14 +36,14 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     };
 
     modalDismissedListener?: EventSubscription;
-
-    arrayholder: GoodsReceiptEntry[] = [];
+    entriesToDisplay: GoodsReceiptEntry[] = [];
 
     constructor(props: GoodsReceiptShowProps) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
-            session: props.session,
+            sessionEntries: [],
+            entriesToDisplay: [],
             filter: '',
         };
     }
@@ -104,13 +104,18 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 if (!session) {
                     throw new Error('Session not found');
                 }
-                if (session.goodsReceiptEntries) {
-                    this.arrayholder = session.goodsReceiptEntries;
-                }
                 this.setState({
-                    session,
+                    sessionEntries: session.goodsReceiptEntries ?? [],
+                    entriesToDisplay: this.entriesAfterFilter(session.goodsReceiptEntries, this.state.filter),
                 });
             });
+    }
+
+    filterEntriesWith(text: string): void {
+        this.setState({
+            filter: text,
+            entriesToDisplay: this.entriesAfterFilter(this.state.sessionEntries, text),
+        });
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
@@ -147,6 +152,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Scan',
                             passProps: {
+                                session: this.props.session,
                                 preselectedProductId: productId,
                             },
                         },
@@ -168,7 +174,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         component: {
                             name: 'GoodsReceipt/Export',
                             passProps: {
-                                session: this.state.session,
+                                session: this.props.session,
                             },
                         },
                     },
@@ -230,13 +236,24 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     itemBackgroundColor(entry: GoodsReceiptEntry): string {
-        if (true === entry.isValid()) {
-            return '#5cb85c';
+        if (entry.productQty === null) {
+            return 'transparent';
         }
-        if (false === entry.isValid()) {
-            return '#d9534f';
+
+        switch (entry.getStatus()) {
+            case EntryStatus.ERROR:
+                return '#d9534f';
+                break;
+            case EntryStatus.WARNING:
+                return '#ffc30f';
+                break;
+            case EntryStatus.VALID:
+                return '#5cb85c';
+                break;
+            default:
+                return 'transparent';
+                break;
         }
-        return 'transparent';
     }
 
     orderedReceiptEntries(entries: GoodsReceiptEntry[] | undefined): GoodsReceiptEntry[] {
@@ -254,31 +271,28 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return [];
     }
 
-    searchFilterFunction(text: string): void {
-        this.setState({
-            filter: text,
-        });
-
-        const newData = this.arrayholder.filter(item => {
-            const textData = text.toUpperCase();
-            return item.productName ? item.productName.toUpperCase().indexOf(textData) > -1 : 0;
-        });
-
-        const session: GoodsReceiptSession = this.state.session;
-        session.goodsReceiptEntries = newData;
-
-        this.setState({
-            session,
+    entriesAfterFilter(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
+        console.debug(entries);
+        console.debug(filter);
+        if (!entries) {
+            return [];
+        }
+        if (!filter) {
+            return entries;
+        }
+        const searchString = filter.toUpperCase();
+        return entries.filter(item => {
+            return item.productName ? item.productName.toUpperCase().indexOf(searchString) > -1 : false;
         });
     }
 
     renderHeader = (): React.ReactElement => {
         return (
             <SearchBar
-                placeholder="Filter ici ..."
+                placeholder="Filtrer ici ..."
                 lightTheme
                 round
-                onChangeText={(text: string): void => this.searchFilterFunction(text)}
+                onChangeText={(text: string): void => this.filterEntriesWith(text)}
                 autoCorrect={false}
                 value={this.state.filter}
             />
@@ -287,7 +301,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
 
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
-        if (false === entry.isValid()) {
+        if (false === entry.isValidQuantity() || false === entry.isValidUom()) {
             correctQty = (
                 <Text style={{ fontSize: 16 }}>
                     {displayNumber(entry.productQty)} {ProductProduct.quantityUnitAsString(entry.productUom)}
@@ -298,8 +312,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             <View style={{ alignItems: 'flex-end' }}>
                 <Text
                     style={{
-                        fontSize: false === entry.isValid() ? 12 : 16,
-                        textDecorationLine: false === entry.isValid() ? 'line-through' : 'none',
+                        fontSize: false === entry.isValidQuantity() || false === entry.isValidUom() ? 12 : 16,
+                        textDecorationLine:
+                            false === entry.isValidQuantity() || false === entry.isValidUom() ? 'line-through' : 'none',
                     }}
                 >
                     {displayNumber(entry.expectedProductQty)}{' '}
@@ -337,6 +352,35 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         );
     }
 
+    renderPackageQty(entry: GoodsReceiptEntry): React.ReactElement {
+        let correctPackageQty;
+        if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
+            correctPackageQty = (
+                <Text style={{ fontSize: 16 }}>
+                    {entry.packageQty} colis de {entry.productQtyPackage} article(s)
+                </Text>
+            );
+        }
+        return (
+            <View style={{ alignItems: 'flex-end' }}>
+                <Text
+                    style={{
+                        fontSize:
+                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage() ? 12 : 16,
+                        textDecorationLine:
+                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()
+                                ? 'line-through'
+                                : 'none',
+                    }}
+                >
+                    {entry.expectedPackageQty} colis de {entry.expectedProductQtyPackage} article
+                    {entry.expectedProductQtyPackage && entry.expectedProductQtyPackage > 1 ? 's' : ''}
+                </Text>
+                {correctPackageQty}
+            </View>
+        );
+    }
+
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{ height: '100%' }}>
@@ -352,7 +396,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         <FlatList
                             scrollEnabled={false}
                             style={{ backgroundColor: 'white' }}
-                            data={this.orderedReceiptEntries(this.state.session.goodsReceiptEntries)}
+                            data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
                             keyExtractor={(item): string => {
                                 if (item.id && item.id.toString()) {
                                     return item.id.toString();
@@ -368,6 +412,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                     }
                                     subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
                                     rightElement={this.renderEntryQty(item)}
+                                    rightSubtitle={this.renderPackageQty(item)}
                                     onPress={(): void => {
                                         this.openGoodsReceiptScan(item.productId);
                                     }}

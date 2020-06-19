@@ -62,13 +62,6 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
             senderName: Google.getInstance().getUsername(),
             senderNameDialogVisible: false,
         };
-
-        this.generateCSVFile().then(filePath => {
-            // console.log(filePath);
-            this.setState({
-                filePath,
-            });
-        });
     }
 
     static options(): Options {
@@ -93,7 +86,24 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     }
 
     componentDidMount(): void {
-        //
+        getRepository(GoodsReceiptSession)
+            .findOne(this.props.session.id, {
+                relations: ['goodsReceiptEntries'],
+            })
+            .then((session): void => {
+                //console.log(session);
+                if (!session) {
+                    throw new Error('Session not found');
+                }
+                this.receiptEntries = session.goodsReceiptEntries ?? [];
+
+                this.generateCSVFile().then(filePath => {
+                    // console.log(filePath);
+                    this.setState({
+                        filePath,
+                    });
+                });
+            });
     }
 
     chooseRecipient = (): void => {
@@ -122,13 +132,17 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 throw new Error('Missing mandatory entry parameters');
             }
             const entryData: CSVData = {
-                status: entry.isValid() ? 'OK' : 'ERREUR',
+                status: entry.getStatus().toString(),
                 product: entry.productName,
                 supplierCode: entry.productSupplierCode,
                 expectedQty: entry.expectedProductQty,
                 receivedQty: entry.productQty,
                 expectedUom: entry.expectedProductUom,
                 receivedUom: entry.productUom,
+                expectedPackageQty: entry.expectedPackageQty, // Colisage (nombre de produits par colis)
+                receivedPackageQty: entry.packageQty,
+                expectedProductQtyPackage: entry.expectedProductQtyPackage, // Nombre de colis
+                receivedProductQtyPackage: entry.productQtyPackage,
                 comment: entry.comment,
                 barcode: entry.productBarcode,
             };
