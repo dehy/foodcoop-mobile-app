@@ -21,6 +21,7 @@ export interface GoodsReceiptShowProps {
 
 interface GoodsReceiptShowState {
     sessionEntries: GoodsReceiptEntry[];
+    sessionAttachments: Attachment[];
     entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
@@ -43,6 +44,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         Navigation.events().bindComponent(this);
         this.state = {
             sessionEntries: [],
+            sessionAttachments: [],
             entriesToDisplay: [],
             filter: '',
         };
@@ -106,7 +108,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 }
                 this.setState({
                     sessionEntries: session.goodsReceiptEntries ?? [],
-                    entriesToDisplay: this.entriesAfterFilter(session.goodsReceiptEntries, this.state.filter),
+                    sessionAttachments: session.attachments ?? [],
+                    entriesToDisplay: this.filteredEntries(session.goodsReceiptEntries, this.state.filter),
                 });
             });
     }
@@ -114,7 +117,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     filterEntriesWith(text: string): void {
         this.setState({
             filter: text,
-            entriesToDisplay: this.entriesAfterFilter(this.state.sessionEntries, text),
+            entriesToDisplay: this.filteredEntries(this.state.sessionEntries, text),
         });
     }
 
@@ -209,22 +212,15 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             } else {
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                const session: GoodsReceiptSession = this.state.session;
+                const session: GoodsReceiptSession = this.props.session;
 
                 GoodsReceiptService.getInstance()
                     .attachementFromImagePicker(session, response)
                     .then(attachement => {
                         getRepository(Attachment)
                             .save(attachement)
-                            .then(attachement => {
-                                if (!session.attachments) {
-                                    session.attachments = [];
-                                }
-                                session.attachments?.push(attachement);
-
-                                this.setState({
-                                    session,
-                                });
+                            .then(() => {
+                                this.loadData();
                             });
                     });
             }
@@ -271,7 +267,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return [];
     }
 
-    entriesAfterFilter(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
+    filteredEntries(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
         console.debug(entries);
         console.debug(filter);
         if (!entries) {
@@ -330,24 +326,30 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             <FlatList
                 scrollEnabled={false}
                 // style={{ backgroundColor: 'white' }}
-                data={this.state.session.attachments}
+                data={this.state.sessionAttachments}
                 keyExtractor={(item): string => {
                     return item.path ? item.path : '';
                 }}
-                renderItem={({ item }): React.ReactElement => (
-                    <View>
-                        <Text>Item number : {item.type}</Text>
-                        <Image
-                            source={{ uri: `file://${item.path}` }}
-                            style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                width: 300,
-                                height: 400,
-                            }}
-                        />
-                    </View>
-                )}
+                renderItem={({ item }): React.ReactElement => {
+                    const attachmentUri = `file://${RNFS.DocumentDirectoryPath}/${item.path}`;
+                    console.debug(`attachment path: ${attachmentUri}`);
+                    return (
+                        <View>
+                            <Text>Item number : {item.type}</Text>
+                            <Image
+                                source={{
+                                    uri: attachmentUri,
+                                }}
+                                style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 300,
+                                    height: 400,
+                                }}
+                            />
+                        </View>
+                    );
+                }}
             />
         );
     }
