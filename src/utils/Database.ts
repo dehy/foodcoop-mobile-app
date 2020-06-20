@@ -8,7 +8,7 @@ import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
 import { DeleteCascade1588861598725 } from '../migrations/1588861598725-DeleteCascade';
 import { AddExpectedPackageQty1589031691422 } from '../migrations/1589031691422-AddExpectedPackageQty';
-import { AddSessionAttachment1588584092064 } from '../migrations/1588584092064-AddSessionAttachment';
+import { AddSessionAttachment1592642586405 } from '../migrations/1592642586405-AddSessionAttachment';
 
 interface EntityDefinition {
     name: string;
@@ -60,7 +60,7 @@ export default class Database {
                 UpdateGoodsReceiptEntry1588342677098,
                 DeleteCascade1588861598725,
                 AddExpectedPackageQty1589031691422,
-                AddSessionAttachment1588584092064,
+                AddSessionAttachment1592642586405,
             ],
         });
     }

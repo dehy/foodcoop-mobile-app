@@ -88,7 +88,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     componentDidMount(): void {
         getRepository(GoodsReceiptSession)
             .findOne(this.props.session.id, {
-                relations: ['goodsReceiptEntries'],
+                relations: ['goodsReceiptEntries', 'attachments'],
             })
             .then((session): void => {
                 //console.log(session);
@@ -96,6 +96,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                     throw new Error('Session not found');
                 }
                 this.receiptEntries = session.goodsReceiptEntries ?? [];
+                this.images = session.attachments ?? [];
 
                 this.generateCSVFile().then(filePath => {
                     // console.log(filePath);
@@ -218,10 +219,20 @@ ${entriesCount} produits traités`;
         const csvFilenameDateTime = moment(this.props.session.updatedAt).format('YYYYMMDDHHmmss');
         const csvFilename = `reception-${this.props.session.poName}-${csvFilenameDateTime}.csv`;
 
-        const attachments: MailAttachment[] = this.images.map((file: Attachment) => {
-            if (file.path && file.name)
-                return { filepath: file.path || '', filename: file.name, filetype: file.type, encoding: 'base64' };
-        });
+        const attachments: MailAttachment[] = this.images
+            .map((file: Attachment) => {
+                if (file.path && file.name) {
+                    return {
+                        filepath: file.filepath(),
+                        filename: file.name,
+                        filetype: file.type,
+                        encoding: 'base64',
+                    };
+                }
+            })
+            .filter(attachement => {
+                return undefined === attachement ? false : true;
+            }) as MailAttachment[];
 
         if (this.state.filePath) {
             attachments.push({
@@ -236,7 +247,7 @@ ${entriesCount} produits traités`;
 
     buttonTitle = (): string => {
         if (this.state.isSendingMail) {
-            return 'Envoi en cours ...';
+            return 'Envoi en cours ... Merci de patienter, l\'envoi peut être long en fonction du nombre de pièces jointes';
         }
         return 'Envoyer maintenant';
     };
@@ -299,7 +310,8 @@ ${entriesCount} produits traités`;
                                 moment(this.props.session.createdAt).format('dddd DD MMMM YYYY')}
                             , PO {this.props.session.poName}, de {this.props.session.partnerName}. Elle contient{' '}
                             {this.receiptEntries.length} produit
-                            {this.receiptEntries.length > 1 ? 's' : ''}.
+                            {this.receiptEntries.length > 1 ? 's' : ''} et {this.images.length} image
+                            {this.images.length > 1 ? 's' : ''}.
                         </Text>
                         <ListItem
                             title="Réceptionneur"
