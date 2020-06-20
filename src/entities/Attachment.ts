@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import GoodsReceiptSession from './GoodsReceiptSession';
+import * as RNFS from 'react-native-fs';
 
 @Entity()
 export default class Attachment {
@@ -21,4 +22,8 @@ export default class Attachment {
         goodsReceiptSession => goodsReceiptSession.attachments,
     )
     public goodsReceiptSession?: GoodsReceiptSession;
+
+    public filepath(): string {
+        return RNFS.DocumentDirectoryPath + this.path;
+    }
 }
