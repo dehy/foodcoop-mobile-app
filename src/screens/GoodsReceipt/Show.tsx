@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
+import { View, Text, SafeAreaView, FlatList, Alert } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import { GoodsReceiptEntry, EntryStatus } from '../../entities/GoodsReceiptEntry';
@@ -225,14 +225,20 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
 
     renderHeader = (): React.ReactElement => {
         return (
-            <SearchBar
-                placeholder="Filtrer ici ..."
-                lightTheme
-                round
-                onChangeText={(text: string): void => this.filterEntriesWith(text)}
-                autoCorrect={false}
-                value={this.state.filter}
-            />
+            <View>
+                <Text style={{ fontSize: 25, margin: 5 }}>{this.props.session.partnerName}</Text>
+                <Text style={{ fontSize: 15, margin: 5, fontStyle: 'italic' }}>
+                    {this.props.session.poName} - {moment(this.props.session.createdAt).format('DD MMMM YYYY')}
+                </Text>
+                <SearchBar
+                    placeholder="Filtrer ici ..."
+                    lightTheme
+                    round
+                    onChangeText={(text: string): void => this.filterEntriesWith(text)}
+                    autoCorrect={false}
+                    value={this.state.filter}
+                />
+            </View>
         );
     };
 
@@ -266,42 +272,31 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return (
             <SafeAreaView style={{ height: '100%' }}>
                 <ThemeProvider theme={this.theme}>
-                    <ScrollView>
-                        <View>
-                            <Text style={{ fontSize: 25, margin: 5 }}>{this.props.session.partnerName}</Text>
-                            <Text style={{ fontSize: 15, margin: 5, fontStyle: 'italic' }}>
-                                {this.props.session.poName} -{' '}
-                                {moment(this.props.session.createdAt).format('DD MMMM YYYY')}
-                            </Text>
-                        </View>
-                        <FlatList
-                            scrollEnabled={false}
-                            style={{ backgroundColor: 'white' }}
-                            data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
-                            keyExtractor={(item): string => {
-                                if (item.id && item.id.toString()) {
-                                    return item.id.toString();
-                                }
-                                return '';
-                            }}
-                            renderItem={({ item }): React.ReactElement => (
-                                <ListItem
-                                    containerStyle={{ backgroundColor: this.itemBackgroundColor(item) }}
-                                    title={item.productName}
-                                    subtitle={
-                                        item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'
-                                    }
-                                    subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
-                                    rightElement={this.renderEntryQty(item)}
-                                    onPress={(): void => {
-                                        this.openGoodsReceiptScan(item.productId);
-                                    }}
-                                    topDivider
-                                />
-                            )}
-                            ListHeaderComponent={this.renderHeader}
-                        />
-                    </ScrollView>
+                    <FlatList
+                        keyboardShouldPersistTaps="always"
+                        style={{ backgroundColor: 'white' }}
+                        data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
+                        keyExtractor={(item): string => {
+                            if (item.id && item.id.toString()) {
+                                return item.id.toString();
+                            }
+                            return '';
+                        }}
+                        renderItem={({ item }): React.ReactElement => (
+                            <ListItem
+                                containerStyle={{ backgroundColor: this.itemBackgroundColor(item) }}
+                                title={item.productName}
+                                subtitle={item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'}
+                                subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
+                                rightElement={this.renderEntryQty(item)}
+                                onPress={(): void => {
+                                    this.openGoodsReceiptScan(item.productId);
+                                }}
+                                topDivider
+                            />
+                        )}
+                        ListHeaderComponent={this.renderHeader}
+                    />
                 </ThemeProvider>
             </SafeAreaView>
         );
