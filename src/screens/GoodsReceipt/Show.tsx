@@ -318,6 +318,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                 subtitle={item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'}
                                 subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
                                 rightElement={this.renderEntryQty(item)}
+                                rightSubtitle={this.renderPackageQty(item)}
                                 onPress={(): void => {
                                     this.openGoodsReceiptScan(item.productId);
                                 }}
