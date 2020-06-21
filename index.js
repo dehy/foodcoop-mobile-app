@@ -10,8 +10,14 @@ import moment from 'moment';
 import 'moment/locale/fr';
 import Database from './src/utils/Database';
 import { readableVersion, systemName } from './src/utils/helpers';
+import * as Sentry from '@sentry/react-native';
 
 moment.locale('fr');
+
+Sentry.init({
+    dsn: '***REMOVED***',
+});
+Sentry.setRelease(`mobile-app-${readableVersion()}`);
 
 registerScreens();
 Database.connect();
