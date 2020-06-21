@@ -151,8 +151,7 @@ export default class Database {
         await this.executeQuery('PRAGMA user_version = 0');
 
         // TypeORM
-        const entities = await this.getEntities();
-        await this.cleanAll(entities);
+        getConnection().synchronize();
 
         return true;
     }
