@@ -4,7 +4,6 @@ import base64url from 'base64url';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
 import AppLogger from './AppLogger';
-import * as Sentry from '@sentry/react-native';
 import { readableVersion, systemName } from './helpers';
 
 export interface MailAttachment {
@@ -45,9 +44,6 @@ export default class Google {
     setCurrentUser(user: User | undefined): void {
         // console.debug(user);
         this.currentUser = user;
-        Sentry.setUser({
-            email: this.currentUser?.user.email,
-        });
     }
 
     async signInSilently(): Promise<void> {
@@ -134,7 +130,6 @@ export default class Google {
     async signOut(): Promise<void> {
         await GoogleSignin.signOut();
         // await GoogleSignin.revokeAccess();
-        Sentry.setUser(null);
         this.setCurrentUser(undefined);
     }
 
