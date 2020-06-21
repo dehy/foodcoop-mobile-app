@@ -3,7 +3,9 @@
 import { string } from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 
-export const readableVersion = DeviceInfo.getReadableVersion();
+export const readableVersion = (): string => {
+    return DeviceInfo.getVersion() + '+' + DeviceInfo.getBuildNumber();
+};
 export const systemName = DeviceInfo.getSystemName();
 
 export function isInt(n: number): boolean {

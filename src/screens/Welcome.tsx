@@ -90,9 +90,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                         disabled={this.state.signinInProgress}
                     />
                 </View>
-                <Text style={styles.version}>
-                    {readableVersion}
-                </Text>
+                <Text style={styles.version}>{readableVersion()}</Text>
             </SafeAreaView>
         );
     }
