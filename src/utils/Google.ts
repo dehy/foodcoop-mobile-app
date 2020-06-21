@@ -166,7 +166,7 @@ X-Supercoop-App-Platform: ${systemName}
 From: ${from}
 To: ${__DEV__ ? from : to}
 `;
-        if (cc != null) {
+        if (cc != '') {
             rfc822Message += `Cc: ${__DEV__ ? from : cc}
 `;
         }
