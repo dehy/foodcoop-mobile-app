@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, SafeAreaView, FlatList, Alert } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
-import { GoodsReceiptEntry, EntryStatus } from '../../entities/GoodsReceiptEntry';
+import GoodsReceiptEntry, { EntryStatus } from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
 import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
@@ -264,6 +264,35 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                     {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
                 {correctQty}
+            </View>
+        );
+    }
+
+    renderPackageQty(entry: GoodsReceiptEntry): React.ReactElement {
+        let correctPackageQty;
+        if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
+            correctPackageQty = (
+                <Text style={{ fontSize: 16 }}>
+                    {entry.packageQty} colis de {entry.productQtyPackage} article(s)
+                </Text>
+            );
+        }
+        return (
+            <View style={{ alignItems: 'flex-end' }}>
+                <Text
+                    style={{
+                        fontSize:
+                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage() ? 12 : 16,
+                        textDecorationLine:
+                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()
+                                ? 'line-through'
+                                : 'none',
+                    }}
+                >
+                    {entry.expectedPackageQty} colis de {entry.expectedProductQtyPackage} article
+                    {entry.expectedProductQtyPackage && entry.expectedProductQtyPackage > 1 ? 's' : ''}
+                </Text>
+                {correctPackageQty}
             </View>
         );
     }
