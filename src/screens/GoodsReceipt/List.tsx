@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView, Platform, Alert } from 'react-native';
+import { View, Text, SafeAreaView, SectionList, EmitterSubscription, Platform, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';

@@ -1,6 +1,5 @@
 'use strict';
 
-import { string } from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 
 export const readableVersion = (): string => {
