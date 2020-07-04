@@ -4,13 +4,14 @@ import base64url from 'base64url';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
 import AppLogger from './AppLogger';
-import * as Sentry from '@sentry/react-native';
 import { readableVersion, systemName } from './helpers';
+import * as Sentry from '@sentry/react-native';
 
 export interface MailAttachment {
     filepath: string;
     filename?: string;
     filetype?: string;
+    encoding?: string;
 }
 
 export default class Google {
@@ -45,9 +46,11 @@ export default class Google {
     setCurrentUser(user: User | undefined): void {
         // console.debug(user);
         this.currentUser = user;
-        Sentry.setUser({
-            email: this.currentUser?.user.email,
-        });
+        if (undefined !== user) {
+            Sentry.setUser({ email: user.user.email });
+        } else {
+            Sentry.setUser(null);
+        }
     }
 
     async signInSilently(): Promise<void> {
@@ -134,7 +137,6 @@ export default class Google {
     async signOut(): Promise<void> {
         await GoogleSignin.signOut();
         // await GoogleSignin.revokeAccess();
-        Sentry.setUser(null);
         this.setCurrentUser(undefined);
     }
 
@@ -161,7 +163,7 @@ export default class Google {
             .toString(36)
             .replace(/[^a-z]+/g, '')
             .substr(0, 32);
-        let rfc822Message = `X-Supercoop-App-Version: ${readableVersion}
+        let rfc822Message = `X-Supercoop-App-Version: ${readableVersion()}
 X-Supercoop-App-Platform: ${systemName}
 From: ${from}
 To: ${__DEV__ ? from : to}
@@ -184,8 +186,10 @@ ${bodyBase64}`;
             // console.debug('Attachment key:', key);
             if (attachments.hasOwnProperty(key)) {
                 const attachment = attachments[key];
-                // console.debug('Attachment: ', attachment);
-                const fileContentBase64 = Base64.encode(await RNFS.readFile(attachment.filepath));
+                let fileContentBase64 = await RNFS.readFile(attachment.filepath, attachment.encoding || 'utf8');
+                if ('base64' !== attachment.encoding) {
+                    fileContentBase64 = Base64.encode(fileContentBase64);
+                }
                 const filename = attachment.filename || attachment.filepath.split('/').pop();
                 const filetype = attachment.filetype || mime.lookup(attachment.filepath);
                 const fileCharset = mime.charset(attachment.filepath);
