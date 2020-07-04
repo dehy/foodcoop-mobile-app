@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, Text, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
-import { defaultScreenOptions } from '../../utils/navigation';
+import { View, Text, SafeAreaView, FlatList, ScrollView, Alert, Image } from 'react-native';
+import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
+import ImagePicker from 'react-native-image-picker';
 import GoodsReceiptEntry, { EntryStatus } from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import { getRepository } from 'typeorm';
-import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
+import GoodsReceiptService from '../../services/GoodsReceiptService';
+import Attachment from '../../entities/Attachment';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
-import moment from 'moment';
+import { defaultScreenOptions } from '../../utils/navigation';
 import { displayNumber } from '../../utils/helpers';
+import { getRepository } from 'typeorm';
+import moment from 'moment';
+import * as RNFS from 'react-native-fs';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -17,6 +21,7 @@ export interface GoodsReceiptShowProps {
 
 interface GoodsReceiptShowState {
     sessionEntries: GoodsReceiptEntry[];
+    sessionAttachments: Attachment[];
     entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
@@ -39,6 +44,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         Navigation.events().bindComponent(this);
         this.state = {
             sessionEntries: [],
+            sessionAttachments: [],
             entriesToDisplay: [],
             filter: '',
         };
@@ -49,16 +55,24 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         const topBar = options.topBar ?? {};
         topBar.rightButtons = [
             {
-                id: 'export',
-                icon: require('../../../assets/icons/paper-plane-regular.png'),
-            },
-            {
-                id: 'scan',
-                icon: require('../../../assets/icons/barcode-read-regular.png'),
+                id: 'add-photo',
+                icon: require('../../../assets/icons/add-a-photo-regular.png'),
+                text: 'Ajouter une photo',
             },
             {
                 id: 'add-extra',
                 icon: require('../../../assets/icons/cart-plus-regular.png'),
+                text: 'Ajouter un article',
+            },
+            {
+                id: 'scan',
+                icon: require('../../../assets/icons/barcode-read-regular.png'),
+                text: 'Scanner un article',
+            },
+            {
+                id: 'export',
+                icon: require('../../../assets/icons/paper-plane-regular.png'),
+                text: 'Envoyer',
             },
         ];
 
@@ -85,7 +99,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     loadData(): void {
         getRepository(GoodsReceiptSession)
             .findOne(this.props.session.id, {
-                relations: ['goodsReceiptEntries'],
+                relations: ['goodsReceiptEntries', 'attachments'],
             })
             .then((session): void => {
                 //console.log(session);
@@ -94,7 +108,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 }
                 this.setState({
                     sessionEntries: session.goodsReceiptEntries ?? [],
-                    entriesToDisplay: this.entriesAfterFilter(session.goodsReceiptEntries, this.state.filter),
+                    sessionAttachments: session.attachments ?? [],
+                    entriesToDisplay: this.filteredEntries(session.goodsReceiptEntries, this.state.filter),
                 });
             });
     }
@@ -102,11 +117,14 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     filterEntriesWith(text: string): void {
         this.setState({
             filter: text,
-            entriesToDisplay: this.entriesAfterFilter(this.state.sessionEntries, text),
+            entriesToDisplay: this.filteredEntries(this.state.sessionEntries, text),
         });
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+        if (buttonId === 'add-photo') {
+            this.addPhoto();
+        }
         if (buttonId === 'add-extra') {
             this.searchExtraItem();
         }
@@ -168,6 +186,47 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         });
     };
 
+    addPhoto(): void {
+        const options = {
+            title: 'Selectionner une photo',
+            cancelButtonTitle: 'Annuler',
+            takePhotoButtonTitle: 'Prendre une photo',
+            chooseFromLibraryButtonTitle: 'Sélectionner depuis la librairie',
+            // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+            noData: true,
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        ImagePicker.showImagePicker(options, response => {
+            console.debug('Response = ', response);
+
+            if (response.didCancel) {
+                console.debug('User cancelled image picker');
+            } else if (response.error) {
+                console.debug('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.debug('User tapped custom button: ', response.customButton);
+            } else {
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+                const session: GoodsReceiptSession = this.props.session;
+
+                GoodsReceiptService.getInstance()
+                    .attachementFromImagePicker(session, response)
+                    .then(attachement => {
+                        getRepository(Attachment)
+                            .save(attachement)
+                            .then(() => {
+                                this.loadData();
+                            });
+                    });
+            }
+        });
+    }
+
     searchExtraItem(): void {
         Alert.alert('Développement en cours');
     }
@@ -208,7 +267,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         return [];
     }
 
-    entriesAfterFilter(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
+    filteredEntries(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
         console.debug(entries);
         console.debug(filter);
         if (!entries) {
@@ -259,6 +318,39 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 </Text>
                 {correctQty}
             </View>
+        );
+    }
+
+    renderImageAttachments(): React.ReactElement {
+        return (
+            <FlatList
+                scrollEnabled={false}
+                // style={{ backgroundColor: 'white' }}
+                data={this.state.sessionAttachments}
+                keyExtractor={(item): string => {
+                    return item.path ? item.path : '';
+                }}
+                renderItem={({ item }): React.ReactElement => {
+                    const attachmentUri = `file://${RNFS.DocumentDirectoryPath}/${item.path}`;
+                    console.debug(`attachment path: ${attachmentUri}`);
+                    return (
+                        <View>
+                            <Text>Item number : {item.type}</Text>
+                            <Image
+                                source={{
+                                    uri: attachmentUri,
+                                }}
+                                style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 300,
+                                    height: 400,
+                                }}
+                            />
+                        </View>
+                    );
+                }}
+            />
         );
     }
 
@@ -331,6 +423,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                             )}
                             ListHeaderComponent={this.renderHeader}
                         />
+                        <View>
+                            <Text style={{ fontSize: 15, margin: 5 }}>Images jointes</Text>
+                        </View>
+                        {this.renderImageAttachments()}
                     </ScrollView>
                 </ThemeProvider>
             </SafeAreaView>

@@ -11,6 +11,7 @@ export interface MailAttachment {
     filepath: string;
     filename?: string;
     filetype?: string;
+    encoding?: string;
 }
 
 export default class Google {
@@ -184,8 +185,10 @@ ${bodyBase64}`;
             // console.debug('Attachment key:', key);
             if (attachments.hasOwnProperty(key)) {
                 const attachment = attachments[key];
-                // console.debug('Attachment: ', attachment);
-                const fileContentBase64 = Base64.encode(await RNFS.readFile(attachment.filepath));
+                let fileContentBase64 = await RNFS.readFile(attachment.filepath, attachment.encoding || 'utf8');
+                if ('base64' !== attachment.encoding) {
+                    fileContentBase64 = Base64.encode(fileContentBase64);
+                }
                 const filename = attachment.filename || attachment.filepath.split('/').pop();
                 const filetype = attachment.filetype || mime.lookup(attachment.filepath);
                 const fileCharset = mime.charset(attachment.filepath);

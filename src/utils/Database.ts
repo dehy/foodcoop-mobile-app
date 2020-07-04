@@ -2,11 +2,13 @@ import SQLite from 'react-native-sqlite-storage';
 import { toNumber } from './helpers';
 import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
+import Attachment from '../entities/Attachment';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
 import { DeleteCascade1588861598725 } from '../migrations/1588861598725-DeleteCascade';
 import { AddExpectedPackageQty1589031691422 } from '../migrations/1589031691422-AddExpectedPackageQty';
+import { AddSessionAttachment1592642586405 } from '../migrations/1592642586405-AddSessionAttachment';
 
 interface EntityDefinition {
     name: string;
@@ -50,10 +52,16 @@ export default class Database {
             logging: true,
             dropSchema: dropSchema,
             synchronize: synchronize,
-            entities: [GoodsReceiptSession, GoodsReceiptEntry],
+            entities: [GoodsReceiptSession, GoodsReceiptEntry, Attachment],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
-            migrations: [Init1580395050084, UpdateGoodsReceiptEntry1588342677098, DeleteCascade1588861598725, AddExpectedPackageQty1589031691422],
+            migrations: [
+                Init1580395050084,
+                UpdateGoodsReceiptEntry1588342677098,
+                DeleteCascade1588861598725,
+                AddExpectedPackageQty1589031691422,
+                AddSessionAttachment1592642586405,
+            ],
         });
     }
 
