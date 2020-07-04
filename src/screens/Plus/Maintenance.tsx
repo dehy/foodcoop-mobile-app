@@ -1,8 +1,7 @@
 import React from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
-import materialStyle from '../../styles/material';
 import { ListItem } from 'react-native-elements';
 
 export interface MaintenanceProps {

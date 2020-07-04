@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Avatar, ListItem } from 'react-native-elements';
 import { goToAuth } from '../utils/navigation';
 import Google from '../utils/Google';
