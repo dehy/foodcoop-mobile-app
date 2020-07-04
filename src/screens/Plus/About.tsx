@@ -29,7 +29,7 @@ export default class ProfileAbout extends React.Component<{}, {}> {
             <SafeAreaView>
                 <Text style={[styles.title, { marginTop: 16 }]}>{DeviceInfo.getApplicationName()}</Text>
                 <ListItem title="Système" rightTitle={systemName} topDivider />
-                <ListItem title="Version" rightTitle={readableVersion} topDivider />
+                <ListItem title="Version" rightTitle={readableVersion()} topDivider />
             </SafeAreaView>
         );
     }
