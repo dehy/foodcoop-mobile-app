@@ -92,45 +92,50 @@ export default class Plus extends React.Component<PlusProps> {
                 break;
         }
     };
+
+    renderHeader = (): React.ReactElement => {
+        return (
+            <View style={styles.profile}>
+                <Avatar
+                    rounded
+                    size="large"
+                    source={{
+                        uri: Google.getInstance().getUserPhoto(),
+                    }}
+                    containerStyle={styles.avatar}
+                />
+                <View>
+                    <Text style={styles.profileName}>{Google.getInstance().getUsername()}</Text>
+                    <Text>{Google.getInstance().getEmail()}</Text>
+                </View>
+            </View>
+        );
+    };
+
     render(): React.ReactNode {
         return (
             <SafeAreaView>
-                <ScrollView style={{ height: '100%' }}>
-                    <View style={styles.profile}>
-                        <Avatar
-                            rounded
-                            size="large"
-                            source={{
-                                uri: Google.getInstance().getUserPhoto(),
-                            }}
-                            containerStyle={styles.avatar}
+                <FlatList
+                    scrollEnabled={false}
+                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    )}
+                    data={[
+                        { title: 'À propos', key: 'about' },
+                        { title: 'Maintenance', key: 'maintenance' },
+                        { title: 'Se déconnecter', key: 'logout', color: 'red', chevron: false },
+                    ]}
+                    renderItem={({ item }): React.ReactElement => (
+                        <ListItem
+                            onPress={(): void => this._onPress(item.key)}
+                            title={item.title}
+                            titleStyle={{ color: item.color ?? 'black' }}
+                            topDivider
+                            chevron={item.chevron ?? true}
                         />
-                        <View>
-                            <Text style={styles.profileName}>{Google.getInstance().getUsername()}</Text>
-                            <Text>{Google.getInstance().getEmail()}</Text>
-                        </View>
-                    </View>
-                    <FlatList
-                        scrollEnabled={false}
-                        ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                            <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
-                        )}
-                        data={[
-                            { title: 'À propos', key: 'about' },
-                            { title: 'Maintenance', key: 'maintenance' },
-                            { title: 'Se déconnecter', key: 'logout', color: 'red', chevron: false },
-                        ]}
-                        renderItem={({ item }): React.ReactElement => (
-                            <ListItem
-                                onPress={(): void => this._onPress(item.key)}
-                                title={item.title}
-                                titleStyle={{ color: item.color ?? 'black' }}
-                                topDivider
-                                chevron={item.chevron ?? true}
-                            />
-                        )}
-                    />
-                </ScrollView>
+                    )}
+                    ListHeaderComponent={this.renderHeader}
+                />
             </SafeAreaView>
         );
     }
