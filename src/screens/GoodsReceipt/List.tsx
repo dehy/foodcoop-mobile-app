@@ -25,6 +25,7 @@ interface GoodsReceiptListState {
     goodsReceiptsData: GoodsReceiptSessionsData[];
     todaysGoodsReceipts: PurchaseOrder[];
     showHidden: boolean;
+    refreshing: boolean;
 }
 
 interface GoodsReceiptSessionTapProps {
@@ -51,6 +52,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
             goodsReceiptsData: [],
             todaysGoodsReceipts: [],
             showHidden: false,
+            refreshing: true,
         };
     }
 
@@ -139,9 +141,21 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                 //console.log(goodsReceiptSessionsData);
                 this.setState({
                     goodsReceiptsData: goodsReceiptSessionsData,
+                    refreshing: false,
                 });
             });
     }
+
+    _handleRefresh = (): void => {
+        this.setState(
+            {
+                refreshing: true,
+            },
+            () => {
+                this.loadData();
+            },
+        );
+    };
 
     renderHideIcon(): void {
         const showHidden = this.state.showHidden;
@@ -334,6 +348,8 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                         )}
                         renderItem={this.renderItem}
                         ListHeaderComponent={this.renderHeader}
+                        onRefresh={this._handleRefresh}
+                        refreshing={this.state.refreshing}
                     />
                 </SafeAreaView>
             </ThemeProvider>
