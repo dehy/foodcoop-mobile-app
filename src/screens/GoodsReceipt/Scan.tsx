@@ -431,7 +431,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     renderEntry(): React.ReactNode {
         return (
-            <KeyboardAwareScrollView style={{ height: '100%' }}>
+            <KeyboardAwareScrollView style={{ height: '100%' }} keyboardShouldPersistTaps="always">
                 <Image source={{ uri: this.state.product && this.state.product.image }} />
                 <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
