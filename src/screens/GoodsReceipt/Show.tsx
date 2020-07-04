@@ -301,6 +301,17 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         );
     };
 
+    renderFooter = (): React.ReactElement => {
+        return (
+            <View>
+                <View>
+                    <Text style={{ fontSize: 15, margin: 5 }}>Images jointes</Text>
+                </View>
+                {this.renderImageAttachments()}
+            </View>
+        );
+    };
+
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
         if (false === entry.isValidQuantity() || false === entry.isValidUom()) {
@@ -418,11 +429,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                             />
                         )}
                         ListHeaderComponent={this.renderHeader}
-                    />
-                    <View>
-                        <Text style={{ fontSize: 15, margin: 5 }}>Images jointes</Text>
-                    </View>
-                    {this.renderImageAttachments()}
+                        ListFooterComponent={this.renderFooter}
                     />
                 </ThemeProvider>
             </SafeAreaView>
