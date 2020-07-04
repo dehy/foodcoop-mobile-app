@@ -4,7 +4,6 @@ import ActionSheet from 'react-native-action-sheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import { getConnection } from 'typeorm';
 import GoodsReceiptService from '../../services/GoodsReceiptService';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
@@ -284,19 +283,10 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                                         {
                                             text: 'Oui, supprimer',
                                             onPress: (): void => {
-                                                const goodsReceiptEntryRepository = getConnection().getRepository(
-                                                    GoodsReceiptEntry,
-                                                );
-                                                goodsReceiptEntryRepository
-                                                    .find({
-                                                        goodsReceiptSession: item,
-                                                    })
-                                                    .then(entries => {
-                                                        goodsReceiptEntryRepository.remove(entries).then(() => {
-                                                            goodsReceiptSessionRepository.remove(item).then(() => {
-                                                                this.loadData();
-                                                            });
-                                                        });
+                                                GoodsReceiptService.getInstance()
+                                                    .deleteSession(item)
+                                                    .then(() => {
+                                                        this.loadData();
                                                     });
                                             },
                                         },
