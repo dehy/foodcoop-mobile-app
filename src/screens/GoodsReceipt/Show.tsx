@@ -13,6 +13,7 @@ import { displayNumber } from '../../utils/helpers';
 import { getRepository } from 'typeorm';
 import moment from 'moment';
 import * as RNFS from 'react-native-fs';
+import Fuse from 'fuse.js';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -36,6 +37,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         },
     };
 
+    fuse: Fuse<GoodsReceiptEntry, Fuse.IFuseOptions<GoodsReceiptEntry>>;
     modalDismissedListener?: EventSubscription;
     entriesToDisplay: GoodsReceiptEntry[] = [];
 
@@ -48,6 +50,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             entriesToDisplay: [],
             filter: '',
         };
+        this.fuse = new Fuse(this.state.sessionEntries, {
+            keys: ['productName'],
+        });
     }
 
     static options(): Options {
@@ -268,18 +273,22 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     filteredEntries(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
-        console.debug(entries);
-        console.debug(filter);
         if (!entries) {
             return [];
         }
         if (!filter) {
             return entries;
         }
-        const searchString = filter.toUpperCase();
-        return entries.filter(item => {
-            return item.productName ? item.productName.toUpperCase().indexOf(searchString) > -1 : false;
+
+        this.fuse.setCollection(entries);
+        const results = this.fuse.search(filter);
+
+        const filteredItems: GoodsReceiptEntry[] = [];
+        results.forEach(result => {
+            filteredItems.push(result.item);
         });
+
+        return filteredItems;
     }
 
     renderHeader = (): React.ReactElement => {
@@ -423,7 +432,6 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         <Text style={{ fontSize: 15, margin: 5 }}>Images jointes</Text>
                     </View>
                     {this.renderImageAttachments()}
-                    />
                 </ThemeProvider>
             </SafeAreaView>
         );
