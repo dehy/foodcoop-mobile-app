@@ -91,23 +91,21 @@ export default class Maintenance extends React.Component<MaintenanceProps, {}> {
     render(): React.ReactNode {
         return (
             <SafeAreaView>
-                <ScrollView style={{ height: '100%' }}>
-                    <FlatList
-                        scrollEnabled={false}
-                        ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                            <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
-                        )}
-                        data={this.flatListItems}
-                        renderItem={({ item }): React.ReactElement => (
-                            <ListItem
-                                onPress={(): void => this._onPress(item.key)}
-                                title={item.title}
-                                bottomDivider
-                                chevron
-                            />
-                        )}
-                    />
-                </ScrollView>
+                <FlatList
+                    style={{ height: '100%' }}
+                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    )}
+                    data={this.flatListItems}
+                    renderItem={({ item }): React.ReactElement => (
+                        <ListItem
+                            onPress={(): void => this._onPress(item.key)}
+                            title={item.title}
+                            bottomDivider
+                            chevron
+                        />
+                    )}
+                />
             </SafeAreaView>
         );
     }

@@ -307,29 +307,34 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         );
     };
 
+    renderHeader = (): React.ReactElement => {
+        return (
+            <View>
+                {this.renderTodaysGoodsReceipts()}
+                {this.renderHiddenMessage()}
+            </View>
+        );
+    };
+
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView style={{ height: '100%' }}>
-                    <ScrollView>
-                        {this.renderTodaysGoodsReceipts()}
-                        {this.renderHiddenMessage()}
-                        <SectionList
-                            scrollEnabled={false}
-                            style={{ backgroundColor: 'white', height: '100%' }}
-                            sections={this.state.goodsReceiptsData}
-                            keyExtractor={(item): string => {
-                                if (item.id && item.id.toString()) {
-                                    return item.id.toString();
-                                }
-                                return '';
-                            }}
-                            renderSectionHeader={({ section: { title } }): React.ReactElement => (
-                                <Text style={styles.listHeader}>{title}</Text>
-                            )}
-                            renderItem={this.renderItem}
-                        />
-                    </ScrollView>
+                    <SectionList
+                        style={{ backgroundColor: 'white', height: '100%' }}
+                        sections={this.state.goodsReceiptsData}
+                        keyExtractor={(item): string => {
+                            if (item.id && item.id.toString()) {
+                                return item.id.toString();
+                            }
+                            return '';
+                        }}
+                        renderSectionHeader={({ section: { title } }): React.ReactElement => (
+                            <Text style={styles.listHeader}>{title}</Text>
+                        )}
+                        renderItem={this.renderItem}
+                        ListHeaderComponent={this.renderHeader}
+                    />
                 </SafeAreaView>
             </ThemeProvider>
         );

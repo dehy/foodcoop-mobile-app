@@ -395,7 +395,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 <ThemeProvider theme={this.theme}>
                     <FlatList
                         keyboardShouldPersistTaps="always"
-                        style={{ backgroundColor: 'white' }}
+                        style={{ backgroundColor: 'white', height: '100%' }}
                         data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
                         keyExtractor={(item): string => {
                             if (item.id && item.id.toString()) {
