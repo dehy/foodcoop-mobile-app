@@ -267,9 +267,9 @@ PODS:
     - React
   - RNKeychain (5.0.1):
     - React
-  - RNSentry (1.3.7):
+  - RNSentry (1.4.5):
     - React
-    - Sentry (~> 4.4.0)
+    - Sentry (~> 5.1.4)
   - RNSound (0.11.0):
     - React
     - RNSound/Core (= 0.11.0)
@@ -286,9 +286,9 @@ PODS:
   - RNZipArchive/Core (5.0.2):
     - React
     - SSZipArchive (= 2.2.2)
-  - Sentry (4.4.3):
-    - Sentry/Core (= 4.4.3)
-  - Sentry/Core (4.4.3)
+  - Sentry (5.1.4):
+    - Sentry/Core (= 5.1.4)
+  - Sentry/Core (5.1.4)
   - SSZipArchive (2.2.2)
   - Yoga (1.14.0)
 
@@ -477,12 +477,12 @@ SPEC CHECKSUMS:
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGoogleSignin: 068788c1e83e5e05ef0bad090ba67fd8f963a2a3
   RNKeychain: a5623de13ec5378bfb8035422e3dee4fa538660d
-  RNSentry: 370623102247ebea20191b5fb549ecc7a275b324
+  RNSentry: 0a70359ddacbfb9b1cbbb0971e54065b9f70ac57
   RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNZipArchive: ab51bc004a31657f34010254a9182014c6a81217
-  Sentry: 14bdd673870e8cf64932b149fad5bbbf39a9b390
+  Sentry: 74f2ad93a20a5567a1badaedf5b3f60b142ad082
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
