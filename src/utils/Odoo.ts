@@ -105,7 +105,7 @@ export default class Odoo {
     assertApiResponse(response: OdooApiResponse): void {
         // console.debug('assertApiResponse()');
         // console.debug(response);
-        CookieManager.get(Odoo.odooEnpoint).then(res => {
+        CookieManager.get(Odoo.odooEnpoint).then(() => {
             // console.debug('CookieManager.get => ', res);
         });
         if (response.success == true) {

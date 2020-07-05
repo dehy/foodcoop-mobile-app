@@ -13,6 +13,7 @@ import { displayNumber } from '../../utils/helpers';
 import { getRepository } from 'typeorm';
 import moment from 'moment';
 import * as RNFS from 'react-native-fs';
+import Fuse from 'fuse.js';
 
 export interface GoodsReceiptShowProps {
     componentId: string;
@@ -36,6 +37,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         },
     };
 
+    fuse: Fuse<GoodsReceiptEntry, Fuse.IFuseOptions<GoodsReceiptEntry>>;
     modalDismissedListener?: EventSubscription;
     entriesToDisplay: GoodsReceiptEntry[] = [];
 
@@ -48,6 +50,12 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             entriesToDisplay: [],
             filter: '',
         };
+        this.fuse = new Fuse(this.state.sessionEntries, {
+            keys: ['productName'],
+            ignoreLocation: true,
+            isCaseSensitive: false,
+            shouldSort: true,
+        });
     }
 
     static options(): Options {
@@ -106,10 +114,16 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 if (!session) {
                     throw new Error('Session not found');
                 }
+                let entries;
+                if (this.state.filter) {
+                    entries = this.filteredEntries(session.goodsReceiptEntries, this.state.filter);
+                } else {
+                    entries = this.orderedReceiptEntries(session.goodsReceiptEntries);
+                }
                 this.setState({
                     sessionEntries: session.goodsReceiptEntries ?? [],
                     sessionAttachments: session.attachments ?? [],
-                    entriesToDisplay: this.filteredEntries(session.goodsReceiptEntries, this.state.filter),
+                    entriesToDisplay: entries,
                 });
             });
     }
@@ -268,18 +282,22 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     filteredEntries(entries?: GoodsReceiptEntry[], filter?: string): GoodsReceiptEntry[] {
-        console.debug(entries);
-        console.debug(filter);
         if (!entries) {
             return [];
         }
         if (!filter) {
             return entries;
         }
-        const searchString = filter.toUpperCase();
-        return entries.filter(item => {
-            return item.productName ? item.productName.toUpperCase().indexOf(searchString) > -1 : false;
+
+        this.fuse.setCollection(entries);
+        const results = this.fuse.search(filter);
+
+        const filteredItems: GoodsReceiptEntry[] = [];
+        results.forEach(result => {
+            filteredItems.push(result.item);
         });
+
+        return filteredItems;
     }
 
     renderHeader = (): React.ReactElement => {
@@ -407,7 +425,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                     <FlatList
                         keyboardShouldPersistTaps="always"
                         style={{ backgroundColor: 'white', height: '100%' }}
-                        data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
+                        data={this.state.entriesToDisplay}
                         keyExtractor={(item): string => {
                             if (item.id && item.id.toString()) {
                                 return item.id.toString();
