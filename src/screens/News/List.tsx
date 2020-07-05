@@ -13,6 +13,7 @@ export interface NewsListProps {
 
 interface NewsListState {
     news: NewsItem[];
+    refreshing: boolean;
 }
 
 export default class NewsList extends React.Component<NewsListProps, NewsListState> {
@@ -21,6 +22,7 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
         Navigation.events().bindComponent(this);
         this.state = {
             news: [],
+            refreshing: true,
         };
     }
 
@@ -45,9 +47,21 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
                 }
                 this.setState({
                     news: allTheNews,
+                    refreshing: false,
                 });
             });
     }
+
+    _handleRefresh = (): void => {
+        this.setState(
+            {
+                refreshing: true,
+            },
+            () => {
+                this.loadData();
+            },
+        );
+    };
 
     static get options(): Options {
         return defaultScreenOptions('Actualités');
@@ -81,6 +95,8 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
                             chevron
                         />
                     )}
+                    onRefresh={this._handleRefresh}
+                    refreshing={this.state.refreshing}
                 />
             </SafeAreaView>
         );
