@@ -156,23 +156,14 @@ export default class Odoo {
         return [];
     }
 
-    async fetchWaitingPurchaseOrders(): Promise<PurchaseOrder[]> {
+    async fetchWaitingPurchaseOrders(page = 1): Promise<PurchaseOrder[]> {
         await this.assertConnect();
 
         const params = {
-            domain: [
-                ['state', '=', 'purchase'],
-                [
-                    'date_planned',
-                    '>',
-                    moment()
-                        .subtract(2, 'week')
-                        .format(Dates.ODOO_DATETIME_FORMAT),
-                ],
-            ],
+            domain: [['state', '=', 'purchase']],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
-            //limit: 10,
-            offset: 0,
+            limit: 20,
+            offset: 20 * (page - 1),
             order: 'date_planned DESC',
         };
 
