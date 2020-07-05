@@ -14,6 +14,7 @@ export interface InventoryListProps {
 
 interface InventoryListState {
     inventoriesData: InventorySessionListItem[];
+    refreshing: boolean;
 }
 
 interface InventorySessionListItem {
@@ -47,6 +48,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
         Navigation.events().bindComponent(this);
         this.state = {
             inventoriesData: [],
+            refreshing: true,
         };
     }
 
@@ -110,11 +112,23 @@ export default class InventoryList extends React.Component<InventoryListProps, I
 
                 this.setState({
                     inventoriesData: inventoriesData,
+                    refreshing: false,
                 });
             });
     }
 
-    openNewInventoryModal(): void {
+    _handleRefresh = (): void => {
+        this.setState(
+            {
+                refreshing: true,
+            },
+            () => {
+                this.loadData();
+            },
+        );
+    };
+
+    openNewInventoryModal = (): void => {
         Navigation.showModal({
             stack: {
                 children: [
@@ -126,10 +140,9 @@ export default class InventoryList extends React.Component<InventoryListProps, I
                 ],
             },
         });
-    }
+    };
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
-        // will be called when "buttonOne" is clicked
         if (buttonId === 'inventory-new') {
             this.openNewInventoryModal();
         }
@@ -146,17 +159,19 @@ export default class InventoryList extends React.Component<InventoryListProps, I
         });
     };
 
-    renderHeader(): React.ReactElement {
+    renderHeader = (): React.ReactElement => {
         return (
             <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
                 <Button
                     title=" Nouvel inventaire"
                     icon={<Icon name="plus-circle" color="white" />}
-                    onPress={this.openNewInventoryModal}
+                    onPress={(): void => {
+                        this.openNewInventoryModal();
+                    }}
                 />
             </View>
         );
-    }
+    };
 
     render(): React.ReactNode {
         return (
@@ -182,6 +197,8 @@ export default class InventoryList extends React.Component<InventoryListProps, I
                             />
                         )}
                         ListHeaderComponent={this.renderHeader}
+                        onRefresh={this._handleRefresh}
+                        refreshing={this.state.refreshing}
                     />
                 </SafeAreaView>
             </ThemeProvider>
