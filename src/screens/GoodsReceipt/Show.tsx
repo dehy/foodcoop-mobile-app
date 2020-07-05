@@ -52,6 +52,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         };
         this.fuse = new Fuse(this.state.sessionEntries, {
             keys: ['productName'],
+            ignoreLocation: true,
+            isCaseSensitive: false,
+            shouldSort: true,
         });
     }
 
@@ -111,10 +114,16 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 if (!session) {
                     throw new Error('Session not found');
                 }
+                let entries;
+                if (this.state.filter) {
+                    entries = this.filteredEntries(session.goodsReceiptEntries, this.state.filter);
+                } else {
+                    entries = this.orderedReceiptEntries(session.goodsReceiptEntries);
+                }
                 this.setState({
                     sessionEntries: session.goodsReceiptEntries ?? [],
                     sessionAttachments: session.attachments ?? [],
-                    entriesToDisplay: this.filteredEntries(session.goodsReceiptEntries, this.state.filter),
+                    entriesToDisplay: entries,
                 });
             });
     }
@@ -405,7 +414,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                     <FlatList
                         keyboardShouldPersistTaps="always"
                         style={{ backgroundColor: 'white', height: '100%' }}
-                        data={this.orderedReceiptEntries(this.state.entriesToDisplay)}
+                        data={this.state.entriesToDisplay}
                         keyExtractor={(item): string => {
                             if (item.id && item.id.toString()) {
                                 return item.id.toString();
