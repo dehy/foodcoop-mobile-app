@@ -18,7 +18,7 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* SupercoopTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SupercoopTests.m */; };
 		51AC4DEB220C812C0051FDD5 /* beep.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 51AC4DBE220C812C0051FDD5 /* beep.mp3 */; };
-		787071BBA8846428CDB3A52B /* libPods-SupercoopTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C9B6FA1EA12B3064FA93CD6 /* libPods-SupercoopTests.a */; };
+		826A0593CD846364FADF9E7D /* libPods-Supercoop-SupercoopTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEEC54E1812B2E49CB33E17C /* libPods-Supercoop-SupercoopTests.a */; };
 		8788D63DD4A44A68BF959124 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D0670CA31142E2B609FF43 /* libz.tbd */; };
 		9064FEF6050DE8AF59CB8AB2 /* libPods-Supercoop-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E5930C35A644072AED4C059 /* libPods-Supercoop-tvOS.a */; };
 		A3BC9CE7025C16BF336EB947 /* libPods-Supercoop-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 52381E057261B3688ECAD37F /* libPods-Supercoop-tvOSTests.a */; };
@@ -62,15 +62,17 @@
 		3E5930C35A644072AED4C059 /* libPods-Supercoop-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		51AC4DBE220C812C0051FDD5 /* beep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = beep.mp3; sourceTree = "<group>"; };
 		52381E057261B3688ECAD37F /* libPods-Supercoop-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5C9B6FA1EA12B3064FA93CD6 /* libPods-SupercoopTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SupercoopTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		60B52FF613863E535B85AF8C /* Pods-SupercoopTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SupercoopTests.release.xcconfig"; path = "Target Support Files/Pods-SupercoopTests/Pods-SupercoopTests.release.xcconfig"; sourceTree = "<group>"; };
 		60D0670CA31142E2B609FF43 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		6E1C51E3DAE018ACA38BB7D7 /* Pods-Supercoop-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOSTests/Pods-Supercoop-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		775C24564D76037FF37E0A97 /* Pods-Supercoop-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOS/Pods-Supercoop-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		940EA61E8F5862E71D8E715A /* Pods-Supercoop-SupercoopTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-SupercoopTests.release.xcconfig"; path = "Target Support Files/Pods-Supercoop-SupercoopTests/Pods-Supercoop-SupercoopTests.release.xcconfig"; sourceTree = "<group>"; };
 		ABF01E56D7F1CEE4B72A58CF /* Pods-Supercoop-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOS/Pods-Supercoop-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		B156E4A29A9963AC9B7B1D8D /* Pods-Supercoop-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop-tvOSTests/Pods-Supercoop-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B64405A7BEF9C4D8CBAE4055 /* Pods-SupercoopTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SupercoopTests.debug.xcconfig"; path = "Target Support Files/Pods-SupercoopTests/Pods-SupercoopTests.debug.xcconfig"; sourceTree = "<group>"; };
+		BD4667B585CA1F3750AE71C7 /* Pods-Supercoop-SupercoopTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-SupercoopTests.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop-SupercoopTests/Pods-Supercoop-SupercoopTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C361FADEC1AA67D4D2EC61B1 /* Pods-Supercoop.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop/Pods-Supercoop.debug.xcconfig"; sourceTree = "<group>"; };
+		DEEC54E1812B2E49CB33E17C /* libPods-Supercoop-SupercoopTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop-SupercoopTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC6084D92D1AE67FEC708337 /* libPods-Supercoop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FB09BC93229854830096FDF5 /* Supercoop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Supercoop.entitlements; path = Supercoop/Supercoop.entitlements; sourceTree = "<group>"; };
@@ -83,7 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				787071BBA8846428CDB3A52B /* libPods-SupercoopTests.a in Frameworks */,
+				826A0593CD846364FADF9E7D /* libPods-Supercoop-SupercoopTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,8 +160,8 @@
 				EC6084D92D1AE67FEC708337 /* libPods-Supercoop.a */,
 				3E5930C35A644072AED4C059 /* libPods-Supercoop-tvOS.a */,
 				52381E057261B3688ECAD37F /* libPods-Supercoop-tvOSTests.a */,
-				5C9B6FA1EA12B3064FA93CD6 /* libPods-SupercoopTests.a */,
 				60D0670CA31142E2B609FF43 /* libz.tbd */,
+				DEEC54E1812B2E49CB33E17C /* libPods-Supercoop-SupercoopTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -175,6 +177,8 @@
 				6E1C51E3DAE018ACA38BB7D7 /* Pods-Supercoop-tvOSTests.release.xcconfig */,
 				B64405A7BEF9C4D8CBAE4055 /* Pods-SupercoopTests.debug.xcconfig */,
 				60B52FF613863E535B85AF8C /* Pods-SupercoopTests.release.xcconfig */,
+				BD4667B585CA1F3750AE71C7 /* Pods-Supercoop-SupercoopTests.debug.xcconfig */,
+				940EA61E8F5862E71D8E715A /* Pods-Supercoop-SupercoopTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -224,6 +228,7 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				486DAC9DE71A236FE5FF56FA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -496,6 +501,56 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		486DAC9DE71A236FE5FF56FA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Supercoop-SupercoopTests/Pods-Supercoop-SupercoopTests-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Supercoop-SupercoopTests/Pods-Supercoop-SupercoopTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		6A3A537361A0AF8FC99FFF79 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -547,7 +602,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SupercoopTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Supercoop-SupercoopTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -662,7 +717,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B64405A7BEF9C4D8CBAE4055 /* Pods-SupercoopTests.debug.xcconfig */;
+			baseConfigurationReference = BD4667B585CA1F3750AE71C7 /* Pods-Supercoop-SupercoopTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = QPB8MBWLB4;
@@ -692,7 +747,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 60B52FF613863E535B85AF8C /* Pods-SupercoopTests.release.xcconfig */;
+			baseConfigurationReference = 940EA61E8F5862E71D8E715A /* Pods-Supercoop-SupercoopTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
