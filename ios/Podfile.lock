@@ -199,13 +199,13 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
   - React-jsinspector (0.62.2)
-  - react-native-camera (3.23.1):
+  - react-native-camera (3.31.0):
     - React
-    - react-native-camera/RCT (= 3.23.1)
-    - react-native-camera/RN (= 3.23.1)
-  - react-native-camera/RCT (3.23.1):
+    - react-native-camera/RCT (= 3.31.0)
+    - react-native-camera/RN (= 3.31.0)
+  - react-native-camera/RCT (3.31.0):
     - React
-  - react-native-camera/RN (3.23.1):
+  - react-native-camera/RN (3.31.0):
     - React
   - react-native-cookies (3.2.0):
     - React
@@ -276,24 +276,24 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
     - ReactCommon/callinvoker (= 0.62.2)
-  - ReactNativeNavigation (6.4.0):
+  - ReactNativeNavigation (6.9.0):
     - React
     - React-RCTImage
     - React-RCTText
-  - RNDateTimePicker (2.3.2):
+  - RNDateTimePicker (2.5.0):
     - React
-  - RNDeviceInfo (5.5.6):
+  - RNDeviceInfo (5.6.1):
     - React
   - RNFS (2.16.6):
     - React
-  - RNGoogleSignin (4.0.0):
+  - RNGoogleSignin (4.0.3):
     - GoogleSignIn (~> 5.0.0)
     - React
   - RNKeychain (5.0.1):
     - React
-  - RNSentry (1.4.5):
+  - RNSentry (1.6.0):
     - React
-    - Sentry (~> 5.1.4)
+    - Sentry (~> 5.1.6)
   - RNSound (0.11.0):
     - React
     - RNSound/Core (= 0.11.0)
@@ -301,13 +301,13 @@ PODS:
     - React
   - RNSVG (12.1.0):
     - React
-  - RNVectorIcons (6.6.0):
+  - RNVectorIcons (7.0.0):
     - React
-  - RNZipArchive (5.0.2):
+  - RNZipArchive (5.0.3):
     - React
-    - RNZipArchive/Core (= 5.0.2)
+    - RNZipArchive/Core (= 5.0.3)
     - SSZipArchive (= 2.2.2)
-  - RNZipArchive/Core (5.0.2):
+  - RNZipArchive/Core (5.0.3):
     - React
     - SSZipArchive (= 2.2.2)
   - Sentry (5.1.7):
@@ -479,7 +479,7 @@ SPEC CHECKSUMS:
   React-jsi: b6dc94a6a12ff98e8877287a0b7620d365201161
   React-jsiexecutor: 1540d1c01bb493ae3124ed83351b1b6a155db7da
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
-  react-native-camera: 1b52abea404d04e040edb3e74b7c5523c01a3089
+  react-native-camera: b5c8c7a71feecfdd5b39f0dbbf6b64b957ed55f2
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-image-picker: 6a850c41f57f0848d918c2a77aedd7aa272ffa30
   react-native-keep-awake: 4f10247f33d1c653603f70754a498f635f114b02
@@ -495,21 +495,21 @@ SPEC CHECKSUMS:
   React-RCTText: fae545b10cfdb3d247c36c56f61a94cfd6dba41d
   React-RCTVibration: 4356114dbcba4ce66991096e51a66e61eda51256
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
-  ReactNativeNavigation: 667586f6924fbd09512e2933fe70497db914b758
-  RNDateTimePicker: 4bd49e09f91ca73d69119a9e1173b0d43b82f5e5
-  RNDeviceInfo: 722dc13c269b9dbf305aa4b790d36731602e99b7
+  ReactNativeNavigation: 38441fc9711ea6df07e4c30c642fb4c29fecc4c5
+  RNDateTimePicker: a8000390e7a4fe23d9f36492ded9282640721c82
+  RNDeviceInfo: b6e650fbd234732c759544218657d549b4339038
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
-  RNGoogleSignin: 068788c1e83e5e05ef0bad090ba67fd8f963a2a3
+  RNGoogleSignin: ccf71ee4b6cfd324fd788a41e457e2043838c0d9
   RNKeychain: a5623de13ec5378bfb8035422e3dee4fa538660d
-  RNSentry: 0a70359ddacbfb9b1cbbb0971e54065b9f70ac57
+  RNSentry: 888dd890845f27e5c4cd71ac0178f1028b6815c7
   RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
-  RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
-  RNZipArchive: ab51bc004a31657f34010254a9182014c6a81217
+  RNVectorIcons: da6fe858f5a65d7bbc3379540a889b0b12aa5976
+  RNZipArchive: 6b7d8d2c30114467dcfbfb27552f4be1499e9613
   Sentry: f16ff9ed0d862a9f1dc75aa030a08a76f8b50730
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
 
-PODFILE CHECKSUM: 9165674a2dbf1f952e4ad6e917ccb0aaadcff9cc
+PODFILE CHECKSUM: 983afb3a7ec798e03d2c1725c5a75046d087c481
 
 COCOAPODS: 1.9.3

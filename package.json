@@ -54,12 +54,13 @@
         "react-native-sound": "^0.11.0",
         "react-native-sqlite-storage": "^4.1.0",
         "react-native-svg": "^12.0.3",
-        "react-native-vector-icons": "^6.6.0",
+        "react-native-vector-icons": "^7.0.0",
         "react-native-webview": "^8.1.2",
         "react-native-zip-archive": "^5.0.0",
         "reflect-metadata": "^0.1.13",
         "sha.js": "^2.4.11",
-        "typeorm": "^0.2.19"
+        "typeorm": "^0.2.19",
+        "url": "^0.11.0"
     },
     "devDependencies": {
         "@babel/core": "^7.6.2",
@@ -70,7 +71,7 @@
         "@types/node": "^13.9.1",
         "@types/papaparse": "^5.0.2",
         "@types/react": "^16.8.13",
-        "@types/react-native": "^0.61.21",
+        "@types/react-native": "^0.62.17",
         "@types/react-native-sqlite-storage": "^3.3.1",
         "@types/react-native-vector-icons": "^6.4.0",
         "@typescript-eslint/eslint-plugin": "^2.11.0",
