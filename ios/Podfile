@@ -107,12 +107,3 @@ target 'Supercoop' do
   #   flipper_post_install(installer)
   # end
 end
-
-target 'Supercoop-tvOS' do
-  # Pods for Supercoop-tvOS
-
-  target 'Supercoop-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end
