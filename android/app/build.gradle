@@ -143,7 +143,7 @@ android {
         versionCode 32
         versionName "1.2.1"
         missingDimensionStrategy 'react-native-camera', 'general'
-        missingDimensionStrategy 'RNN.reactNativeVersion', 'reactNative60'
+        missingDimensionStrategy 'RNN.reactNativeVersion', 'reactNative62'
         multiDexEnabled true
     }
     splits {
