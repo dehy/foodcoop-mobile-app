@@ -32,15 +32,18 @@
 //  InitializeFlipper(application);
 //#endif
 
-  NSURL *jsCodeLocation;
-  #if DEBUG
-    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-  #else
-    jsCodeLocation=  [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-  #endif
-  [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
+  [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
 
   return YES;
+}
+
+-(NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+  #if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #endif
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
