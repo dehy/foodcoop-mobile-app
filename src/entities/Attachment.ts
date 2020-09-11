@@ -24,6 +24,6 @@ export default class Attachment {
     public goodsReceiptSession?: GoodsReceiptSession;
 
     public filepath(): string {
-        return RNFS.DocumentDirectoryPath + this.path;
+        return RNFS.DocumentDirectoryPath + '/' + this.path;
     }
 }
