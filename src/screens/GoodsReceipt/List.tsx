@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, SafeAreaView, SectionList, EmitterSubscription, ScrollView, Platform, Alert } from 'react-native';
+import { View, Text, SafeAreaView, SectionList, EmitterSubscription, Platform, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import { getConnection } from 'typeorm';
 import GoodsReceiptService from '../../services/GoodsReceiptService';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
@@ -26,6 +25,7 @@ interface GoodsReceiptListState {
     goodsReceiptsData: GoodsReceiptSessionsData[];
     todaysGoodsReceipts: PurchaseOrder[];
     showHidden: boolean;
+    refreshing: boolean;
 }
 
 interface GoodsReceiptSessionTapProps {
@@ -52,6 +52,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
             goodsReceiptsData: [],
             todaysGoodsReceipts: [],
             showHidden: false,
+            refreshing: true,
         };
     }
 
@@ -140,9 +141,21 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                 //console.log(goodsReceiptSessionsData);
                 this.setState({
                     goodsReceiptsData: goodsReceiptSessionsData,
+                    refreshing: false,
                 });
             });
     }
+
+    _handleRefresh = (): void => {
+        this.setState(
+            {
+                refreshing: true,
+            },
+            () => {
+                this.loadData();
+            },
+        );
+    };
 
     renderHideIcon(): void {
         const showHidden = this.state.showHidden;
@@ -284,19 +297,10 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                                         {
                                             text: 'Oui, supprimer',
                                             onPress: (): void => {
-                                                const goodsReceiptEntryRepository = getConnection().getRepository(
-                                                    GoodsReceiptEntry,
-                                                );
-                                                goodsReceiptEntryRepository
-                                                    .find({
-                                                        goodsReceiptSession: item,
-                                                    })
-                                                    .then(entries => {
-                                                        goodsReceiptEntryRepository.remove(entries).then(() => {
-                                                            goodsReceiptSessionRepository.remove(item).then(() => {
-                                                                this.loadData();
-                                                            });
-                                                        });
+                                                GoodsReceiptService.getInstance()
+                                                    .deleteSession(item)
+                                                    .then(() => {
+                                                        this.loadData();
                                                     });
                                             },
                                         },
@@ -317,29 +321,36 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         );
     };
 
+    renderHeader = (): React.ReactElement => {
+        return (
+            <View>
+                {this.renderTodaysGoodsReceipts()}
+                {this.renderHiddenMessage()}
+            </View>
+        );
+    };
+
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView style={{ height: '100%' }}>
-                    <ScrollView>
-                        {this.renderTodaysGoodsReceipts()}
-                        {this.renderHiddenMessage()}
-                        <SectionList
-                            scrollEnabled={false}
-                            style={{ backgroundColor: 'white', height: '100%' }}
-                            sections={this.state.goodsReceiptsData}
-                            keyExtractor={(item): string => {
-                                if (item.id && item.id.toString()) {
-                                    return item.id.toString();
-                                }
-                                return '';
-                            }}
-                            renderSectionHeader={({ section: { title } }): React.ReactElement => (
-                                <Text style={styles.listHeader}>{title}</Text>
-                            )}
-                            renderItem={this.renderItem}
-                        />
-                    </ScrollView>
+                    <SectionList
+                        style={{ backgroundColor: 'white', height: '100%' }}
+                        sections={this.state.goodsReceiptsData}
+                        keyExtractor={(item): string => {
+                            if (item.id && item.id.toString()) {
+                                return item.id.toString();
+                            }
+                            return '';
+                        }}
+                        renderSectionHeader={({ section: { title } }): React.ReactElement => (
+                            <Text style={styles.listHeader}>{title}</Text>
+                        )}
+                        renderItem={this.renderItem}
+                        ListHeaderComponent={this.renderHeader}
+                        onRefresh={this._handleRefresh}
+                        refreshing={this.state.refreshing}
+                    />
                 </SafeAreaView>
             </ThemeProvider>
         );

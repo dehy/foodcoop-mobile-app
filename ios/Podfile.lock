@@ -1,9 +1,9 @@
 PODS:
-  - AppAuth (1.3.0):
-    - AppAuth/Core (= 1.3.0)
-    - AppAuth/ExternalUserAgent (= 1.3.0)
-  - AppAuth/Core (1.3.0)
-  - AppAuth/ExternalUserAgent (1.3.0)
+  - AppAuth (1.4.0):
+    - AppAuth/Core (= 1.4.0)
+    - AppAuth/ExternalUserAgent (= 1.4.0)
+  - AppAuth/Core (1.4.0)
+  - AppAuth/ExternalUserAgent (1.4.0)
   - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.61.5)
@@ -209,6 +209,8 @@ PODS:
     - React
   - react-native-cookies (3.2.0):
     - React
+  - react-native-image-picker (2.3.1):
+    - React
   - react-native-keep-awake (1.0.3):
     - React
   - react-native-sqlite-storage (4.1.0):
@@ -265,9 +267,9 @@ PODS:
     - React
   - RNKeychain (5.0.1):
     - React
-  - RNSentry (1.3.7):
+  - RNSentry (1.4.5):
     - React
-    - Sentry (~> 4.4.0)
+    - Sentry (~> 5.1.4)
   - RNSound (0.11.0):
     - React
     - RNSound/Core (= 0.11.0)
@@ -284,9 +286,9 @@ PODS:
   - RNZipArchive/Core (5.0.2):
     - React
     - SSZipArchive (= 2.2.2)
-  - Sentry (4.4.3):
-    - Sentry/Core (= 4.4.3)
-  - Sentry/Core (4.4.3)
+  - Sentry (5.1.6):
+    - Sentry/Core (= 5.1.6)
+  - Sentry/Core (5.1.6)
   - SSZipArchive (2.2.2)
   - Yoga (1.14.0)
 
@@ -309,6 +311,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-keep-awake (from `../node_modules/@sayem314/react-native-keep-awake`)"
   - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -379,6 +382,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-cookies:
     :path: "../node_modules/react-native-cookies/ios"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-keep-awake:
     :path: "../node_modules/@sayem314/react-native-keep-awake"
   react-native-sqlite-storage:
@@ -431,7 +436,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
+  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
@@ -452,6 +457,7 @@ SPEC CHECKSUMS:
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-camera: 1b52abea404d04e040edb3e74b7c5523c01a3089
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
+  react-native-image-picker: 6a850c41f57f0848d918c2a77aedd7aa272ffa30
   react-native-keep-awake: 4f10247f33d1c653603f70754a498f635f114b02
   react-native-sqlite-storage: f06bfba10f67f989c00b6a699b9c2b80a816edbe
   react-native-webview: 160ac8d6bb974e2933f2de6bb7464a8e934ff31d
@@ -471,15 +477,15 @@ SPEC CHECKSUMS:
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGoogleSignin: 068788c1e83e5e05ef0bad090ba67fd8f963a2a3
   RNKeychain: a5623de13ec5378bfb8035422e3dee4fa538660d
-  RNSentry: 370623102247ebea20191b5fb549ecc7a275b324
+  RNSentry: 0a70359ddacbfb9b1cbbb0971e54065b9f70ac57
   RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNZipArchive: ab51bc004a31657f34010254a9182014c6a81217
-  Sentry: 14bdd673870e8cf64932b149fad5bbbf39a9b390
+  Sentry: e5796ec31a481474d2f94553213278470f9e302d
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: 3aa8d26553b747a97f55fd260724f6c0e950d83a
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3
