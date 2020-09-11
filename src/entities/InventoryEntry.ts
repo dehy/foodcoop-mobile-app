@@ -19,8 +19,8 @@ export default class InventoryEntry {
         const newEntry: InventoryEntry = new InventoryEntry();
         newEntry.articleBarcode = product.barcode;
         newEntry.articleName = product.name;
-        newEntry.articleUnit = product.uom_id;
-        newEntry.articlePrice = product.lst_price;
+        newEntry.articleUnit = product.uomId;
+        newEntry.articlePrice = product.lstPrice;
         return newEntry;
     }
 
