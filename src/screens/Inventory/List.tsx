@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, FlatList, ScrollView } from 'react-native';
+import { EmitterSubscription, View, SafeAreaView, FlatList } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
@@ -14,6 +14,7 @@ export interface InventoryListProps {
 
 interface InventoryListState {
     inventoriesData: InventorySessionListItem[];
+    refreshing: boolean;
 }
 
 interface InventorySessionListItem {
@@ -47,6 +48,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
         Navigation.events().bindComponent(this);
         this.state = {
             inventoriesData: [],
+            refreshing: true,
         };
     }
 
@@ -110,11 +112,23 @@ export default class InventoryList extends React.Component<InventoryListProps, I
 
                 this.setState({
                     inventoriesData: inventoriesData,
+                    refreshing: false,
                 });
             });
     }
 
-    openNewInventoryModal(): void {
+    _handleRefresh = (): void => {
+        this.setState(
+            {
+                refreshing: true,
+            },
+            () => {
+                this.loadData();
+            },
+        );
+    };
+
+    openNewInventoryModal = (): void => {
         Navigation.showModal({
             stack: {
                 children: [
@@ -126,10 +140,9 @@ export default class InventoryList extends React.Component<InventoryListProps, I
                 ],
             },
         });
-    }
+    };
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
-        // will be called when "buttonOne" is clicked
         if (buttonId === 'inventory-new') {
             this.openNewInventoryModal();
         }
@@ -146,39 +159,47 @@ export default class InventoryList extends React.Component<InventoryListProps, I
         });
     };
 
+    renderHeader = (): React.ReactElement => {
+        return (
+            <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
+                <Button
+                    title=" Nouvel inventaire"
+                    icon={<Icon name="plus-circle" color="white" />}
+                    onPress={(): void => {
+                        this.openNewInventoryModal();
+                    }}
+                />
+            </View>
+        );
+    };
+
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView>
-                    <ScrollView style={{ height: '100%' }}>
-                        <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
-                            <Button
-                                title=" Nouvel inventaire"
-                                icon={<Icon name="plus-circle" color="white" />}
-                                onPress={this.openNewInventoryModal}
+                    <FlatList
+                        style={{ backgroundColor: 'white', height: '100%' }}
+                        data={this.state.inventoriesData}
+                        renderItem={({ item }): React.ReactElement => (
+                            <ListItem
+                                onPress={(): void => {
+                                    const inventorySessionTapProps: InventorySessionTapProps = {
+                                        componentId: this.props.componentId,
+                                        item: item,
+                                    };
+                                    this.didTapInventoryEntry(inventorySessionTapProps);
+                                }}
+                                title={item.title}
+                                subtitle={item.subtitle}
+                                rightTitle={item.detailText}
+                                bottomDivider
+                                chevron
                             />
-                        </View>
-                        <FlatList
-                            style={{ backgroundColor: 'white' }}
-                            data={this.state.inventoriesData}
-                            renderItem={({ item }): React.ReactElement => (
-                                <ListItem
-                                    onPress={(): void => {
-                                        const inventorySessionTapProps: InventorySessionTapProps = {
-                                            componentId: this.props.componentId,
-                                            item: item,
-                                        };
-                                        this.didTapInventoryEntry(inventorySessionTapProps);
-                                    }}
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    rightTitle={item.detailText}
-                                    bottomDivider
-                                    chevron
-                                />
-                            )}
-                        />
-                    </ScrollView>
+                        )}
+                        ListHeaderComponent={this.renderHeader}
+                        onRefresh={this._handleRefresh}
+                        refreshing={this.state.refreshing}
+                    />
                 </SafeAreaView>
             </ThemeProvider>
         );

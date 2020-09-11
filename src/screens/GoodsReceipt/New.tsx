@@ -23,12 +23,20 @@ interface PurchaseOrderList {
 interface GoodsReceiptNewState {
     waitingPurchaseOrders: PurchaseOrderList[];
     showLoadingModal: boolean;
+    page: number;
+    loading: boolean;
+    loadingMore: boolean;
+    refreshing: boolean;
 }
 
 export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProps, GoodsReceiptNewState> {
     state: GoodsReceiptNewState = {
         waitingPurchaseOrders: [],
         showLoadingModal: false,
+        page: 1,
+        loading: true,
+        loadingMore: false,
+        refreshing: true,
     };
 
     constructor(props: GoodsReceiptNewProps) {
@@ -54,9 +62,33 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
         this.loadPurchaseOrdersFromOdoo();
     }
 
+    _handleLoadMore = (): void => {
+        this.setState(
+            prevState => ({
+                page: prevState.page + 1,
+                loadingMore: true,
+            }),
+            () => {
+                this.loadPurchaseOrdersFromOdoo();
+            },
+        );
+    };
+
+    _handleRefresh = () => {
+        this.setState(
+            {
+                page: 1,
+                refreshing: true,
+            },
+            () => {
+                this.loadPurchaseOrdersFromOdoo();
+            },
+        );
+    };
+
     loadPurchaseOrdersFromOdoo(): void {
         Odoo.getInstance()
-            .fetchWaitingPurchaseOrders()
+            .fetchWaitingPurchaseOrders(this.state.page)
             .then(purchaseOrders => {
                 const purchaseOrderList: PurchaseOrderList[] = [];
                 let previousTitle: string;
@@ -76,7 +108,12 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                     data.push(po);
                 });
                 this.setState({
-                    waitingPurchaseOrders: purchaseOrderList,
+                    waitingPurchaseOrders:
+                        this.state.page === 1
+                            ? purchaseOrderList
+                            : [...this.state.waitingPurchaseOrders, ...purchaseOrderList],
+                    loading: false,
+                    refreshing: false,
                 });
             });
     }
@@ -114,8 +151,8 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                             goodsReceiptEntry.goodsReceiptSession = session;
                             goodsReceiptEntry.name = poLine.name;
                             goodsReceiptEntry.productId = poLine.productId;
-                            goodsReceiptEntry.packageQty = poLine.packageQty;
-                            goodsReceiptEntry.productQtyPackage = poLine.productQtyPackage;
+                            goodsReceiptEntry.expectedPackageQty = poLine.packageQty;
+                            goodsReceiptEntry.expectedProductQtyPackage = poLine.productQtyPackage;
                             goodsReceiptEntry.expectedProductQty = poLine.productQty;
                             goodsReceiptEntry.expectedProductUom = poLine.productUom;
 
@@ -138,14 +175,14 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
 
                                 Odoo.getInstance()
                                     .fetchProductSupplierInfoFromProductTemplateIds(
-                                        products.map(p => (p.template_id ? p.template_id : 0)),
+                                        products.map(p => (p.templateId ? p.templateId : 0)),
                                         goodsReceiptSession.partnerId!,
                                     )
                                     .then(res => {
                                         if (res) {
                                             products.forEach(product => {
                                                 goodsReceiptEntries[product.id!].productSupplierCode =
-                                                    res[product.template_id!];
+                                                    res[product.templateId!];
                                             });
                                         }
                                         getRepository(GoodsReceiptEntry)
@@ -186,6 +223,16 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
         return;
     }
 
+    _renderFooter = (): React.ReactElement | null => {
+        if (!this.state.loadingMore) return null;
+
+        return (
+            <View style={{ padding: 8 }}>
+                <ActivityIndicator animating size="large" />
+            </View>
+        );
+    };
+
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{ padding: 16 }}>
@@ -222,6 +269,12 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                             </View>
                         </TouchableHighlight>
                     )}
+                    onEndReached={this._handleLoadMore}
+                    onEndReachedThreshold={0.5}
+                    initialNumToRender={10}
+                    onRefresh={this._handleRefresh}
+                    refreshing={this.state.refreshing}
+                    ListFooterComponent={this._renderFooter}
                 />
                 {this.renderLoadingModal()}
             </SafeAreaView>

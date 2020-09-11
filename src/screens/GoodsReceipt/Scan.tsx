@@ -50,6 +50,8 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     scanner?: Scanner2;
     receivedQuantityInput?: TextInput;
+    receivedPackageQtyInput?: TextInput;
+    receivedProductQtyPackageInput?: TextInput;
 
     state: GoodsReceiptScanState = {
         product: undefined,
@@ -161,6 +163,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             const goodsReceiptEntry = this.state.goodsReceiptEntry;
             goodsReceiptEntry.productQty = this.state.goodsReceiptEntry.expectedProductQty;
             goodsReceiptEntry.productUom = this.state.goodsReceiptEntry.expectedProductUom;
+            goodsReceiptEntry.packageQty = this.state.goodsReceiptEntry.expectedPackageQty;
+            goodsReceiptEntry.productQtyPackage = this.state.goodsReceiptEntry.expectedProductQtyPackage;
+
             getRepository(GoodsReceiptEntry)
                 .save(goodsReceiptEntry)
                 .then(() => {
@@ -183,6 +188,8 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         if (goodsReceiptEntry) {
             goodsReceiptEntry.productUom = goodsReceiptEntry?.expectedProductUom;
             goodsReceiptEntry.productQty = undefined;
+            goodsReceiptEntry.packageQty = undefined;
+            goodsReceiptEntry.productQtyPackage = undefined;
         }
         this.setState({
             isValid: false,
@@ -237,6 +244,16 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             Alert.alert('La quantité ne peut être inférieur à 0 !');
             return false;
         }
+        const packageQty = goodsReceiptEntry.packageQty;
+        if (packageQty == undefined || packageQty < 0) {
+            Alert.alert('Le nombre de colis ne peut être inférieur à 0 !');
+            return false;
+        }
+        const productQtypackage = goodsReceiptEntry.productQtyPackage;
+        if (productQtypackage == undefined || productQtypackage < 0) {
+            Alert.alert('Le nombre de produits par colis ne peut être inférieur à 0 !');
+            return false;
+        }
         const productUom = goodsReceiptEntry.productUom;
         const unitOfMesurements = [UnitOfMesurement.unit, UnitOfMesurement.kg, UnitOfMesurement.litre];
         if (productUom == undefined || !unitOfMesurements.includes(productUom)) {
@@ -284,6 +301,70 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         }
                         onPress={(): void => {
                             this.receivedQuantityInput?.focus();
+                        }}
+                        bottomDivider
+                    />
+                    <ListItem
+                        title="Nombre de colis reçu"
+                        rightElement={
+                            <TextInput
+                                onChangeText={(receivedPackageQtyStr: string): void => {
+                                    let receivedPackageQty: number | undefined;
+                                    receivedPackageQty = toNumber(receivedPackageQtyStr);
+                                    console.log(receivedPackageQty);
+                                    if (isNaN(receivedPackageQty)) {
+                                        receivedPackageQty = undefined;
+                                    }
+                                    AppLogger.getLogger().debug(
+                                        `New receivedQty: '${receivedPackageQtyStr}' => ${receivedPackageQty}`,
+                                    );
+                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                    if (goodsReceiptEntry) {
+                                        goodsReceiptEntry.packageQty = receivedPackageQty;
+                                        this.setState({ goodsReceiptEntry });
+                                    }
+                                }}
+                                placeholder="Inconnue"
+                                keyboardType="decimal-pad"
+                                ref={(input: TextInput): void => {
+                                    this.receivedPackageQtyInput = input;
+                                }}
+                            />
+                        }
+                        onPress={(): void => {
+                            this.receivedPackageQtyInput?.focus();
+                        }}
+                        bottomDivider
+                    />
+                    <ListItem
+                        title="Nombre d'articles par colis"
+                        rightElement={
+                            <TextInput
+                                onChangeText={(receivedProductQtyPackageStr: string): void => {
+                                    let receivedProductQtyPackage: number | undefined;
+                                    receivedProductQtyPackage = toNumber(receivedProductQtyPackageStr);
+                                    console.log(receivedProductQtyPackage);
+                                    if (isNaN(receivedProductQtyPackage)) {
+                                        receivedProductQtyPackage = undefined;
+                                    }
+                                    AppLogger.getLogger().debug(
+                                        `New receivedQty: '${receivedProductQtyPackageStr}' => ${receivedProductQtyPackage}`,
+                                    );
+                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                    if (goodsReceiptEntry) {
+                                        goodsReceiptEntry.productQtyPackage = receivedProductQtyPackage;
+                                        this.setState({ goodsReceiptEntry });
+                                    }
+                                }}
+                                placeholder="Inconnue"
+                                keyboardType="decimal-pad"
+                                ref={(input: TextInput): void => {
+                                    this.receivedProductQtyPackageInput = input;
+                                }}
+                            />
+                        }
+                        onPress={(): void => {
+                            this.receivedProductQtyPackageInput?.focus();
                         }}
                         bottomDivider
                     />
@@ -350,16 +431,20 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     renderEntry(): React.ReactNode {
         return (
-            <KeyboardAwareScrollView style={{ height: '100%' }}>
+            <KeyboardAwareScrollView style={{ height: '100%' }} keyboardShouldPersistTaps="always">
                 <Image source={{ uri: this.state.product && this.state.product.image }} />
                 <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
                 </Text>
-                <Text style={{ fontSize: 45, margin: 5, textAlign: 'center' }}>
+                <Text style={{ fontSize: 45, marginTop: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && displayNumber(this.state.goodsReceiptEntry.expectedProductQty)}{' '}
                     {ProductProduct.quantityUnitAsString(
                         this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductUom,
                     )}
+                </Text>
+                <Text style={{ fontSize: 25, marginBottom: 5, textAlign: 'center' }}>
+                    en {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedPackageQty} colis de{' '}
+                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQtyPackage} article(s)
                 </Text>
                 <View
                     style={{
