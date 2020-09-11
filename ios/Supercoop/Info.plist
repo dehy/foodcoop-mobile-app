@@ -56,6 +56,8 @@
 	<string>Nous n'utilisons pas votre localisation. Ce message n'est pas censé apparaitre.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nous avons besoin d'accéder au micro pour pouvoir afficher la caméra. Me demandez pas pourquoi, je ne sais pas non plus.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Nous pouvons avoir besoin de lire vos photos pour attacher une photo à un rapport de réception de livraison</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FontAwesome5_Brands.ttf</string>
