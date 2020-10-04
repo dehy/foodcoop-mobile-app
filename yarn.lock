@@ -1317,6 +1317,11 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
 
+"@types/react-native-datawedge-intents@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-datawedge-intents/-/react-native-datawedge-intents-0.1.0.tgz#7291bf285a9d352a8d52b9fa4fc5f1a4596e6897"
+  integrity sha512-0ywaPjiJQCrrLvZkmNvWB0Da3lU4tJfJ2R9re80CjRG9IOFb/Zo6elwkG/vC7WuUIBs61wvzlxI2gcyUZ0+/7g==
+
 "@types/react-native-dialog@^5.6.1":
   version "5.6.2"
   resolved "https://registry.yarnpkg.com/@types/react-native-dialog/-/react-native-dialog-5.6.2.tgz#a519e1f24d4e24a566fe9ce6e5cb133c25414211"
@@ -6514,6 +6519,11 @@ react-native-cookies@^3.3.0:
   integrity sha512-GobKo8Kvyuif6ROj6rDAjQJpCSLazcZl6AgZb1z7ldB9FrMtetQzXvIehS0QcwbpnXWyJzXJaY0yrlDjFz+NaA==
   dependencies:
     invariant "^2.1.0"
+
+react-native-datawedge-intents@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-datawedge-intents/-/react-native-datawedge-intents-0.1.2.tgz#3dc9733b9ed011ab8c336f6d8516b7162950dde1"
+  integrity sha512-tNFfSD4sbkmtLBcSpdTnUYU72Tl1+oRBeZOJJ+d+81x8THidQ4Xyu8u0HqyH22ar4F1zQOTABeUFQb822RY4PQ==
 
 react-native-device-info@^5.3.1:
   version "5.6.1"
