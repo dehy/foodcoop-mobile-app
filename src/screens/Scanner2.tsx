@@ -1,6 +1,15 @@
 /* eslint-disable no-console */
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, GestureResponderEvent, Platform, Vibration } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Dimensions,
+    GestureResponderEvent,
+    Platform,
+    Vibration,
+    DeviceEventEmitter,
+} from 'react-native';
 import DialogInput from 'react-native-dialog-input';
 import {
     RNCamera,
@@ -21,6 +30,8 @@ import BarcodeMask from 'react-native-barcode-mask';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Sound from 'react-native-sound';
 import KeepAwake from '@sayem314/react-native-keep-awake';
+import DataWedgeIntents from 'react-native-datawedge-intents';
+import { deviceId } from '../utils/helpers';
 
 // const flashModeOrder: { [key: string]: keyof FlashMode } = {
 //     off: RNCamera.Constants.FlashMode.on,
@@ -94,7 +105,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 0,
-        backgroundColor: '#000',
     },
     actions: {
         position: 'absolute',
@@ -191,6 +201,11 @@ const styles = StyleSheet.create({
 export default class Scanner2 extends React.Component<Scanner2Props, Scanner2State> {
     private camera: RNCamera | null = null;
     private beepSound: Sound;
+    private scannerMode: 'legacyCamera' | 'dataWedge';
+    /* DataWedge */
+    private sendCommandResult: 'true' | 'false' = 'false';
+    private broadcastReceiverHandler?: (intent: any) => void;
+    /* End DataWedge */
 
     state: Scanner2State = {
         flash: RNCamera.Constants.FlashMode.off,
@@ -228,6 +243,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     constructor(props: Scanner2Props) {
         super(props);
         this.state.canDetectBarcode = true;
+        this.scannerMode = 'legacyCamera';
 
         // Sound
         Sound.setCategory('Ambient', true);
@@ -238,6 +254,228 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             }
         });
         this.beepSound.stop();
+
+        /* DataWedge */
+        if ('MC40' == deviceId) {
+            this.scannerMode = 'dataWedge';
+            this.sendCommandResult = 'false';
+            this.broadcastReceiverHandler = (intent): void => {
+                this.broadcastReceiver(intent);
+            };
+            DeviceEventEmitter.addListener('datawedge_broadcast_intent', this.broadcastReceiverHandler);
+            this.registerBroadcastReceiver();
+            this.determineVersion();
+        }
+        /* End DataWedge */
+    }
+
+    /* DataWedge */
+    determineVersion(): void {
+        this.sendCommand('com.symbol.datawedge.api.GET_VERSION_INFO', '');
+    }
+
+    sendCommand(extraName: string, extraValue: any): void {
+        console.log('Sending Command: ' + extraName + ', ' + JSON.stringify(extraValue));
+        const broadcastExtras: { [x: string]: string } = {};
+        broadcastExtras[extraName] = extraValue;
+        broadcastExtras['SEND_RESULT'] = this.sendCommandResult;
+        DataWedgeIntents.sendBroadcastWithExtras({
+            action: 'com.symbol.datawedge.api.ACTION',
+            extras: broadcastExtras,
+        });
+    }
+
+    registerBroadcastReceiver(): void {
+        DataWedgeIntents.registerBroadcastReceiver({
+            filterActions: ['fr.supercoop.app_android.ACTION', 'com.symbol.datawedge.api.RESULT_ACTION'],
+            filterCategories: ['android.intent.category.DEFAULT'],
+        });
+    }
+
+    broadcastReceiver(intent: { [x: string]: string }): void {
+        //  Broadcast received
+        console.log('Received Intent: ' + JSON.stringify(intent));
+        if (intent.hasOwnProperty('RESULT_INFO')) {
+            const commandResult =
+                intent.RESULT +
+                ' (' +
+                intent.COMMAND.substring(intent.COMMAND.lastIndexOf('.') + 1, intent.COMMAND.length) +
+                ')'; // + JSON.stringify(intent.RESULT_INFO);
+            this.commandReceived(commandResult.toLowerCase());
+        }
+
+        if (intent.hasOwnProperty('com.symbol.datawedge.api.RESULT_GET_VERSION_INFO')) {
+            //  The version has been returned (DW 6.3 or higher).  Includes the DW version along with other subsystem versions e.g MX
+            const versionInfo: any = intent['com.symbol.datawedge.api.RESULT_GET_VERSION_INFO'];
+            console.log('Version Info: ' + JSON.stringify(versionInfo));
+            const datawedgeVersion = versionInfo['DATAWEDGE'];
+            console.log('Datawedge version: ' + datawedgeVersion);
+
+            //  Fire events sequentially so the application can gracefully degrade the functionality available on earlier DW versions
+            if (datawedgeVersion >= '6.3') this.datawedge63();
+            if (datawedgeVersion >= '6.4') this.datawedge64();
+            if (datawedgeVersion >= '6.5') this.datawedge65();
+
+            //this.setState(this.state);
+        } else if (intent.hasOwnProperty('com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS')) {
+            //  Return from our request to enumerate the available scanners
+            const enumeratedScannersObj = intent['com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS'];
+            this.enumerateScanners(enumeratedScannersObj);
+        } else if (intent.hasOwnProperty('com.symbol.datawedge.api.RESULT_GET_ACTIVE_PROFILE')) {
+            //  Return from our request to obtain the active profile
+            const activeProfileObj = intent['com.symbol.datawedge.api.RESULT_GET_ACTIVE_PROFILE'];
+            this.activeProfile(activeProfileObj);
+        } else if (!intent.hasOwnProperty('RESULT_INFO')) {
+            //  A barcode has been scanned
+            this.dataWedgeBarcodeScanned(intent, new Date().toLocaleString());
+        }
+    }
+
+    datawedge63(): void {
+        console.log('Datawedge 6.3 APIs are available');
+        //  Create a profile for our application
+        this.sendCommand('com.symbol.datawedge.api.CREATE_PROFILE', 'Supercoop');
+
+        //this.state.dwVersionText = '6.3.  Please configure profile manually.  See ReadMe for more details.';
+
+        //  Although we created the profile we can only configure it with DW 6.4.
+        this.sendCommand('com.symbol.datawedge.api.GET_ACTIVE_PROFILE', '');
+
+        //  Enumerate the available scanners on the device
+        this.sendCommand('com.symbol.datawedge.api.ENUMERATE_SCANNERS', '');
+
+        //  Functionality of the scan button is available
+        //this.state.scanButtonVisible = true;
+    }
+
+    datawedge64(): void {
+        console.log('Datawedge 6.4 APIs are available');
+
+        //  Documentation states the ability to set a profile config is only available from DW 6.4.
+        //  For our purposes, this includes setting the decoders and configuring the associated app / output params of the profile.
+        //this.state.dwVersionText = '6.4.';
+        //this.state.dwVersionTextStyle = styles.itemText;
+        //document.getElementById('info_datawedgeVersion').classList.remove("attention");
+
+        //  Decoders are now available
+        //this.state.checkBoxesDisabled = false;
+
+        //  Configure the created profile (associated app and keyboard plugin)
+        const profileConfig = {
+            PROFILE_NAME: 'Supercoop',
+            PROFILE_ENABLED: 'true',
+            CONFIG_MODE: 'UPDATE',
+            PLUGIN_CONFIG: {
+                PLUGIN_NAME: 'BARCODE',
+                RESET_CONFIG: 'true',
+                PARAM_LIST: {},
+            },
+            APP_LIST: [
+                {
+                    PACKAGE_NAME: 'fr.supercoop.app_android',
+                    ACTIVITY_LIST: ['fr.supercoop.app_android.MainActivity'],
+                },
+            ],
+        };
+        this.sendCommand('com.symbol.datawedge.api.SET_CONFIG', profileConfig);
+
+        //  Configure the created profile (intent plugin)
+        const profileConfig2 = {
+            PROFILE_NAME: 'Supercoop',
+            PROFILE_ENABLED: 'true',
+            CONFIG_MODE: 'UPDATE',
+            PLUGIN_CONFIG: {
+                PLUGIN_NAME: 'INTENT',
+                RESET_CONFIG: 'true',
+                PARAM_LIST: {
+                    // eslint-disable-next-line @typescript-eslint/camelcase
+                    intent_output_enabled: 'true',
+                    // eslint-disable-next-line @typescript-eslint/camelcase
+                    intent_action: 'fr.supercoop.app_android.ACTION',
+                    // eslint-disable-next-line @typescript-eslint/camelcase
+                    intent_delivery: '2',
+                },
+            },
+        };
+        this.sendCommand('com.symbol.datawedge.api.SET_CONFIG', profileConfig2);
+
+        //  Give some time for the profile to settle then query its value
+        setTimeout(() => {
+            this.sendCommand('com.symbol.datawedge.api.GET_ACTIVE_PROFILE', '');
+        }, 1000);
+    }
+
+    datawedge65(): void {
+        console.log('Datawedge 6.5 APIs are available');
+
+        //this.state.dwVersionText = '6.5 or higher.';
+
+        //  Instruct the API to send
+        this.sendCommandResult = 'true';
+        //this.state.lastApiVisible = true;
+    }
+
+    commandReceived(commandText: string): void {
+        //this.state.lastApiText = commandText;
+        console.log('lastApiText: ' + commandText);
+        //this.setState(this.state);
+    }
+
+    enumerateScanners(enumeratedScanners: any): void {
+        console.log(enumeratedScanners);
+        let humanReadableScannerList = '';
+        for (let i = 0; i < enumeratedScanners.length; i++) {
+            console.log(
+                'Scanner found: name= ' +
+                    enumeratedScanners[i].SCANNER_NAME +
+                    ', id=' +
+                    enumeratedScanners[i].SCANNER_INDEX +
+                    ', connected=' +
+                    enumeratedScanners[i].SCANNER_CONNECTION_STATE,
+            );
+            humanReadableScannerList += enumeratedScanners[i].SCANNER_NAME;
+            if (i < enumeratedScanners.length - 1) humanReadableScannerList += ', ';
+        }
+        console.info(humanReadableScannerList);
+        //this.state.enumeratedScannersText = humanReadableScannerList;
+    }
+
+    activeProfile(theActiveProfile: string): void {
+        console.log('Active Profile: ' + theActiveProfile);
+        //this.state.activeProfileText = theActiveProfile;
+        //this.setState(this.state);
+    }
+
+    dataWedgeBarcodeScanned(scanData: { [x: string]: any }, timeOfScan: string): void {
+        const scannedData = scanData['com.symbol.datawedge.data_string'];
+        const scannedType = scanData['com.symbol.datawedge.label_type'];
+        const scan = { data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan };
+        console.log(scan);
+        const barcodeEvent: BarcodeReadEvent = {
+            data: scannedData,
+            rawData: undefined,
+            type: scannedType,
+            bounds: {
+                width: 0,
+                height: 0,
+                origin: [{ x: '0', y: '0' }],
+            },
+        };
+        this.setState({
+            displayCamera: false,
+        });
+        this.barcodeRecognized(barcodeEvent);
+        //console.log('Scan: ' + scannedData);
+        //this.state.scans.unshift({ data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan });
+        //console.log(this.state.scans);
+        //this.setState(this.state);
+    }
+    /* End DataWedge */
+
+    componentWillUnmount(): void {
+        if (this.broadcastReceiverHandler) {
+            DeviceEventEmitter.removeListener('datawedge_broadcast_intent', this.broadcastReceiverHandler);
+        }
     }
 
     findBestRatio = async (): Promise<void> => {
@@ -531,10 +769,12 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({ barcodes: [barcode] });
         if (undefined === previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
-            Vibration.vibrate(500, false);
-            this.beepSound.play(() => {
-                this.beepSound.stop(); // Resets file for immediate play availability
-            });
+            if ('legacyCamera' === this.scannerMode) {
+                Vibration.vibrate(500, false);
+                this.beepSound.play(() => {
+                    this.beepSound.stop(); // Resets file for immediate play availability
+                });
+            }
             if (this.props.onBarcodeRead !== undefined) {
                 this.props.onBarcodeRead(barcode);
                 return;
@@ -681,12 +921,72 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         );
     };
 
+    renderDataWedgeInstruction = (): React.ReactElement => {
+        return (
+            <View style={{ backgroundColor: 'white', height: '100%' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 8 }}>
+                    <Icon name="arrow-up" style={{ textAlignVertical: 'center', marginRight: 8, fontSize: 20 }} />
+                    <Text style={{ fontSize: 20 }}>Laser</Text>
+                    <Icon
+                        name="exclamation-triangle"
+                        style={{ textAlignVertical: 'center', marginLeft: 8, fontSize: 20, color: 'red' }}
+                    />
+                </View>
+                <View
+                    style={{
+                        marginTop: 28,
+                        marginBottom: 60,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <View
+                        style={{
+                            width: 10,
+                            height: 85,
+                            backgroundColor: 'black',
+                            borderBottomRightRadius: 30,
+                            borderTopRightRadius: 30,
+                        }}
+                    ></View>
+                    <Icon name="arrow-left" size={30} style={{ textAlignVertical: 'center' }} />
+                    <Text style={{ width: '50%', textAlign: 'center', textAlignVertical: 'center' }}>
+                        Reste appuyé sur un des boutons latéraux pour activer le scanner laser.
+                    </Text>
+                    <Icon name="arrow-right" size={30} style={{ textAlignVertical: 'center' }} />
+                    <View
+                        style={{
+                            width: 10,
+                            height: 85,
+                            backgroundColor: 'black',
+                            borderBottomLeftRadius: 30,
+                            borderTopLeftRadius: 30,
+                        }}
+                    ></View>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                    <Icon name="exclamation-triangle" solid size={30} style={{ color: 'red' }} />
+                    <Icon name="eye" solid size={30} style={{ color: 'red' }} />
+                </View>
+                <Text style={{ textAlign: 'center', fontSize: 24 }}>Attention aux yeux.</Text>
+                <Text style={{ textAlign: 'center' }}>Ne pas pointer le laser vers un visage !</Text>
+            </View>
+        );
+    };
+
     render(): React.ReactNode {
+        let cameraView;
+        if ('dataWedge' === this.scannerMode) {
+            cameraView = this.state.displayCamera ? this.renderDataWedgeInstruction() : undefined;
+        }
+        if ('legacyCamera' === this.scannerMode) {
+            cameraView = this.state.displayCamera ? this.renderCamera() : undefined;
+        }
         return (
             <View style={styles.container}>
                 <KeepAwake />
                 {this.renderManualSearchView()}
-                {this.state.displayCamera ? this.renderCamera() : undefined}
+                {cameraView}
             </View>
         );
     }
