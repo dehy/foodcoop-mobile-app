@@ -608,37 +608,83 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                 </View>
                 <View>
                     <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
-                        <View style={{ flex: 1, flexDirection: 'column' }}>
-                            <Text style={styles.detailTitle}>Prix</Text>
-                            <Text style={styles.detailValue}>
-                                {this.state.odooProductProduct && this.state.odooProductProduct.lstPrice
-                                    ? Math.round(this.state.odooProductProduct.lstPrice * 100) / 100 + ' €'
-                                    : '-'}
-                            </Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.detailTitle}>Stock</Text>
-                            <Text
-                                style={[
-                                    styles.detailValue,
-                                    this.state.odooProductProduct && !this.state.odooProductProduct.quantityIsValid()
-                                        ? styles.detailValueInvalid
-                                        : undefined,
-                                ]}
-                            >
-                                {this.state.odooProductProduct && this.state.odooProductProduct.quantityIsValid()
-                                    ? this.state.odooProductProduct.quantityAsString()
-                                    : '-'}
-                            </Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                            <Text style={styles.detailValue}>
-                                {this.state.odooProductProduct
-                                    ? this.state.odooProductProduct.packagingAsString()
-                                    : '-'}
-                            </Text>
-                        </View>
+                        {this.props.inventory ? (
+                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
+                                <TextInput
+                                    ref={(ref): void => {
+                                        this.textInput = ref;
+                                    }}
+                                    onChangeText={(value): void => {
+                                        this.articleQuantityValue = value;
+                                    }}
+                                    style={{
+                                        flex: 0,
+                                        fontSize: 28,
+                                        width: 80,
+                                        borderWidth: 1,
+                                        borderRadius: 8,
+                                        marginRight: 8,
+                                        textAlign: 'right',
+                                        alignItems: 'center',
+                                    }}
+                                    keyboardType="decimal-pad"
+                                    blurOnSubmit={false}
+                                    onSubmitEditing={(): void => {
+                                        this.inventoryDidTapSaveButton();
+                                    }}
+                                />
+                                <Text style={{ fontSize: 28, flex: 0 }}>
+                                    {this.state.odooProductProduct
+                                        ? this.state.odooProductProduct.unitAsString()
+                                        : null}
+                                </Text>
+                                <Button
+                                    // style={{ flex: 1, marginLeft: 16 }}
+                                    onPress={(): void => {
+                                        this.inventoryDidTapSaveButton();
+                                    }}
+                                    title="Enregistrer"
+                                />
+                            </View>
+                        ) : (
+                            <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
+                                <View style={{ flex: 1, flexDirection: 'column' }}>
+                                    <Text style={styles.detailTitle}>Prix</Text>
+                                    <Text style={styles.detailValue}>
+                                        {this.state.odooProductProduct && this.state.odooProductProduct.lstPrice
+                                            ? (Math.round(this.state.odooProductProduct.lstPrice * 100) / 100).toFixed(
+                                                  2,
+                                              ) + ' €'
+                                            : '-'}
+                                    </Text>
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.detailTitle}>Stock</Text>
+                                    <Text
+                                        style={[
+                                            styles.detailValue,
+                                            this.state.odooProductProduct &&
+                                            !this.state.odooProductProduct.quantityIsValid()
+                                                ? styles.detailValueInvalid
+                                                : undefined,
+                                        ]}
+                                    >
+                                        {this.state.odooProductProduct &&
+                                        this.state.odooProductProduct.quantityIsValid()
+                                            ? this.state.odooProductProduct.quantityAsString()
+                                            : '-'}
+                                    </Text>
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.detailTitle}>Poid/Vol.</Text>
+                                    <Text style={styles.detailValue}>
+                                        {this.state.odooProductProduct
+                                            ? this.state.odooProductProduct.packagingAsString()
+                                            : '-'}
+                                    </Text>
+                                </View>
+                            </View>
+                        )}
                     </View>
                     {this.renderInventoryQuantityInputRow()}
                 </View>
