@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, Text, StyleSheet } from 'react-native';
-import { readableVersion, systemName } from '../../utils/helpers';
+import { readableVersion, systemName, deviceId, systemVersion, brand } from '../../utils/helpers';
 import { defaultScreenOptions } from '../../utils/navigation';
 import DeviceInfo from 'react-native-device-info';
 import { Options } from 'react-native-navigation';
@@ -28,8 +28,11 @@ export default class ProfileAbout extends React.Component<{}, {}> {
         return (
             <SafeAreaView>
                 <Text style={[styles.title, { marginTop: 16 }]}>{DeviceInfo.getApplicationName()}</Text>
+                <ListItem title="Marque" rightTitle={brand} topDivider />
+                <ListItem title="Modèle" rightTitle={deviceId} topDivider />
                 <ListItem title="Système" rightTitle={systemName} topDivider />
-                <ListItem title="Version" rightTitle={readableVersion()} topDivider />
+                <ListItem title="Version Système" rightTitle={systemVersion} topDivider />
+                <ListItem title="Version App" rightTitle={readableVersion()} topDivider />
             </SafeAreaView>
         );
     }
