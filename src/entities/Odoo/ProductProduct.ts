@@ -53,9 +53,15 @@ export default class ProductProduct {
         let metricString = '';
         if (this.weightNet) {
             metricString = `${String(this.weightNet)} kg`;
+            if (this.weightNet < 1) {
+                metricString = `${String(this.weightNet * 1000)} g`;
+            }
         }
         if (this.volume) {
             metricString = `${String(this.volume)} L`;
+            if (this.volume < 1) {
+                metricString = `${String(this.volume * 1000)} mL`;
+            }
         }
         return metricString;
     }
