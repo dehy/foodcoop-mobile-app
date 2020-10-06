@@ -3,7 +3,6 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
-#import <RNGoogleSignin/RNGoogleSignin.h>
 
 //#if DEBUG
 //#import <FlipperKit/FlipperClient.h>
@@ -48,9 +47,10 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-      return [RNGoogleSignin application:application openURL:url options:options];
-  
-  return true;
+  if ([self.authorizationFlowManagerDelegate resumeExternalUserAgentFlowWithURL:url]) {
+    return YES;
+  }
+  return NO;
 }
 
 @end

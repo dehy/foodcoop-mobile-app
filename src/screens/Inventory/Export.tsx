@@ -6,11 +6,12 @@ import { Navigation, Options } from 'react-native-navigation';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import CSVGenerator from '../../utils/CSVGenerator';
-import Google, { MailAttachment } from '../../utils/Google';
 import moment from 'moment';
 import InventoryEntry from '../../entities/InventoryEntry';
 import InventorySession from '../../entities/InventorySession';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import SupercoopSignIn from '../../utils/SupercoopSignIn';
+import Mailjet, { MailAttachment } from '../../utils/Mailjet';
 
 export interface InventoryShowProps {
     componentId: string;
@@ -69,22 +70,19 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
         this.checkInventory();
     }
 
-    checkInventory(): void {
-        InventoryEntryFactory.sharedInstance()
-            .findForInventorySession(this.props.inventory)
-            .then(inventoryEntries => {
-                this.inventoryEntries = inventoryEntries;
-                this.csvGenerator.exportInventorySession(this.props.inventory).then(filepath => {
-                    this.setState({
-                        filepath: filepath,
-                        inventoryCheckPassed: true,
-                    });
-                });
-            });
+    async checkInventory(): Promise<void> {
+        this.inventoryEntries = await InventoryEntryFactory.sharedInstance().findForInventorySession(
+            this.props.inventory,
+        );
+        const filepath = await this.csvGenerator.exportInventorySession(this.props.inventory);
+        this.setState({
+            filepath: filepath,
+            inventoryCheckPassed: true,
+        });
     }
 
-    sendInventory(): void {
-        this.setState({
+    async sendInventory(): Promise<void> {
+        await this.setState({
             sendingMail: true,
         });
         if (!this.props.inventory.lastModifiedAt) {
@@ -93,7 +91,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
         if (!this.state.filepath) {
             throw new Error('File not generated');
         }
-        const userFirstname = Google.getInstance().getFirstnameSlug();
+        const username = SupercoopSignIn.getInstance().getName();
         const zone = this.props.inventory.zone;
         const date = this.props.inventory.lastModifiedAt.format('DD/MM/YYYY');
         const time = this.props.inventory.lastModifiedAt.format('HH:mm:ss');
@@ -110,7 +108,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
 
         const to = 'inventaire@supercoop.fr';
         const subject = `[Zone ${zone}][${date}] Résultat d'inventaire`;
-        let body = `Inventaire fait par ${userFirstname}, zone ${zone}, le ${date} à ${time}
+        let body = `Inventaire fait par ${username}, zone ${zone}, le ${date} à ${time}
 ${entriesCount} produits scannés`;
 
         if (notFoundInOdoo.length > 0) {
@@ -120,13 +118,9 @@ Attention, ces codes barre n'ont pas été trouvé dans Odoo:
 ${notFoundInOdooString}`);
         }
 
-        const attachments: MailAttachment[] = [
-            {
-                filepath: this.state.filepath,
-            },
-        ];
+        const attachments: MailAttachment[] = [await Mailjet.filepathToAttachment(this.state.filepath)];
 
-        Google.getInstance()
+        Mailjet.getInstance()
             .sendEmail(to, '', subject, body, attachments)
             .then(() => {
                 InventorySessionFactory.sharedInstance().updateLastSentAt(this.props.inventory, moment());
@@ -191,7 +185,9 @@ ${notFoundInOdooString}`);
                     <Text>En tapant sur le bouton ci-dessous, il sera envoyé à l&apos;équipe inventaire :</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', margin: 16 }}>
                         <Button
-                            onPress={(): void => this.sendInventory()}
+                            onPress={(): void => {
+                                this.sendInventory();
+                            }}
                             title="Envoyer mon inventaire"
                             disabled={this.state.sendingMail || !this.state.inventoryCheckPassed}
                         />

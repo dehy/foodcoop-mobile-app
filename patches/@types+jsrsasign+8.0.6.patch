@@ -1,0 +1,20 @@
+diff --git a/node_modules/@types/jsrsasign/modules/KJUR/jws/JWS.d.ts b/node_modules/@types/jsrsasign/modules/KJUR/jws/JWS.d.ts
+index 8fd89bc..103c6e4 100644
+--- a/node_modules/@types/jsrsasign/modules/KJUR/jws/JWS.d.ts
++++ b/node_modules/@types/jsrsasign/modules/KJUR/jws/JWS.d.ts
+@@ -357,11 +357,11 @@ declare namespace jsrsasign.KJUR.jws {
+             sJWT: string,
+             key: string,
+             acceptField?: {
+-                alg: string[];
+-                aud: string[];
+-                iss: string[];
++                alg?: string[];
++                aud?: string[];
++                iss?: string[];
+                 jti?: string;
+-                sub: string[];
++                sub?: string[];
+                 verifyAt?: string | number;
+             },
+         ): boolean;

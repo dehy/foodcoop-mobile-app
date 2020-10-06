@@ -2,8 +2,8 @@ import React from 'react';
 import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Avatar, ListItem } from 'react-native-elements';
 import { goToAuth } from '../utils/navigation';
-import Google from '../utils/Google';
 import { Navigation } from 'react-native-navigation';
+import SupercoopSignIn from '../utils/SupercoopSignIn';
 
 export interface PlusProps {
     componentId: string;
@@ -81,12 +81,10 @@ export default class Plus extends React.Component<PlusProps> {
                     },
                     {
                         text: 'Oui',
-                        onPress: (): Promise<void> =>
-                            Google.getInstance()
-                                .signOut()
-                                .then(() => {
-                                    goToAuth();
-                                }),
+                        onPress: async (): Promise<void> => {
+                            await SupercoopSignIn.getInstance().signOut();
+                            goToAuth();
+                        },
                     },
                 ]);
                 break;
@@ -94,19 +92,18 @@ export default class Plus extends React.Component<PlusProps> {
     };
 
     renderHeader = (): React.ReactElement => {
+        const initialsMatch =
+            SupercoopSignIn.getInstance()
+                .getName()
+                .match(/\b\w/g) || [];
+        const initials: string = ((initialsMatch.shift() || '') + (initialsMatch.pop() || '')).toUpperCase();
+
         return (
             <View style={styles.profile}>
-                <Avatar
-                    rounded
-                    size="large"
-                    source={{
-                        uri: Google.getInstance().getUserPhoto(),
-                    }}
-                    containerStyle={styles.avatar}
-                />
+                <Avatar rounded size="large" title={initials} containerStyle={styles.avatar} />
                 <View>
-                    <Text style={styles.profileName}>{Google.getInstance().getUsername()}</Text>
-                    <Text>{Google.getInstance().getEmail()}</Text>
+                    <Text style={styles.profileName}>{SupercoopSignIn.getInstance().getName()}</Text>
+                    <Text>{SupercoopSignIn.getInstance().getEmail()}</Text>
                 </View>
             </View>
         );
