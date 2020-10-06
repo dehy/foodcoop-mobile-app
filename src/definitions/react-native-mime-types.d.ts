@@ -1,6 +1,6 @@
 declare module 'react-native-mime-types' {
-    function charset(type: string): boolean | string;
-    function contentType(str: string): boolean | string;
-    function extension(type: string): boolean | string;
-    function lookup(path: string): boolean | string;
+    function charset(type: string): false | string;
+    function contentType(str: string): false | string;
+    function extension(type: string): false | string;
+    function lookup(path: string): false | string;
 }

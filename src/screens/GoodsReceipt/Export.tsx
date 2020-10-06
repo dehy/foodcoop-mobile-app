@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { ActivityIndicator, Alert, Platform, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { Button, ThemeProvider, ListItem } from 'react-native-elements';
 import AlertAsync from 'react-native-alert-async';
@@ -10,10 +10,12 @@ import ActionSheet from 'react-native-action-sheet';
 import { getRepository } from 'typeorm';
 import { defaultScreenOptions } from '../../utils/navigation';
 import CSVGenerator, { CSVData } from '../../utils/CSVGenerator';
-import Google, { MailAttachment } from '../../utils/Google';
+import Mailjet, { MailAttachment } from '../../utils/Mailjet';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import Attachment from '../../entities/Attachment';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
+import SupercoopSignIn from '../../utils/SupercoopSignIn';
+import { asyncFilter } from '../../utils/helpers';
 
 export interface GoodsReceiptExportProps {
     componentId: string;
@@ -59,7 +61,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
 
         this.state = {
             isSendingMail: false,
-            senderName: Google.getInstance().getUsername(),
+            senderName: SupercoopSignIn.getInstance().getName(),
             senderNameDialogVisible: false,
         };
     }
@@ -170,7 +172,7 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         if (!this.state.filePath) {
             throw new Error('File is not available !');
         }
-        const userEmail = Google.getInstance().getEmail();
+        const userEmail = SupercoopSignIn.getInstance().getEmail();
         const userName = this.state.senderName;
         const poName = this.props.session.poName;
         const partnerName = this.props.session.partnerName;
@@ -189,8 +191,8 @@ Fournisseur: ${partnerName}
 Réception effectuée le: ${date} à ${time}
 ${entriesCount} produits traités`;
 
-        Google.getInstance()
-            .sendEmail(to, cc, subject, body, this.getMailAttachments())
+        Mailjet.getInstance()
+            .sendEmail(to, cc, subject, body, await this.getMailAttachments())
             .then(async () => {
                 this.props.session.lastSentAt = moment().toDate();
                 this.props.session.hidden = true;
@@ -215,31 +217,18 @@ ${entriesCount} produits traités`;
             });
     }
 
-    getMailAttachments = (): MailAttachment[] => {
+    getMailAttachments = async (): Promise<MailAttachment[]> => {
         const csvFilenameDateTime = moment(this.props.session.updatedAt).format('YYYYMMDDHHmmss');
         const csvFilename = `reception-${this.props.session.poName}-${csvFilenameDateTime}.csv`;
 
-        const attachments: MailAttachment[] = this.images
-            .map((file: Attachment) => {
-                if (file.path && file.name) {
-                    return {
-                        filepath: file.filepath(),
-                        filename: file.name,
-                        filetype: file.type,
-                        encoding: 'base64',
-                    };
-                }
-            })
-            .filter(attachement => {
-                return undefined === attachement ? false : true;
-            }) as MailAttachment[];
+        const attachments: MailAttachment[] = await asyncFilter(this.images, async (image: Attachment) => {
+            if (image.path && image.name) {
+                return await Mailjet.filepathToAttachment(image.path, image.name);
+            }
+        });
 
         if (this.state.filePath) {
-            attachments.push({
-                filename: csvFilename,
-                filepath: this.state.filePath,
-                encoding: 'utf8',
-            });
+            attachments.push(await Mailjet.filepathToAttachment(this.state.filePath, csvFilename));
         }
 
         return attachments;
