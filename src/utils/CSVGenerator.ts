@@ -5,7 +5,7 @@ import InventoryEntryFactory from '../factories/InventoryEntryFactory';
 import InventorySession from '../entities/InventorySession';
 import AppLogger from './AppLogger';
 import * as RNFS from 'react-native-fs';
-import Google from './Google';
+import SupercoopSignIn from './SupercoopSignIn';
 
 export interface CSVData {
     [key: string]: string | number | boolean | null | undefined;
@@ -22,7 +22,7 @@ export default class CSVGenerator {
         const inventoryEntries = await InventoryEntryFactory.sharedInstance().findForInventorySession(inventorySession);
         const entriesArray: CSVData[] = [];
 
-        const userFirstname = Google.getInstance().getFirstnameSlug();
+        const userFirstname = SupercoopSignIn.getInstance().getFirstnameSlug();
         const csvFilenameDateTime =
             inventorySession.lastModifiedAt && inventorySession.lastModifiedAt.format('YYYYMMDDHHmmss');
         const csvFilename = `Zone${inventorySession.zone}_${userFirstname}-${csvFilenameDateTime}.csv`;

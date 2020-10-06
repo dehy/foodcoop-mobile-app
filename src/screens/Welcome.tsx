@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { goHome } from '../utils/navigation';
-import { GoogleSigninButton } from '@react-native-community/google-signin';
-import Google from '../utils/Google';
 import { readableVersion } from '../utils/helpers';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
+import SupercoopSignIn, { SupercoopSignInButton } from '../utils/SupercoopSignIn';
 
 type WelcomeState = {
     signinInProgress: boolean;
@@ -50,6 +49,36 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
             signinInProgress: false,
         };
     }
+
+    authWithSupercoop = async (): Promise<void> => {
+        this.setState({
+            signinInProgress: true,
+        });
+        try {
+            SupercoopSignIn.getInstance()
+                .signIn()
+                .then(
+                    () => {
+                        this.setState({
+                            signinInProgress: false,
+                        });
+                        goHome();
+                    },
+                    reason => {
+                        console.warn(reason);
+                        this.setState({
+                            signinInProgress: false,
+                        });
+                    },
+                );
+        } catch (error) {
+            this.setState({
+                signinInProgress: false,
+            });
+            console.log(error);
+        }
+    };
+
     render(): React.ReactNode {
         return (
             <SafeAreaView style={styles.container}>
@@ -59,34 +88,12 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                 <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
                 <Text style={styles.instructions}>
                     Pour commencer à utiliser l&apos;application, connectes-toi à ton compte Supercoop grâce au bouton
-                    ci-dessous. Tu auras besoin de tes identifiants Google Supercoop. On se retrouve juste après !
+                    ci-dessous. On se retrouve juste après !
                 </Text>
                 <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
-                    <GoogleSigninButton
-                        style={{ width: 230, height: 48, margin: 12 }}
-                        size={GoogleSigninButton.Size.Standard}
-                        color={GoogleSigninButton.Color.Dark}
-                        onPress={(): void => {
-                            this.setState({
-                                signinInProgress: true,
-                            });
-                            Google.getInstance()
-                                .signIn()
-                                .then(
-                                    () => {
-                                        this.setState({
-                                            signinInProgress: false,
-                                        });
-                                        goHome();
-                                    },
-                                    reason => {
-                                        console.warn(reason);
-                                        this.setState({
-                                            signinInProgress: false,
-                                        });
-                                    },
-                                );
-                        }}
+                    <SupercoopSignInButton
+                        title="Se connecter"
+                        onPress={this.authWithSupercoop}
                         disabled={this.state.signinInProgress}
                     />
                 </View>
