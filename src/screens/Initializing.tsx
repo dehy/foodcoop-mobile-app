@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Google from '../utils/Google';
 import { goHome, goToAuth } from '../utils/navigation';
 import Database from '../utils/Database';
 import Odoo from '../utils/Odoo';
+import SupercoopSignIn from '../utils/SupercoopSignIn';
 
 export interface InitialisingProps {
     componentId: string;
@@ -43,13 +43,15 @@ export default class Initialising extends React.Component<InitialisingProps> {
     }
 
     signInSilently(): void {
-        Google.getInstance()
+        SupercoopSignIn.getInstance()
             .signInSilently()
             .then(
                 () => {
+                    console.debug('Previously Authenticated.');
                     goHome();
                 },
                 () => {
+                    console.debug('Going to authentication screen.');
                     goToAuth();
                 },
             );

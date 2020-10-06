@@ -1012,11 +1012,6 @@
     eslint-plugin-react-native "3.6.0"
     prettier "1.16.4"
 
-"@react-native-community/google-signin@^4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/google-signin/-/google-signin-4.0.3.tgz#66fbdd469e5895ec787224334d480c1c867240e8"
-  integrity sha512-0RyMHAPTOejxXuHkcrVLJ9Co1hxG/b1shmtn29QSjZ9W8oLj23gyLhJI4jjca389jToVjr2HsXsDXfNU4CA2Uw==
-
 "@sayem314/react-native-keep-awake@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@sayem314/react-native-keep-awake/-/react-native-keep-awake-1.0.3.tgz#f8a617108b1223df5bf68908c4887191e4374c88"
@@ -1284,6 +1279,16 @@
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.5.tgz#dcce4430e64b443ba8945f0290fb564ad5bac6dd"
   integrity sha512-7+2BITlgjgDhH0vvwZU/HZJVyk+2XUlvxXe8dFMedNX/aMkaOq++rMAFXc0tM7ij15QaWlbdQASBR9dihi+bDQ==
+
+"@types/jsrsasign@^8.0.5":
+  version "8.0.6"
+  resolved "https://registry.yarnpkg.com/@types/jsrsasign/-/jsrsasign-8.0.6.tgz#0dc77d129bb6dc1efdaf74400c1f5b61b55e8f08"
+  integrity sha512-jVTGJRrVCCM5K1MvP7SrvyiHwJU8Hi9uHHZDjWDswyImVqquzqw900r/yyp6Uk26T2lyP2lUx+bTtyHR+GEYoA==
+
+"@types/jwt-decode@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/jwt-decode/-/jwt-decode-2.2.1.tgz#afdf5c527fcfccbd4009b5fd02d1e18241f2d2f2"
+  integrity sha512-aWw2YTtAdT7CskFyxEX2K21/zSDStuf/ikI3yBqmwpwJF0pS+/IX5DWv+1UFffZIbruP6cnT9/LAJV1gFwAT1A==
 
 "@types/node@*":
   version "14.0.14"
@@ -2003,11 +2008,6 @@ base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
   integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
-
-base64url@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/base64url/-/base64url-3.0.1.tgz#6399d572e2bc3f90a9a8b22d5dbb0a32d33f788d"
-  integrity sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==
 
 base@^0.11.1:
   version "0.11.2"
@@ -4965,6 +4965,11 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jsrsasign@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/jsrsasign/-/jsrsasign-10.0.0.tgz#a544b4e63124c4da56a6e7a8007e0ee8a616a81e"
+  integrity sha512-U1lSbeqaRN8aUOvbsfX7xzFXcjtV1g5zaWI+TrjBwZ46kSH0gZscEquyO9cmaTPTv1U1KAJxoSLUx79dM03Exw==
+
 jsx-ast-utils@^2.0.1, jsx-ast-utils@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-2.4.1.tgz#1114a4c1209481db06c690c2b4f488cc665f657e"
@@ -4972,6 +4977,11 @@ jsx-ast-utils@^2.0.1, jsx-ast-utils@^2.4.1:
   dependencies:
     array-includes "^3.1.1"
     object.assign "^4.1.0"
+
+jwt-decode@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.0.0.tgz#d9a17ddf6d37c03bf037b0b27cf8756cfd01c5c7"
+  integrity sha512-RBQv2MTm3FNKQkdzhEyQwh5MbdNgMa+FyIJIK5RMWEn6hRgRHr7j55cRxGhRe6vGJDElyi6f6u/yfkP7AoXddA==
 
 kind-of@^1.1.0:
   version "1.1.0"
@@ -6471,12 +6481,25 @@ react-native-animatable@1.3.3, react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-app-auth@^5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-app-auth/-/react-native-app-auth-5.1.3.tgz#840ed3a126419be360d54dc9c3f1f3cede2f79ff"
+  integrity sha512-tIFyGf8pZutstmS5B6BY5MfPOArnOt8mLx2TrvrUQJAQbe9+XvY4MZjHq9ZYYYBQwVRkkv3SmesGOMkpYygIUg==
+  dependencies:
+    invariant "2.2.4"
+    react-native-base64 "0.0.2"
+
 react-native-barcode-mask@^1.1.0:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/react-native-barcode-mask/-/react-native-barcode-mask-1.2.4.tgz#271b868d1d9040e04b9f8f32ec4ee6f6a2639b3b"
   integrity sha512-Jh3mEs/xUBs/z9mKkj2mM07MMQ2SdtW9mU4FOo5DQyA2kDte6lW87vIYFkWw1nxpzc7sy28ahMsgId8LTtKZsg==
   dependencies:
     prop-types "^15.6.2"
+
+react-native-base64@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-base64/-/react-native-base64-0.0.2.tgz#c28463c2c6779ac3ec5fdd12979ebc8c5f9b410a"
+  integrity sha512-Fu/J1a2y0X22EJDWqJR2oEa1fpP4gTFjYxk8ElJdt1Yak3HOXmFJ7EohLVHU2DaQkgmKfw8qb7u/48gpzveRbg==
 
 react-native-camera@^3.13.0:
   version "3.31.0"
@@ -6557,11 +6580,6 @@ react-native-keyboard-aware-scroll-view@^0.9.1:
   dependencies:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
-
-react-native-keychain@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-5.0.1.tgz#2751de436f017c87b8aabb32533bee88657d643e"
-  integrity sha512-CLIPNexPBufPpNqgF7/smZNAiv6x0SCsztfEi/hWPCQ7yHxNwdRUyUzOLGrw1lPe/6fQE+TC3iS1+cbDTaRJag==
 
 react-native-mime-types@^2.2.1:
   version "2.3.0"
@@ -7058,6 +7076,11 @@ rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
   integrity sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI=
+
+rn-secure-storage@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/rn-secure-storage/-/rn-secure-storage-2.0.6.tgz#bde7931f40363fd6e9dcc5aa60c1313369c6fb62"
+  integrity sha512-cRdbY9RXlZKOth/awK9SZ7/7pIpY1QAXZ7DCW6FY602lhHpZJuE/6TcvbNqqs1bxFy8yzew5aoEkcyHiOigJhg==
 
 rnpm-plugin-windows@^0.5.1-0:
   version "0.5.1-0"

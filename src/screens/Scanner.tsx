@@ -15,7 +15,6 @@ import { defaultScreenOptions } from '../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import { RNCamera, FlashMode, AutoFocus, Barcode } from 'react-native-camera';
 import DialogInput from 'react-native-dialog-input';
-import Google from '../utils/Google';
 import InventoryEntry from '../entities/InventoryEntry';
 import InventoryEntryFactory from '../factories/InventoryEntryFactory';
 import InventorySession from '../entities/InventorySession';
@@ -26,6 +25,7 @@ import ProductProduct, { UnitOfMesurement } from '../entities/Odoo/ProductProduc
 import { isInt } from '../utils/helpers';
 import Scanner2 from './Scanner2';
 import { Button, Divider } from 'react-native-elements';
+import Mailjet from '../utils/Mailjet';
 
 export interface ScannerProps {
     componentId: string;
@@ -436,7 +436,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         const body = `Le code barre ${odooProductProduct.barcode} est introuvable dans Odoo.
 Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         try {
-            Google.getInstance()
+            Mailjet.getInstance()
                 .sendEmail(to, '', subject, body)
                 .then(() => {
                     Alert.alert('Mail envoyé', 'Merci pour le signalement ! 🎉');

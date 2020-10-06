@@ -7,6 +7,15 @@ export const readableVersion = (): string => {
 };
 export const systemName = DeviceInfo.getSystemName();
 
+// https://advancedweb.hu/how-to-use-async-functions-with-array-filter-in-javascript/
+export const asyncFilter = async (
+    arr: any[],
+    predicate: (value: any, index?: number, array?: any[]) => unknown,
+): Promise<any[]> => {
+    const results = await Promise.all(arr.map(predicate));
+    return arr.filter((_v, index) => results[index]);
+};
+
 export function isInt(n: number): boolean {
     return n % 1 === 0;
 }
