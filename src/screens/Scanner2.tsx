@@ -572,9 +572,13 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                 title={'Recherche manuelle'}
                 message={'Entres le code barre du produit que tu cherches'}
                 submitInput={(barcodeData: string): void => {
+                    let type = RNCamera.Constants.BarCodeType.ean13;
+                    if (barcodeData.length === 8) {
+                        type = RNCamera.Constants.BarCodeType.ean8;
+                    }
                     const barcode: BarcodeReadEvent = {
                         data: barcodeData,
-                        type: RNCamera.Constants.BarCodeType.ean13,
+                        type: type,
                         bounds: { origin: { x: '0', y: '0' }, size: { width: '0', height: '0' } },
                     };
                     this.hideManualSearchView();

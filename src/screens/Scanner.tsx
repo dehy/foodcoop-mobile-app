@@ -279,16 +279,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
     }
 
     didScanBarcode(barcode: Barcode): void {
-        // console.debug('didScanBarcode()', barcode.data, barcode.type);
-        if (barcode.type !== 'PRODUCT' || !(barcode.data.length !== 13)) {
-            this.lookupForBarcode(barcode.data);
-            return;
-        }
-        Alert.alert(
-            'Code barre incompatible',
-            "Ce code barre n'est pas utilisé par Odoo. Cherches un code barre à 13 chiffres.",
-            [{ text: 'OK', onPress: (): void => this.reset() }],
-        );
+        //console.debug('didScanBarcode()', barcode.data, barcode.type);
+        this.lookupForBarcode(barcode.data);
+        return;
     }
 
     lookupForBarcode(barcode: string): void {
@@ -316,7 +309,7 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
     }
 
     handleNotFoundProductProduct(barcode: string): void {
-        let notFoundInOdooString = `Le code barre ${barcode} est introuvable dans odoo.`;
+        let notFoundInOdooString = `Le code barre ${barcode} est introuvable dans odoo. Vérifies que tu as bien scanné le bon code.`;
         const alertButtons: AlertButton[] = [
             {
                 text: 'Annuler',
