@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import Google from '../utils/Google';
 import { goHome, goToAuth } from '../utils/navigation';
 import Database from '../utils/Database';
+import Odoo from '../utils/Odoo';
 
 export interface InitialisingProps {
     componentId: string;
@@ -32,7 +33,11 @@ export default class Initialising extends React.Component<InitialisingProps> {
             .migrate()
             .then(success => {
                 if (success) {
-                    this.signInSilently();
+                    Odoo.getInstance()
+                        .fetchBarcodeNomenclature()
+                        .then(() => {
+                            this.signInSilently();
+                        });
                 }
             });
     }
