@@ -4,7 +4,7 @@ import OdooApi from 'react-native-odoo-promise-based';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
 import CookieManager from 'react-native-cookies';
-import { isInt } from './helpers';
+import { isInt, replaceStringAt } from './helpers';
 import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
 import PurchaseOrderFactory from '../factories/Odoo/PurchaseOrderFactory';
 import moment from 'moment';
@@ -12,6 +12,22 @@ import PurchaseOrderLine from '../entities/Odoo/PurchaseOrderLine';
 import PurchaseOrderLineFactory from '../factories/Odoo/PurchaseOrderLineFactory';
 import iconv from 'iconv-lite';
 import Dates from './Dates';
+import { Barcode } from 'react-native-camera';
+
+interface BarcodeRule {
+    name: string;
+    encoding: string;
+    type: string;
+    pattern: string;
+    regex?: RegExp;
+    sequence: number;
+}
+
+export interface ParsedBarcode {
+    original: string;
+    base?: string;
+    weight?: number;
+}
 
 export default class Odoo {
     private static FETCH_FIELDS_PRODUCT = [
@@ -27,6 +43,7 @@ export default class Odoo {
 
     private static instance: Odoo;
     private static odooEnpoint = '***REMOVED***';
+    private static barcodeRules: BarcodeRule[] = [];
     private isConnected: boolean;
     private odooApi: OdooApi;
 
@@ -117,6 +134,117 @@ export default class Odoo {
             this.resetApiAuthDetails();
             throw new Error(response.error.message);
         }
+    }
+
+    async fetchBarcodeNomenclature(): Promise<void> {
+        await this.assertConnect();
+        const params = {
+            domain: [['barcode_nomenclature_id', '=', 2]],
+            fields: ['sequence', 'pattern', 'name', 'encoding', 'type'],
+            offset: 0,
+            order: 'sequence ASC',
+        };
+        const response = await this.odooApi.search_read('barcode.rule', params);
+        console.log(JSON.stringify(response));
+
+        this.assertApiResponse(response);
+        if (response.data && response.data.length > 0) {
+            const rules = response.data as BarcodeRule[];
+            for (const rule of rules) {
+                let regexString = rule.pattern;
+                regexString = regexString.replace(/[\{\}]/g, '');
+                regexString = regexString.replace(/[ND]/g, '.');
+                rule.regex = new RegExp(`^${regexString}$`);
+            }
+            Odoo.barcodeRules = rules;
+        }
+    }
+
+    static barcodeRuleForBarcode(barcode: string): BarcodeRule | undefined {
+        console.log(`barcode: ${barcode}`);
+        const barcodeWoChecksum = barcode.slice(0, barcode.length - 1);
+        console.log(`barcode without checksum: ${barcodeWoChecksum}`);
+        let barcodeEncoding = 'ean13';
+        switch (barcode.length) {
+            case 8:
+                barcodeEncoding = 'ean8';
+                break;
+            case 13:
+                barcodeEncoding = 'ean13';
+                break;
+        }
+        console.log(`barcode encoding: ${barcodeEncoding}`);
+        for (const barcodeRule of Odoo.barcodeRules) {
+            console.log(`Trying barcode rule: ${barcodeRule.pattern}`);
+            if (barcodeEncoding !== barcodeRule.encoding) {
+                // skip if not the same encoding rule
+                console.log(`+ encoding not matching`);
+                continue;
+            }
+            if (barcodeRule.regex) {
+                console.log(`barcode regex: ${barcodeRule.regex}`);
+                if (null !== barcodeRule.regex.exec(barcodeWoChecksum)) {
+                    // we have a match!
+                    return barcodeRule;
+                }
+            }
+        }
+        return undefined;
+    }
+
+    static eanCheckDigit(s: string): string {
+        let result = 0;
+        for (let counter = s.length - 1; counter >= 0; counter--) {
+            result = result + parseInt(s.charAt(counter)) * (1 + 2 * (counter % 2));
+        }
+        return ((10 - (result % 10)) % 10).toString();
+    }
+
+    static parseBarcode(barcode: string): ParsedBarcode {
+        const parsedBarcode: ParsedBarcode = {
+            original: barcode,
+            base: undefined,
+            weight: undefined,
+        };
+        let baseBarcode: string = JSON.parse(JSON.stringify(barcode));
+        const rule = Odoo.barcodeRuleForBarcode(barcode);
+        if (!rule) {
+            return parsedBarcode;
+        }
+        if ('weight' !== rule.type) {
+            return parsedBarcode;
+        }
+        const pattern = rule.pattern.replace(/[\{\}]/g, '');
+        const unitsResult = new RegExp(/N+/g).exec(pattern);
+        if (null === unitsResult) {
+            return parsedBarcode;
+        }
+        const unitsPositionStart = unitsResult?.index;
+        const unitsSize = unitsResult[0].length;
+        if (undefined === unitsPositionStart || unitsSize === 0) {
+            return parsedBarcode;
+        }
+        const units = barcode.slice(unitsPositionStart, unitsPositionStart + unitsSize);
+        baseBarcode = replaceStringAt(baseBarcode, unitsPositionStart, '0'.repeat(unitsSize));
+
+        const decimalsResult = new RegExp(/D+/g).exec(pattern);
+        if (null !== decimalsResult) {
+            const decimalsPositionStart = decimalsResult?.index;
+            const decimalsSize = decimalsResult[0].length;
+            let decimals = '0';
+            decimals = barcode.slice(decimalsPositionStart, decimalsPositionStart + decimalsSize);
+            baseBarcode = replaceStringAt(baseBarcode, decimalsPositionStart, '0'.repeat(decimalsSize));
+            parsedBarcode.weight = parseInt(units) + parseInt(decimals) / Math.pow(10, decimalsSize);
+        }
+
+        // Recalculate the checksum digit for the base barcode
+        const newChecksumDigit = Odoo.eanCheckDigit(baseBarcode.slice(0, baseBarcode.length - 1));
+        baseBarcode = replaceStringAt(baseBarcode, baseBarcode.length - 1, newChecksumDigit);
+        parsedBarcode.base = baseBarcode;
+
+        console.debug(`parsedBarcode: ${JSON.stringify(parsedBarcode)}`);
+
+        return parsedBarcode;
     }
 
     async fetchPurchaseOrdersPlannedToday(): Promise<PurchaseOrder[]> {
@@ -294,10 +422,13 @@ export default class Odoo {
             throw new Error('Odoo is not connected');
         }
 
+        const parsedBarcode = Odoo.parseBarcode(barcode);
+        const odooBarcode = parsedBarcode.base ?? parsedBarcode.original;
+
         const params = {
             // ids: [1, 2, 3, 4, 5],
             // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
-            domain: [['barcode', '=', barcode]],
+            domain: [['barcode', '=', odooBarcode]],
             fields: Odoo.FETCH_FIELDS_PRODUCT,
             // lst_price = prix de vente, standard_price = achat, uom_id = unité de vente, uom_po_id = unité d'achat
             // order: 'name DESC',
@@ -310,7 +441,11 @@ export default class Odoo {
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
         if (response.data && response.data.length > 0) {
-            return ProductProductFactory.ProductProductFromResponse(response.data[0]);
+            const product = ProductProductFactory.ProductProductFromResponse(response.data[0]);
+            if (parsedBarcode.weight) {
+                product.weightNet = parsedBarcode.weight;
+            }
+            return product;
         }
         return null;
     }
