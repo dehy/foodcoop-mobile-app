@@ -19,6 +19,10 @@ export function toNumber(value: string): number {
     return parseFloat(value.replace(',', '.'));
 }
 
+export function replaceStringAt(value: string, index: number, replacement: string): string {
+    return value.substr(0, index) + replacement + value.substr(index + replacement.length);
+}
+
 export function displayNumber(value?: number): string {
     if (undefined == value) {
         return '';
