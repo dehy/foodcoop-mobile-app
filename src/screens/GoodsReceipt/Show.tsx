@@ -33,7 +33,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             iconContainerStyle: { marginRight: 5 },
         },
         Icon: {
-            type: 'font-awesome',
+            type: 'font-awesome-5',
         },
     };
 
@@ -435,16 +435,24 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                         renderItem={({ item }): React.ReactElement => (
                             <ListItem
                                 containerStyle={{ backgroundColor: this.itemBackgroundColor(item) }}
-                                title={item.productName}
-                                subtitle={item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'}
-                                subtitleStyle={item.productBarcode ? undefined : { fontStyle: 'italic' }}
-                                rightElement={this.renderEntryQty(item)}
-                                rightSubtitle={this.renderPackageQty(item)}
                                 onPress={(): void => {
                                     this.openGoodsReceiptScan(item.productId);
                                 }}
                                 topDivider
-                            />
+                            >
+                                <ListItem.Content>
+                                    <ListItem.Title>{item.productName}</ListItem.Title>
+                                    <ListItem.Subtitle
+                                        style={item.productBarcode ? undefined : { fontStyle: 'italic' }}
+                                    >
+                                        {item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'}
+                                    </ListItem.Subtitle>
+                                </ListItem.Content>
+                                <ListItem.Content right>
+                                    <ListItem.Title right>{this.renderEntryQty(item)}</ListItem.Title>
+                                    <ListItem.Subtitle right>{this.renderPackageQty(item)}</ListItem.Subtitle>
+                                </ListItem.Content>
+                            </ListItem>
                         )}
                         ListHeaderComponent={this.renderHeader}
                         ListFooterComponent={this.renderFooter}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, ListItem } from 'react-native-elements';
+import { Avatar, Icon, ListItem } from 'react-native-elements';
 import { goToAuth } from '../utils/navigation';
 import { Navigation } from 'react-native-navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
@@ -123,13 +123,14 @@ export default class Plus extends React.Component<PlusProps> {
                         { title: 'Se déconnecter', key: 'logout', color: 'red', chevron: false },
                     ]}
                     renderItem={({ item }): React.ReactElement => (
-                        <ListItem
-                            onPress={(): void => this._onPress(item.key)}
-                            title={item.title}
-                            titleStyle={{ color: item.color ?? 'black' }}
-                            topDivider
-                            chevron={item.chevron ?? true}
-                        />
+                        <ListItem onPress={(): void => this._onPress(item.key)} topDivider>
+                            <ListItem.Content>
+                                <ListItem.Title style={{ color: item.color ?? 'black' }}>{item.title}</ListItem.Title>
+                            </ListItem.Content>
+                            {false === item.chevron ? null : (
+                                <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                            )}
+                        </ListItem>
                     )}
                     ListHeaderComponent={this.renderHeader}
                 />

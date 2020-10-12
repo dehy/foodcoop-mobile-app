@@ -126,12 +126,14 @@ path: ${cookie.path}`;
                     return item.title;
                 }}
                 renderItem={({ item }): React.ReactElement => (
-                    <ListItem
-                        onPress={(): void => this.didTapCookieItem(item.key)}
-                        title={item.title}
-                        rightTitle={item.subtitle}
-                        bottomDivider
-                    />
+                    <ListItem onPress={(): void => this.didTapCookieItem(item.key)} bottomDivider>
+                        <ListItem.Content>
+                            <ListItem.Title>{item.title}</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Content right>
+                            <ListItem.Title right>{item.subtitle}</ListItem.Title>
+                        </ListItem.Content>
+                    </ListItem>
                 )}
             />
         );
@@ -148,11 +150,11 @@ path: ${cookie.path}`;
                     )}
                     data={[{ title: 'Effacer les cookies', key: 'clear-cookies', color: 'red' }]}
                     renderItem={({ item }): React.ReactElement => (
-                        <ListItem
-                            onPress={(): void => this.didTapActionItem(item.key)}
-                            title={item.title}
-                            titleStyle={{ color: item.color ?? 'black' }}
-                        />
+                        <ListItem onPress={(): void => this.didTapActionItem(item.key)}>
+                            <ListItem.Content>
+                                <ListItem.Title style={{ color: item.color ?? 'black' }}>{item.title}</ListItem.Title>
+                            </ListItem.Content>
+                        </ListItem>
                     )}
                 />
             </SafeAreaView>

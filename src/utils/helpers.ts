@@ -9,6 +9,7 @@ export const brand = DeviceInfo.getBrand();
 export const deviceId = DeviceInfo.getDeviceId();
 export const systemName = DeviceInfo.getSystemName();
 export const systemVersion = DeviceInfo.getSystemVersion();
+export const userAgent = `${DeviceInfo.getApplicationName()} - ${DeviceInfo.getSystemName()} - Version ${DeviceInfo.getVersion()} - www.supercoop.fr`;
 
 // https://advancedweb.hu/how-to-use-async-functions-with-array-filter-in-javascript/
 export const asyncFilter = async (

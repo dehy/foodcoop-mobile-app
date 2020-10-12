@@ -200,6 +200,15 @@ export default class Odoo {
         return ((10 - (result % 10)) % 10).toString();
     }
 
+    static barcodeIsValid(barcode: string): boolean {
+        const providedChecksumDigit = barcode.slice(barcode.length - 1, barcode.length);
+        const calculatedChecksumDigit = Odoo.eanCheckDigit(barcode.slice(0, barcode.length - 1));
+        if (calculatedChecksumDigit === providedChecksumDigit) {
+            return true;
+        }
+        return false;
+    }
+
     static parseBarcode(barcode: string): ParsedBarcode {
         const parsedBarcode: ParsedBarcode = {
             original: barcode,

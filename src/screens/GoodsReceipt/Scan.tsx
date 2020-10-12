@@ -44,7 +44,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             iconContainerStyle: { marginRight: 5 },
         },
         Icon: {
-            type: 'font-awesome',
+            type: 'font-awesome-5',
         },
     };
 
@@ -272,8 +272,15 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             return (
                 <View style={{ height: '100%' }}>
                     <ListItem
-                        title="Quantité reçue"
-                        rightElement={
+                        onPress={(): void => {
+                            this.receivedQuantityInput?.focus();
+                        }}
+                        bottomDivider
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Quantité reçue</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Content right>
                             <TextInput
                                 onChangeText={(receivedQtyStr: string): void => {
                                     let receivedQty: number | undefined;
@@ -298,15 +305,18 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                 }}
                                 autoFocus={true}
                             />
-                        }
+                        </ListItem.Content>
+                    </ListItem>
+                    <ListItem
                         onPress={(): void => {
-                            this.receivedQuantityInput?.focus();
+                            this.receivedPackageQtyInput?.focus();
                         }}
                         bottomDivider
-                    />
-                    <ListItem
-                        title="Nombre de colis reçu"
-                        rightElement={
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Nombre de colis reçu</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Content right>
                             <TextInput
                                 onChangeText={(receivedPackageQtyStr: string): void => {
                                     let receivedPackageQty: number | undefined;
@@ -330,15 +340,18 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                     this.receivedPackageQtyInput = input;
                                 }}
                             />
-                        }
+                        </ListItem.Content>
+                    </ListItem>
+                    <ListItem
                         onPress={(): void => {
-                            this.receivedPackageQtyInput?.focus();
+                            this.receivedProductQtyPackageInput?.focus();
                         }}
                         bottomDivider
-                    />
-                    <ListItem
-                        title="Nombre d'articles par colis"
-                        rightElement={
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Nombre d&quot;articles par colis</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Content right>
                             <TextInput
                                 onChangeText={(receivedProductQtyPackageStr: string): void => {
                                     let receivedProductQtyPackage: number | undefined;
@@ -362,23 +375,22 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                     this.receivedProductQtyPackageInput = input;
                                 }}
                             />
-                        }
-                        onPress={(): void => {
-                            this.receivedProductQtyPackageInput?.focus();
-                        }}
-                        bottomDivider
-                    />
+                        </ListItem.Content>
+                    </ListItem>
                     <ListItem
-                        title="Unité de mesure"
-                        rightElement={
-                            <Text>{ProductProduct.quantityUnitAsString(this.state.goodsReceiptEntry?.productUom)}</Text>
-                        }
                         onPress={(): void => {
                             this.chooseUom();
                         }}
                         bottomDivider
-                        chevron
-                    />
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Unité de mesure</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Content right>
+                            <Text>{ProductProduct.quantityUnitAsString(this.state.goodsReceiptEntry?.productUom)}</Text>
+                        </ListItem.Content>
+                        <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                    </ListItem>
                     <Input
                         placeholder="Commentaire (optionnel)"
                         multiline={true}
