@@ -28,11 +28,46 @@ export default class ProfileAbout extends React.Component<{}, {}> {
         return (
             <SafeAreaView>
                 <Text style={[styles.title, { marginTop: 16 }]}>{DeviceInfo.getApplicationName()}</Text>
-                <ListItem title="Marque" rightTitle={brand} topDivider />
-                <ListItem title="Modèle" rightTitle={deviceId} topDivider />
-                <ListItem title="Système" rightTitle={systemName} topDivider />
-                <ListItem title="Version Système" rightTitle={systemVersion} topDivider />
-                <ListItem title="Version App" rightTitle={readableVersion()} topDivider />
+                <ListItem topDivider>
+                    <ListItem.Content>
+                        <ListItem.Title>Marque</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <ListItem.Title right>{brand}</ListItem.Title>
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem topDivider>
+                    <ListItem.Content>
+                        <ListItem.Title>Modèle</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <ListItem.Title right>{deviceId}</ListItem.Title>
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem topDivider>
+                    <ListItem.Content>
+                        <ListItem.Title>Système</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <ListItem.Title right>{systemName}</ListItem.Title>
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem topDivider>
+                    <ListItem.Content>
+                        <ListItem.Title>Version Système</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <ListItem.Title right>{systemVersion}</ListItem.Title>
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem topDivider>
+                    <ListItem.Content>
+                        <ListItem.Title>Version App</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <ListItem.Title right>{readableVersion()}</ListItem.Title>
+                    </ListItem.Content>
+                </ListItem>
             </SafeAreaView>
         );
     }

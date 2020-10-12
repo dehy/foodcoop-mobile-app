@@ -97,12 +97,12 @@ export default class Maintenance extends React.Component<MaintenanceProps, {}> {
                     )}
                     data={this.flatListItems}
                     renderItem={({ item }): React.ReactElement => (
-                        <ListItem
-                            onPress={(): void => this._onPress(item.key)}
-                            title={item.title}
-                            bottomDivider
-                            chevron
-                        />
+                        <ListItem onPress={(): void => this._onPress(item.key)} bottomDivider>
+                            <ListItem.Content>
+                                <ListItem.Title>{item.title}</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                        </ListItem>
                     )}
                 />
             </SafeAreaView>

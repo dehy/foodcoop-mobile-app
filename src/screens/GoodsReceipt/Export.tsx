@@ -1,9 +1,8 @@
 import React from 'react';
 import { ActivityIndicator, Alert, Platform, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
-import { Button, ThemeProvider, ListItem } from 'react-native-elements';
+import { Button, ThemeProvider, ListItem, Icon } from 'react-native-elements';
 import AlertAsync from 'react-native-alert-async';
 import { Navigation, Options } from 'react-native-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 import Dialog from 'react-native-dialog';
 import ActionSheet from 'react-native-action-sheet';
@@ -303,31 +302,46 @@ ${entriesCount} produits traités`;
                             {this.images.length > 1 ? 's' : ''}.
                         </Text>
                         <ListItem
-                            title="Réceptionneur"
-                            rightElement={<Text>{this.state.senderName}</Text>}
                             onPress={(): void => {
                                 this.senderNameInput = this.state.senderName;
                                 this.setState({ senderNameDialogVisible: true });
                             }}
                             topDivider
                             bottomDivider
-                            chevron
-                        />
-                        <ListItem title="État" rightElement={ReceiptCheck} bottomDivider />
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title>Réceptionneur</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Content right>
+                                <Text>{this.state.senderName}</Text>
+                            </ListItem.Content>
+                            <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                        </ListItem>
+                        <ListItem bottomDivider>
+                            <ListItem.Content>
+                                <ListItem.Title>État</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Content right>
+                                <Text>{ReceiptCheck}</Text>
+                            </ListItem.Content>
+                        </ListItem>
                         <ListItem
-                            title="Destinataire"
-                            rightElement={
-                                <Text style={{ color: this.state.selectedGamme ? 'black' : 'red' }}>
-                                    {this.state.selectedGamme || 'À Choisir'}
-                                </Text>
-                            }
                             onPress={(): void => {
                                 this.chooseRecipient();
                             }}
                             disabled={this.state.isSendingMail}
                             bottomDivider
-                            chevron
-                        />
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title>Destinataire</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Content right>
+                                <Text style={{ color: this.state.selectedGamme ? 'black' : 'red' }}>
+                                    {this.state.selectedGamme || 'À Choisir'}
+                                </Text>
+                            </ListItem.Content>
+                            <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                        </ListItem>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', margin: 16 }}>
                             <Button
                                 onPress={(): void => {

@@ -19,7 +19,7 @@ import ProductProduct from '../../entities/Odoo/ProductProduct';
 import ActionSheet from 'react-native-action-sheet';
 import InventorySession from '../../entities/InventorySession';
 import InventoryEntry from '../../entities/InventoryEntry';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Button, Icon, ListItem } from 'react-native-elements';
 
 export interface InventoryShowProps {
     inventorySessionId: number;
@@ -117,7 +117,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                 title: entry.articleName,
                 subtitle: entry.articleBarcode,
                 image: entry.articleImage ? { uri: entry.articleImage } : null,
-                metadata: `${entry.articleQuantity}\n${ProductProduct.quantityUnitAsString(entry.articleUnit)}`,
+                metadata: `${entry.articleQuantity} ${ProductProduct.quantityUnitAsString(entry.articleUnit)}`,
                 inventoryEntry: entry,
             };
             listDatas.push(data);
@@ -248,24 +248,20 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                             paddingVertical: 16,
                         }}
                     >
-                        <Icon.Button
+                        <Button
                             onPress={(): void => {
                                 this.openScannerModal();
                             }}
-                            name="barcode"
-                            solid
-                        >
-                            Scanner
-                        </Icon.Button>
-                        <Icon.Button
+                            icon={<Icon name="barcode" type="font-awesome-5" color="white" solid />}
+                            title=" Scanner"
+                        />
+                        <Button
                             onPress={(): void => {
                                 this.openExportModal();
                             }}
-                            name="file-export"
-                            solid
-                        >
-                            Envoyer
-                        </Icon.Button>
+                            icon={<Icon name="file-export" type="font-awesome-5" color="white" solid />}
+                            title=" Envoyer"
+                        />
                     </View>
                     {this.state.inventoryEntries.length > 0 ? (
                         <FlatList
@@ -273,27 +269,26 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                             style={{ backgroundColor: 'white' }}
                             data={this.computeEntriesData()}
                             renderItem={({ item }): React.ReactElement => (
-                                <TouchableHighlight
-                                    style={materialStyle.row}
-                                    underlayColor="#BCBCBC"
+                                <ListItem
                                     onPress={(): void => {
                                         this.didTapIventoryEntry(item.inventoryEntry);
                                     }}
+                                    bottomDivider
                                 >
-                                    <View style={materialStyle.row}>
-                                        <View style={materialStyle.rowContent}>
-                                            <Text style={materialStyle.rowTitle}>{item.title}</Text>
-                                            <Text style={materialStyle.rowSubtitle}>{item.subtitle}</Text>
-                                        </View>
+                                    <ListItem.Content>
+                                        <ListItem.Title>{item.title}</ListItem.Title>
+                                        <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
+                                    </ListItem.Content>
+                                    <ListItem.Content right>
                                         <Text style={{ textAlign: 'right' }}>{item.metadata}</Text>
-                                    </View>
-                                </TouchableHighlight>
+                                    </ListItem.Content>
+                                </ListItem>
                             )}
                         />
                     ) : (
                         <View>
-                            <Text style={{ fontSize: 25, textAlign: 'center', marginTop: 30 }}>
-                                Aucun article pour le moment !
+                            <Text style={{ fontSize: 25, textAlign: 'center', marginTop: 30, marginHorizontal: 8 }}>
+                                Aucun article pour le moment. Appuie sur le bouton &quot;Scanner&quot; pour démarrer !
                             </Text>
                         </View>
                     )}
