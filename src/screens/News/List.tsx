@@ -5,7 +5,7 @@ import { defaultScreenOptions } from '../../utils/navigation';
 import * as rssParser from 'react-native-rss-parser';
 import moment from 'moment';
 import { NewsItem } from './Show';
-import { ListItem } from 'react-native-elements';
+import { Icon, ListItem } from 'react-native-elements';
 
 export interface NewsListProps {
     componentId: string;
@@ -89,11 +89,14 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
                             onPress={(): void => {
                                 this.didTapNewsItem(item);
                             }}
-                            title={item.title}
-                            subtitle={`publié le ${item.published.format('DD MMMM YYYY')}`}
                             bottomDivider
-                            chevron
-                        />
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title>{item.title}</ListItem.Title>
+                                <ListItem.Subtitle>publié le {item.published.format('DD MMMM YYYY')}</ListItem.Subtitle>
+                            </ListItem.Content>
+                            <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                        </ListItem>
                     )}
                     onRefresh={this._handleRefresh}
                     refreshing={this.state.refreshing}

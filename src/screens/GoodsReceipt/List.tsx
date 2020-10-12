@@ -39,7 +39,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
             iconContainerStyle: { marginRight: 5 },
         },
         Icon: {
-            type: 'font-awesome',
+            type: 'font-awesome-5',
         },
     };
 
@@ -62,7 +62,7 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
         topBar.rightButtons = [
             {
                 id: 'goodsreceipt-new',
-                icon: require('../../../assets/icons/plus-regular.png'),
+                text: 'Commencer',
             },
         ];
 
@@ -310,14 +310,20 @@ export default class GoodsReceiptList extends React.Component<GoodsReceiptListPr
                         },
                     );
                 }}
-                leftIcon={item.hidden ? <Icon name="eye-slash" /> : undefined}
-                title={item.poName}
-                subtitle={item.partnerName}
-                rightTitle={item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
-                rightTitleStyle={{ color: item.lastSentAt == undefined ? 'black' : 'green' }}
                 bottomDivider
-                chevron
-            />
+            >
+                <ListItem.Content>
+                    {item.hidden ? <Icon type="font-awesome-5" name="eye-slash" /> : null}
+                    <ListItem.Title>{item.poName}</ListItem.Title>
+                    <ListItem.Subtitle>{item.partnerName}</ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Content right>
+                    <ListItem.Title right style={{ color: item.lastSentAt == undefined ? 'black' : 'green' }}>
+                        {item.lastSentAt == undefined ? 'En cours' : 'Envoyé'}
+                    </ListItem.Title>
+                </ListItem.Content>
+                <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+            </ListItem>
         );
     };
 

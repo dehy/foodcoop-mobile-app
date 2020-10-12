@@ -6,6 +6,7 @@ import InventoryEntryFactory from '../../factories/InventoryEntryFactory';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import InventorySession from '../../entities/InventorySession';
 import { ListItem, Button, Icon, ThemeProvider } from 'react-native-elements';
+import merge from 'deepmerge';
 
 export interface InventoryListProps {
     componentId: string;
@@ -37,7 +38,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
             iconContainerStyle: { marginRight: 5 },
         },
         Icon: {
-            type: 'font-awesome',
+            type: 'font-awesome-5',
         },
     };
 
@@ -54,14 +55,17 @@ export default class InventoryList extends React.Component<InventoryListProps, I
 
     static options(): Options {
         const options = defaultScreenOptions('Inventaires');
-        // options.topBar.rightButtons = [
-        //     {
-        //         id: 'inventory-new',
-        //         text: 'Nouveau'
-        //     }
-        // ]
-
-        return options;
+        const buttons = {
+            topBar: {
+                rightButtons: [
+                    {
+                        id: 'inventory-new',
+                        text: 'Nouveau',
+                    },
+                ],
+            },
+        };
+        return merge(options, buttons);
     }
 
     componentDidAppear(): void {
@@ -189,14 +193,19 @@ export default class InventoryList extends React.Component<InventoryListProps, I
                                     };
                                     this.didTapInventoryEntry(inventorySessionTapProps);
                                 }}
-                                title={item.title}
-                                subtitle={item.subtitle}
-                                rightTitle={item.detailText}
                                 bottomDivider
-                                chevron
-                            />
+                            >
+                                <ListItem.Content>
+                                    <ListItem.Title>{item.title}</ListItem.Title>
+                                    <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
+                                </ListItem.Content>
+                                <ListItem.Content right>
+                                    <ListItem.Title right>{item.detailText}</ListItem.Title>
+                                </ListItem.Content>
+                                <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                            </ListItem>
                         )}
-                        ListHeaderComponent={this.renderHeader}
+                        // ListHeaderComponent={this.renderHeader}
                         onRefresh={this._handleRefresh}
                         refreshing={this.state.refreshing}
                     />

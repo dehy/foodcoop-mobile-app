@@ -153,5 +153,4 @@ export function defaultScreenOptions(screenTitle: string): Options {
             },
         },
     };
-    return {};
 }

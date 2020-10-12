@@ -42,7 +42,8 @@ def flipper_post_install(installer)
       end
     end
   end
-  file_name = Dir.glob("*.xcodeproj")[0]
+  podfile_dir = File.dirname(__FILE__) + "/"
+  file_name = Dir.glob(podfile_dir + "*.xcodeproj")[0]
   app_project = Xcodeproj::Project.open(file_name)
   app_project.native_targets.each do |target|
     target.build_configurations.each do |config|
@@ -90,6 +91,7 @@ target 'Supercoop' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
 
   target 'SupercoopTests' do
     inherit! :complete

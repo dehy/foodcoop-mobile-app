@@ -27,11 +27,11 @@ import {
     BarcodeType,
 } from 'react-native-camera';
 import BarcodeMask from 'react-native-barcode-mask';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import Sound from 'react-native-sound';
 import KeepAwake from '@sayem314/react-native-keep-awake';
 import DataWedgeIntents from 'react-native-datawedge-intents';
 import { deviceId } from '../utils/helpers';
+import { Button, Icon } from 'react-native-elements';
 
 // const flashModeOrder: { [key: string]: keyof FlashMode } = {
 //     off: RNCamera.Constants.FlashMode.on,
@@ -884,36 +884,52 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                 <BarcodeMask width={300} height={100} showAnimatedLine={false} />
                 <View style={styles.actions}>
                     <View style={styles.actionButton}>
-                        <Icon.Button
-                            name="bolt"
-                            backgroundColor="#000000"
-                            color={this.state.flash == RNCamera.Constants.FlashMode.torch ? '#00FF00' : '#FFFFFF'}
+                        <Button
+                            icon={
+                                <Icon
+                                    type="font-awesome-5"
+                                    name="bolt"
+                                    color={this.state.flash == RNCamera.Constants.FlashMode.torch ? 'yellow' : 'white'}
+                                    solid
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: 'black',
+                            }}
+                            titleStyle={{
+                                color: this.state.flash == RNCamera.Constants.FlashMode.torch ? 'yellow' : 'white',
+                            }}
                             onPress={this.toggleFlash}
-                            solid
-                        >
-                            Flash
-                        </Icon.Button>
+                            title=" Flash"
+                        />
                     </View>
                     <View style={styles.actionButton}>
-                        <Icon.Button
-                            name="expand"
-                            color={this.state.autoFocus === RNCamera.Constants.AutoFocus.on ? '#00FF00' : '#FF0000'}
-                            backgroundColor="#000000"
+                        <Button
+                            icon={
+                                <Icon
+                                    type="font-awesome-5"
+                                    name="expand"
+                                    color={this.state.autoFocus === RNCamera.Constants.AutoFocus.on ? 'green' : 'red'}
+                                    solid
+                                />
+                            }
+                            buttonStyle={{
+                                backgroundColor: 'black',
+                            }}
+                            titleStyle={{
+                                color: this.state.autoFocus === RNCamera.Constants.AutoFocus.on ? 'green' : 'red',
+                            }}
                             onPress={this.toggleFocus}
-                            solid
-                        >
-                            Autofocus
-                        </Icon.Button>
+                            title=" Autofocus"
+                        />
                     </View>
                     <View style={styles.actionButton}>
-                        <Icon.Button
-                            name="keyboard"
-                            backgroundColor="#000000"
+                        <Button
+                            icon={<Icon type="font-awesome-5" name="keyboard" color="white" solid />}
+                            buttonStyle={{ backgroundColor: 'black' }}
                             onPress={this.showManualSearchView}
-                            solid
-                        >
-                            Clavier
-                        </Icon.Button>
+                            title=" Clavier"
+                        />
                     </View>
                 </View>
                 {!!canDetectFaces && this.renderFaces()}
@@ -928,16 +944,24 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         return (
             <View style={{ backgroundColor: 'white', height: '100%' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 8 }}>
-                    <Icon name="arrow-up" style={{ textAlignVertical: 'center', marginRight: 8, fontSize: 20 }} />
+                    <Icon
+                        type="font-awesome-5"
+                        name="arrow-up"
+                        size={20}
+                        style={{ textAlignVertical: 'center', marginRight: 8 }}
+                    />
                     <Text style={{ fontSize: 20 }}>Laser</Text>
                     <Icon
+                        type="font-awesome-5"
                         name="exclamation-triangle"
-                        style={{ textAlignVertical: 'center', marginLeft: 8, fontSize: 20, color: 'red' }}
+                        size={20}
+                        color="red"
+                        style={{ textAlignVertical: 'center', marginLeft: 8 }}
                     />
                 </View>
                 <View
                     style={{
-                        marginTop: 28,
+                        marginTop: 83,
                         marginBottom: 60,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
@@ -952,11 +976,21 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                             borderTopRightRadius: 30,
                         }}
                     ></View>
-                    <Icon name="arrow-left" size={30} style={{ textAlignVertical: 'center' }} />
+                    <Icon
+                        type="font-awesome-5"
+                        name="arrow-left"
+                        size={30}
+                        style={{ marginTop: 25, textAlignVertical: 'center' }}
+                    />
                     <Text style={{ width: '50%', textAlign: 'center', textAlignVertical: 'center' }}>
                         Reste appuyé sur un des boutons latéraux pour activer le scanner laser.
                     </Text>
-                    <Icon name="arrow-right" size={30} style={{ textAlignVertical: 'center' }} />
+                    <Icon
+                        type="font-awesome-5"
+                        name="arrow-right"
+                        size={30}
+                        style={{ marginTop: 25, textAlignVertical: 'center' }}
+                    />
                     <View
                         style={{
                             width: 10,
@@ -968,8 +1002,8 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                     ></View>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                    <Icon name="exclamation-triangle" solid size={30} style={{ color: 'red' }} />
-                    <Icon name="eye" solid size={30} style={{ color: 'red' }} />
+                    <Icon type="font-awesome-5" name="exclamation-triangle" solid size={30} color="red" />
+                    <Icon type="font-awesome-5" name="eye" solid size={30} color="red" />
                 </View>
                 <Text style={{ textAlign: 'center', fontSize: 24 }}>Attention aux yeux.</Text>
                 <Text style={{ textAlign: 'center' }}>Ne pas pointer le laser vers un visage !</Text>
