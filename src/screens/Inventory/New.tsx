@@ -8,6 +8,7 @@ import InventorySession from '../../entities/InventorySession';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
 import moment, { Moment } from 'moment';
 import { toNumber, isInt } from '../../utils/helpers';
+import merge from 'deepmerge';
 
 export interface InventoryNewProps {
     componentId: string;
@@ -50,16 +51,17 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
 
     static options(): Options {
         const options = defaultScreenOptions('Nouvel inventaire');
-        options.topBar = {
-            rightButtons: [
-                {
-                    id: 'cancel',
-                    text: 'Annuler',
-                },
-            ],
+        const buttons = {
+            topBar: {
+                rightButtons: [
+                    {
+                        id: 'cancel',
+                        text: 'Annuler',
+                    },
+                ],
+            },
         };
-
-        return options;
+        return merge(options, buttons);
     }
 
     componentDidAppear(): void {
@@ -133,15 +135,15 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
 
     render(): React.ReactNode {
         return (
-            <SafeAreaView style={{ padding: 16 }}>
-                <View style={{ marginBottom: 8, flexDirection: 'row' }}>
+            <SafeAreaView style={{ padding: 16, alignItems: 'center' }}>
+                <View style={{ marginTop: 8, marginBottom: 8, flexDirection: 'row' }}>
                     <Input
                         containerStyle={{ flex: 9 }}
                         ref={(ref): void => {
                             this.dateInput = ref !== null ? ref : undefined;
                         }}
-                        leftIcon={{ type: 'font-awesome', name: 'calendar' }}
-                        leftIconContainerStyle={{ marginRight: 8 }}
+                        leftIcon={{ type: 'font-awesome-5', name: 'calendar' }}
+                        leftIconContainerStyle={{ marginLeft: 8 }}
                         label="Date"
                         inputContainerStyle={styles.input}
                         keyboardType="number-pad"
@@ -153,8 +155,8 @@ export default class InventoryNew extends React.Component<InventoryNewProps, Inv
                         ref={(ref): void => {
                             this.zoneInput = ref !== null ? ref : undefined;
                         }}
-                        leftIcon={{ type: 'font-awesome', name: 'map-marker' }}
-                        leftIconContainerStyle={{ marginRight: 8 }}
+                        leftIcon={{ type: 'font-awesome-5', name: 'map-marker-alt' }}
+                        leftIconContainerStyle={{ marginLeft: 8 }}
                         label="Zone"
                         inputContainerStyle={styles.input}
                         keyboardType="number-pad"

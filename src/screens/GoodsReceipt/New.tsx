@@ -9,7 +9,7 @@ import moment from 'moment';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Icon } from 'react-native-elements';
 
 export interface GoodsReceiptNewProps {
     componentId: string;

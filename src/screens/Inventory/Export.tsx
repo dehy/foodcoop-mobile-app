@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, Icon } from 'react-native-elements';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import InventorySessionFactory from '../../factories/InventorySessionFactory';
@@ -9,9 +9,9 @@ import CSVGenerator from '../../utils/CSVGenerator';
 import moment from 'moment';
 import InventoryEntry from '../../entities/InventoryEntry';
 import InventorySession from '../../entities/InventorySession';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import SupercoopSignIn from '../../utils/SupercoopSignIn';
 import Mailjet, { MailAttachment } from '../../utils/Mailjet';
+import merge from 'deepmerge';
 
 export interface InventoryShowProps {
     componentId: string;
@@ -47,16 +47,18 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
 
     static options(): Options {
         const options = defaultScreenOptions("Envoi d'inventaire");
-        options.topBar = {
-            rightButtons: [
-                {
-                    id: 'cancel',
-                    text: 'Fermer',
-                },
-            ],
+        const buttons = {
+            topBar: {
+                rightButtons: [
+                    {
+                        id: 'cancel',
+                        text: 'Annuler',
+                    },
+                ],
+            },
         };
 
-        return options;
+        return merge(options, buttons);
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
