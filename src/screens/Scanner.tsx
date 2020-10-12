@@ -3,9 +3,9 @@ import {
     ActivityIndicator,
     Alert,
     AlertButton,
-    Button,
     Image,
     SafeAreaView,
+    StatusBar,
     StyleSheet,
     Text,
     TextInput,
@@ -25,6 +25,7 @@ import Odoo from '../utils/Odoo';
 import ProductProduct, { UnitOfMesurement } from '../entities/Odoo/ProductProduct';
 import { isInt } from '../utils/helpers';
 import Scanner2 from './Scanner2';
+import { Button, Divider } from 'react-native-elements';
 
 export interface ScannerProps {
     componentId: string;
@@ -71,9 +72,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         top: 0,
-        width: '94%',
-        margin: '3%',
-        height: 160,
+        right: 0,
+        margin: 8,
         borderRadius: 8,
         backgroundColor: 'white',
         padding: 16,
@@ -163,12 +163,16 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
     }
 
     componentDidAppear(): void {
+        if (!this.props.inventory) {
+            StatusBar.setBarStyle('light-content');
+        }
         this.setState({
             displayCamera: true,
         });
     }
 
     componentDidDisappear(): void {
+        StatusBar.setBarStyle('dark-content');
         this.setState({
             displayCamera: false,
         });
@@ -182,13 +186,19 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
 
     static options(passProps: ScannerProps): Options {
         const options = defaultScreenOptions('Recherche...');
-        if (passProps.inventory && options && options.topBar) {
-            options.topBar.rightButtons = [
-                {
-                    id: 'close',
-                    text: 'Fermer',
-                },
-            ];
+        if (passProps.inventory) {
+            if (options && options.topBar) {
+                options.topBar.rightButtons = [
+                    {
+                        id: 'close',
+                        text: 'Fermer',
+                    },
+                ];
+            }
+        } else {
+            if (options && options.topBar) {
+                options.topBar.visible = false;
+            }
         }
 
         return options;
@@ -527,109 +537,121 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         }
     }
 
+    renderInventoryQuantityInputRow(): React.ReactNode | void {
+        if (!this.props.inventory) {
+            return;
+        }
+        return (
+            <View>
+                <Divider></Divider>
+                <Text style={{ fontWeight: 'bold', paddingTop: 8 }}>Nouveau stock</Text>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
+                    <TextInput
+                        ref={(ref): void => {
+                            this.textInput = ref;
+                        }}
+                        onChangeText={(value): void => {
+                            this.articleQuantityValue = value;
+                        }}
+                        style={{
+                            flex: 0,
+                            fontSize: 28,
+                            width: 80,
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            marginRight: 8,
+                            paddingRight: 5,
+                            textAlign: 'right',
+                            alignItems: 'center',
+                        }}
+                        keyboardType="decimal-pad"
+                        blurOnSubmit={false}
+                        onSubmitEditing={(): void => {
+                            this.inventoryDidTapSaveButton();
+                        }}
+                    />
+                    <Text style={{ fontSize: 28, flex: 1 }}>
+                        {this.state.odooProductProduct ? this.state.odooProductProduct.unitAsString() : null}
+                    </Text>
+                    <Button
+                        onPress={(): void => {
+                            this.inventoryDidTapSaveButton();
+                        }}
+                        title="Enregistrer"
+                    />
+                </View>
+            </View>
+        );
+    }
+
+    renderProductCard(): React.ReactNode | void {
+        if (!this.state.showProductCard) {
+            return;
+        }
+        return (
+            <View style={[styles.information, { marginTop: this.props.inventory ? 8 : 28 }]}>
+                <View style={{ flexDirection: 'row' }}>
+                    {this.state.odooProductProduct && this.state.odooProductProduct.image ? (
+                        <Image source={{ uri: this.state.odooProductProduct.image }} style={styles.articleImage} />
+                    ) : (
+                        <ActivityIndicator size="small" color="#999999" style={styles.articleImage} />
+                    )}
+                    <Text
+                        ref={(ref): void => {
+                            this.articleTitle = ref;
+                        }}
+                        numberOfLines={2}
+                        style={styles.articleName}
+                    >
+                        {this.state.odooProductProduct ? this.state.odooProductProduct.name : 'Chargement...'}
+                    </Text>
+                </View>
+                <View>
+                    <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
+                        <View style={{ flex: 1, flexDirection: 'column' }}>
+                            <Text style={styles.detailTitle}>Prix</Text>
+                            <Text style={styles.detailValue}>
+                                {this.state.odooProductProduct && this.state.odooProductProduct.lstPrice
+                                    ? Math.round(this.state.odooProductProduct.lstPrice * 100) / 100 + ' €'
+                                    : '-'}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.detailTitle}>Stock</Text>
+                            <Text
+                                style={[
+                                    styles.detailValue,
+                                    this.state.odooProductProduct && !this.state.odooProductProduct.quantityIsValid()
+                                        ? styles.detailValueInvalid
+                                        : undefined,
+                                ]}
+                            >
+                                {this.state.odooProductProduct && this.state.odooProductProduct.quantityIsValid()
+                                    ? this.state.odooProductProduct.quantityAsString()
+                                    : '-'}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.detailTitle}>Poid/Vol.</Text>
+                            <Text style={styles.detailValue}>
+                                {this.state.odooProductProduct
+                                    ? this.state.odooProductProduct.packagingAsString()
+                                    : '-'}
+                            </Text>
+                        </View>
+                    </View>
+                    {this.renderInventoryQuantityInputRow()}
+                </View>
+            </View>
+        );
+    }
+
     render(): React.ReactNode {
         return (
             <SafeAreaView style={styles.container}>
                 {this.renderUnknownProductProductView()}
                 {this.renderCameraView()}
-                {this.state.showProductCard ? (
-                    <View style={styles.information}>
-                        <View style={{ flexDirection: 'row' }}>
-                            {this.state.odooProductProduct && this.state.odooProductProduct.image ? (
-                                <Image
-                                    source={{ uri: this.state.odooProductProduct.image }}
-                                    style={styles.articleImage}
-                                />
-                            ) : (
-                                <ActivityIndicator size="small" color="#999999" style={styles.articleImage} />
-                            )}
-                            <Text
-                                ref={(ref): void => {
-                                    this.articleTitle = ref;
-                                }}
-                                numberOfLines={2}
-                                style={styles.articleName}
-                            >
-                                {this.state.odooProductProduct ? this.state.odooProductProduct.name : 'Chargement...'}
-                            </Text>
-                        </View>
-                        {this.props.inventory ? (
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
-                                <TextInput
-                                    ref={(ref): void => {
-                                        this.textInput = ref;
-                                    }}
-                                    onChangeText={(value): void => {
-                                        this.articleQuantityValue = value;
-                                    }}
-                                    style={{
-                                        flex: 0,
-                                        fontSize: 28,
-                                        width: 80,
-                                        borderWidth: 1,
-                                        borderRadius: 8,
-                                        marginRight: 8,
-                                        textAlign: 'right',
-                                        alignItems: 'center',
-                                    }}
-                                    keyboardType="decimal-pad"
-                                    blurOnSubmit={false}
-                                    onSubmitEditing={(): void => {
-                                        this.inventoryDidTapSaveButton();
-                                    }}
-                                />
-                                <Text style={{ fontSize: 28, flex: 0 }}>
-                                    {this.state.odooProductProduct
-                                        ? this.state.odooProductProduct.unitAsString()
-                                        : null}
-                                </Text>
-                                <Button
-                                    // style={{ flex: 1, marginLeft: 16 }}
-                                    onPress={(): void => {
-                                        this.inventoryDidTapSaveButton();
-                                    }}
-                                    title="Enregistrer"
-                                />
-                            </View>
-                        ) : (
-                            <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
-                                <View style={{ flex: 1, flexDirection: 'column' }}>
-                                    <Text style={styles.detailTitle}>Prix</Text>
-                                    <Text style={styles.detailValue}>
-                                        {this.state.odooProductProduct && this.state.odooProductProduct.lstPrice
-                                            ? Math.round(this.state.odooProductProduct.lstPrice * 100) / 100 + ' €'
-                                            : '-'}
-                                    </Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={styles.detailTitle}>Stock</Text>
-                                    <Text
-                                        style={[
-                                            styles.detailValue,
-                                            this.state.odooProductProduct &&
-                                            !this.state.odooProductProduct.quantityIsValid()
-                                                ? styles.detailValueInvalid
-                                                : undefined,
-                                        ]}
-                                    >
-                                        {this.state.odooProductProduct &&
-                                        this.state.odooProductProduct.quantityIsValid()
-                                            ? this.state.odooProductProduct.quantityAsString()
-                                            : '-'}
-                                    </Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={styles.detailTitle}>Poid/Vol.</Text>
-                                    <Text style={styles.detailValue}>
-                                        {this.state.odooProductProduct
-                                            ? this.state.odooProductProduct.packagingAsString()
-                                            : '-'}
-                                    </Text>
-                                </View>
-                            </View>
-                        )}
-                    </View>
-                ) : null}
+                {this.renderProductCard()}
             </SafeAreaView>
         );
     }
