@@ -447,8 +447,11 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     }
 
     dataWedgeBarcodeScanned(scanData: { [x: string]: any }, timeOfScan: string): void {
-        const scannedData = scanData['com.symbol.datawedge.data_string'];
+        let scannedData = scanData['com.symbol.datawedge.data_string'];
         const scannedType = scanData['com.symbol.datawedge.label_type'];
+        if ('LABEL-TYPE-UPCA' === scannedType) {
+            scannedData = `0${scannedData}`;
+        }
         const scan = { data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan };
         console.log(scan);
         const barcodeEvent: BarcodeReadEvent = {
