@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-app-auth/android/build.gradle b/node_modules/react-native-app-auth/android/build.gradle
+index a5ba2c7..82cad6b 100644
+--- a/node_modules/react-native-app-auth/android/build.gradle
++++ b/node_modules/react-native-app-auth/android/build.gradle
+@@ -57,6 +57,6 @@ repositories {
+ dependencies {
+     //noinspection GradleDynamicVersion
+     implementation 'com.facebook.react:react-native:+'  // From node_modules
+-    implementation 'net.openid:appauth:0.7.1'
++    implementation 'com.github.openid:AppAuth-Android:master-SNAPSHOT'
+     implementation 'androidx.browser:browser:1.2.0'
+ }
