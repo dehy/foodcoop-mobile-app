@@ -112,6 +112,15 @@ Il est possible de s'en occuper manuellement en suivant les procédures des deux
 
 Ou sinon, l'outil [fastlane](https://fastlane.tools/) permet d'automatiser cette tâche.
 
+#### APK pour les devices sans Google Play (MC40)
+
+- Récupérer le fichier AppBundle généré par Android Studio pour le Play Store (généralement `app-release.aab`)
+- Télécharger l'outil [bundletool](https://github.com/google/bundletool/releases) et exécuter la commande suivante :
+
+    java -jar bundletool-all-1.3.0.jar build-apks --bundle=app-release.aab --output=app-release.apks --overwrite --mode=universal --ks=/path/to/project/android/keystores/release.keystore --ks-pass=pass:my-keystore-password --ks-key-alias=sp_release --key-pass=pass:my-key-password
+
+- Changer l'extension du fichier `app-release.apks` en `.zip`. Dézipper et distribuer le fichier `universal.apk`.
+
 #### fastlane
 
 Fastlane, tout comme Cocoapods (voir plus haut) est écrit en Ruby. Le gestionnaite de gems (nom des modules ruby) s'appelle `bundler`.
