@@ -52,7 +52,7 @@ export default class Agribalyse {
         return this.instance;
     }
 
-    async fetchFromBarcode(AGBCode: string): Promise<AGBProduct> {
+    async fetchFromBarcode(AGBCode: string): Promise<AGBProduct | null> {
         const options: RequestInit = {
             headers: {
                 method: 'GET',
@@ -82,7 +82,7 @@ export default class Agribalyse {
         AppLogger.getLogger().debug(JSON.stringify(response));
 
         if (0 === response.total) {
-            throw '[Agribalyse] product not found';
+            return null;
         }
         if (response.total > 1) {
             throw '[Agribalyse] more than 1 result';
