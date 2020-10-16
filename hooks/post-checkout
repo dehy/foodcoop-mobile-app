@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-echo "+ Executing Yarn install"
-
-yarn install

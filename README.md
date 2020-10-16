@@ -84,6 +84,16 @@ cd ios/
 bundle exec pod update
 ```
 
+#### Messages de commit
+
+Les messages de commit doivent respecter la [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/)
+
+    <type>[optional scope]: <description>
+
+    [optional body]
+
+    [optional footer(s)]
+
 ### Mise en prod
 
 #### Versioning
