@@ -30,7 +30,7 @@ export default class OpenFoodFacts {
         return this.instance;
     }
 
-    async fetchFromBarcode(barcode: string): Promise<OFFProduct> {
+    async fetchFromBarcode(barcode: string): Promise<OFFProduct | null> {
         if (!Odoo.barcodeIsValid(barcode)) {
             throw 'Invalid barcode provided';
         }
@@ -72,7 +72,7 @@ export default class OpenFoodFacts {
         const response = ((await result.json()) as unknown) as OFFResponse;
 
         if (!response.product) {
-            throw '[OpenFoodFacts] product not found';
+            return null;
         }
 
         return response.product;

@@ -319,6 +319,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         OpenFoodFacts.getInstance()
             .fetchFromBarcode(barcode)
             .then(product => {
+                if (null === product) {
+                    return;
+                }
                 this.setState({
                     offProduct: product,
                 });
@@ -327,6 +330,9 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
                     Agribalyse.getInstance()
                         .fetchFromBarcode(product.categories_properties['agribalyse_food_code:en'])
                         .then(product => {
+                            if (null === product) {
+                                return;
+                            }
                             this.setState({
                                 agribalyseProduct: product,
                             });
