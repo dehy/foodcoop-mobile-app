@@ -30,14 +30,14 @@
 				<string>***REMOVED***</string>
 			</array>
 		</dict>
-    <dict>
-      <key>CFBundleURLName</key>
-      <string>fr.supercoop.app</string>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>fr.supercoop.app</string>
-      </array>
-    </dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>fr.supercoop.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fr.supercoop.app</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -57,13 +57,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Nous avons besoin d&apos;accéder à la caméra pour pouvoir scanner des codes barre.</string>
+	<string>Nous avons besoin d'accéder à la caméra pour pouvoir scanner des codes barre.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Nous n&apos;utilisons pas votre localisation. Ce message n&apos;est pas censé apparaitre.</string>
+	<string>Nous n'utilisons pas votre localisation. Ce message n'est pas censé apparaitre.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Nous n&apos;utilisons pas votre localisation. Ce message n&apos;est pas censé apparaitre.</string>
+	<string>Nous n'utilisons pas votre localisation. Ce message n'est pas censé apparaitre.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Nous avons besoin d&apos;accéder au micro pour pouvoir afficher la caméra. Me demandez pas pourquoi, je ne sais pas non plus.</string>
+	<string>Nous avons besoin d'accéder au micro pour pouvoir afficher la caméra. Me demandez pas pourquoi, je ne sais pas non plus.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Nous pouvons avoir besoin de lire vos photos pour attacher une photo à un rapport de réception de livraison</string>
 	<key>UIAppFonts</key>
