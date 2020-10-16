@@ -70,6 +70,8 @@
         "@babel/core": "^7.6.2",
         "@babel/plugin-proposal-decorators": "^7.6.0",
         "@babel/runtime": "^7.6.2",
+        "@commitlint/cli": "^11.0.0",
+        "@commitlint/config-conventional": "^11.0.0",
         "@react-native-community/eslint-config": "^0.0.5",
         "@types/js-base64": "^2.3.1",
         "@types/jsrsasign": "^8.0.5",
@@ -85,10 +87,12 @@
         "@typescript-eslint/eslint-plugin": "^2.11.0",
         "@typescript-eslint/parser": "^2.11.0",
         "babel-jest": "^24.9.0",
+        "commitlint": "^11.0.0",
         "eslint": "^6.5.1",
         "eslint-config-prettier": "^6.7.0",
         "eslint-plugin-prettier": "^3.1.1",
         "eslint-plugin-react": "^7.17.0",
+        "husky": "^4.3.0",
         "jest": "^24.9.0",
         "metro-react-native-babel-preset": "^0.58.0",
         "patch-package": "^6.0.2",
@@ -96,11 +100,22 @@
         "react-native-clean-project": "^3.4.0",
         "react-native-typescript-transformer": "^1.2.12",
         "react-test-renderer": "16.11.0",
-        "shared-git-hooks": "^1.2.1",
         "ts-node": "^8.6.2",
         "typescript": "^3.4.3"
     },
     "jest": {
         "preset": "react-native"
+    },
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+            "post-checkout": "yarn install",
+            "post-merge": "yarn install"
+        }
     }
 }
