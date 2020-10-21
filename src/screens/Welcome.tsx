@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Alert } from 'react-native';
 import { goHome } from '../utils/navigation';
 import { readableVersion } from '../utils/helpers';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
@@ -54,29 +54,23 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
         this.setState({
             signinInProgress: true,
         });
-        try {
-            SupercoopSignIn.getInstance()
-                .signIn()
-                .then(
-                    () => {
-                        this.setState({
-                            signinInProgress: false,
-                        });
-                        goHome();
-                    },
-                    reason => {
-                        console.warn(reason);
-                        this.setState({
-                            signinInProgress: false,
-                        });
-                    },
-                );
-        } catch (error) {
-            this.setState({
-                signinInProgress: false,
-            });
-            console.log(error);
-        }
+        SupercoopSignIn.getInstance()
+            .signIn()
+            .then(
+                () => {
+                    this.setState({
+                        signinInProgress: false,
+                    });
+                    goHome();
+                },
+                reason => {
+                    Alert.alert('Erreur', "Une erreur s'est produite lors de la connexion");
+                    console.error(reason);
+                    this.setState({
+                        signinInProgress: false,
+                    });
+                },
+            );
     };
 
     render(): React.ReactNode {
