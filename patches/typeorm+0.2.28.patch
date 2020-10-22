@@ -1,0 +1,21 @@
+diff --git a/node_modules/typeorm/browser/driver/react-native/ReactNativeDriver.js b/node_modules/typeorm/browser/driver/react-native/ReactNativeDriver.js
+index aa68524..c2e7890 100644
+--- a/node_modules/typeorm/browser/driver/react-native/ReactNativeDriver.js
++++ b/node_modules/typeorm/browser/driver/react-native/ReactNativeDriver.js
+@@ -3,7 +3,6 @@ import { AbstractSqliteDriver } from "../sqlite-abstract/AbstractSqliteDriver";
+ import { ReactNativeQueryRunner } from "./ReactNativeQueryRunner";
+ import { DriverOptionNotSetError } from "../../error/DriverOptionNotSetError";
+ import { DriverPackageNotInstalledError } from "../../error/DriverPackageNotInstalledError";
+-import { PlatformTools } from "../../platform/PlatformTools";
+ var ReactNativeDriver = /** @class */ (function (_super) {
+     __extends(ReactNativeDriver, _super);
+     // -------------------------------------------------------------------------
+@@ -78,7 +77,7 @@ var ReactNativeDriver = /** @class */ (function (_super) {
+      */
+     ReactNativeDriver.prototype.loadDependencies = function () {
+         try {
+-            this.sqlite = PlatformTools.load("react-native-sqlite-storage");
++            this.sqlite = require("react-native-sqlite-storage");
+         }
+         catch (e) {
+             throw new DriverPackageNotInstalledError("React-Native", "react-native-sqlite-storage");
