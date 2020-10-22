@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, View, SectionList, TouchableHighlight, ActivityIndicator } from 'react-native';
+import { SafeAreaView, Text, View, SectionList, ActivityIndicator } from 'react-native';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
 import Odoo from '../../utils/Odoo';
@@ -9,7 +9,7 @@ import moment from 'moment';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
-import { Icon } from 'react-native-elements';
+import { Icon, ListItem } from 'react-native-elements';
 
 export interface GoodsReceiptNewProps {
     componentId: string;
@@ -45,7 +45,7 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
     }
 
     static options(): Options {
-        const options = defaultScreenOptions('Nouvelle réception de marchandises');
+        const options = defaultScreenOptions('Nouvelle réception');
         options.topBar = {
             rightButtons: [
                 {
@@ -249,25 +249,21 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                         <Text style={styles.listHeader}>{title}</Text>
                     )}
                     renderItem={({ item }): React.ReactElement => (
-                        <TouchableHighlight
+                        <ListItem
                             onPress={(): void => {
                                 this.didTapPurchaseOrder({ item: item });
                             }}
-                            underlayColor="#FFFFFF"
+                            bottomDivider
                         >
-                            <View style={styles.row}>
-                                <Icon name="clipboard-list" style={styles.rowIcon} />
-                                <View style={styles.rowContent}>
-                                    <Text style={styles.rowTitle}>
-                                        {item.plannedDeliveryDate && moment(item.plannedDeliveryDate).format('DD MMMM')}{' '}
-                                        - {item.name}
-                                    </Text>
-                                    <Text style={styles.rowSubtitle}>{item.partnerName}</Text>
-                                </View>
-                                {/* <Text style={styles.rowDetailText}>{item.detailText}</Text> */}
-                                <Icon name="info-circle" style={styles.rowActionIcon} />
-                            </View>
-                        </TouchableHighlight>
+                            <Icon type="font-awesome-5" name="clipboard-list" />
+                            <ListItem.Content>
+                                <ListItem.Title>
+                                    {item.plannedDeliveryDate && moment(item.plannedDeliveryDate).format('DD MMMM')} -{' '}
+                                    {item.name}
+                                </ListItem.Title>
+                                <ListItem.Subtitle>{item.partnerName}</ListItem.Subtitle>
+                            </ListItem.Content>
+                        </ListItem>
                     )}
                     onEndReached={this._handleLoadMore}
                     onEndReachedThreshold={0.5}

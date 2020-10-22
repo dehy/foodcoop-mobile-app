@@ -252,14 +252,14 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
                             onPress={(): void => {
                                 this.openScannerModal();
                             }}
-                            icon={<Icon name="barcode" type="font-awesome-5" color="white" solid />}
+                            icon={<Icon type="font-awesome-5" name="barcode" color="white" solid />}
                             title=" Scanner"
                         />
                         <Button
                             onPress={(): void => {
                                 this.openExportModal();
                             }}
-                            icon={<Icon name="file-export" type="font-awesome-5" color="white" solid />}
+                            icon={<Icon type="font-awesome-5" name="file-export" color="white" solid />}
                             title=" Envoyer"
                         />
                     </View>

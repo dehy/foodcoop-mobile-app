@@ -157,7 +157,7 @@ ${notFoundInOdooString}`);
         if (this.state.inventoryCheckPassed == true) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
-                    <Icon name="check" color="green" style={{ paddingTop: 3, marginRight: 4 }} />
+                    <Icon type="font-awesome-5" name="check" color="green" style={{ paddingTop: 3, marginRight: 4 }} />
                     <Text style={{ color: 'green' }}>Prêt pour l&apos;envoi</Text>
                 </View>
             );
@@ -165,7 +165,7 @@ ${notFoundInOdooString}`);
         if (this.state.inventoryCheckPassed == false) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
-                    <Icon name="times" color="red" style={{ paddingTop: 3, marginRight: 4 }} />
+                    <Icon type="font-awesome-5" name="times" color="red" style={{ paddingTop: 3, marginRight: 4 }} />
                     <Text style={{ color: 'red' }}>Erreur !</Text>
                 </View>
             );

@@ -7,22 +7,24 @@ import NutriScoreD from '../../assets/svg/Nutri-score-D.svg';
 import NutriScoreE from '../../assets/svg/Nutri-score-E.svg';
 
 interface NutriScoreProps extends SvgProps {
-    score: 1 | 2 | 3 | 4 | 5;
+    score: 'a' | 'b' | 'c' | 'd' | 'e';
 }
 
 export default class NutriScore extends React.Component<NutriScoreProps> {
     render(): React.ReactNode {
+        console.log(this.props.score);
         switch (this.props.score) {
-            case 1:
+            case 'a':
                 return <NutriScoreA width={this.props.width} height={this.props.height} />;
-            case 2:
+            case 'b':
                 return <NutriScoreB width={this.props.width} height={this.props.height} />;
-            case 3:
+            case 'c':
                 return <NutriScoreC width={this.props.width} height={this.props.height} />;
-            case 4:
+            case 'd':
                 return <NutriScoreD width={this.props.width} height={this.props.height} />;
-            case 5:
+            case 'e':
                 return <NutriScoreE width={this.props.width} height={this.props.height} />;
         }
+        return null;
     }
 }
