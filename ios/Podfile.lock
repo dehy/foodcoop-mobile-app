@@ -204,7 +204,7 @@ PODS:
     - React
   - react-native-keep-awake (1.0.3):
     - React
-  - react-native-sqlite-storage (4.1.0):
+  - react-native-sqlite-storage (5.0.0):
     - React
   - react-native-webview (8.2.1):
     - React
@@ -466,7 +466,7 @@ SPEC CHECKSUMS:
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-image-picker: 6a850c41f57f0848d918c2a77aedd7aa272ffa30
   react-native-keep-awake: 4f10247f33d1c653603f70754a498f635f114b02
-  react-native-sqlite-storage: f06bfba10f67f989c00b6a699b9c2b80a816edbe
+  react-native-sqlite-storage: 418ef4afc5e6df6ce3574c4617e5f0b65cffde55
   react-native-webview: 160ac8d6bb974e2933f2de6bb7464a8e934ff31d
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
