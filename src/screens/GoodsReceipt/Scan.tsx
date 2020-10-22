@@ -474,7 +474,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                             backgroundColor:
                                 this.state.isValid === false ? this.colorSuccessDisabled : this.colorSuccess,
                         }}
-                        icon={<Icon name="check" color="white" />}
+                        icon={<Icon type="font-awesome-5" name="check" color="white" />}
                     />
                     <Button
                         title=" Erreur"
@@ -482,7 +482,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         buttonStyle={{
                             backgroundColor: this.state.isValid === true ? this.colorDangerDisabled : this.colorDanger,
                         }}
-                        icon={<Icon name="times" color="white" />}
+                        icon={<Icon type="font-awesome-5" name="times" color="white" />}
                     />
                     <Button
                         title="Annuler"

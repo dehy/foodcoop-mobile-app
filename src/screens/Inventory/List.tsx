@@ -168,7 +168,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
             <View style={{ padding: 8, flexDirection: 'row', justifyContent: 'center' }}>
                 <Button
                     title=" Nouvel inventaire"
-                    icon={<Icon name="plus-circle" color="white" />}
+                    icon={<Icon type="font-awesome-5" name="plus-circle" color="white" />}
                     onPress={(): void => {
                         this.openNewInventoryModal();
                     }}

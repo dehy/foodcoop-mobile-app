@@ -10,7 +10,7 @@ interface OFFResponse {
 }
 
 export interface OFFProduct {
-    nutriscore_score?: 1 | 2 | 3 | 4 | 5;
+    nutrition_grade_fr?: 'a' | 'b' | 'c' | 'd' | 'e';
     nova_group?: 1 | 2 | 3 | 4;
     categories_properties?: {
         'agribalyse_food_code:en'?: string;
@@ -70,6 +70,7 @@ export default class OpenFoodFacts {
         AppLogger.getLogger().debug(uri);
         const result = await fetch(uri, options);
         const response = ((await result.json()) as unknown) as OFFResponse;
+        AppLogger.getLogger().debug(JSON.stringify(response));
 
         if (!response.product) {
             return null;
