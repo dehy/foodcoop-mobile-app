@@ -629,7 +629,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         console.debug(this.state.offProduct);
         return (
             <View style={{ flexDirection: 'row' }}>
-                {this.state.offProduct.nutriscore_score ? (
+                {this.state.offProduct.nutrition_grade_fr ? (
                     <TouchableWithoutFeedback
                         style={{ flex: 1, marginHorizontal: 8 }}
                         onPress={(): void => {
@@ -642,9 +642,9 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                         <View style={{ flex: 1 }}>
                             {/* <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center' }}>
                                 <Text>Nutri-Score </Text>
-                                <Icon name="question-circle" type="font-awesome-5" size={questionIconHeight} />
+                                <Icon type="font-awesome-5" name="question-circle" size={questionIconHeight} />
                             </View> */}
-                            <NutriScore score={this.state.offProduct.nutriscore_score} height={iconHeight} />
+                            <NutriScore score={this.state.offProduct.nutrition_grade_fr} height={iconHeight} />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
@@ -670,7 +670,7 @@ Produits alimentaires et boissons ultra-transformés`,
                         <View style={{ flex: 1 }}>
                             {/* <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center' }}>
                                 <Text>NOVA </Text>
-                                <Icon name="question-circle" type="font-awesome-5" size={questionIconHeight} />
+                                <Icon type="font-awesome-5" name="question-circle" size={questionIconHeight} />
                             </View> */}
                             <NovaGroup
                                 group={this.state.offProduct.nova_group}
@@ -693,7 +693,7 @@ Produits alimentaires et boissons ultra-transformés`,
                         <View style={{ flex: 1 }}>
                             <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center' }}>
                                 <Text>CO2e </Text>
-                                <Icon name="question-circle" type="font-awesome-5" size={questionIconHeight} />
+                                <Icon type="font-awesome-5" name="question-circle" size={questionIconHeight} />
                             </View>
                             <Text style={{ fontSize: 40, textAlign: 'center' }}>
                                 {this.state.agribalyseProduct['Changement_climatique_(kg_CO2_eq/kg_de_produit)']} kg
