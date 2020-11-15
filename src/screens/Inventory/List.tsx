@@ -108,7 +108,7 @@ export default class InventoryList extends React.Component<InventoryListProps, I
                         id: inventory.id ? inventory.id : 0,
                         title: inventory.date ? inventory.date.format('DD MMMM YYYY à HH[h]mm') : '',
                         subtitle: 'Zone ' + String(inventory.zone) + ' - ' + articleCountString,
-                        detailText: '',
+                        detailText: inventory.lastSentAt ? 'Envoyé' : '',
                         object: inventory,
                     };
                     inventoriesData.push(inventoryData);
