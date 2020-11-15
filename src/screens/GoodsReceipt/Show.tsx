@@ -247,7 +247,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
 
     itemBackgroundColor(entry: GoodsReceiptEntry): string {
         if (entry.productQty === null) {
-            return 'transparent';
+            return 'white';
         }
 
         switch (entry.getStatus()) {
@@ -261,7 +261,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 return '#5cb85c';
                 break;
             default:
-                return 'transparent';
+                return 'white';
                 break;
         }
     }
@@ -339,10 +339,12 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 </Text>
             );
         }
+
         return (
-            <View style={{ alignItems: 'flex-end' }}>
+            <ListItem.Title right>
                 <Text
                     style={{
+                        textAlign: 'right',
                         fontSize: false === entry.isValidQuantity() || false === entry.isValidUom() ? 12 : 16,
                         textDecorationLine:
                             false === entry.isValidQuantity() || false === entry.isValidUom() ? 'line-through' : 'none',
@@ -352,7 +354,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                     {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
                 {correctQty}
-            </View>
+            </ListItem.Title>
         );
     }
 
@@ -394,15 +396,16 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
             correctPackageQty = (
                 <Text style={{ fontSize: 16 }}>
-                    {entry.productQtyPackage} colis de {entry.packageQty}{' '}
+                    {entry.productQtyPackage} x {entry.packageQty}{' '}
                     {ProductProduct.quantityUnitAsString(entry.productUom)}
                 </Text>
             );
         }
         return (
-            <View style={{ alignItems: 'flex-end' }}>
+            <ListItem.Subtitle right>
                 <Text
                     style={{
+                        textAlign: 'right',
                         fontSize:
                             false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage() ? 12 : 16,
                         textDecorationLine:
@@ -411,11 +414,11 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                 : 'none',
                     }}
                 >
-                    {entry.expectedProductQtyPackage} colis de {entry.expectedPackageQty}{' '}
+                    {entry.expectedProductQtyPackage} x {entry.expectedPackageQty}{' '}
                     {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
                 {correctPackageQty}
-            </View>
+            </ListItem.Subtitle>
         );
     }
 
@@ -450,8 +453,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                     </ListItem.Subtitle>
                                 </ListItem.Content>
                                 <ListItem.Content right>
-                                    <ListItem.Title right>{this.renderEntryQty(item)}</ListItem.Title>
-                                    <ListItem.Subtitle right>{this.renderPackageQty(item)}</ListItem.Subtitle>
+                                    {this.renderEntryQty(item)}
+                                    {this.renderPackageQty(item)}
                                 </ListItem.Content>
                             </ListItem>
                         )}
