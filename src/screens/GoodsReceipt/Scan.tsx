@@ -318,41 +318,6 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                         </ListItem.Content>
                         <ListItem.Content right>
                             <TextInput
-                                onChangeText={(receivedPackageQtyStr: string): void => {
-                                    let receivedPackageQty: number | undefined;
-                                    receivedPackageQty = toNumber(receivedPackageQtyStr);
-                                    console.log(receivedPackageQty);
-                                    if (isNaN(receivedPackageQty)) {
-                                        receivedPackageQty = undefined;
-                                    }
-                                    AppLogger.getLogger().debug(
-                                        `New receivedQty: '${receivedPackageQtyStr}' => ${receivedPackageQty}`,
-                                    );
-                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                    if (goodsReceiptEntry) {
-                                        goodsReceiptEntry.packageQty = receivedPackageQty;
-                                        this.setState({ goodsReceiptEntry });
-                                    }
-                                }}
-                                placeholder="Inconnue"
-                                keyboardType="decimal-pad"
-                                ref={(input: TextInput): void => {
-                                    this.receivedPackageQtyInput = input;
-                                }}
-                            />
-                        </ListItem.Content>
-                    </ListItem>
-                    <ListItem
-                        onPress={(): void => {
-                            this.receivedProductQtyPackageInput?.focus();
-                        }}
-                        bottomDivider
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title>Nombre d&quot;articles par colis</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Content right>
-                            <TextInput
                                 onChangeText={(receivedProductQtyPackageStr: string): void => {
                                     let receivedProductQtyPackage: number | undefined;
                                     receivedProductQtyPackage = toNumber(receivedProductQtyPackageStr);
@@ -373,6 +338,41 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                                 keyboardType="decimal-pad"
                                 ref={(input: TextInput): void => {
                                     this.receivedProductQtyPackageInput = input;
+                                }}
+                            />
+                        </ListItem.Content>
+                    </ListItem>
+                    <ListItem
+                        onPress={(): void => {
+                            this.receivedPackageQtyInput?.focus();
+                        }}
+                        bottomDivider
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Nombre d&quot;articles par colis</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Content right>
+                            <TextInput
+                                onChangeText={(receivedPackageQtyStr: string): void => {
+                                    let receivedPackageQty: number | undefined;
+                                    receivedPackageQty = toNumber(receivedPackageQtyStr);
+                                    console.log(receivedPackageQty);
+                                    if (isNaN(receivedPackageQty)) {
+                                        receivedPackageQty = undefined;
+                                    }
+                                    AppLogger.getLogger().debug(
+                                        `New receivedQty: '${receivedPackageQtyStr}' => ${receivedPackageQty}`,
+                                    );
+                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                    if (goodsReceiptEntry) {
+                                        goodsReceiptEntry.packageQty = receivedPackageQty;
+                                        this.setState({ goodsReceiptEntry });
+                                    }
+                                }}
+                                placeholder="Inconnue"
+                                keyboardType="decimal-pad"
+                                ref={(input: TextInput): void => {
+                                    this.receivedPackageQtyInput = input;
                                 }}
                             />
                         </ListItem.Content>
@@ -455,8 +455,11 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
                     )}
                 </Text>
                 <Text style={{ fontSize: 25, marginBottom: 5, textAlign: 'center' }}>
-                    en {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedPackageQty} colis de{' '}
-                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQtyPackage} article(s)
+                    en {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQtyPackage} colis de{' '}
+                    {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedPackageQty}{' '}
+                    {ProductProduct.quantityUnitAsString(
+                        this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductUom,
+                    )}
                 </Text>
                 <View
                     style={{

@@ -65,16 +65,16 @@ export default class GoodsReceiptService {
         const attachments = await attachmentRepository.find({
             goodsReceiptSession: session,
         });
-        attachments?.forEach(async attachement => {
+        for (const attachement of attachments) {
             await attachmentRepository.remove(attachement);
-        });
+        }
 
         const entries = await entryRepository.find({
             goodsReceiptSession: session,
         });
-        entries?.forEach(async entry => {
+        for (const entry of entries) {
             await entryRepository.remove(entry);
-        });
+        }
 
         await sessionRepository.remove(session);
 

@@ -119,14 +119,14 @@ export default class GoodsReceiptEntry {
     }
 
     public getStatus(): EntryStatus {
-        if (false === this.isValidQuantity()) {
+        if (true !== this.isValidQuantity()) {
             return EntryStatus.ERROR;
         }
         if (
-            false === this.isValidUom() ||
+            true !== this.isValidUom() ||
             this.hasComment() ||
-            false === this.isValidPackageQty() ||
-            false === this.isValidProductQtyPackage()
+            true !== this.isValidPackageQty() ||
+            true !== this.isValidProductQtyPackage()
         ) {
             return EntryStatus.WARNING;
         }
