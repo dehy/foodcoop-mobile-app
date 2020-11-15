@@ -10,6 +10,7 @@ import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
 import { getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import { Icon, ListItem } from 'react-native-elements';
+import { filterUnique } from '../../utils/helpers';
 
 export interface GoodsReceiptNewProps {
     componentId: string;
@@ -141,7 +142,7 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                 Odoo.getInstance()
                     .fetchPurchaseOrderLinesForPurchaseOrder(props.item)
                     .then(purchaseOrderLines => {
-                        const goodsReceiptEntries: { [id: number]: GoodsReceiptEntry } = {};
+                        const goodsReceiptEntries: GoodsReceiptEntry[] = [];
                         purchaseOrderLines.forEach(poLine => {
                             if (!poLine.productId) {
                                 return;
@@ -156,11 +157,13 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                             goodsReceiptEntry.expectedProductQty = poLine.productQty;
                             goodsReceiptEntry.expectedProductUom = poLine.productUom;
 
-                            goodsReceiptEntries[goodsReceiptEntry.productId] = goodsReceiptEntry;
+                            goodsReceiptEntries.push(goodsReceiptEntry);
                         });
-                        const productIds: number[] = Object.keys(goodsReceiptEntries).map(value => {
-                            return parseInt(value, 10)!;
-                        });
+                        const productIds: number[] = goodsReceiptEntries
+                            .map(entry => {
+                                return entry.productId!;
+                            })
+                            .filter(filterUnique);
                         Odoo.getInstance()
                             .fetchProductFromIds(productIds)
                             .then(products => {
@@ -168,9 +171,16 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                     return;
                                 }
                                 products.forEach(product => {
-                                    const entry = goodsReceiptEntries[product.id!];
-                                    entry.productName = product.name;
-                                    entry.productBarcode = product.barcode;
+                                    /**
+                                     * We iterate on all entries instead of using productId because some lines can be the same product
+                                     * exemple: Apples are the same for us (same productId) but different species (names) for the supplier
+                                     */
+                                    goodsReceiptEntries.forEach(entry => {
+                                        if (product.id === entry.productId) {
+                                            entry.productName = product.name;
+                                            entry.productBarcode = product.barcode;
+                                        }
+                                    });
                                 });
 
                                 Odoo.getInstance()
@@ -181,8 +191,12 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                                     .then(res => {
                                         if (res) {
                                             products.forEach(product => {
-                                                goodsReceiptEntries[product.id!].productSupplierCode =
-                                                    res[product.templateId!];
+                                                // We can only iterate, see above comment
+                                                goodsReceiptEntries.forEach(entry => {
+                                                    if (product.id === entry.productId) {
+                                                        entry.productSupplierCode = res[product.templateId!];
+                                                    }
+                                                });
                                             });
                                         }
                                         getRepository(GoodsReceiptEntry)

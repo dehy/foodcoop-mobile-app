@@ -52,3 +52,11 @@ export function randomId(): string {
         .substr(2, 9)
         .toString();
 }
+
+/**
+ * Function to use with Array.filter() to get only unique values
+ * https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
+ */
+export function filterUnique(value: any, index: number, self: any): boolean {
+    return self.indexOf(value) === index;
+}
