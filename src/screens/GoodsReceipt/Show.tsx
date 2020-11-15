@@ -394,7 +394,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
             correctPackageQty = (
                 <Text style={{ fontSize: 16 }}>
-                    {entry.packageQty} colis de {entry.productQtyPackage} article(s)
+                    {entry.productQtyPackage} colis de {entry.packageQty}{' '}
+                    {ProductProduct.quantityUnitAsString(entry.productUom)}
                 </Text>
             );
         }
@@ -410,8 +411,8 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                 : 'none',
                     }}
                 >
-                    {entry.expectedPackageQty} colis de {entry.expectedProductQtyPackage} article
-                    {entry.expectedProductQtyPackage && entry.expectedProductQtyPackage > 1 ? 's' : ''}
+                    {entry.expectedProductQtyPackage} colis de {entry.expectedPackageQty}{' '}
+                    {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
                 {correctPackageQty}
             </View>
