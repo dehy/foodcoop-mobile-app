@@ -322,7 +322,7 @@ ${entriesCount} produits traités`;
                                 <ListItem.Title>État</ListItem.Title>
                             </ListItem.Content>
                             <ListItem.Content right>
-                                <Text>{ReceiptCheck}</Text>
+                                {ReceiptCheck}
                             </ListItem.Content>
                         </ListItem>
                         <ListItem
