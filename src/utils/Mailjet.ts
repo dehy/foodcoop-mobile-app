@@ -110,15 +110,15 @@ export default class Mailjet {
 
         const message: Message = {
             From: {
-                email: this.senderEmail,
-                name: this.senderName,
+                email: '***REMOVED***',
+                name: `${this.senderName} (App Mobile)`,
             },
             To: [
                 {
                     email: __DEV__ ? this.senderEmail : to,
                 },
             ],
-            Subject: subject = __DEV__ ? '[Test]' + subject : subject,
+            Subject: subject = __DEV__ ? '[Test] ' + subject : subject,
             TextPart: body,
         };
         if (!__DEV__) {
