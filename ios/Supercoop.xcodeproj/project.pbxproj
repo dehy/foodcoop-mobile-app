@@ -17,7 +17,6 @@
 		8788D63DD4A44A68BF959124 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D0670CA31142E2B609FF43 /* libz.tbd */; };
 		C1FF6ED374D5D19284786352 /* libPods-Supercoop.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC6084D92D1AE67FEC708337 /* libPods-Supercoop.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
-		FB92CF492297F62A0048733D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB92CF482297F62A0048733D /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,7 +54,6 @@
 		EC6084D92D1AE67FEC708337 /* libPods-Supercoop.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Supercoop.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FB09BC93229854830096FDF5 /* Supercoop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Supercoop.entitlements; path = Supercoop/Supercoop.entitlements; sourceTree = "<group>"; };
-		FB92CF482297F62A0048733D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FBFAF431235A074100008911 /* InputMask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = InputMask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -102,7 +100,6 @@
 			isa = PBXGroup;
 			children = (
 				FB09BC93229854830096FDF5 /* Supercoop.entitlements */,
-				FB92CF482297F62A0048733D /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -286,7 +283,6 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				51AC4DEB220C812C0051FDD5 /* beep.mp3 in Resources */,
-				FB92CF492297F62A0048733D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
