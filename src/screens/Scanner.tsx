@@ -4,6 +4,7 @@ import {
     Alert,
     AlertButton,
     Image,
+    Linking,
     SafeAreaView,
     StatusBar,
     StyleSheet,
@@ -30,7 +31,7 @@ import { Button, Divider, Icon } from 'react-native-elements';
 import OpenFoodFacts, { OFFProduct } from '../utils/OpenFoodFacts';
 import NutriScore from '../components/NutriScore';
 import NovaGroup from '../components/NovaGroup';
-import Agribalyse, { AGBProduct } from '../utils/Agribalyse';
+import EcoScore from '../components/EcoScore';
 
 export interface ScannerProps {
     componentId: string;
@@ -43,7 +44,6 @@ interface ScannerState {
     autoFocus: keyof AutoFocus;
     odooProductProduct?: ProductProduct;
     offProduct?: OFFProduct;
-    agribalyseProduct?: AGBProduct;
     showProductCard: boolean;
     showUnknownProductProductNameView: boolean;
 }
@@ -301,7 +301,6 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
         this.setState({
             odooProductProduct: undefined,
             offProduct: undefined,
-            agribalyseProduct: undefined,
         });
         this.lookupForBarcode(barcode.data);
         return;
@@ -325,19 +324,6 @@ export default class Scanner extends React.Component<ScannerProps, ScannerState>
                 this.setState({
                     offProduct: product,
                 });
-                console.log(product.categories_properties);
-                if (product.categories_properties && product.categories_properties['agribalyse_food_code:en']) {
-                    Agribalyse.getInstance()
-                        .fetchFromBarcode(product.categories_properties['agribalyse_food_code:en'])
-                        .then(product => {
-                            if (null === product) {
-                                return;
-                            }
-                            this.setState({
-                                agribalyseProduct: product,
-                            });
-                        });
-                }
             });
         this.odoo.fetchProductFromBarcode(barcode).then(
             odooProductProduct => {
@@ -625,17 +611,30 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
             return;
         }
         const iconHeight = 60;
+        const iconWidth = 80;
         const questionIconHeight = 14;
-        console.debug(this.state.offProduct);
+        // console.error(this.state.offProduct.nutriscore_score);
+        // console.error(this.state.offProduct.nova_group);
+        // console.error(this.state.offProduct.ecoscore_grade);
         return (
-            <View style={{ flexDirection: 'row' }}>
-                {this.state.offProduct.nutrition_grade_fr ? (
+            <View style={{ flexDirection: 'row', backgroundColor: 'blue' }}>
+                {this.state.offProduct.nutriscore_score ? (
                     <TouchableWithoutFeedback
                         style={{ flex: 1, marginHorizontal: 8 }}
                         onPress={(): void => {
                             Alert.alert(
                                 'Nutri-Score',
-                                `Le Nutri-Score est un logo qui indique la qualité nutritionnelle des aliments avec des notes allant de A à E. Avec le NutriScore, les produits peuvent être facilement et rapidement comparés.`,
+                                `Le Nutri-Score indique la qualité nutritionnelle des aliments avec des notes allant de A à E.`,
+                                [
+                                    {
+                                        text: 'OK',
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'En savoir plus',
+                                        onPress: () => Linking.openURL('https://www.santepubliquefrance.fr/determinants-de-sante/nutrition-et-activite-physique/articles/nutri-score'),
+                                    },
+                                ]
                             );
                         }}
                     >
@@ -644,7 +643,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                 <Text>Nutri-Score </Text>
                                 <Icon type="font-awesome-5" name="question-circle" size={questionIconHeight} />
                             </View> */}
-                            <NutriScore score={this.state.offProduct.nutrition_grade_fr} height={iconHeight} />
+                            <NutriScore score={this.state.offProduct.nutriscore_score} width={iconWidth} />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
@@ -654,16 +653,17 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                         onPress={(): void => {
                             Alert.alert(
                                 'NOVA',
-                                `La classification NOVA assigne un groupe aux produits alimentaires en fonction du degré de transformation qu'ils ont subi:
-
-Groupe 1
-Aliments non transformés ou transformés minimalement
-Groupe 2
-Ingrédients culinaires transformés
-Groupe 3
-Aliments transformés
-Groupe 4
-Produits alimentaires et boissons ultra-transformés`,
+                                `La classification NOVA assigne un groupe aux produits alimentaires en fonction du degré de transformation qu'ils ont subi.`,
+                                [
+                                    {
+                                        text: 'OK',
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'En savoir plus',
+                                        onPress: () => Linking.openURL('https://fr.openfoodfacts.org/nova'),
+                                    },
+                                ]
                             );
                         }}
                     >
@@ -674,32 +674,36 @@ Produits alimentaires et boissons ultra-transformés`,
                             </View> */}
                             <NovaGroup
                                 group={this.state.offProduct.nova_group}
-                                height={iconHeight}
+                                width={iconWidth}
                                 style={{ marginTop: 8 }}
                             />
                         </View>
                     </TouchableWithoutFeedback>
                 ) : null}
-                {this.state.agribalyseProduct ? (
+                {this.state.offProduct.ecoscore_grade ? (
                     <TouchableWithoutFeedback
-                        style={{ flex: 1, marginHorizontal: 8 }}
-                        onPress={(): void => {
-                            Alert.alert(
-                                'CO2e',
-                                `L'équivalent CO2 représente la quantité de gaz à effet de serre produite durant le cycle de vie de ce produit.`,
-                            );
-                        }}
-                    >
-                        <View style={{ flex: 1 }}>
-                            <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'center' }}>
-                                <Text>CO2e </Text>
-                                <Icon type="font-awesome-5" name="question-circle" size={questionIconHeight} />
-                            </View>
-                            <Text style={{ fontSize: 40, textAlign: 'center' }}>
-                                {this.state.agribalyseProduct['Changement_climatique_(kg_CO2_eq/kg_de_produit)']} kg
-                            </Text>
-                        </View>
-                    </TouchableWithoutFeedback>
+                    style={{ flex: 1, marginHorizontal: 8 }}
+                    onPress={(): void => {
+                        Alert.alert(
+                            'Eco-score',
+                            `L'Eco-score est un indicateur représentant l'impact environnemental des produits alimentaires. Il classe les produits en 5 catégories (A, B, C, D, E), de l'impact le plus faible, à l'impact le plus élevé.`,
+                            [
+                                {
+                                    text: 'OK',
+                                    style: 'cancel',
+                                },
+                                {
+                                    text: 'En savoir plus',
+                                    onPress: () => Linking.openURL('https://docs.score-environnemental.com'),
+                                }
+                            ],
+                        );
+                    }}
+                >
+                    <View style={{ flex: 1 }}>
+                        <EcoScore score={this.state.offProduct.ecoscore_grade} height={iconHeight} width={iconWidth} />
+                    </View>
+                </TouchableWithoutFeedback>
                 ) : null}
             </View>
         );

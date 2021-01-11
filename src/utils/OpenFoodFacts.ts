@@ -10,7 +10,8 @@ interface OFFResponse {
 }
 
 export interface OFFProduct {
-    nutrition_grade_fr?: 'a' | 'b' | 'c' | 'd' | 'e';
+    nutriscore_score?: 'a' | 'b' | 'c' | 'd' | 'e';
+    ecoscore_grade?: 'a' | 'b' | 'c' | 'd' | 'e';
     nova_group?: 1 | 2 | 3 | 4;
     categories_properties?: {
         'agribalyse_food_code:en'?: string;
@@ -43,6 +44,7 @@ export default class OpenFoodFacts {
         const parameters: { [key: string]: string | string[] } = {
             fields: [
                 'nova_group',
+                'ecoscore_grade',
                 'nutriscore_score',
                 'nutrition_grades_tags',
                 'nutrition_grade_fr',
