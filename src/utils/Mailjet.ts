@@ -1,4 +1,5 @@
 import { Base64 } from 'js-base64';
+import Config from 'react-native-config';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
 import AppLogger from './AppLogger';
@@ -27,9 +28,9 @@ export interface MailAttachment {
 
 export default class Mailjet {
     private static instance: Mailjet;
-    private publicApiKey = '***REMOVED***';
-    private privateapiKey = '***REMOVED***';
-    private senderEmail?: string;
+    private publicApiKey = Config.MAILJET_PUBLIC_API_KEY;
+    private privateapiKey = Config.MAILJET_PRIVATE_API_KEY;
+    private senderEmail = Config.MAIL_FROM;
     private senderName?: string;
 
     public static async filepathToAttachment(
@@ -64,8 +65,7 @@ export default class Mailjet {
         return this.instance;
     }
 
-    public setSender(email?: string, name?: string): void {
-        this.senderEmail = email;
+    public setSender(name?: string): void {
         this.senderName = name;
     }
 
@@ -110,7 +110,7 @@ export default class Mailjet {
 
         const message: Message = {
             From: {
-                email: '***REMOVED***',
+                email: this.senderEmail,
                 name: `${this.senderName} (App Mobile)`,
             },
             To: [
