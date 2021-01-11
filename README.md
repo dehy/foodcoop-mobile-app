@@ -88,6 +88,14 @@ Les messages de commit doivent respecter la [Conventional Commits specification]
 
     [optional footer(s)]
 
+#### Configuration de l'app
+
+La configuration de l'application (endpoint/identifiants Odoo, endpoint/paramètres OpenId Connect, ...) sont externalisé à l'application et sont disponible grâce à la mécanique `dotenv` :
+
+Recopier le fichier `.env.dist` en fichier `.env` et y insérer les valeurs en face des variables.
+
+Pour plus de détails et pour utiliser les fonctionnalités avancées de ce système, voir `[react-native-config](https://github.com/luggit/react-native-config)`
+
 ### Mise en prod
 
 #### Versioning

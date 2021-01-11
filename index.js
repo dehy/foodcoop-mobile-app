@@ -11,11 +11,12 @@ import 'moment/locale/fr';
 import Database from './src/utils/Database';
 import { readableVersion, systemName } from './src/utils/helpers';
 import * as Sentry from '@sentry/react-native';
+import Config from 'react-native-config';
 
 moment.locale('fr');
 
 Sentry.init({
-    dsn: '***REMOVED***',
+    dsn: Config.SENTRY_DSN,
 });
 Sentry.setRelease(`mobile-app-${readableVersion()}`);
 
