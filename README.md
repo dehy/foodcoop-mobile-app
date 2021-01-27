@@ -45,8 +45,6 @@ ESLint est le linter utilisé dans ce projet. Prettier est le formatteur. Tous d
 
 Suivre la documentation d'installation d'environnement: https://reactnative.dev/docs/environment-setup
 
-Récupérer le fichier `google-services.json` auprès d'une autre développeur et le copier dans `./android/app/`.
-
 Ouvrir ensuite le dossier `./android` avec Android Studio.
 
 ##### Dépendances natives
@@ -56,8 +54,6 @@ Tout comme pour iOS, Android nécessite des librairies natives. Elle sont géré
 ##### Simulateur Android avec Genymotion (facultatif)
 
 Une fois Genymotion installé (compte créé et identification effectuée), créer un nouveau terminal virtuel. Choisir par exemple un Samsung Galaxy S9 sous android 8.0 et laisser les paramètres par défaut.
-
-Après installation du terminal, le démarrer. Installer ensuite les "Open GApps" (bouton en haut à droite de l'interface). Cette suite d'application nous permettra d'utiliser l'authentification Google Supercoop.
 
 ##### Périphérique Android natif
 
@@ -72,8 +68,6 @@ Sur votre PC, exécuter en CLI la commande `adb reverse tcp:8081 tcp8081` afin q
 Suivre la documentation d'installation d'environnement: https://reactnative.dev/docs/environment-setup
 
 Ouvrir ensuite le fichier `./ios/Supercoop.xcworkspace` avec Xcode.
-
-Récupérer le fichier `GoogleService-Info.plist` auprès d'une autre développeur et l'ajouter.
 
 ##### Dépendances natives
 
@@ -112,14 +106,14 @@ Il est possible de s'en occuper manuellement en suivant les procédures des deux
 
 Ou sinon, l'outil [fastlane](https://fastlane.tools/) permet d'automatiser cette tâche.
 
-#### APK pour les devices sans Google Play (MC40)
+#### APK pour les devices sans Google Play Store (MC40)
 
-- Récupérer le fichier AppBundle généré par Android Studio pour le Play Store (généralement `app-release.aab`)
-- Télécharger l'outil [bundletool](https://github.com/google/bundletool/releases) et exécuter la commande suivante :
+-   Récupérer le fichier AppBundle généré par Android Studio pour le Play Store (généralement `app-release.aab`)
+-   Télécharger l'outil [bundletool](https://github.com/google/bundletool/releases) et exécuter la commande suivante :
 
     java -jar bundletool-all-1.3.0.jar build-apks --bundle=app-release.aab --output=app-release.apks --overwrite --mode=universal --ks=/path/to/project/android/keystores/release.keystore --ks-pass=pass:my-keystore-password --ks-key-alias=sp_release --key-pass=pass:my-key-password
 
-- Changer l'extension du fichier `app-release.apks` en `.zip`. Dézipper et distribuer le fichier `universal.apk`.
+-   Changer l'extension du fichier `app-release.apks` en `.zip`. Dézipper et distribuer le fichier `universal.apk`.
 
 #### fastlane
 
