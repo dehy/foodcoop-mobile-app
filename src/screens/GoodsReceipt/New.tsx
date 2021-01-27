@@ -94,8 +94,8 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                 const purchaseOrderList: PurchaseOrderList[] = [];
                 let previousTitle: string;
                 let data: PurchaseOrder[];
-                purchaseOrders.forEach(po => {
-                    const dateAsString = moment(po.plannedDeliveryDate!).format('Do MMMM YYYY');
+                purchaseOrders.forEach((po, index, array) => {
+                    const dateAsString = moment(po.plannedDeliveryDate!).format('dddd Do MMMM YYYY');
                     if (previousTitle != dateAsString) {
                         if (previousTitle != undefined) {
                             purchaseOrderList.push({
@@ -107,6 +107,12 @@ export default class GoodsReceiptNew extends React.Component<GoodsReceiptNewProp
                         data = [];
                     }
                     data.push(po);
+                    if (index == array.length - 1) {
+                        purchaseOrderList.push({
+                            title: previousTitle,
+                            data: data,
+                        });
+                    }
                 });
                 this.setState({
                     waitingPurchaseOrders:
