@@ -3,6 +3,9 @@ import { toNumber } from './helpers';
 import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
 import Attachment from '../entities/Attachment';
+import List from '../entities/List';
+import ListAttachment from '../entities/ListAttachment';
+import ListEntry from '../entities/ListEntry';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
@@ -52,7 +55,14 @@ export default class Database {
             logging: true,
             dropSchema: dropSchema,
             synchronize: synchronize,
-            entities: [GoodsReceiptSession, GoodsReceiptEntry, Attachment],
+            entities: [
+                Attachment,
+                GoodsReceiptEntry,
+                GoodsReceiptSession,
+                List,
+                ListAttachment, 
+                ListEntry
+            ],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
             migrations: [

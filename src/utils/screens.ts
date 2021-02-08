@@ -21,6 +21,11 @@ export function registerScreens(): void {
     Navigation.registerComponent('Inventory/New', () => require('../screens/Inventory/New').default);
     Navigation.registerComponent('Inventory/Show', () => require('../screens/Inventory/Show').default);
     Navigation.registerComponent('Inventory/Export', () => require('../screens/Inventory/Export').default);
+    Navigation.registerComponent('Lists/List', () => require('../screens/Lists/List').default);
+    Navigation.registerComponent('Lists/New', () => require('../screens/Lists/New').default);
+    Navigation.registerComponent('Lists/NewStepType', () => require('../screens/Lists/NewStepType').default);
+    Navigation.registerComponent('Lists/NewStepInventory', () => require('../screens/Lists/NewStepInventory').default);
+    Navigation.registerComponent('Lists/NewStepGoodsReceipt', () => require('../screens/Lists/NewStepGoodsReceipt').default);
     Navigation.registerComponent('GoodsReceipt/List', () => require('../screens/GoodsReceipt/List').default);
     Navigation.registerComponent('GoodsReceipt/New', () => require('../screens/GoodsReceipt/New').default);
     Navigation.registerComponent('GoodsReceipt/Show', () => require('../screens/GoodsReceipt/Show').default);

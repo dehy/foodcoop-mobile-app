@@ -75,17 +75,17 @@ export function goHome(): void {
                     },
                     {
                         stack: {
-                            id: 'InventoryListTab',
+                            id: 'ListsListTab',
                             children: [
                                 {
                                     component: {
-                                        name: 'Inventory/List',
+                                        name: 'Lists/List',
                                     },
                                 },
                             ],
                             options: {
                                 bottomTab: {
-                                    text: 'Inventaires',
+                                    text: 'Listes',
                                     icon: require('../../assets/icons/clipboard-list-check-regular.png'),
                                 },
                             },
