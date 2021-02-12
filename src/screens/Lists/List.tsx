@@ -1,6 +1,6 @@
 import React, { ReactText } from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
-import { ListItem, ThemeProvider } from 'react-native-elements';
+import { Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, NavigationComponent, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { getConnection } from 'typeorm';
@@ -52,6 +52,10 @@ export default class ListsList extends NavigationComponent<Props, State> {
         return options;
     }
 
+    componentDidMount() {
+        this._handleRefresh();
+    }
+
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
         if (buttonId === 'list-new') {
             this.openListNewModal();
@@ -83,7 +87,6 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 where: whereOptions,
             })
             .then(async lists => {
-                console.log(lists);
                 this.setState({
                     lists: lists,
                     refreshing: false,
@@ -105,7 +108,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
     componentNameFromList = (list: BaseList): ReactText | undefined => {
         switch (list.constructor.name) {
             case InventoryList.name:
-                return 'Lists/ShowInventory';
+                return 'Lists/Inventory/Show';
 
             default:
                 return undefined;
@@ -154,9 +157,9 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 }}
                 bottomDivider
             >
+                <Icon type="font-awesome-5" name="boxes" />
                 <ListItem.Content>
                     <ListItem.Title>{item.name}</ListItem.Title>
-                    <ListItem.Subtitle>{item.typeLabel}</ListItem.Subtitle>
                 </ListItem.Content>
                 <ListItem.Content right>
                     <ListItem.Title right>{item.entries?.length ?? '0'}</ListItem.Title>
@@ -173,8 +176,13 @@ export default class ListsList extends NavigationComponent<Props, State> {
                     {this.renderEmptyList()}
                     <FlatList
                         style={{ backgroundColor: 'white', height: '100%' }}
-                        data={this.state.lists}
-                        renderItem={({ item }): React.ReactElement => this._renderEntry(item)}
+                        data={this.state.lists.map((list) => {
+                            return {
+                                key: list.id?.toString(),
+                                list: list,
+                            }
+                        })}
+                        renderItem={({ item }): React.ReactElement => this._renderEntry(item.list)}
                         // ListHeaderComponent={this.renderHeader}
                         onRefresh={this._handleRefresh}
                         refreshing={this.state.refreshing}

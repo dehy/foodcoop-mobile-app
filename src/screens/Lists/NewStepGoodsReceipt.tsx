@@ -3,7 +3,6 @@ import { ActivityIndicator, SafeAreaView, ScrollView, SectionList, View } from '
 import { Button, Icon, Input, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
-import DeliveryIcon from '../../../assets/svg/007-delivery.svg';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
 import Odoo from '../../utils/Odoo';
 import moment from 'moment';

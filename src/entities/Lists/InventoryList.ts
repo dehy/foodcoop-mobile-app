@@ -1,6 +1,7 @@
 'use strict';
 
-import { ChildEntity, OneToMany } from 'typeorm';
+import { Icon } from 'react-native-elements';
+import { ChildEntity } from 'typeorm';
 import BaseList from './BaseList';
 
 export type InventoryListExtraData = {
@@ -9,6 +10,9 @@ export type InventoryListExtraData = {
 
 @ChildEntity()
 export default class InventoryList extends BaseList {
+    static icon = 'boxes';
+    static label = 'Inventaire';
+
     get zone(): number {
         return (this.extraData as InventoryListExtraData).zone;
     }

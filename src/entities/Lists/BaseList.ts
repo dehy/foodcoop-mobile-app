@@ -13,33 +13,16 @@ import { InventoryListExtraData } from './InventoryList';
 import ListAttachment from './ListAttachment';
 import BaseEntry from './BaseEntry';
 import { DateTime } from 'luxon';
+import { Icon } from 'react-native-elements';
 
-export enum ListType {
-    inventory = 'InventoryList',
-    goodsReceipt = 'GoodsReceiptList',
-    loss = 'loss',
-    soldout = 'soldout',
-    stickers = 'stickers',
-    other = 'other',
-}
-
-export const ListTypeLabel = new Map<string, string>([
-    [ListType.inventory, 'Inventaire'],
-    [ListType.goodsReceipt, 'Réception de marchandises'],
-    [ListType.loss, 'Pertes'],
-    [ListType.soldout, 'Rupture de stock'],
-    [ListType.stickers, 'Étiquettes'],
-    [ListType.other, 'Autre'],
-]);
-
-export const ListTypeIcon = new Map<string, string>([
-    [ListType.inventory, 'boxes'],
-    [ListType.goodsReceipt, 'truck-loading'],
-    [ListType.loss, 'dumpster'],
-    [ListType.soldout, 'battery-empty'],
-    [ListType.stickers, 'tags'],
-    [ListType.other, 'ellipsis-h'],
-]);
+// export const ListTypeIcon = new Map<string, string>([
+//     [ListType.inventory, 'boxes'],
+//     [ListType.goodsReceipt, 'truck-loading'],
+//     [ListType.loss, 'dumpster'],
+//     [ListType.soldout, 'battery-empty'],
+//     [ListType.stickers, 'tags'],
+//     [ListType.other, 'ellipsis-h'],
+// ]);
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -113,7 +96,6 @@ export default abstract class BaseList {
         this.extraData = {};
     }
 
-    get typeLabel(): string {
-        return ListTypeLabel.get(this.constructor.name) ?? 'unknown';
-    }
+    static label = 'Liste';
+    static icon = 'clipboard-list';
 }
