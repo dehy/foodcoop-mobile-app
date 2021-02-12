@@ -48,7 +48,7 @@ export default class Database {
         let synchronize = false;
         let migrationsRun = true;
         if (__DEV__) {
-            dropSchema = true;
+            dropSchema = false;
             synchronize = true;
             migrationsRun = false;
         }

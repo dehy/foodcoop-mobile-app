@@ -1,18 +1,20 @@
-import { Picker } from '@react-native-picker/picker';
 import React from 'react';
-import { FlatList, GestureResponderEvent, SafeAreaView, SectionList, View } from 'react-native';
+import { FlatList, SafeAreaView, View } from 'react-native';
 import { Icon, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
-import { ListType, ListTypeIcon, ListTypeLabel } from '../../entities/Lists/BaseList';
+import InventoryList from '../../entities/Lists/InventoryList';
+import BaseList from '../../entities/Lists/BaseList';
 import { defaultScreenOptions } from '../../utils/navigation';
 
 type Props = {
     componentId: string;
-}
+};
 
-type State = {
+type State = {};
 
-}
+export const RegisteredListTypes = [
+    InventoryList,
+];
 
 export default class ListsNewStepType extends React.Component<Props, State> {
     theme = {
@@ -49,52 +51,51 @@ export default class ListsNewStepType extends React.Component<Props, State> {
         }
     }
 
-    didTapTypeItem = (type: ListType): void => {
+    didTapTypeItem = (listType: typeof BaseList): void => {
         let componentName: string | undefined = undefined;
-        switch (type) {
-            case ListType.inventory:
-                componentName = 'Lists/NewStepInventory';
-                break;
-            case ListType.goodsReceipt:
-                componentName = 'Lists/NewStepGoodsReceipt';
+        switch (listType) {
+            case InventoryList:
+                componentName = 'Lists/Inventory/New';
                 break;
             default:
                 break;
         }
         if (undefined === componentName) {
-            throw Error("Empty component name");
+            throw Error('Empty component name');
         }
         Navigation.push(this.props.componentId, {
             component: {
                 name: componentName,
             },
         });
-    }
+    };
 
     render() {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView>
-                    <View style={{padding: 10}}>
-                        <Text>Pour quelle activité souhaites-tu créer une liste ?
-                            Cela va influer sur les outils mis à ta disposition pour
-                            remplir cette liste.</Text>
+                    <View style={{ padding: 10 }}>
+                        <Text>
+                            Pour quelle activité souhaites-tu créer une liste ? Cela va influer sur les outils mis à ta
+                            disposition pour remplir cette liste.
+                        </Text>
                     </View>
                     <FlatList
-                        data={Object.values(ListType).map((type: ListType) => {
+                        data={RegisteredListTypes.map((type) => {
                             return {
-                                id: type,
-                                title: ListTypeLabel.get(type),
-                                icon: ListTypeIcon.get(type),
+                                key: type.name,
+                                listType: type,
                             }
                         })}
-                        renderItem={({item}) => (
-                            <ListItem onPress={(e) => {
-                                this.didTapTypeItem(item.id)
-                            }}>
-                                { item.icon ? (<Icon name={item.icon} style={{width: 28}}/>) : null }
+                        renderItem={({ item }) => (
+                            <ListItem
+                                onPress={() => {
+                                    this.didTapTypeItem(item.listType);
+                                }}
+                            >
+                                <Icon type='font-awesome-5' name={item.listType.icon} />
                                 <ListItem.Content>
-                                    <ListItem.Title>{ item.title }</ListItem.Title>
+                                    <ListItem.Title>{item.listType.label}</ListItem.Title>
                                 </ListItem.Content>
                                 <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
                             </ListItem>
@@ -102,6 +103,6 @@ export default class ListsNewStepType extends React.Component<Props, State> {
                     />
                 </SafeAreaView>
             </ThemeProvider>
-        )
+        );
     }
 }

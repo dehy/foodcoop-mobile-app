@@ -3,10 +3,9 @@ import React from 'react';
 import { Alert, SafeAreaView, ScrollView, View } from 'react-native';
 import { Button, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../utils/navigation';
-import InventoryIcon from '../../../assets/svg/017-inventory.svg';
+import { defaultScreenOptions } from '../../../utils/navigation';
 import { getConnection } from 'typeorm';
-import InventoryList from '../../entities/Lists/InventoryList';
+import InventoryList from '../../../entities/Lists/InventoryList';
 
 type Props = {
     componentId: string;
@@ -14,7 +13,7 @@ type Props = {
 
 type State = {};
 
-export default class ListsNewStepInventory extends React.Component<Props, State> {
+export default class ListsInventoryNew extends React.Component<Props, State> {
     theme = {
         Button: {
             iconContainerStyle: { marginRight: 5 },
@@ -65,7 +64,6 @@ export default class ListsNewStepInventory extends React.Component<Props, State>
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView>
                     <ScrollView>
-                        <InventoryIcon height={120} width="100%" style={{ padding: 10 }} />
                         <ListItem>
                             <ListItem.Content>
                                 <ListItem.Title>Zone</ListItem.Title>

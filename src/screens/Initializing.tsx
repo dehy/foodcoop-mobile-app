@@ -50,7 +50,6 @@ export default class Initialising extends React.Component<InitialisingProps> {
     }
 
     componentDidMount(): void {
-        return;
         Database.sharedInstance()
             .migrate()
             .then(success => {

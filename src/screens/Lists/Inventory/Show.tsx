@@ -8,14 +8,14 @@ import {
     Text,
     View,
 } from 'react-native';
-import { defaultScreenOptions } from '../../utils/navigation';
+import { defaultScreenOptions } from '../../../utils/navigation';
 import { Navigation, Options } from 'react-native-navigation';
-import bootstrapStyle from '../../styles/bootstrap';
-import ProductProduct from '../../entities/Odoo/ProductProduct';
+import bootstrapStyle from '../../../styles/bootstrap';
+import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import ActionSheet from 'react-native-action-sheet';
 import { Button, Icon, ListItem } from 'react-native-elements';
-import InventoryList from '../../entities/Lists/InventoryList';
-import InventoryEntry from '../../entities/Lists/InventoryEntry';
+import InventoryList from '../../../entities/Lists/InventoryList';
+import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import { getConnection, Repository } from 'typeorm';
 
 export interface Props {
@@ -36,7 +36,7 @@ interface InventoryData {
     inventoryEntry: InventoryEntry;
 }
 
-export default class ListsShowInventory extends React.Component<Props, State> {
+export default class ListsInventoryShow extends React.Component<Props, State> {
     modalDismissedListener?: EmitterSubscription;
     inventoryListRepository: Repository<InventoryList>;
     inventoryEntryRepository: Repository<InventoryEntry>;
