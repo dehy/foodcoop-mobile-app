@@ -1,7 +1,12 @@
 {
     "name": "supercoop",
     "version": "1.4.2",
+    "license": "AGPL-3.0-or-later",
     "private": true,
+    "author": "Arnaud de Mouhy <arnaud@admds.net>",
+    "contributors": [
+        "Vivien Poirier"
+    ],
     "scripts": {
         "clean": "react-native-clean-project",
         "android": "react-native run-android",
