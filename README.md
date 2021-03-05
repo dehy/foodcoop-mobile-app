@@ -148,3 +148,13 @@ $ ./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -n 
 ```
 
 Ajouter la classe fraîchement créée ('`<Nom><Timestamp>`') dans Database.ts, dans la méthode `createConnexion()` de la méthode `connect()`.
+
+## Contribution
+
+Les pull request sont les bienvenues. Pour des changements majeurs, merci d'ouvrir une issue d'abord afin de discuter des changements que vous souhaiteriez effectuer.
+
+Merci de mettre à jour les tests appropriés (le cas échéant).
+
+## License
+
+[GNU Affero General Public License v3.0](https://choosealicense.com/licenses/agpl-3.0/)
