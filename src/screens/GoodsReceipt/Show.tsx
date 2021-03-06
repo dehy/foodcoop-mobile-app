@@ -37,7 +37,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         },
     };
 
-    fuse: Fuse<GoodsReceiptEntry, Fuse.IFuseOptions<GoodsReceiptEntry>>;
+    fuse: Fuse<GoodsReceiptEntry>;
     modalDismissedListener?: EventSubscription;
     entriesToDisplay: GoodsReceiptEntry[] = [];
 
