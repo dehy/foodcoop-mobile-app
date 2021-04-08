@@ -9,7 +9,7 @@ import {
     View,
 } from 'react-native';
 import { defaultScreenOptions } from '../../../utils/navigation';
-import { Navigation, Options } from 'react-native-navigation';
+import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation';
 import bootstrapStyle from '../../../styles/bootstrap';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import ActionSheet from 'react-native-action-sheet';
@@ -128,12 +128,13 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
                 children: [
                     {
                         component: {
-                            name: 'Scanner',
+                            name: 'Lists/Inventory/Scan',
                             passProps: {
                                 inventory: this.state.list,
                             },
                             options: {
                                 topBar: {},
+                                modalPresentationStyle: OptionsModalPresentationStyle.fullScreen,
                             },
                         },
                     },

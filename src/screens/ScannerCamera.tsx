@@ -32,6 +32,7 @@ import KeepAwake from '@sayem314/react-native-keep-awake';
 import DataWedgeIntents from 'react-native-datawedge-intents';
 import { deviceId } from '../utils/helpers';
 import { Button, Icon } from 'react-native-elements';
+import ScannerInfoPanel from './ScannerInfoPanel';
 
 // const flashModeOrder: { [key: string]: keyof FlashMode } = {
 //     off: RNCamera.Constants.FlashMode.on,
@@ -64,12 +65,12 @@ interface BarcodeReadEvent {
 
 const landmarkSize = 2;
 
-interface Scanner2Props {
-    ref?: (instance: Scanner2) => void;
+interface Props {
+    ref?: (instance: ScannerCamera) => void;
     onBarcodeRead?: (barcode: Barcode) => void;
 }
 
-interface Scanner2State {
+interface State {
     flash: keyof FlashMode;
     zoom: number;
     autoFocus?: keyof AutoFocus;
@@ -195,19 +196,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         textAlign: 'center',
         backgroundColor: 'transparent',
+        width: '100%',
     },
 });
 
-export default class Scanner2 extends React.Component<Scanner2Props, Scanner2State> {
+export default class ScannerCamera extends React.Component<Props, State> {
     private camera: RNCamera | null = null;
     private beepSound: Sound;
-    private scannerMode: 'legacyCamera' | 'dataWedge';
+    private scannerMode: 'camera' | 'dataWedge';
     /* DataWedge */
     private sendCommandResult: 'true' | 'false' = 'false';
     private broadcastReceiverHandler?: (intent: any) => void;
     /* End DataWedge */
 
-    state: Scanner2State = {
+    state: State = {
         flash: RNCamera.Constants.FlashMode.off,
         zoom: 0,
         autoFocus: RNCamera.Constants.AutoFocus.on,
@@ -240,10 +242,10 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         showManualSearchView: false,
     };
 
-    constructor(props: Scanner2Props) {
+    constructor(props: Props) {
         super(props);
         this.state.canDetectBarcode = true;
-        this.scannerMode = 'legacyCamera';
+        this.scannerMode = 'camera';
 
         // Sound
         Sound.setCategory('Ambient', true);
@@ -772,7 +774,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({ barcodes: [barcode] });
         if (undefined === previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
-            if ('legacyCamera' === this.scannerMode) {
+            if ('camera' === this.scannerMode) {
                 Vibration.vibrate(500, false);
                 this.beepSound.play(() => {
                     this.beepSound.stop(); // Resets file for immediate play availability
@@ -791,7 +793,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         </View>
     );
 
-    renderBarcode = ({ bounds, data }: Barcode): React.ReactElement => (
+    renderBarcode = ({ bounds, data }: Barcode): React.ReactFragment => (
         <React.Fragment key={data + bounds.origin.x}>
             <View
                 style={[
@@ -803,7 +805,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                     },
                 ]}
             >
-                <Text style={[styles.textBlock]}>{`${data}`}</Text>
+                <Text style={[styles.textBlock]} numberOfLines={1}>{`${data}`}</Text>
             </View>
         </React.Fragment>
     );
@@ -870,14 +872,14 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                     console.error(error.message);
                 }}
                 onCameraReady={this.findBestRatio}
-                faceDetectionLandmarks={
-                    RNCamera.Constants.FaceDetection.Landmarks
-                        ? RNCamera.Constants.FaceDetection.Landmarks.all
-                        : undefined
-                }
+                // faceDetectionLandmarks={
+                //     RNCamera.Constants.FaceDetection.Landmarks
+                //         ? RNCamera.Constants.FaceDetection.Landmarks.all
+                //         : undefined
+                // }
                 captureAudio={false}
-                onFacesDetected={canDetectFaces ? this.facesDetected : undefined}
-                onTextRecognized={canDetectText ? this.textRecognized : undefined}
+                // onFacesDetected={canDetectFaces ? this.facesDetected : undefined}
+                // onTextRecognized={canDetectText ? this.textRecognized : undefined}
                 onBarCodeRead={canDetectBarcode ? this.barcodeRecognized : undefined}
                 //onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : undefined}
             >
@@ -931,10 +933,21 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                             title=" Clavier"
                         />
                     </View>
+                    <Button title="test" onPress={() => {
+                        const barcodeEvent: BarcodeReadEvent = {
+                            data: '3483981002176',
+                            type: 'ean13',
+                            bounds: {
+                                origin: { x: '0', y: '0' },
+                                size: { width: '640', height: '480' },
+                            }
+                        };
+                        this.barcodeRecognized(barcodeEvent);
+                    }} />
                 </View>
-                {!!canDetectFaces && this.renderFaces()}
-                {!!canDetectFaces && this.renderLandmarks()}
-                {!!canDetectText && this.renderTextBlocks()}
+                {/* {!!canDetectFaces && this.renderFaces()} */}
+                {/* {!!canDetectFaces && this.renderLandmarks()} */}
+                {/* {!!canDetectText && this.renderTextBlocks()} */}
                 {!!canDetectBarcode && this.renderBarcodes()}
             </RNCamera>
         );
@@ -1012,18 +1025,18 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     };
 
     render(): React.ReactNode {
-        let cameraView;
+        let mainView;
         if ('dataWedge' === this.scannerMode) {
-            cameraView = this.state.displayCamera ? this.renderDataWedgeInstruction() : undefined;
+            mainView = this.state.displayCamera ? this.renderDataWedgeInstruction() : undefined;
         }
-        if ('legacyCamera' === this.scannerMode) {
-            cameraView = this.state.displayCamera ? this.renderCamera() : undefined;
+        if ('camera' === this.scannerMode) {
+            mainView = this.state.displayCamera ? this.renderCamera() : undefined;
         }
         return (
             <View style={styles.container}>
                 <KeepAwake />
                 {this.renderManualSearchView()}
-                {cameraView}
+                {mainView}
             </View>
         );
     }

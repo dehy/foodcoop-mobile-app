@@ -46,7 +46,17 @@ export default class ProductProduct {
     }
 
     quantityAsString(): string {
-        return `${String(this.qtyAvailable)} ${this.unitAsString()}`;
+        return `${String(this.qtyAvailable?.toPrecision())} ${this.unitAsString()}`;
+    }
+
+    packagingUnit(): number {
+        if (this.weightNet) {
+            return UnitOfMesurement.kg;
+        }
+        if (this.volume) {
+            return UnitOfMesurement.litre;
+        }
+        return UnitOfMesurement.unit;
     }
 
     packagingAsString(): string {

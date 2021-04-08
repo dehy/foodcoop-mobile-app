@@ -47,7 +47,7 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
         }
 
         const list = new InventoryList();
-        list.name = `Inventaire`;
+        list.name = `Inventaire du ${DateTime.local().toFormat('d LLLL')}`;
         list.zone = this.zoneValue;
 
         getConnection()
