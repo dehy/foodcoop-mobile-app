@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Platform, SafeAreaView, Text, TextInput, View, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
-import Scanner2 from '../Scanner2';
+import ScannerCamera from '../ScannerCamera';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Barcode } from 'react-native-camera/types';
@@ -48,7 +48,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         },
     };
 
-    scanner?: Scanner2;
+    scanner?: ScannerCamera;
     receivedQuantityInput?: TextInput;
     receivedPackageQtyInput?: TextInput;
     receivedProductQtyPackageInput?: TextInput;
@@ -504,14 +504,14 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     renderCamera(): React.ReactNode {
         return (
-            <Scanner2
-                ref={(ref: Scanner2): void => {
+            <ScannerCamera
+                ref={(ref: ScannerCamera): void => {
                     this.scanner = ref !== null ? ref : undefined;
                 }}
                 onBarcodeRead={(barcode): void => {
                     this.didScanBarcode(barcode);
                 }}
-            ></Scanner2>
+            ></ScannerCamera>
         );
     }
 

@@ -1,11 +1,12 @@
 import React, { ReactText } from 'react';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import { Dimensions, FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, NavigationComponent, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { getConnection } from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 
 interface Props {
     componentId: string;
@@ -172,15 +173,15 @@ export default class ListsList extends NavigationComponent<Props, State> {
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
-                <SafeAreaView>
+                <SafeAreaView style={{ backgroundColor: 'pink' }}>
                     {this.renderEmptyList()}
                     <FlatList
                         style={{ backgroundColor: 'white', height: '100%' }}
-                        data={this.state.lists.map((list) => {
+                        data={this.state.lists.map(list => {
                             return {
                                 key: list.id?.toString(),
                                 list: list,
-                            }
+                            };
                         })}
                         renderItem={({ item }): React.ReactElement => this._renderEntry(item.list)}
                         // ListHeaderComponent={this.renderHeader}
