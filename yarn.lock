@@ -5319,10 +5319,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jsrsasign@^10.0.0:
-  version "10.1.4"
-  resolved "https://registry.yarnpkg.com/jsrsasign/-/jsrsasign-10.1.4.tgz#8fca72f4bce9b0cb24fe3390df60a5b4a059b446"
-  integrity sha512-j+bG6EaQ/SBvQvnI8M2x3Wawz8jx3fBViPClAw84QpsnLSjtr5fobp5W2TAljpAhboxWvbkZmd/KDBm+hckqJQ==
+jsrsasign@^10.1.13:
+  version "10.1.13"
+  resolved "https://registry.yarnpkg.com/jsrsasign/-/jsrsasign-10.1.13.tgz#737f752b5ea321ccae5be25431e2df98ef1d369a"
+  integrity sha512-EKifn2DocDxU2fWVqTJgFYjZUcL4fTUtfgN5OQP4t4i/WOioios8wq350E1aJFxCLmtdxGNqhLX3O0tdVqJoFg==
 
 "jsx-ast-utils@^2.4.1 || ^3.0.0":
   version "3.1.0"
