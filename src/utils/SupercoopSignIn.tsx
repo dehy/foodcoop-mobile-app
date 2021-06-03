@@ -188,6 +188,6 @@ export default class SupercoopSignIn {
 
 export class SupercoopSignInButton extends Component<ButtonProps, {}> {
     render(): ReactElement {
-        return <Button title={this.props.title} onPress={this.props.onPress} />;
+        return <Button title={this.props.title} onPress={this.props.onPress} disabled={this.props.disabled} />;
     }
 }
