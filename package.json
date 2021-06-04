@@ -20,7 +20,7 @@
         "typeorm": "ts-node ./node_modules/typeorm/cli.js"
     },
     "dependencies": {
-        "@react-native-community/datetimepicker": "2.6.2",
+        "@react-native-community/datetimepicker": "3.0.2",
         "@sayem314/react-native-keep-awake": "^1.0.3",
         "@sentry/react-native": "^2.1.0",
         "@types/jwt-decode": "^3.1.0",
