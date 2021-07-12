@@ -280,8 +280,8 @@ PODS:
     - React
     - React-RCTImage
     - React-RCTText
-  - RNDateTimePicker (2.6.2):
-    - React
+  - RNDateTimePicker (3.0.6):
+    - React-Core
   - RNDeviceInfo (6.2.1):
     - React-Core
   - RNFS (2.18.0):
@@ -492,7 +492,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 36a70f1015574284fa6770993c1e83a1f85dbabc
   ReactCommon: 3ea86417fa6e432b500579df40b057df54cfb4d4
   ReactNativeNavigation: aefc8debafb4a374575adafb44a3352b9d5b618a
-  RNDateTimePicker: 968ccf716b3b6aee07849641966005924de5c0f9
+  RNDateTimePicker: 120f8d08b19dd50c0308d30a07c1982e4618e9ad
   RNDeviceInfo: 9b6aba9ffaed69ecb72bd13c7bcb0debf277bc9f
   RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   RNSecureStorage: 8b2b07278d80c48b3a881c56e604ab147372f243
