@@ -3,9 +3,14 @@ import { toNumber } from './helpers';
 import GoodsReceiptSession from '../entities/GoodsReceiptSession';
 import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
 import Attachment from '../entities/Attachment';
-import List from '../entities/List';
-import ListAttachment from '../entities/ListAttachment';
-import ListEntry from '../entities/ListEntry';
+
+import BaseList from '../entities/Lists/BaseList';
+import InventoryList from '../entities/Lists/InventoryList';
+
+import BaseEntry from '../entities/Lists/BaseEntry';
+import InventoryEntry from '../entities/Lists/InventoryEntry';
+
+import ListAttachment from '../entities/Lists/ListAttachment';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
 import { Init1580395050084 } from '../migrations/1580395050084-Init';
 import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
@@ -34,21 +39,21 @@ export default class Database {
 
     constructor() {
         this.db = undefined;
-        // SQLite.DEBUG(true);
+        SQLite.DEBUG(true);
         SQLite.enablePromise(true);
     }
 
-    static connect(): Promise<Connection> {
+    static async connect(): Promise<Connection> {
         let dropSchema = false;
         let synchronize = false;
         let migrationsRun = true;
         if (__DEV__) {
-            dropSchema = false;
-            synchronize = false;
-            migrationsRun = true;
+            dropSchema = true;
+            synchronize = true;
+            migrationsRun = false;
         }
 
-        return createConnection({
+        const connection = await createConnection({
             type: 'react-native',
             database: 'supercoop.sqlite',
             location: 'Documents',
@@ -59,9 +64,11 @@ export default class Database {
                 Attachment,
                 GoodsReceiptEntry,
                 GoodsReceiptSession,
-                List,
-                ListAttachment, 
-                ListEntry
+                BaseList,
+                InventoryList,
+                BaseEntry,
+                InventoryEntry,
+                ListAttachment,
             ],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
@@ -73,6 +80,8 @@ export default class Database {
                 AddSessionAttachment1592642586405,
             ],
         });
+        console.log("connection created");
+        return connection;
     }
 
     async legacyConnect(): Promise<void> {

@@ -3,7 +3,7 @@ import React from 'react';
 import { FlatList, GestureResponderEvent, SafeAreaView, SectionList, View } from 'react-native';
 import { Icon, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
-import List, { ListType, ListTypeIcon, ListTypeLabel } from '../../entities/List';
+import { ListType, ListTypeIcon, ListTypeLabel } from '../../entities/Lists/BaseList';
 import { defaultScreenOptions } from '../../utils/navigation';
 
 type Props = {

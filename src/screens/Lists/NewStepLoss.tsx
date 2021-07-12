@@ -4,7 +4,7 @@ import React from 'react';
 import { FlatList, SafeAreaView, SectionList, View } from 'react-native';
 import { Button, Input, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
-import List, { ListType, ListTypeLabel } from '../../entities/List';
+import List, { ListType, ListTypeLabel } from '../../entities/Lists/List';
 import { defaultScreenOptions } from '../../utils/navigation';
 import InventoryIcon from '../../../assets/svg/017-inventory.svg';
 import { getConnection } from 'typeorm';

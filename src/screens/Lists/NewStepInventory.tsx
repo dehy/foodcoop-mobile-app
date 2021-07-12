@@ -1,13 +1,12 @@
-import { Picker } from '@react-native-picker/picker';
 import { DateTime } from 'luxon';
 import React from 'react';
-import { FlatList, SafeAreaView, ScrollView, SectionList, View } from 'react-native';
-import { Button, Input, ListItem, Text, ThemeProvider } from 'react-native-elements';
+import { Alert, SafeAreaView, ScrollView, View } from 'react-native';
+import { Button, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
-import List, { ListType, ListTypeLabel } from '../../entities/List';
 import { defaultScreenOptions } from '../../utils/navigation';
 import InventoryIcon from '../../../assets/svg/017-inventory.svg';
 import { getConnection } from 'typeorm';
+import InventoryList from '../../entities/Lists/InventoryList';
 
 type Props = {
     componentId: string;
@@ -43,14 +42,20 @@ export default class ListsNewStepInventory extends React.Component<Props, State>
             console.log('TODO: disable button');
         }
 
-        const list = new List();
-        list.type = ListType.inventory;
+        if (undefined === this.zoneValue || isNaN(this.zoneValue)) {
+            Alert.alert("Le numéro de zone n'est pas valide. Merci de la ressaisir.");
+            return;
+        }
+
+        const list = new InventoryList();
         list.name = `Inventaire`;
+        list.zone = this.zoneValue;
 
         getConnection()
-            .getRepository(List)
+            .getRepository(InventoryList)
             .save(list)
-            .then(() => {
+            .then(list => {
+                console.log(list);
                 Navigation.dismissModal(this.props.componentId);
             });
     };
@@ -74,6 +79,7 @@ export default class ListsNewStepInventory extends React.Component<Props, State>
                                     }}
                                     blurOnSubmit={true}
                                     onSubmitEditing={e => {}}
+                                    keyboardType="number-pad"
                                 />
                             </ListItem.Content>
                         </ListItem>
@@ -87,7 +93,7 @@ export default class ListsNewStepInventory extends React.Component<Props, State>
                                 </ListItem.Title>
                             </ListItem.Content>
                         </ListItem>
-                        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                             <Button
                                 title="Commencer l'inventaire"
                                 style={{ margin: 20 }}

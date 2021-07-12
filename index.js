@@ -17,6 +17,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import { registerScreens } from './src/utils/screens';
 import moment from 'moment';
 import 'moment/locale/fr';
+import { Settings } from 'luxon';
 import Database from './src/utils/Database';
 import { readableVersion, systemName } from './src/utils/helpers';
 import * as Sentry from '@sentry/react-native';
@@ -29,22 +30,24 @@ Sentry.init({
 });
 Sentry.setRelease(`mobile-app-${readableVersion()}`);
 
+Settings.defaultLocale = "fr";
+
 registerScreens();
-Database.connect();
+Database.connect().then(() => {
+    EStyleSheet.build({});
 
-EStyleSheet.build({});
-
-Navigation.events().registerAppLaunchedListener(() => {
-    Navigation.setDefaultOptions({
-        layout: {
-            orientation: ['portrait'],
-        },
-    });
-    Navigation.setRoot({
-        root: {
-            component: {
-                name: 'Initializing',
+    Navigation.events().registerAppLaunchedListener(() => {
+        Navigation.setDefaultOptions({
+            layout: {
+                orientation: ['portrait'],
             },
-        },
+        });
+        Navigation.setRoot({
+            root: {
+                component: {
+                    name: 'Initializing',
+                },
+            },
+        });
     });
 });
