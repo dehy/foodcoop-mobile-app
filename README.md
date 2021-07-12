@@ -1,6 +1,6 @@
 # README
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_shield)
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_shield)
 
 ## Développement
 
@@ -159,7 +159,6 @@ Merci de mettre à jour les tests appropriés (le cas échéant).
 
 ## License
 
-[GNU Affero General Public License v3.0 or later](https://choosealicense.com/licenses/agpl-3.0/)
-
+[GNU General Public License v3.0 or later](https://choosealicense.com/licenses/gpl-3.0/)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_large)
