@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import * as RNFS from 'react-native-fs';
-import List from './List';
+import BaseList from './BaseList';
 
 @Entity()
 export default class ListAttachment {
@@ -18,10 +18,10 @@ export default class ListAttachment {
 
     @ManyToOne(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type => List,
+        type => BaseList,
         list => list.attachments,
     )
-    public list?: List;
+    public list?: BaseList;
 
     public filepath(): string {
         return RNFS.DocumentDirectoryPath + '/' + this.path;
