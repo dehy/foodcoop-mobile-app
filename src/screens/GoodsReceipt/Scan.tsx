@@ -505,7 +505,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     renderCamera(): React.ReactNode {
         return (
             <Scanner2
-                ref={(ref): void => {
+                ref={(ref: Scanner2): void => {
                     this.scanner = ref !== null ? ref : undefined;
                 }}
                 onBarcodeRead={(barcode): void => {

@@ -556,7 +556,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         if (this.state.displayCamera) {
             return (
                 <Scanner2
-                    ref={(ref): void => {
+                    ref={(ref: Scanner2): void => {
                         this.scanner = ref !== null ? ref : undefined;
                     }}
                     onBarcodeRead={(barcode): void => {
