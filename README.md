@@ -1,6 +1,7 @@
 # README
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_shield)
+![TSC](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/tsc.yml/badge.svg?branch=develop)
 
 ## Développement
 
