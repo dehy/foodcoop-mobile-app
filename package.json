@@ -18,7 +18,8 @@
         "postinstall": "./postinstall.sh",
         "ios:beta": "fastlane ios beta",
         "android:beta": "fastlane android beta",
-        "typeorm": "ts-node ./node_modules/typeorm/cli.js"
+        "typeorm": "ts-node ./node_modules/typeorm/cli.js",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@react-native-community/datetimepicker": "3.0.6",
@@ -102,7 +103,7 @@
         "eslint-config-prettier": "^6.7.0",
         "eslint-plugin-prettier": "^3.1.1",
         "eslint-plugin-react": "^7.17.0",
-        "husky": "^4.3.0",
+        "husky": "^7.0.0",
         "jest": "^24.9.0",
         "metro-react-native-babel-preset": "^0.58.0",
         "patch-package": "^6.0.2",
@@ -120,12 +121,5 @@
         "extends": [
             "@commitlint/config-conventional"
         ]
-    },
-    "husky": {
-        "hooks": {
-            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-            "post-checkout": "yarn install",
-            "post-merge": "yarn install"
-        }
     }
 }
