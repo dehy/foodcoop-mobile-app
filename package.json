@@ -5,7 +5,8 @@
     "private": true,
     "author": "Arnaud de Mouhy <arnaud@admds.net>",
     "contributors": [
-        "Vivien Poirier"
+        "Vivien Poirier",
+        "Briac Pilpré"
     ],
     "scripts": {
         "clean": "react-native-clean-project",
