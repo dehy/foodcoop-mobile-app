@@ -62,7 +62,7 @@ export default class Odoo {
         this.odooApi = new OdooApi({
             host: Odoo.odooEnpoint,
             port: Config.ODOO_PORT,
-            protocol: Config.PROTOCOL,
+            protocol: Config.ODOO_SCHEME,
             username: Config.ODOO_USERNAME,
             password: Config.ODOO_PASSWORD,
             database: Config.ODOO_DATABASE,
