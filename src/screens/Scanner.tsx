@@ -177,7 +177,9 @@ export default class Scanner extends React.Component<Props, State> {
             barcode: undefined,
             odooProductProduct: undefined,
         });
-        this.scanner ? this.scanner.reset() : undefined;
+        if (this.scanner) {
+            this.scanner.reset();
+        }
     }
 
     didScanBarcode(barcode: Barcode): void {
