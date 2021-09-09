@@ -8,7 +8,7 @@ import Attachment from '../entities/Attachment';
 import { ImagePickerResponse } from 'react-native-image-picker';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
-import { randomId } from '../../src/utils/helpers';
+import { lightRandomId } from '../../src/utils/helpers';
 import { getRepository } from 'typeorm';
 
 export default class GoodsReceiptService {
@@ -38,7 +38,7 @@ export default class GoodsReceiptService {
         }
 
         const extension = response.type ? mime.extension(response.type) : 'jpeg';
-        const attachmentBasename = `${session.poName}-${randomId()}`;
+        const attachmentBasename = `${session.poName}-${lightRandomId()}`;
         const attachmentFilename = `${attachmentBasename}.${extension}`;
         const attachmentShortFilepath = `${this.dataDirectoryRelativePathForSession(session)}/${attachmentFilename}`;
         const attachmentFullFilepath = `${this.dataDirectoryAbsolutePathForSession(session)}/${attachmentFilename}`;
