@@ -2,10 +2,10 @@ import React, { ReactNode } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Odoo from '../utils/Odoo';
-import ProductProduct, { UnitOfMesurement } from '../entities/Odoo/ProductProduct';
+import ProductProduct, { UnitOfMeasurement } from '../entities/Odoo/ProductProduct';
 
 export interface Props {
-    barcode: string;
+    barcode?: string;
     onClose?: () => void;
 }
 
@@ -204,9 +204,9 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.detailTitle}>
-                                    { UnitOfMesurement.unit === this.state.product?.packagingUnit() ? 'Unité' : null}
-                                    { UnitOfMesurement.kg === this.state.product?.packagingUnit() ? 'Poids' : null}
-                                    { UnitOfMesurement.litre === this.state.product?.packagingUnit() ? 'Volume' : null}
+                                    {UnitOfMeasurement.unit === this.state.product?.packagingUnit() ? 'Unité' : null}
+                                    {UnitOfMeasurement.kg === this.state.product?.packagingUnit() ? 'Poids' : null}
+                                    {UnitOfMeasurement.litre === this.state.product?.packagingUnit() ? 'Volume' : null}
                                 </Text>
                                 <Text style={styles.detailValue}>
                                     {this.state.product ? this.state.product.packagingAsString() : '-'}

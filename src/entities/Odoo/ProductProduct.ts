@@ -2,7 +2,7 @@
 
 import { isFloat } from '../../utils/helpers';
 
-export enum UnitOfMesurement {
+export enum UnitOfMeasurement {
     unit = 1,
     kg = 3,
     litre = 11,
@@ -27,13 +27,13 @@ export default class ProductProduct {
     static quantityUnitAsString(odooUnit?: number): string {
         let string = '';
         switch (odooUnit) {
-            case UnitOfMesurement.unit:
+            case UnitOfMeasurement.unit:
                 string = 'unités';
                 break;
-            case UnitOfMesurement.kg:
+            case UnitOfMeasurement.kg:
                 string = 'kg';
                 break;
-            case UnitOfMesurement.litre:
+            case UnitOfMeasurement.litre:
                 string = 'litre';
                 break;
         }
@@ -51,12 +51,12 @@ export default class ProductProduct {
 
     packagingUnit(): number {
         if (this.weightNet) {
-            return UnitOfMesurement.kg;
+            return UnitOfMeasurement.kg;
         }
         if (this.volume) {
-            return UnitOfMesurement.litre;
+            return UnitOfMeasurement.litre;
         }
-        return UnitOfMesurement.unit;
+        return UnitOfMeasurement.unit;
     }
 
     packagingAsString(): string {
@@ -80,7 +80,7 @@ export default class ProductProduct {
         if (this.qtyAvailable == undefined || this.qtyAvailable < 0) {
             return false;
         }
-        if (this.uomId === UnitOfMesurement.unit && isFloat(this.qtyAvailable)) {
+        if (this.uomId === UnitOfMeasurement.unit && isFloat(this.qtyAvailable)) {
             return false;
         }
 

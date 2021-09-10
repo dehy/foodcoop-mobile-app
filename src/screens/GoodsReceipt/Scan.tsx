@@ -6,7 +6,7 @@ import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Barcode } from 'react-native-camera/types';
 import Odoo from '../../utils/Odoo';
-import ProductProduct, { UnitOfMesurement } from '../../entities/Odoo/ProductProduct';
+import ProductProduct, { UnitOfMeasurement } from '../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
 import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
 import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
@@ -34,9 +34,9 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     colorDanger = '#DC3545';
     colorDangerDisabled = '#F7D8DB';
     uomList: { [k: string]: number } = {
-        unités: UnitOfMesurement.unit,
-        kg: UnitOfMesurement.kg,
-        litre: UnitOfMesurement.litre,
+        unités: UnitOfMeasurement.unit,
+        kg: UnitOfMeasurement.kg,
+        litre: UnitOfMeasurement.litre,
     };
 
     theme = {
@@ -255,12 +255,12 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
             return false;
         }
         const productUom = goodsReceiptEntry.productUom;
-        const unitOfMesurements = [UnitOfMesurement.unit, UnitOfMesurement.kg, UnitOfMesurement.litre];
-        if (productUom == undefined || !unitOfMesurements.includes(productUom)) {
+        const UnitOfMeasurements = [UnitOfMeasurement.unit, UnitOfMeasurement.kg, UnitOfMeasurement.litre];
+        if (productUom == undefined || !UnitOfMeasurements.includes(productUom)) {
             Alert.alert(`Unité de messure inconnue: ${productUom}`);
             return false;
         }
-        if (productUom == UnitOfMesurement.unit && isFloat(productQty)) {
+        if (productUom == UnitOfMeasurement.unit && isFloat(productQty)) {
             Alert.alert('Impossible d\'avoir un nombre à virgule pour l\'unité de mesure "unités".');
             return false;
         }
