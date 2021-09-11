@@ -13,15 +13,37 @@ export default class ProductProduct {
     public templateId?: number;
     public barcode?: string;
     public name?: string;
-    public image?: string;
+    public image?: string | null;
     public qtyAvailable?: number;
     public uomId?: number;
     public lstPrice?: number;
     public weightNet?: number;
     public volume?: number;
 
-    static imageFromOdooBase64(imageBase64: string): string {
-        return 'data:image/png;base64,' + imageBase64;
+    static imageFromOdooBase64(imageBase64: string): string | undefined {
+        // https://stackoverflow.com/a/50111377/2287525
+        let imageType: string | undefined = undefined;
+        console.log(imageBase64.charAt(0));
+        switch (imageBase64.charAt(0)) {
+            case '/':
+                imageType = 'jpg';
+                break;
+            case 'i':
+                imageType = 'png';
+                break;
+            case 'R':
+                imageType = 'gif';
+                break;
+            case 'U':
+                imageType = 'webp';
+                break;
+        }
+        if (undefined === imageType) {
+            console.warn('Unknown image type');
+            return;
+        }
+        console.log(imageType);
+        return 'data:image/' + imageType + ';base64,' + imageBase64;
     }
 
     static quantityUnitAsString(odooUnit?: number): string {
