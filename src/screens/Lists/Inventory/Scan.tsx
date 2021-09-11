@@ -2,7 +2,6 @@ import React from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import { Barcode } from 'react-native-camera';
 import ScannerCamera from '../../ScannerCamera';
-import SlidingUpPanel from 'rn-sliding-up-panel';
 import { Button } from 'react-native-elements';
 import ScannerInfoPanel from '../../ScannerInfoPanel';
 import { Navigation, Options } from 'react-native-navigation';
@@ -25,7 +24,7 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
         Navigation.events().bindComponent(this);
         this.state = {
             barcode: undefined,
-        }
+        };
     }
 
     static options(): Options {
@@ -50,28 +49,25 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
     }
 
     _didScanBarcode = (barcode: Barcode) => {
-        this.setState({barcode})
+        this.setState({ barcode });
     };
 
     render(): React.ReactElement {
         return (
             <SafeAreaView>
                 <ScannerCamera
-                    ref={(ref): void => {
+                    ref={(ref: ScannerCamera): void => {
                         this.scanner = ref !== null ? ref : undefined;
                     }}
                     onBarcodeRead={(barcode): void => {
                         this._didScanBarcode(barcode);
                     }}
-                >
-                </ScannerCamera>
-                { this.state.barcode != undefined ? (
-                <View>
-                    <ScannerInfoPanel
-                        barcode={this.state.barcode?.data}>
-
-                        </ScannerInfoPanel>
-                </View>) : null }
+                ></ScannerCamera>
+                {this.state.barcode != undefined ? (
+                    <View>
+                        <ScannerInfoPanel barcode={this.state.barcode?.data}></ScannerInfoPanel>
+                    </View>
+                ) : null}
             </SafeAreaView>
         );
     }

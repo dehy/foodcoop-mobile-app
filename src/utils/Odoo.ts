@@ -163,9 +163,9 @@ export default class Odoo {
     }
 
     static barcodeRuleForBarcode(barcode: string): BarcodeRule | undefined {
-        console.log(`barcode: ${barcode}`);
+        // console.log(`barcode: ${barcode}`);
         const barcodeWoChecksum = barcode.slice(0, barcode.length - 1);
-        console.log(`barcode without checksum: ${barcodeWoChecksum}`);
+        // console.log(`barcode without checksum: ${barcodeWoChecksum}`);
         let barcodeEncoding = 'ean13';
         switch (barcode.length) {
             case 8:
@@ -175,16 +175,16 @@ export default class Odoo {
                 barcodeEncoding = 'ean13';
                 break;
         }
-        console.log(`barcode encoding: ${barcodeEncoding}`);
+        // console.log(`barcode encoding: ${barcodeEncoding}`);
         for (const barcodeRule of Odoo.barcodeRules) {
-            console.log(`Trying barcode rule: ${barcodeRule.pattern}`);
+            // console.log(`Trying barcode rule: ${barcodeRule.pattern}`);
             if (barcodeEncoding !== barcodeRule.encoding) {
                 // skip if not the same encoding rule
-                console.log(`+ encoding not matching`);
+                // console.log(`+ encoding not matching`);
                 continue;
             }
             if (barcodeRule.regex) {
-                console.log(`barcode regex: ${barcodeRule.regex}`);
+                // console.log(`barcode regex: ${barcodeRule.regex}`);
                 if (null !== barcodeRule.regex.exec(barcodeWoChecksum)) {
                     // we have a match!
                     return barcodeRule;
@@ -253,7 +253,7 @@ export default class Odoo {
         baseBarcode = replaceStringAt(baseBarcode, baseBarcode.length - 1, newChecksumDigit);
         parsedBarcode.base = baseBarcode;
 
-        console.debug(`parsedBarcode: ${JSON.stringify(parsedBarcode)}`);
+        // console.debug(`parsedBarcode: ${JSON.stringify(parsedBarcode)}`);
 
         return parsedBarcode;
     }
