@@ -6,11 +6,11 @@ import ProductProduct, { UnitOfMeasurement } from '../entities/Odoo/ProductProdu
 
 export interface Props {
     barcode?: string;
+    productNotFoundCallback?: () => void;
     onClose?: () => void;
 }
 
 interface State {
-    barcode: string;
     product?: ProductProduct | null;
 }
 
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: 'white',
         padding: 16,
+        minHeight: 170,
     },
     preview: {
         flex: 1,
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     articleImage: {
         width: 64,
         height: 64,
-        backgroundColor: 'white',
+        //backgroundColor: 'white',
         marginRight: 16,
         marginBottom: 8,
     },
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
         paddingRight: 8,
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
-    }
+    },
 });
 
 export default class ScannerInfoPanel extends React.Component<Props, State> {
@@ -112,46 +113,74 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         this.odoo = Odoo.getInstance();
 
         this.state = {
-            barcode: props.barcode,
             product: undefined,
         };
     }
 
     componentDidMount(): void {
         console.debug('did mount');
-        this.fetchProduct(this.state.barcode);
-    }
-
-    componentDidUpdate(prevProps: Props, prevState: State) {
-        if (prevState.barcode !== this.state.barcode) {
-            this.fetchProduct(this.state.barcode);
+        if (this.props.barcode) {
+            this.fetchProduct(this.props.barcode);
         }
     }
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-        if (nextProps.barcode !== prevState.barcode) {
-            return { barcode: nextProps.barcode, product: undefined };
+    componentDidUpdate(_prevProps: Props): void {
+        if (this.props.barcode && _prevProps.barcode !== this.props.barcode) {
+            this.fetchProduct(this.props.barcode);
         }
-        return null;
     }
+
+    // static getDerivedStateFromProps(nextProps: Props, prevState: State): State | null {
+    //     if (nextProps.barcode !== prevState.barcode) {
+    //         return { barcode: nextProps.barcode, product: undefined };
+    //     }
+    //     return null;
+    // }
 
     fetchProduct(barcode: string): void {
-        console.debug(`fetchProduct: ${barcode}`)
         this.odoo.fetchProductFromBarcode(barcode).then(product => {
             this.setState({ product });
+            if (!product) {
+                return;
+            }
+            this.odoo.fetchImageForProductProduct(product).then(image => {
+                if (!image) {
+                    return;
+                }
+                product.image = ProductProduct.imageFromOdooBase64(image);
+                this.setState({
+                    product,
+                });
+            });
         });
     }
 
-    renderLoading = (): ReactNode => {
+    close(): void {
+        if (this.props.onClose) {
+            this.props.onClose();
+        }
+        this.setState({ product: undefined });
+    }
+
+    renderLoading = (): React.ReactElement => {
         return (
-            <View style={{ alignContent: 'center', width: '100%', backgroundColor: 'red' }}>
+            <View
+                style={{
+                    alignContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                }}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon name="barcode" type="font-awesome-5" style={{ paddingRight: 8 }} />
+                    <Text style={{ fontSize: 18 }}>{this.props.barcode}</Text>
+                </View>
                 <View
                     style={{
-                        backgroundColor: '#EEEEEE',
-                        padding: 10,
-                        borderRadius: 5,
                         flexDirection: 'row',
                         alignItems: 'center',
+                        justifyContent: 'center',
                     }}
                 >
                     <ActivityIndicator size="small" style={{ paddingRight: 10 }} />
@@ -161,77 +190,93 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         );
     };
 
-    render(): ReactNode {
+    renderProductImage(): React.ReactNode {
+        if (this.state.product?.image) {
+            return (
+                <Image
+                    source={{ uri: this.state.product.image }}
+                    style={[styles.articleImage]}
+                    resizeMode={'contain'}
+                    resizeMethod={'resize'}
+                />
+            );
+        }
+        if (null === this.state.product?.image) {
+            return (
+                <View style={[styles.articleImage, { backgroundColor: '#EEE', justifyContent: 'center' }]}>
+                    <Icon name={'image'} type={'font-awesome-5'} color={'#999'} />
+                </View>
+            );
+        }
+        // undefined = not retrieved image
+        return <ActivityIndicator size="small" color="#999999" style={styles.articleImage} />;
+    }
+
+    renderProductInfos(): React.ReactNode {
+        if (!this.state.product) {
+            return null;
+        }
         return (
-            <View style={[styles.information, { marginTop: 8 }]}>
-                <TouchableOpacity 
-                    style={{ position: 'absolute', right: 0, top: 0 }} 
-                    onPress={this.props.onClose}
-                >
-                    <Icon 
-                        name="times-circle"
-                        type="font-awesome-5"
-                        color={"#999"}
-                        style={styles.closeIcon}
-                    />
-                </TouchableOpacity>
+            <View>
                 <View style={{ flexDirection: 'row' }}>
-                    {this.state.product && this.state.product.image ? (
-                        <Image source={{ uri: this.state.product.image }} style={styles.articleImage} />
-                    ) : (
-                        <ActivityIndicator size="small" color="#999999" style={styles.articleImage} />
-                    )}
-                    <Text
-                        ref={(ref): void => {
-                            // this.articleTitle = ref;
-                        }}
-                        numberOfLines={2}
-                        style={styles.articleName}
-                    >
-                        {this.state.product ? this.state.product.name : 'Chargement...'}
+                    {this.renderProductImage()}
+                    <Text numberOfLines={2} style={styles.articleName}>
+                        {this.state.product.name}
                     </Text>
                 </View>
-                <View>
+                <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
                     <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
-                        <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
-                            <View style={{ flex: 1, flexDirection: 'column' }}>
-                                <Text style={styles.detailTitle}>Prix</Text>
-                                <Text style={styles.detailValue}>
-                                    {this.state.product && undefined !== this.state.product.lstPrice
-                                        ? (Math.round(this.state.product.lstPrice * 100) / 100).toFixed(2) + ' €'
-                                        : '-'}
-                                </Text>
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={styles.detailTitle}>
-                                    {UnitOfMeasurement.unit === this.state.product?.packagingUnit() ? 'Unité' : null}
-                                    {UnitOfMeasurement.kg === this.state.product?.packagingUnit() ? 'Poids' : null}
-                                    {UnitOfMeasurement.litre === this.state.product?.packagingUnit() ? 'Volume' : null}
-                                </Text>
-                                <Text style={styles.detailValue}>
-                                    {this.state.product ? this.state.product.packagingAsString() : '-'}
-                                </Text>
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={styles.detailTitle}>Stock</Text>
-                                <Text
-                                    style={[
-                                        styles.detailValue,
-                                        this.state.product && !this.state.product.quantityIsValid()
-                                            ? styles.detailValueInvalid
-                                            : undefined,
-                                    ]}
-                                >
-                                    {this.state.product && this.state.product.quantityIsValid()
-                                        ? this.state.product.quantityAsString()
-                                        : '-'}
-                                </Text>
-                            </View>
+                        <View style={{ flex: 1, flexDirection: 'column' }}>
+                            <Text style={styles.detailTitle}>Prix</Text>
+                            <Text style={styles.detailValue}>
+                                {undefined !== this.state.product.lstPrice
+                                    ? (Math.round(this.state.product.lstPrice * 100) / 100).toFixed(2) + ' €'
+                                    : '-'}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.detailTitle}>
+                                {UnitOfMeasurement.unit === this.state.product?.packagingUnit() ? 'Unité' : null}
+                                {UnitOfMeasurement.kg === this.state.product?.packagingUnit() ? 'Poids' : null}
+                                {UnitOfMeasurement.litre === this.state.product?.packagingUnit() ? 'Volume' : null}
+                            </Text>
+                            <Text style={styles.detailValue}>{this.state.product.packagingAsString()}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.detailTitle}>Stock</Text>
+                            <Text
+                                style={[
+                                    styles.detailValue,
+                                    !this.state.product.quantityIsValid() ? styles.detailValueInvalid : undefined,
+                                ]}
+                            >
+                                {this.state.product.quantityIsValid() ? this.state.product.quantityAsString() : '-'}
+                            </Text>
                         </View>
                     </View>
-                    {/* {this.renderInventoryQuantityInputRow()}
-                    {this.renderOpenFoodFactsProperties()} */}
                 </View>
+            </View>
+        );
+    }
+
+    renderContent(): React.ReactNode {
+        if (this.state.product) {
+            return this.renderProductInfos();
+        }
+        console.log(this.state.product);
+        return this.renderLoading();
+    }
+
+    render(): ReactNode {
+        if (!this.props.barcode) {
+            return null;
+        }
+        return (
+            <View style={[styles.information, { marginTop: 8 }]}>
+                <TouchableOpacity style={{ position: 'absolute', right: 0, top: 0 }} onPress={(): void => this.close()}>
+                    <Icon name="times-circle" type="font-awesome-5" color={'#999'} style={styles.closeIcon} />
+                </TouchableOpacity>
+                {this.renderContent()}
             </View>
         );
     }

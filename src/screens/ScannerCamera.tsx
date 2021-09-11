@@ -9,6 +9,7 @@ import {
     Platform,
     Vibration,
     DeviceEventEmitter,
+    Alert,
 } from 'react-native';
 import DialogInput from 'react-native-dialog-input';
 import {
@@ -32,6 +33,9 @@ import KeepAwake from '@sayem314/react-native-keep-awake';
 import DataWedgeIntents from 'react-native-datawedge-intents';
 import { deviceId } from '../utils/helpers';
 import { Button, Icon } from 'react-native-elements';
+import Odoo from '../utils/Odoo';
+import ProductProduct from '../entities/Odoo/ProductProduct';
+import Mailjet from '../utils/Mailjet';
 import ScannerInfoPanel from './ScannerInfoPanel';
 
 // const flashModeOrder: { [key: string]: keyof FlashMode } = {
@@ -41,14 +45,14 @@ import ScannerInfoPanel from './ScannerInfoPanel';
 //     torch: RNCamera.Constants.FlashMode.off,
 // };
 
-const wbOrder: { [key: string]: keyof WhiteBalance } = {
-    auto: RNCamera.Constants.WhiteBalance.sunny,
-    sunny: RNCamera.Constants.WhiteBalance.cloudy,
-    cloudy: RNCamera.Constants.WhiteBalance.shadow,
-    shadow: RNCamera.Constants.WhiteBalance.fluorescent,
-    fluorescent: RNCamera.Constants.WhiteBalance.incandescent,
-    incandescent: RNCamera.Constants.WhiteBalance.auto,
-};
+// const wbOrder: { [key: string]: keyof WhiteBalance } = {
+//     auto: RNCamera.Constants.WhiteBalance.sunny,
+//     sunny: RNCamera.Constants.WhiteBalance.cloudy,
+//     cloudy: RNCamera.Constants.WhiteBalance.shadow,
+//     shadow: RNCamera.Constants.WhiteBalance.fluorescent,
+//     fluorescent: RNCamera.Constants.WhiteBalance.incandescent,
+//     incandescent: RNCamera.Constants.WhiteBalance.auto,
+// };
 
 interface BarcodeReadEvent {
     data: string;
@@ -67,7 +71,7 @@ const landmarkSize = 2;
 
 interface Props {
     ref?: (instance: ScannerCamera) => void;
-    onBarcodeRead?: (barcode: Barcode) => void;
+    onProductFound?: (product: ProductProduct) => void;
 }
 
 interface State {
@@ -97,6 +101,8 @@ interface State {
     textBlocks: TrackedTextFeature[];
     barcodes: Barcode[];
 
+    barcode?: Barcode;
+    product?: ProductProduct;
     previousBarcode?: Barcode;
     displayCamera: boolean;
     showManualSearchView: boolean;
@@ -237,6 +243,8 @@ export default class ScannerCamera extends React.Component<Props, State> {
         textBlocks: [],
         barcodes: [],
 
+        barcode: undefined,
+        product: undefined,
         previousBarcode: undefined,
         displayCamera: true,
         showManualSearchView: false,
@@ -252,7 +260,6 @@ export default class ScannerCamera extends React.Component<Props, State> {
         this.beepSound = new Sound('beep.mp3', Sound.MAIN_BUNDLE, error => {
             if (error) {
                 console.log('failed to load the sound', error);
-                return;
             }
         });
         this.beepSound.stop();
@@ -269,6 +276,12 @@ export default class ScannerCamera extends React.Component<Props, State> {
             this.determineVersion();
         }
         /* End DataWedge */
+    }
+
+    componentWillUnmount(): void {
+        if (this.broadcastReceiverHandler) {
+            DeviceEventEmitter.removeListener('datawedge_broadcast_intent', this.broadcastReceiverHandler);
+        }
     }
 
     /* DataWedge */
@@ -477,12 +490,6 @@ export default class ScannerCamera extends React.Component<Props, State> {
     }
     /* End DataWedge */
 
-    componentWillUnmount(): void {
-        if (this.broadcastReceiverHandler) {
-            DeviceEventEmitter.removeListener('datawedge_broadcast_intent', this.broadcastReceiverHandler);
-        }
-    }
-
     findBestRatio = async (): Promise<void> => {
         if (Platform.OS === 'android' && this.camera) {
             const ratios = await this.camera.getSupportedRatiosAsync();
@@ -502,7 +509,6 @@ export default class ScannerCamera extends React.Component<Props, State> {
     reset = (): void => {
         this.setState({
             barcodes: [],
-            previousBarcode: undefined,
             displayCamera: true,
             showManualSearchView: false,
         });
@@ -517,14 +523,14 @@ export default class ScannerCamera extends React.Component<Props, State> {
     pauseCamera = (): void => this.setState({ displayCamera: false });
     resumeCamera = (): void => this.setState({ displayCamera: true });
 
-    toggleFacing = (): void => {
-        this.setState(previousState => ({
-            type:
-                previousState.type === RNCamera.Constants.Type.back
-                    ? RNCamera.Constants.Type.front
-                    : RNCamera.Constants.Type.back,
-        }));
-    };
+    // toggleFacing = (): void => {
+    //     this.setState(previousState => ({
+    //         type:
+    //             previousState.type === RNCamera.Constants.Type.back
+    //                 ? RNCamera.Constants.Type.front
+    //                 : RNCamera.Constants.Type.back,
+    //     }));
+    // };
 
     setFlash = (flash: keyof FlashMode): void => {
         this.setState({ flash });
@@ -537,11 +543,11 @@ export default class ScannerCamera extends React.Component<Props, State> {
         this.setFlash(RNCamera.Constants.FlashMode.off);
     };
 
-    toggleWB = (): void => {
-        this.setState(previousState => ({
-            whiteBalance: wbOrder[previousState.whiteBalance],
-        }));
-    };
+    // toggleWB = (): void => {
+    //     this.setState(previousState => ({
+    //         whiteBalance: wbOrder[previousState.whiteBalance],
+    //     }));
+    // };
 
     setAutofocus = (autoFocus: keyof AutoFocus): void => {
         this.setState({ autoFocus });
@@ -577,154 +583,154 @@ export default class ScannerCamera extends React.Component<Props, State> {
         });
     };
 
-    zoomOut = (): void => {
-        this.setState(previousState => ({
-            zoom: previousState.zoom - 0.1 < 0 ? 0 : previousState.zoom - 0.1,
-        }));
-    };
+    // zoomOut = (): void => {
+    //     this.setState(previousState => ({
+    //         zoom: previousState.zoom - 0.1 < 0 ? 0 : previousState.zoom - 0.1,
+    //     }));
+    // };
 
-    zoomIn = (): void => {
-        this.setState(previousState => ({
-            zoom: previousState.zoom + 0.1 > 1 ? 1 : previousState.zoom + 0.1,
-        }));
-    };
+    // zoomIn = (): void => {
+    //     this.setState(previousState => ({
+    //         zoom: previousState.zoom + 0.1 > 1 ? 1 : previousState.zoom + 0.1,
+    //     }));
+    // };
 
-    setFocusDepth = (depth: number) => (): void => {
-        this.setState({
-            depth,
-        });
-    };
+    // setFocusDepth = (depth: number) => (): void => {
+    //     this.setState({
+    //         depth,
+    //     });
+    // };
 
-    takePicture = async (): Promise<void> => {
-        if (this.camera) {
-            const data = await this.camera.takePictureAsync();
-            console.warn('takePicture ', data);
-        }
-    };
+    // takePicture = async (): Promise<void> => {
+    //     if (this.camera) {
+    //         const data = await this.camera.takePictureAsync();
+    //         console.warn('takePicture ', data);
+    //     }
+    // };
 
-    takeVideo = async (): Promise<void> => {
-        if (this.camera) {
-            try {
-                const promise = this.camera.recordAsync(this.state.recordOptions);
+    // takeVideo = async (): Promise<void> => {
+    //     if (this.camera) {
+    //         try {
+    //             const promise = this.camera.recordAsync(this.state.recordOptions);
 
-                if (promise) {
-                    this.setState({ isRecording: true });
-                    const data = await promise;
-                    this.setState({ isRecording: false });
-                    console.warn('takeVideo', data);
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    };
+    //             if (promise) {
+    //                 this.setState({ isRecording: true });
+    //                 const data = await promise;
+    //                 this.setState({ isRecording: false });
+    //                 console.warn('takeVideo', data);
+    //             }
+    //         } catch (e) {
+    //             console.error(e);
+    //         }
+    //     }
+    // };
 
-    toggle = (value: 'canDetectFaces' | 'canDetectText' | 'canDetectBarcode'): void => {
-        const oldValue = this.state[value] as boolean;
-        if (value == 'canDetectFaces') {
-            this.setState({ canDetectFaces: !oldValue });
-        }
-        if (value == 'canDetectText') {
-            this.setState({ canDetectText: !oldValue });
-        }
-        if (value == 'canDetectBarcode') {
-            this.setState({ canDetectBarcode: !oldValue });
-        }
-    };
+    // toggle = (value: 'canDetectFaces' | 'canDetectText' | 'canDetectBarcode'): void => {
+    //     const oldValue = this.state[value] as boolean;
+    //     if (value == 'canDetectFaces') {
+    //         this.setState({ canDetectFaces: !oldValue });
+    //     }
+    //     if (value == 'canDetectText') {
+    //         this.setState({ canDetectText: !oldValue });
+    //     }
+    //     if (value == 'canDetectBarcode') {
+    //         this.setState({ canDetectBarcode: !oldValue });
+    //     }
+    // };
 
-    facesDetected = (response: { faces: Face[] }): void => this.setState({ faces: response.faces });
+    // facesDetected = (response: { faces: Face[] }): void => this.setState({ faces: response.faces });
 
-    renderFace = ({ bounds, faceID, rollAngle, yawAngle }: Face): React.ReactElement => (
-        <View
-            key={faceID}
-            // transform={[
-            //   { perspective: 600 },
-            //   { rotateZ: `${rollAngle!.toFixed(0)}deg` },
-            //   { rotateY: `${yawAngle!.toFixed(0)}deg` },
-            // ]}
-            style={[
-                styles.face,
-                {
-                    ...bounds.size,
-                    left: bounds.origin.x,
-                    top: bounds.origin.y,
-                },
-            ]}
-        >
-            <Text style={styles.faceText}>ID: {faceID}</Text>
-            <Text style={styles.faceText}>rollAngle: {rollAngle && rollAngle.toFixed(0)}</Text>
-            <Text style={styles.faceText}>yawAngle: {yawAngle && yawAngle.toFixed(0)}</Text>
-        </View>
-    );
+    // renderFace = ({ bounds, faceID, rollAngle, yawAngle }: Face): React.ReactElement => (
+    //     <View
+    //         key={faceID}
+    //         // transform={[
+    //         //   { perspective: 600 },
+    //         //   { rotateZ: `${rollAngle!.toFixed(0)}deg` },
+    //         //   { rotateY: `${yawAngle!.toFixed(0)}deg` },
+    //         // ]}
+    //         style={[
+    //             styles.face,
+    //             {
+    //                 ...bounds.size,
+    //                 left: bounds.origin.x,
+    //                 top: bounds.origin.y,
+    //             },
+    //         ]}
+    //     >
+    //         <Text style={styles.faceText}>ID: {faceID}</Text>
+    //         <Text style={styles.faceText}>rollAngle: {rollAngle && rollAngle.toFixed(0)}</Text>
+    //         <Text style={styles.faceText}>yawAngle: {yawAngle && yawAngle.toFixed(0)}</Text>
+    //     </View>
+    // );
 
-    renderLandmarksOfFace = (face: Face): React.ReactElement => {
-        const renderLandmark = (position?: Point<number>): React.ReactElement | undefined =>
-            position && (
-                <View
-                    style={[
-                        styles.landmark,
-                        {
-                            left: position.x - landmarkSize / 2,
-                            top: position.y - landmarkSize / 2,
-                        },
-                    ]}
-                />
-            );
-        return (
-            <View key={`landmarks-${face.faceID}`}>
-                {renderLandmark(face.leftEyePosition)}
-                {renderLandmark(face.rightEyePosition)}
-                {renderLandmark(face.leftEarPosition)}
-                {renderLandmark(face.rightEarPosition)}
-                {renderLandmark(face.leftCheekPosition)}
-                {renderLandmark(face.rightCheekPosition)}
-                {renderLandmark(face.leftMouthPosition)}
-                {renderLandmark(face.mouthPosition)}
-                {renderLandmark(face.rightMouthPosition)}
-                {renderLandmark(face.noseBasePosition)}
-                {renderLandmark(face.bottomMouthPosition)}
-            </View>
-        );
-    };
+    // renderLandmarksOfFace = (face: Face): React.ReactElement => {
+    //     const renderLandmark = (position?: Point<number>): React.ReactElement | undefined =>
+    //         position && (
+    //             <View
+    //                 style={[
+    //                     styles.landmark,
+    //                     {
+    //                         left: position.x - landmarkSize / 2,
+    //                         top: position.y - landmarkSize / 2,
+    //                     },
+    //                 ]}
+    //             />
+    //         );
+    //     return (
+    //         <View key={`landmarks-${face.faceID}`}>
+    //             {renderLandmark(face.leftEyePosition)}
+    //             {renderLandmark(face.rightEyePosition)}
+    //             {renderLandmark(face.leftEarPosition)}
+    //             {renderLandmark(face.rightEarPosition)}
+    //             {renderLandmark(face.leftCheekPosition)}
+    //             {renderLandmark(face.rightCheekPosition)}
+    //             {renderLandmark(face.leftMouthPosition)}
+    //             {renderLandmark(face.mouthPosition)}
+    //             {renderLandmark(face.rightMouthPosition)}
+    //             {renderLandmark(face.noseBasePosition)}
+    //             {renderLandmark(face.bottomMouthPosition)}
+    //         </View>
+    //     );
+    // };
 
-    renderFaces = (): React.ReactElement => (
-        <View style={styles.facesContainer} pointerEvents="none">
-            {this.state.faces.map(this.renderFace)}
-        </View>
-    );
+    // renderFaces = (): React.ReactElement => (
+    //     <View style={styles.facesContainer} pointerEvents="none">
+    //         {this.state.faces.map(this.renderFace)}
+    //     </View>
+    // );
 
-    renderLandmarks = (): React.ReactElement => (
-        <View style={styles.facesContainer} pointerEvents="none">
-            {this.state.faces.map(this.renderLandmarksOfFace)}
-        </View>
-    );
+    // renderLandmarks = (): React.ReactElement => (
+    //     <View style={styles.facesContainer} pointerEvents="none">
+    //         {this.state.faces.map(this.renderLandmarksOfFace)}
+    //     </View>
+    // );
 
-    renderTextBlocks = (): React.ReactElement => (
-        <View style={styles.facesContainer} pointerEvents="none">
-            {this.state.textBlocks.map(this.renderTextBlock)}
-        </View>
-    );
+    // renderTextBlocks = (): React.ReactElement => (
+    //     <View style={styles.facesContainer} pointerEvents="none">
+    //         {this.state.textBlocks.map(this.renderTextBlock)}
+    //     </View>
+    // );
 
-    renderTextBlock = ({ bounds, value }: TrackedTextFeature): React.ReactElement => (
-        <React.Fragment key={value + bounds.origin.x}>
-            <Text style={[styles.textBlock, { left: bounds.origin.x, top: bounds.origin.y }]}>{value}</Text>
-            <View
-                style={[
-                    styles.text,
-                    {
-                        ...bounds.size,
-                        left: bounds.origin.x,
-                        top: bounds.origin.y,
-                    },
-                ]}
-            />
-        </React.Fragment>
-    );
+    // renderTextBlock = ({ bounds, value }: TrackedTextFeature): React.ReactElement => (
+    //     <React.Fragment key={value + bounds.origin.x}>
+    //         <Text style={[styles.textBlock, { left: bounds.origin.x, top: bounds.origin.y }]}>{value}</Text>
+    //         <View
+    //             style={[
+    //                 styles.text,
+    //                 {
+    //                     ...bounds.size,
+    //                     left: bounds.origin.x,
+    //                     top: bounds.origin.y,
+    //                 },
+    //             ]}
+    //         />
+    //     </React.Fragment>
+    // );
 
-    textRecognized = (response: { textBlocks: TrackedTextFeature[] }): void => {
-        const { textBlocks } = response;
-        this.setState({ textBlocks });
-    };
+    // textRecognized = (response: { textBlocks: TrackedTextFeature[] }): void => {
+    //     const { textBlocks } = response;
+    //     this.setState({ textBlocks });
+    // };
 
     legacyBarcodeToBarcode = (legacy: BarcodeReadEvent): Barcode => {
         let width = 0;
@@ -780,12 +786,68 @@ export default class ScannerCamera extends React.Component<Props, State> {
                     this.beepSound.stop(); // Resets file for immediate play availability
                 });
             }
-            if (this.props.onBarcodeRead !== undefined) {
-                this.props.onBarcodeRead(barcode);
-                return;
-            }
         }
     };
+
+    lookupForBarcode(barcode: Barcode): void {
+        Odoo.getInstance()
+            .fetchProductFromBarcode(barcode.data)
+            .then(
+                odooProductProduct => {
+                    if (!odooProductProduct) {
+                        this.handleNotFoundProductProduct(barcode);
+                        return;
+                    }
+                    this.handleFoundProductProduct(odooProductProduct);
+                    if (this.props.onProductFound !== undefined) {
+                        this.props.onProductFound(odooProductProduct);
+                    }
+                },
+                reason => {
+                    Alert.alert('Erreur', `Une erreur est survenue ("${reason}"). Merci de réessayer.`);
+                    this.reset();
+                },
+            );
+    }
+
+    handleNotFoundProductProduct(barcode: Barcode): void {
+        // TODO: Alert avec option de fermer ou de signaler avec reportUnknownProductProductByMail()
+    }
+
+    reportUnknownProductProductByMail(odooProductProduct: ProductProduct): void {
+        const to = 'inventaire@supercoop.fr';
+        const subject = `Code barre inconnu (${odooProductProduct.barcode})`;
+        const body = `Le code barre ${odooProductProduct.barcode} est introuvable dans Odoo.
+Il a été associé à un produit nommé "${odooProductProduct.name}"`;
+        try {
+            Mailjet.getInstance()
+                .sendEmail(to, '', subject, body)
+                .then(() => {
+                    Alert.alert('Mail envoyé', 'Merci pour le signalement ! 🎉');
+                });
+        } catch (e) {
+            Alert.alert('Erreur', "Houston, une erreur est survenue lors de l'envoi du mail de signalement 😢");
+        }
+        this.reset();
+    }
+
+    handleFoundProductProduct(odooProductProduct: ProductProduct): void {
+        // Mettre à jour le ScannerInfoPanel
+        //
+        /////////////////////////////////
+        // TODO: move to ScannerInfoPanel
+        // Odoo.getInstance()
+        //     .fetchImageForProductProduct(odooProductProduct)
+        //     .then(image => {
+        //         const odooProductProduct = this.state.odooProductProduct;
+        //         if (odooProductProduct && image != null) {
+        //             odooProductProduct.image = ProductProduct.imageFromOdooBase64(image);
+        //             this.setState({
+        //                 odooProductProduct: odooProductProduct,
+        //             });
+        //         }
+        //     });
+    }
 
     renderBarcodes = (): React.ReactElement => (
         <View style={styles.facesContainer} pointerEvents="none">
@@ -844,7 +906,7 @@ export default class ScannerCamera extends React.Component<Props, State> {
     }
 
     renderCamera = (): React.ReactElement => {
-        const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;
+        const { canDetectBarcode } = this.state;
         return (
             <RNCamera
                 ref={(ref): void => {
@@ -933,21 +995,21 @@ export default class ScannerCamera extends React.Component<Props, State> {
                             title=" Clavier"
                         />
                     </View>
-                    <Button title="test" onPress={() => {
-                        const barcodeEvent: BarcodeReadEvent = {
-                            data: '3483981002176',
-                            type: 'ean13',
-                            bounds: {
-                                origin: { x: '0', y: '0' },
-                                size: { width: '640', height: '480' },
-                            }
-                        };
-                        this.barcodeRecognized(barcodeEvent);
-                    }} />
+                    <Button
+                        title="test"
+                        onPress={(): void => {
+                            const barcodeEvent: BarcodeReadEvent = {
+                                data: '3483981002176',
+                                type: 'ean13',
+                                bounds: {
+                                    origin: { x: '30', y: '60' },
+                                    size: { width: '320', height: '240' },
+                                },
+                            };
+                            this.barcodeRecognized(barcodeEvent);
+                        }}
+                    />
                 </View>
-                {/* {!!canDetectFaces && this.renderFaces()} */}
-                {/* {!!canDetectFaces && this.renderLandmarks()} */}
-                {/* {!!canDetectText && this.renderTextBlocks()} */}
                 {!!canDetectBarcode && this.renderBarcodes()}
             </RNCamera>
         );
@@ -1024,6 +1086,21 @@ export default class ScannerCamera extends React.Component<Props, State> {
         );
     };
 
+    renderInfoPanel(): React.ReactElement {
+        return (
+            <ScannerInfoPanel
+                barcode={this.state.barcodes.length > 0 ? this.state.barcodes[0].data : undefined}
+                productNotFoundCallback={(): void => {
+                    console.error('Product not found');
+                    this.handleNotFoundProductProduct(this.state.barcodes[0]);
+                }}
+                onClose={(): void => {
+                    this.setState({ barcodes: [] });
+                }}
+            ></ScannerInfoPanel>
+        );
+    }
+
     render(): React.ReactNode {
         let mainView;
         if ('dataWedge' === this.scannerMode) {
@@ -1037,6 +1114,7 @@ export default class ScannerCamera extends React.Component<Props, State> {
                 <KeepAwake />
                 {this.renderManualSearchView()}
                 {mainView}
+                {this.renderInfoPanel()}
             </View>
         );
     }
