@@ -253,16 +253,12 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         switch (entry.getStatus()) {
             case EntryStatus.ERROR:
                 return '#d9534f';
-                break;
             case EntryStatus.WARNING:
                 return '#ffc30f';
-                break;
             case EntryStatus.VALID:
                 return '#5cb85c';
-                break;
             default:
                 return 'white';
-                break;
         }
     }
 
