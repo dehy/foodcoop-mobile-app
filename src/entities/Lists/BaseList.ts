@@ -13,7 +13,6 @@ import { InventoryListExtraData } from './InventoryList';
 import ListAttachment from './ListAttachment';
 import BaseEntry from './BaseEntry';
 import { DateTime } from 'luxon';
-import { Icon } from 'react-native-elements';
 
 // export const ListTypeIcon = new Map<string, string>([
 //     [ListType.inventory, 'boxes'],

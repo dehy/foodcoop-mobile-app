@@ -1,9 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, TableInheritance, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    TableInheritance,
+    CreateDateColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import InventoryEntryExtraData from './InventoryEntry';
 import BaseList from './BaseList';
 
 @Entity()
-@TableInheritance({ column: { type: "varchar", name: "type" } })
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export default abstract class BaseEntry {
     @PrimaryGeneratedColumn()
     public id?: number;

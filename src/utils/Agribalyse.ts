@@ -85,7 +85,7 @@ export default class Agribalyse {
             return null;
         }
         if (response.total > 1) {
-            throw '[Agribalyse] more than 1 result';
+            throw new Error('[Agribalyse] more than 1 result');
         }
 
         return response.results[0];

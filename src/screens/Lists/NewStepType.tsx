@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { FlatList, SafeAreaView, View } from 'react-native';
 import { Icon, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
@@ -12,9 +12,7 @@ type Props = {
 
 type State = {};
 
-export const RegisteredListTypes = [
-    InventoryList,
-];
+export const RegisteredListTypes = [InventoryList];
 
 export default class ListsNewStepType extends React.Component<Props, State> {
     theme = {
@@ -70,7 +68,7 @@ export default class ListsNewStepType extends React.Component<Props, State> {
         });
     };
 
-    render() {
+    render(): ReactElement {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView>
@@ -81,19 +79,19 @@ export default class ListsNewStepType extends React.Component<Props, State> {
                         </Text>
                     </View>
                     <FlatList
-                        data={RegisteredListTypes.map((type) => {
+                        data={RegisteredListTypes.map(type => {
                             return {
                                 key: type.name,
                                 listType: type,
-                            }
+                            };
                         })}
-                        renderItem={({ item }) => (
+                        renderItem={({ item }): ReactElement => (
                             <ListItem
-                                onPress={() => {
+                                onPress={(): void => {
                                     this.didTapTypeItem(item.listType);
                                 }}
                             >
-                                <Icon type='font-awesome-5' name={item.listType.icon} />
+                                <Icon type="font-awesome-5" name={item.listType.icon} />
                                 <ListItem.Content>
                                     <ListItem.Title>{item.listType.label}</ListItem.Title>
                                 </ListItem.Content>

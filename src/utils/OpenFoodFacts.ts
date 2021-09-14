@@ -32,7 +32,7 @@ export default class OpenFoodFacts {
 
     async fetchFromBarcode(barcode: string): Promise<OFFProduct | null> {
         if (!Odoo.barcodeIsValid(barcode)) {
-            throw 'Invalid barcode provided';
+            throw new Error('Invalid barcode provided');
         }
         const options: RequestInit = {
             headers: {
