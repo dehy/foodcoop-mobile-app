@@ -1,18 +1,23 @@
 import React, { ReactText } from 'react';
-import { Dimensions, FlatList, SafeAreaView, Text, View } from 'react-native';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import { Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, NavigationComponent, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { getConnection } from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
-import SlidingUpPanel from 'rn-sliding-up-panel';
+import BaseEntry from '../../entities/Lists/BaseEntry';
+
+interface EntriesCountList {
+    [listId: string]: number;
+}
 
 interface Props {
     componentId: string;
 }
 interface State {
     lists: BaseList[];
+    listsEntriesCounts: EntriesCountList;
     refreshing: boolean;
 }
 
@@ -37,6 +42,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
         this.state = {
             lists: [],
             refreshing: false,
+            listsEntriesCounts: {},
         };
     }
 
@@ -53,7 +59,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
         return options;
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this._handleRefresh();
     }
 
@@ -63,7 +69,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
         }
     }
 
-    openListNewModal = () => {
+    openListNewModal = (): void => {
         Navigation.showModal({
             stack: {
                 children: [
@@ -88,9 +94,20 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 where: whereOptions,
             })
             .then(async lists => {
+                const queryResult = await getConnection()
+                    .getRepository(BaseEntry)
+                    .createQueryBuilder('entries')
+                    .select('listId, COUNT(id) as entries')
+                    .groupBy('listId')
+                    .getRawMany();
+                const entriesCount: EntriesCountList = {};
+                for (const result of queryResult) {
+                    entriesCount[result['listId']] = result['entries'];
+                }
                 this.setState({
                     lists: lists,
                     refreshing: false,
+                    listsEntriesCounts: entriesCount,
                 });
             });
     }
@@ -117,7 +134,6 @@ export default class ListsList extends NavigationComponent<Props, State> {
     };
 
     didTapList = (list: BaseList): void => {
-        const listId = list.id;
         const componentName = this.componentNameFromList(list);
 
         if (undefined === componentName) {
@@ -129,7 +145,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
             component: {
                 name: componentName,
                 passProps: {
-                    listId: listId,
+                    list: list,
                 },
             },
         });
@@ -142,8 +158,8 @@ export default class ListsList extends NavigationComponent<Props, State> {
         return (
             <View style={{ margin: '3%', padding: 10, backgroundColor: '#EEEEEE', borderRadius: 10 }}>
                 <Text style={{ color: '#333333' }}>
-                    Uh Oh ? Il semble que tu n'aies encore fait aucune liste. Pour en démarrer une, tappes sur le bouton
-                    en haut à droite !
+                    Uh Oh ? Il semble que tu n&#39;aies encore fait aucune liste. Pour en démarrer une, tapes sur le
+                    bouton en haut à droite !
                 </Text>
             </View>
         );
@@ -151,6 +167,9 @@ export default class ListsList extends NavigationComponent<Props, State> {
 
     _renderEntry(item: BaseList): React.ReactElement {
         console.log(item.constructor.name);
+        if (!item.id) {
+            return <ListItem></ListItem>;
+        }
         return (
             <ListItem
                 onPress={(): void => {
@@ -163,32 +182,38 @@ export default class ListsList extends NavigationComponent<Props, State> {
                     <ListItem.Title>{item.name}</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Content right>
-                    <ListItem.Title right>{item.entries?.length ?? '0'}</ListItem.Title>
+                    <ListItem.Title right>{this.state.listsEntriesCounts[item.id] ?? '0'}</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
             </ListItem>
         );
     }
 
+    renderList(): React.ReactNode {
+        if (this.state.lists.length <= 0) {
+            return this.renderEmptyList();
+        }
+        return (
+            <FlatList
+                style={{ backgroundColor: 'white', height: '100%' }}
+                data={this.state.lists.map(list => {
+                    return {
+                        key: list.id?.toString(),
+                        list: list,
+                    };
+                })}
+                renderItem={({ item }): React.ReactElement => this._renderEntry(item.list)}
+                // ListHeaderComponent={this.renderHeader}
+                onRefresh={this._handleRefresh}
+                refreshing={this.state.refreshing}
+            />
+        );
+    }
+
     render(): React.ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
-                <SafeAreaView style={{ backgroundColor: 'pink' }}>
-                    {this.renderEmptyList()}
-                    <FlatList
-                        style={{ backgroundColor: 'white', height: '100%' }}
-                        data={this.state.lists.map(list => {
-                            return {
-                                key: list.id?.toString(),
-                                list: list,
-                            };
-                        })}
-                        renderItem={({ item }): React.ReactElement => this._renderEntry(item.list)}
-                        // ListHeaderComponent={this.renderHeader}
-                        onRefresh={this._handleRefresh}
-                        refreshing={this.state.refreshing}
-                    />
-                </SafeAreaView>
+                <SafeAreaView>{this.renderList()}</SafeAreaView>
             </ThemeProvider>
         );
     }

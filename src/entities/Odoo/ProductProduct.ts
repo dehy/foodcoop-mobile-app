@@ -23,7 +23,6 @@ export default class ProductProduct {
     static imageFromOdooBase64(imageBase64: string): string | undefined {
         // https://stackoverflow.com/a/50111377/2287525
         let imageType: string | undefined = undefined;
-        console.log(imageBase64.charAt(0));
         switch (imageBase64.charAt(0)) {
             case '/':
                 imageType = 'jpg';
@@ -39,10 +38,9 @@ export default class ProductProduct {
                 break;
         }
         if (undefined === imageType) {
-            console.warn('Unknown image type');
+            console.warn('Unknown image type, base64 starting with "' + imageBase64.charAt(0) + '"');
             return;
         }
-        console.log(imageType);
         return 'data:image/' + imageType + ';base64,' + imageBase64;
     }
 

@@ -6,6 +6,7 @@ import ProductProduct, { UnitOfMeasurement } from '../entities/Odoo/ProductProdu
 
 export interface Props {
     barcode?: string;
+    extraPanel?: (product: ProductProduct) => void;
     productNotFoundCallback?: () => void;
     onClose?: () => void;
 }
@@ -261,9 +262,13 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
 
     renderContent(): React.ReactNode {
         if (this.state.product) {
-            return this.renderProductInfos();
+            return (
+                <View>
+                    {this.renderProductInfos()}
+                    {this.props.extraPanel ? this.props.extraPanel(this.state.product) : null}
+                </View>
+            );
         }
-        console.log(this.state.product);
         return this.renderLoading();
     }
 

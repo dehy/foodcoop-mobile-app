@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-    EmitterSubscription,
-    FlatList,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    View,
-} from 'react-native';
+import { EmitterSubscription, FlatList, Platform, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { defaultScreenOptions } from '../../../utils/navigation';
 import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation';
 import bootstrapStyle from '../../../styles/bootstrap';
@@ -17,14 +9,15 @@ import { Button, Icon, ListItem } from 'react-native-elements';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import { getConnection, Repository } from 'typeorm';
+import { DateTime } from 'luxon';
 
 export interface Props {
-    listId: number;
+    list: InventoryList;
 }
 
 interface State {
-    list?: InventoryList;
     listEntries: InventoryEntry[];
+    refreshing: boolean;
 }
 
 interface InventoryData {
@@ -48,23 +41,21 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         this.inventoryEntryRepository = getConnection().getRepository(InventoryEntry);
 
         this.state = {
-            list: undefined,
             listEntries: [],
+            refreshing: false,
         };
     }
 
     static options(): Options {
-        const options = defaultScreenOptions('Inventaire');
-
-        return options;
+        return defaultScreenOptions('Inventaire');
     }
 
     componentDidMount(): void {
         this.modalDismissedListener = Navigation.events().registerModalDismissedListener(() => {
-            this.loadInventoryList();
+            this.loadInventoryEntries();
         });
 
-        this.loadInventoryList();
+        this.loadInventoryEntries();
     }
 
     componentWillUnmount(): void {
@@ -74,26 +65,14 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
     }
 
     componentDidAppear(): void {
-        this.loadInventoryList();
-    }
-
-    loadInventoryList(): void {
-        this.inventoryListRepository.findOne(this.props.listId).then(list => {
-            this.setState({
-                list: list,
-            });
-            this.loadInventoryEntries();
-        });
+        this.loadInventoryEntries();
     }
 
     loadInventoryEntries(): void {
-        if (!this.state.list) {
-            throw new Error('Missing InventoryList');
-        }
         this.inventoryEntryRepository
             .find({
                 where: {
-                    list: this.props.listId,
+                    list: this.props.list.id,
                 },
             })
             .then(entries => {
@@ -103,9 +82,31 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
             });
     }
 
-    deleteInventoryEntry(inventoryEntry: InventoryEntry): void {}
+    _handleRefresh = (): void => {
+        this.setState(
+            {
+                refreshing: true,
+            },
+            () => {
+                this.loadInventoryEntries();
+            },
+        );
+    };
+
+    deleteInventoryEntry(inventoryEntry: InventoryEntry): void {
+        if (!inventoryEntry.id) {
+            return;
+        }
+        getConnection()
+            .getRepository(InventoryEntry)
+            .delete(inventoryEntry.id)
+            .then(() => {
+                this.loadInventoryEntries();
+            });
+    }
 
     computeEntriesData(): InventoryData[] {
+        // TODO: gérer les entrées multiples
         const listDatas = [];
         for (const k in this.state.listEntries) {
             const entry = this.state.listEntries[k];
@@ -130,7 +131,7 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
                         component: {
                             name: 'Lists/Inventory/Scan',
                             passProps: {
-                                inventory: this.state.list,
+                                inventory: this.props.list,
                             },
                             options: {
                                 topBar: {},
@@ -149,9 +150,9 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
                 children: [
                     {
                         component: {
-                            name: 'Inventory/Export',
+                            name: 'Lists/Inventory/Export',
                             passProps: {
-                                inventory: this.state.list,
+                                inventory: this.props.list,
                                 inventoryEntries: this.state.listEntries,
                             },
                             options: {
@@ -164,12 +165,14 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         });
     }
 
-    didTapIventoryEntry(inventoryEntry: InventoryEntry): void {
+    didTapInventoryEntry(inventoryEntry: InventoryEntry): void {
         const title = inventoryEntry.productName;
         const buttonsIos = ['Supprimer', 'Annuler'];
         const buttonsAndroid = ['Supprimer'];
         const DESTRUCTIVE_INDEX = 0;
         const CANCEL_INDEX = 1;
+
+        // TODO: rajouter une entrée "commentaire"
 
         ActionSheet.showActionSheetWithOptions(
             {
@@ -187,20 +190,17 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         );
     }
 
-    render(): React.ReactNode {
-        if (!this.state.list) {
+    renderAlerts(): React.ReactNode {
+        const inventory = this.props.list;
+        if (!inventory) {
             return null;
         }
-        const inventory = this.state.list;
         let lastSentAtInfo, wasModifiedWarning;
-        // console.error(inventory.lastSentAt);
-
         if (inventory.lastSentAt != null) {
             lastSentAtInfo = (
                 <View style={bootstrapStyle.infoView}>
                     <Text style={bootstrapStyle.infoText}>
-                        Inventaire déjà envoyé le {inventory.lastSentAt.toFormat('DD/MM/YYYY')} à{' '}
-                        {inventory.lastSentAt.toFormat('HH[h]mm')}
+                        Inventaire déjà envoyé le {inventory.lastSentAt.toLocaleString(DateTime.DATETIME_SHORT)}
                     </Text>
                 </View>
             );
@@ -216,81 +216,103 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
                 </View>
             );
         }
+
+        return (
+            <View>
+                {lastSentAtInfo}
+                {wasModifiedWarning}
+            </View>
+        );
+    }
+
+    renderHeader(): React.ReactElement {
+        const inventory = this.props.list;
+        return (
+            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#DDD' }}>
+                {this.renderAlerts()}
+                <View style={{ flexDirection: 'row', backgroundColor: 'white', paddingTop: 16 }}>
+                    <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 20, textAlign: 'center' }}>
+                            {inventory.createdAt ? inventory.createdAt.toFormat('cccc') : '-'}
+                        </Text>
+                        <Text style={{ fontSize: 30, textAlign: 'center' }}>
+                            {inventory.createdAt ? inventory.createdAt.toFormat('d LLLL') : '-'}
+                        </Text>
+                        <Text style={{ fontSize: 20, textAlign: 'center' }}>
+                            {inventory.createdAt ? inventory.createdAt.toFormat('yyyy') : '-'}
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', flex: 1 }}>
+                        <Text style={{ fontSize: 24, textAlign: 'center' }}>Zone</Text>
+                        <Text style={{ fontSize: 50, textAlign: 'center' }}>{inventory.zone}</Text>
+                    </View>
+                </View>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        backgroundColor: 'white',
+                        paddingVertical: 16,
+                    }}
+                >
+                    <Button
+                        onPress={(): void => {
+                            this.openScannerModal();
+                        }}
+                        icon={<Icon type="font-awesome-5" name="barcode" color="white" solid />}
+                        title=" Scanner"
+                    />
+                    <Button
+                        onPress={(): void => {
+                            this.openExportModal();
+                        }}
+                        icon={<Icon type="font-awesome-5" name="file-export" color="white" solid />}
+                        title=" Envoyer"
+                    />
+                </View>
+                {this.renderNoEntry()}
+            </View>
+        );
+    }
+
+    renderNoEntry(): React.ReactNode {
+        if (this.state.listEntries.length > 0) {
+            return null;
+        }
+        return (
+            <View>
+                <Text style={{ fontSize: 25, textAlign: 'center', marginTop: 30, marginHorizontal: 8 }}>
+                    Aucun article pour le moment. Appuie sur le bouton &quot;Scanner&quot; pour démarrer !
+                </Text>
+            </View>
+        );
+    }
+
+    render(): React.ReactNode {
         return (
             <SafeAreaView>
-                <ScrollView style={{ height: '100%' }}>
-                    {lastSentAtInfo}
-                    {wasModifiedWarning}
-                    <View style={{ flexDirection: 'row', backgroundColor: 'white', paddingTop: 16 }}>
-                        <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>
-                                {inventory.createdAt ? inventory.createdAt.toFormat('cccc') : '-'}
-                            </Text>
-                            <Text style={{ fontSize: 30, textAlign: 'center' }}>
-                                {inventory.createdAt ? inventory.createdAt.toFormat('d LLLL') : '-'}
-                            </Text>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>
-                                {inventory.createdAt ? inventory.createdAt.toFormat('yyyy') : '-'}
-                            </Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', flex: 1 }}>
-                            <Text style={{ fontSize: 24, textAlign: 'center' }}>Zone</Text>
-                            <Text style={{ fontSize: 50, textAlign: 'center' }}>{inventory.zone}</Text>
-                        </View>
-                    </View>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-around',
-                            backgroundColor: 'white',
-                            paddingVertical: 16,
-                        }}
-                    >
-                        <Button
+                <FlatList
+                    scrollEnabled={true}
+                    style={{ backgroundColor: 'white', height: '100%' }}
+                    data={this.computeEntriesData()}
+                    ListHeaderComponent={this.renderHeader()}
+                    renderItem={({ item }): React.ReactElement => (
+                        <ListItem
                             onPress={(): void => {
-                                this.openScannerModal();
+                                this.didTapInventoryEntry(item.inventoryEntry);
                             }}
-                            icon={<Icon type="font-awesome-5" name="barcode" color="white" solid />}
-                            title=" Scanner"
-                        />
-                        <Button
-                            onPress={(): void => {
-                                this.openExportModal();
-                            }}
-                            icon={<Icon type="font-awesome-5" name="file-export" color="white" solid />}
-                            title=" Envoyer"
-                        />
-                    </View>
-                    {this.state.listEntries.length > 0 ? (
-                        <FlatList
-                            scrollEnabled={false}
-                            style={{ backgroundColor: 'white' }}
-                            data={this.computeEntriesData()}
-                            renderItem={({ item }): React.ReactElement => (
-                                <ListItem
-                                    onPress={(): void => {
-                                        this.didTapIventoryEntry(item.inventoryEntry);
-                                    }}
-                                    bottomDivider
-                                >
-                                    <ListItem.Content>
-                                        <ListItem.Title>{item.title}</ListItem.Title>
-                                        <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
-                                    </ListItem.Content>
-                                    <ListItem.Content right>
-                                        <Text style={{ textAlign: 'right' }}>{item.metadata}</Text>
-                                    </ListItem.Content>
-                                </ListItem>
-                            )}
-                        />
-                    ) : (
-                        <View>
-                            <Text style={{ fontSize: 25, textAlign: 'center', marginTop: 30, marginHorizontal: 8 }}>
-                                Aucun article pour le moment. Appuie sur le bouton &quot;Scanner&quot; pour démarrer !
-                            </Text>
-                        </View>
+                            bottomDivider
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title>{item.title}</ListItem.Title>
+                                <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
+                            </ListItem.Content>
+                            <ListItem.Content right>
+                                <Text style={{ textAlign: 'right' }}>{item.metadata}</Text>
+                            </ListItem.Content>
+                        </ListItem>
                     )}
-                </ScrollView>
+                />
             </SafeAreaView>
         );
     }

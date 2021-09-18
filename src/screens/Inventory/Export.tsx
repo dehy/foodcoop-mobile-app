@@ -12,6 +12,7 @@ import InventorySession from '../../entities/InventorySession';
 import SupercoopSignIn from '../../utils/SupercoopSignIn';
 import Mailjet, { MailAttachment } from '../../utils/Mailjet';
 import merge from 'deepmerge';
+import InventoryList from '../../entities/Lists/InventoryList';
 
 export interface InventoryShowProps {
     componentId: string;
@@ -76,7 +77,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
         this.inventoryEntries = await InventoryEntryFactory.sharedInstance().findForInventorySession(
             this.props.inventory,
         );
-        const filepath = await this.csvGenerator.exportInventorySession(this.props.inventory);
+        const filepath = await this.csvGenerator.exportInventoryList(new InventoryList(), []);
         this.setState({
             filepath: filepath,
             inventoryCheckPassed: true,
@@ -84,7 +85,7 @@ export default class InventoryShow extends React.Component<InventoryShowProps, I
     }
 
     async sendInventory(): Promise<void> {
-        await this.setState({
+        this.setState({
             sendingMail: true,
         });
         if (!this.props.inventory.lastModifiedAt) {

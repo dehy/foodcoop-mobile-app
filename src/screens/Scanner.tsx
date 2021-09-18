@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { defaultScreenOptions } from '../utils/navigation';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
-import ScannerCamera from './ScannerCamera';
+import CodeScanner from './CodeScanner';
 
 export interface Props {
     componentId: string;
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
 });
 
 export default class Scanner extends React.Component<Props, State> {
-    private scanner?: ScannerCamera;
+    private scanner?: CodeScanner;
 
     private navigationEventListener?: EventSubscription;
 
@@ -151,11 +151,14 @@ export default class Scanner extends React.Component<Props, State> {
         }
 
         return (
-            <ScannerCamera
-                ref={(ref: ScannerCamera): void => {
+            <CodeScanner
+                ref={(ref: CodeScanner): void => {
                     this.scanner = ref !== null ? ref : undefined;
                 }}
-            ></ScannerCamera>
+                extraInfoPanel={product => {
+                    return <Text>Coucou</Text>;
+                }}
+            ></CodeScanner>
         );
     }
 

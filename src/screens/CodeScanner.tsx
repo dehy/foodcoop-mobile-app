@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import {
     StyleSheet,
     Text,
@@ -70,7 +70,8 @@ interface BarcodeReadEvent {
 const landmarkSize = 2;
 
 interface Props {
-    ref?: (instance: ScannerCamera) => void;
+    ref?: (instance: CodeScanner) => void;
+    extraInfoPanel?: (product: ProductProduct) => ReactNode;
     onProductFound?: (product: ProductProduct) => void;
 }
 
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class ScannerCamera extends React.Component<Props, State> {
+export default class CodeScanner extends React.Component<Props, State> {
     private camera: RNCamera | null = null;
     private beepSound: Sound;
     private scannerMode: 'camera' | 'dataWedge';
@@ -798,7 +799,6 @@ export default class ScannerCamera extends React.Component<Props, State> {
                         this.handleNotFoundProductProduct(barcode);
                         return;
                     }
-                    this.handleFoundProductProduct(odooProductProduct);
                     if (this.props.onProductFound !== undefined) {
                         this.props.onProductFound(odooProductProduct);
                     }
@@ -829,24 +829,6 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
             Alert.alert('Erreur', "Houston, une erreur est survenue lors de l'envoi du mail de signalement 😢");
         }
         this.reset();
-    }
-
-    handleFoundProductProduct(odooProductProduct: ProductProduct): void {
-        // Mettre à jour le ScannerInfoPanel
-        //
-        /////////////////////////////////
-        // TODO: move to ScannerInfoPanel
-        // Odoo.getInstance()
-        //     .fetchImageForProductProduct(odooProductProduct)
-        //     .then(image => {
-        //         const odooProductProduct = this.state.odooProductProduct;
-        //         if (odooProductProduct && image != null) {
-        //             odooProductProduct.image = ProductProduct.imageFromOdooBase64(image);
-        //             this.setState({
-        //                 odooProductProduct: odooProductProduct,
-        //             });
-        //         }
-        //     });
     }
 
     renderBarcodes = (): React.ReactElement => (
@@ -1087,9 +1069,14 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
     };
 
     renderInfoPanel(): React.ReactElement {
+        let extraPanel: ReactNode = null;
+        if (this.state.product && this.props.extraInfoPanel) {
+            extraPanel = <View>{this.props.extraInfoPanel(this.state.product)}</View>;
+        }
         return (
             <ScannerInfoPanel
                 barcode={this.state.barcodes.length > 0 ? this.state.barcodes[0].data : undefined}
+                extraPanel={this.props.extraInfoPanel}
                 productNotFoundCallback={(): void => {
                     console.error('Product not found');
                     this.handleNotFoundProductProduct(this.state.barcodes[0]);
@@ -1097,7 +1084,9 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                 onClose={(): void => {
                     this.setState({ barcodes: [] });
                 }}
-            ></ScannerInfoPanel>
+            >
+                {extraPanel}
+            </ScannerInfoPanel>
         );
     }
 

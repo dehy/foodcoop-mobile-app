@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Platform, SafeAreaView, Text, TextInput, View, Alert } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
-import ScannerCamera from '../ScannerCamera';
+import CodeScanner from '../CodeScanner';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { Barcode } from 'react-native-camera/types';
@@ -48,7 +48,7 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
         },
     };
 
-    scanner?: ScannerCamera;
+    scanner?: CodeScanner;
     receivedQuantityInput?: TextInput;
     receivedPackageQtyInput?: TextInput;
     receivedProductQtyPackageInput?: TextInput;
@@ -442,9 +442,13 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
     }
 
     renderEntry(): React.ReactNode {
+        let image: string | undefined = undefined;
+        if (this.state.product && null !== this.state.product.image) {
+            image = this.state.product.image;
+        }
         return (
             <KeyboardAwareScrollView style={{ height: '100%' }} keyboardShouldPersistTaps="always">
-                <Image source={{ uri: this.state.product && this.state.product.image }} />
+                <Image source={{ uri: image }} />
                 <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
                 </Text>
@@ -504,14 +508,14 @@ export default class GoodsReceiptScan extends React.Component<GoodsReceiptScanPr
 
     renderCamera(): React.ReactNode {
         return (
-            <ScannerCamera
-                ref={(ref: ScannerCamera): void => {
+            <CodeScanner
+                ref={(ref: CodeScanner): void => {
                     this.scanner = ref !== null ? ref : undefined;
                 }}
-                onBarcodeRead={(barcode): void => {
-                    this.didScanBarcode(barcode);
+                onProductFound={(): void => {
+                    return;
                 }}
-            ></ScannerCamera>
+            ></CodeScanner>
         );
     }
 
