@@ -229,7 +229,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                 const session: GoodsReceiptSession = this.props.session;
 
                 GoodsReceiptService.getInstance()
-                    .attachementFromImagePicker(session, response)
+                    .attachementFromImagePickerLegacy(session, response)
                     .then(attachement => {
                         getRepository(Attachment)
                             .save(attachement)
