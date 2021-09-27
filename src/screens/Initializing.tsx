@@ -83,7 +83,9 @@ export default class Initialising extends React.Component<InitialisingProps> {
             <View style={styles.container}>
                 <Text style={styles.welcome}>Chargement...</Text>
                 <View style={styles.quoteView}>
-                    <Text style={styles.quoteText}>{welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]}</Text>
+                    <Text style={styles.quoteText}>
+                        {welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]}
+                    </Text>
                 </View>
             </View>
         );

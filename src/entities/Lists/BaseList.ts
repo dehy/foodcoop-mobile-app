@@ -13,6 +13,7 @@ import { InventoryListExtraData } from './InventoryList';
 import ListAttachment from './ListAttachment';
 import BaseEntry from './BaseEntry';
 import { DateTime } from 'luxon';
+import { GoodsReceiptListExtraData } from './GoodsReceiptList';
 
 // export const ListTypeIcon = new Map<string, string>([
 //     [ListType.inventory, 'boxes'],
@@ -89,7 +90,7 @@ export default abstract class BaseList {
     entries?: BaseEntry[];
 
     @Column('simple-json')
-    extraData: InventoryListExtraData | {};
+    extraData: InventoryListExtraData | GoodsReceiptListExtraData | {};
 
     constructor() {
         this.extraData = {};

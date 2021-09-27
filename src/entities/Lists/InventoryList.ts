@@ -1,6 +1,5 @@
 'use strict';
 
-import { Icon } from 'react-native-elements';
 import { ChildEntity } from 'typeorm';
 import BaseList from './BaseList';
 

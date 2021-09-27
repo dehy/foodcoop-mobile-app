@@ -5,6 +5,7 @@ import { Navigation, Options } from 'react-native-navigation';
 import InventoryList from '../../entities/Lists/InventoryList';
 import BaseList from '../../entities/Lists/BaseList';
 import { defaultScreenOptions } from '../../utils/navigation';
+import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
 
 type Props = {
     componentId: string;
@@ -12,7 +13,7 @@ type Props = {
 
 type State = {};
 
-export const RegisteredListTypes = [InventoryList];
+export const RegisteredListTypes = [InventoryList, GoodsReceiptList];
 
 export default class ListsNewStepType extends React.Component<Props, State> {
     theme = {
@@ -54,6 +55,9 @@ export default class ListsNewStepType extends React.Component<Props, State> {
         switch (listType) {
             case InventoryList:
                 componentName = 'Lists/Inventory/New';
+                break;
+            case GoodsReceiptList:
+                componentName = 'Lists/GoodsReceipt/New';
                 break;
             default:
                 break;

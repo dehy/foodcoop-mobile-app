@@ -93,24 +93,6 @@ export function goHome(): void {
                     },
                     {
                         stack: {
-                            id: 'GoodsReceiptTab',
-                            children: [
-                                {
-                                    component: {
-                                        name: 'GoodsReceipt/List',
-                                    },
-                                },
-                            ],
-                            options: {
-                                bottomTab: {
-                                    text: 'Réceptions',
-                                    icon: require('../../assets/icons/truck-loading-regular.png'),
-                                },
-                            },
-                        },
-                    },
-                    {
-                        stack: {
                             children: [
                                 {
                                     component: {

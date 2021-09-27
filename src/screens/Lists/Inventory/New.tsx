@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Alert, SafeAreaView, ScrollView, View } from 'react-native';
 import { Button, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
@@ -53,13 +53,13 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
         getConnection()
             .getRepository(InventoryList)
             .save(list)
-            .then(list => {
-                console.log(list);
+            .then(savedList => {
+                console.log(savedList);
                 Navigation.dismissModal(this.props.componentId);
             });
     };
 
-    render() {
+    render(): ReactNode {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView>
@@ -72,7 +72,7 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                                 <ListItem.Input
                                     placeholder="Zone"
                                     autoFocus={true}
-                                    onChangeText={text => {
+                                    onChangeText={(text): void => {
                                         this.zoneValue = parseInt(text);
                                     }}
                                     blurOnSubmit={true}
@@ -95,10 +95,10 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                             <Button
                                 title="Commencer l'inventaire"
                                 style={{ margin: 20 }}
-                                onPress={() => {
+                                onPress={(): void => {
                                     this.createListAndDismiss();
                                 }}
-                                ref={ref => {
+                                ref={(ref): void => {
                                     this.submitButton = ref ?? undefined;
                                 }}
                             />

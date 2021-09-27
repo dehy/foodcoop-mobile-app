@@ -1,14 +1,18 @@
+'use strict';
+
 import SQLite from 'react-native-sqlite-storage';
 import { toNumber } from './helpers';
-import GoodsReceiptSession from '../entities/GoodsReceiptSession';
-import GoodsReceiptEntry from '../entities/GoodsReceiptEntry';
-import Attachment from '../entities/Attachment';
+import LegacyGoodsReceiptSession from '../entities/GoodsReceiptSession';
+import LegacyGoodsReceiptEntry from '../entities/GoodsReceiptEntry';
+import LegacyAttachment from '../entities/Attachment';
 
 import BaseList from '../entities/Lists/BaseList';
 import InventoryList from '../entities/Lists/InventoryList';
+import GoodsReceiptList from '../entities/Lists/GoodsReceiptList';
 
 import BaseEntry from '../entities/Lists/BaseEntry';
 import InventoryEntry from '../entities/Lists/InventoryEntry';
+import GoodsReceiptEntry from '../entities/Lists/GoodsReceiptEntry';
 
 import ListAttachment from '../entities/Lists/ListAttachment';
 import { createConnection, Connection, getConnection, getRepository } from 'typeorm';
@@ -61,13 +65,15 @@ export default class Database {
             dropSchema: dropSchema,
             synchronize: synchronize,
             entities: [
-                Attachment,
-                GoodsReceiptEntry,
-                GoodsReceiptSession,
+                LegacyAttachment,
+                LegacyGoodsReceiptEntry,
+                LegacyGoodsReceiptSession,
                 BaseList,
                 InventoryList,
+                GoodsReceiptList,
                 BaseEntry,
                 InventoryEntry,
+                GoodsReceiptEntry,
                 ListAttachment,
             ],
             migrationsRun: migrationsRun,
@@ -87,7 +93,6 @@ export default class Database {
     async legacyConnect(): Promise<void> {
         if (this.db === undefined) {
             try {
-                // await SQLite.echoTest();
                 this.db = await SQLite.openDatabase({
                     name: 'inventory.db',
                     location: 'Library',
@@ -108,7 +113,7 @@ export default class Database {
         // Reset
         // await this.resetDatabase();
         // await this.db.executeSql('PRAGMA user_version = 0;');
-        const currentSchemaVersion = await this.getCurrentSchemaVersion();
+        let currentSchemaVersion = await this.getCurrentSchemaVersion();
 
         if (currentSchemaVersion >= Database.TARGET_SCHEMA_VERSION) {
             console.info('No need for schema migration');
@@ -120,7 +125,7 @@ export default class Database {
 
         for (const schemaVersionKey in migrationData) {
             const schemaVersion: number = toNumber(schemaVersionKey);
-            const currentSchemaVersion = await this.getCurrentSchemaVersion();
+            currentSchemaVersion = await this.getCurrentSchemaVersion();
             console.info(`Current schema version: ${currentSchemaVersion}`);
             console.info(`Processing schema version ${schemaVersion}`);
             if (schemaVersion <= currentSchemaVersion) {
@@ -198,7 +203,7 @@ export default class Database {
 
     async getEntities(): Promise<EntityDefinition[]> {
         const entities: EntityDefinition[] = [];
-        (await (await getConnection()).entityMetadatas).forEach(x =>
+        getConnection().entityMetadatas.forEach(x =>
             entities.push({ name: x.name, tableName: x.tableName }),
         );
         return entities;
@@ -207,7 +212,7 @@ export default class Database {
     async cleanAll(entities: EntityDefinition[]): Promise<void> {
         try {
             for (const entity of entities) {
-                const repository = await getRepository(entity.name);
+                const repository = getRepository(entity.name);
                 await repository.query(`DELETE FROM \`${entity.tableName}\`;`);
             }
         } catch (error) {

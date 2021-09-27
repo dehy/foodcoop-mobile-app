@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import InventoryEntryExtraData from './InventoryEntry';
 import BaseList from './BaseList';
+import { GoodsReceiptEntryExtraData } from './GoodsReceiptEntry';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
@@ -25,19 +26,16 @@ export default abstract class BaseEntry {
     @Column('varchar')
     public productName?: string;
 
-    @Column('float')
+    @Column({ type: 'float', nullable: true })
     public quantity?: number;
 
-    @Column('int')
+    @Column({ type: 'int', nullable: true })
     public unit?: number;
 
-    @Column('float')
+    @Column({ type: 'float', nullable: true })
     public price?: number;
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
+    @Column({ type: 'text', nullable: true })
     public comment?: string;
 
     @CreateDateColumn()
@@ -55,7 +53,7 @@ export default abstract class BaseEntry {
     public list?: BaseList;
 
     @Column('simple-json')
-    public extraData: InventoryEntryExtraData | {};
+    public extraData: InventoryEntryExtraData | GoodsReceiptEntryExtraData | {};
 
     constructor() {
         this.extraData = {};

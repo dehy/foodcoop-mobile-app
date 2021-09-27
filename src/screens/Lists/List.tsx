@@ -1,11 +1,13 @@
 import React, { ReactText } from 'react';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import ActionSheet from 'react-native-action-sheet';
+import { FlatList, Platform, SafeAreaView, Text, View } from 'react-native';
 import { Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, NavigationComponent, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
 import { getConnection } from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
+import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
 import BaseEntry from '../../entities/Lists/BaseEntry';
 
 interface EntriesCountList {
@@ -112,6 +114,18 @@ export default class ListsList extends NavigationComponent<Props, State> {
             });
     }
 
+    deleteGoodsReceiptList(list: BaseList): void {
+        if (!list.id) {
+            return;
+        }
+        getConnection()
+            .getRepository(BaseList)
+            .delete(list.id)
+            .then(() => {
+                this.loadData();
+            });
+    }
+
     _handleRefresh = (): void => {
         this.setState(
             {
@@ -127,6 +141,8 @@ export default class ListsList extends NavigationComponent<Props, State> {
         switch (list.constructor.name) {
             case InventoryList.name:
                 return 'Lists/Inventory/Show';
+            case GoodsReceiptList.name:
+                return 'Lists/GoodsReceipt/Show';
 
             default:
                 return undefined;
@@ -149,6 +165,29 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 },
             },
         });
+    };
+
+    didLongPressList = (list: BaseList): void => {
+        const title = list.name;
+        const buttonsIos = ['Supprimer', 'Annuler'];
+        const buttonsAndroid = ['Supprimer'];
+        const DESTRUCTIVE_INDEX = 0;
+        const CANCEL_INDEX = 1;
+
+        ActionSheet.showActionSheetWithOptions(
+            {
+                title: title,
+                options: Platform.OS == 'ios' ? buttonsIos : buttonsAndroid,
+                cancelButtonIndex: CANCEL_INDEX,
+                destructiveButtonIndex: DESTRUCTIVE_INDEX,
+                tintColor: 'blue',
+            },
+            buttonIndex => {
+                if (buttonIndex == DESTRUCTIVE_INDEX) {
+                    this.deleteGoodsReceiptList(list);
+                }
+            },
+        );
     };
 
     renderEmptyList = (): React.ReactNode => {
@@ -174,6 +213,9 @@ export default class ListsList extends NavigationComponent<Props, State> {
             <ListItem
                 onPress={(): void => {
                     this.didTapList(item);
+                }}
+                onLongPress={(): void => {
+                    this.didLongPressList(item);
                 }}
                 bottomDivider
             >
