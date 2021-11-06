@@ -36,11 +36,9 @@ export default class ListsList extends NavigationComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
-        const modalDismissedListener = Navigation.events().registerModalDismissedListener(
-            ({ componentId, modalsDismissed }) => {
-                this.loadData();
-            },
-        );
+        Navigation.events().registerModalDismissedListener(() => {
+            this.loadData();
+        });
         this.state = {
             lists: [],
             refreshing: false,

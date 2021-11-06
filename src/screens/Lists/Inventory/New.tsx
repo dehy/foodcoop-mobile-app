@@ -76,7 +76,6 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                                         this.zoneValue = parseInt(text);
                                     }}
                                     blurOnSubmit={true}
-                                    onSubmitEditing={e => {}}
                                     keyboardType="number-pad"
                                 />
                             </ListItem.Content>

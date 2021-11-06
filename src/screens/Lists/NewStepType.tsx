@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { FlatList, SafeAreaView, View } from 'react-native';
 import { Icon, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';

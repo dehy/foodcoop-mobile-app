@@ -11,7 +11,6 @@ import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import Odoo from '../../../utils/Odoo';
 import PurchaseOrder from '../../../entities/Odoo/PurchaseOrder';
 import styles from '../../../styles/material';
-import { assert } from 'console';
 
 interface PurchaseOrderList {
     title: string;
