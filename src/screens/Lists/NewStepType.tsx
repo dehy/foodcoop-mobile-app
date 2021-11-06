@@ -2,9 +2,9 @@ import React, { ReactElement, ReactNode } from 'react';
 import { FlatList, SafeAreaView, View } from 'react-native';
 import { Icon, ListItem, Text, ThemeProvider } from 'react-native-elements';
 import { Navigation, Options } from 'react-native-navigation';
-import InventoryList from '../../entities/Lists/InventoryList';
-import BaseList from '../../entities/Lists/BaseList';
 import { defaultScreenOptions } from '../../utils/navigation';
+import BaseList from '../../entities/Lists/BaseList';
+import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
 
 type Props = {

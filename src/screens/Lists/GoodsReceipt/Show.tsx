@@ -156,7 +156,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                 children: [
                     {
                         component: {
-                            name: 'List/GoodsReceipt/Scan',
+                            name: 'Lists/GoodsReceipt/Scan',
                             passProps: {
                                 list: this.props.list,
                                 preselectedProductId: productId,

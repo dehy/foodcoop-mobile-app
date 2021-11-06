@@ -4,7 +4,6 @@ import ActionSheet from 'react-native-action-sheet';
 import CodeScanner from '../../CodeScanner';
 import { Navigation, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../../utils/navigation';
-import { Barcode } from 'react-native-camera/types';
 import Odoo from '../../../utils/Odoo';
 import ProductProduct, { UnitOfMeasurement } from '../../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
@@ -17,7 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 interface Props {
     componentId: string;
-    session: GoodsReceiptList;
+    list: GoodsReceiptList;
     preselectedProductId?: number;
 }
 
@@ -94,7 +93,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
 
     loadProductWithId(id: number): void {
         AppLogger.getLogger().debug(
-            `Loading product #'${id}' from session #${this.props.session.id} (${this.props.session.purchaseOrderName})`,
+            `Loading product #'${id}' from session #${this.props.list.id} (${this.props.list.purchaseOrderName})`,
         );
         Odoo.getInstance()
             .fetchProductFromIds([id])
@@ -110,30 +109,15 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             });
     }
 
-    didScanBarcode(barcode: Barcode): void {
-        AppLogger.getLogger().debug(`Barcode '${barcode.data}' scanned`);
-        Odoo.getInstance()
-            .fetchProductFromBarcode(barcode.data)
-            .then((product: ProductProduct | null) => {
-                if (product === null) {
-                    AppLogger.getLogger().debug(`Product with barcode '${barcode.data}' not found`);
-                    alert(`Produit avec le code barre ${barcode.data} non trouvé`);
-                    return;
-                }
-                AppLogger.getLogger().debug(`Found Product '${product.barcode}' => '${product.name}'`);
-                this.loadEntryFromProduct(product);
-            });
-    }
-
     loadEntryFromProduct(product: ProductProduct): void {
         getConnection()
             .getRepository(GoodsReceiptEntry)
             .findOneOrFail({
                 where: {
                     productBarcode: product.barcode,
-                    goodsReceiptSession: this.props.session,
+                    list: this.props.list,
                 },
-                relations: ['goodsReceiptSession'],
+                relations: ['list'],
             })
             .then((entry: GoodsReceiptEntry) => {
                 AppLogger.getLogger().debug(
@@ -267,177 +251,176 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
     };
 
     renderInvalid(): React.ReactNode {
-        if (this.state.isValid === false) {
-            return (
-                <View style={{ height: '100%' }}>
-                    <ListItem
-                        onPress={(): void => {
-                            this.receivedQuantityInput?.focus();
-                        }}
-                        bottomDivider
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title>Quantité reçue</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Content right>
-                            <TextInput
-                                onChangeText={(receivedQtyStr: string): void => {
-                                    let receivedQty: number | undefined;
-                                    receivedQty = toNumber(receivedQtyStr);
-                                    console.log(receivedQty);
-                                    if (isNaN(receivedQty)) {
-                                        receivedQty = undefined;
-                                    }
-                                    AppLogger.getLogger().debug(
-                                        `New receivedQty: '${receivedQtyStr}' => ${receivedQty}`,
-                                    );
-                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                    if (goodsReceiptEntry) {
-                                        goodsReceiptEntry.quantity = receivedQty;
-                                        this.setState({ goodsReceiptEntry });
-                                    }
-                                }}
-                                placeholder="Inconnue"
-                                keyboardType="decimal-pad"
-                                ref={(input: TextInput): void => {
-                                    this.receivedQuantityInput = input;
-                                }}
-                                autoFocus={true}
-                            />
-                        </ListItem.Content>
-                    </ListItem>
-                    <ListItem
-                        onPress={(): void => {
-                            this.receivedPackageQtyInput?.focus();
-                        }}
-                        bottomDivider
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title>Nombre de colis reçu</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Content right>
-                            <TextInput
-                                onChangeText={(receivedProductQtyPackageStr: string): void => {
-                                    let receivedProductQtyPackage: number | null;
-                                    receivedProductQtyPackage = toNumber(receivedProductQtyPackageStr);
-                                    console.log(receivedProductQtyPackage);
-                                    if (isNaN(receivedProductQtyPackage)) {
-                                        receivedProductQtyPackage = null;
-                                    }
-                                    AppLogger.getLogger().debug(
-                                        `New receivedQty: '${receivedProductQtyPackageStr}' => ${receivedProductQtyPackage}`,
-                                    );
-                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                    if (goodsReceiptEntry) {
-                                        goodsReceiptEntry.productQtyPackage = receivedProductQtyPackage;
-                                        this.setState({ goodsReceiptEntry });
-                                    }
-                                }}
-                                placeholder="Inconnue"
-                                keyboardType="decimal-pad"
-                                ref={(input: TextInput): void => {
-                                    this.receivedProductQtyPackageInput = input;
-                                }}
-                            />
-                        </ListItem.Content>
-                    </ListItem>
-                    <ListItem
-                        onPress={(): void => {
-                            this.receivedPackageQtyInput?.focus();
-                        }}
-                        bottomDivider
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title>Nombre d&quot;articles par colis</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Content right>
-                            <TextInput
-                                onChangeText={(receivedPackageQtyStr: string): void => {
-                                    let receivedPackageQty: number | null;
-                                    receivedPackageQty = toNumber(receivedPackageQtyStr);
-                                    console.log(receivedPackageQty);
-                                    if (isNaN(receivedPackageQty)) {
-                                        receivedPackageQty = null;
-                                    }
-                                    AppLogger.getLogger().debug(
-                                        `New receivedQty: '${receivedPackageQtyStr}' => ${receivedPackageQty}`,
-                                    );
-                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                    if (goodsReceiptEntry) {
-                                        goodsReceiptEntry.packageQty = receivedPackageQty;
-                                        this.setState({ goodsReceiptEntry });
-                                    }
-                                }}
-                                placeholder="Inconnue"
-                                keyboardType="decimal-pad"
-                                ref={(input: TextInput): void => {
-                                    this.receivedPackageQtyInput = input;
-                                }}
-                            />
-                        </ListItem.Content>
-                    </ListItem>
-                    <ListItem
-                        onPress={(): void => {
-                            this.chooseUom();
-                        }}
-                        bottomDivider
-                    >
-                        <ListItem.Content>
-                            <ListItem.Title>Unité de mesure</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Content right>
-                            <Text>{ProductProduct.quantityUnitAsString(this.state.goodsReceiptEntry?.unit)}</Text>
-                        </ListItem.Content>
-                        <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
-                    </ListItem>
-                    <Input
-                        placeholder="Commentaire (optionnel)"
-                        multiline={true}
-                        numberOfLines={4}
-                        onChangeText={(invalidReason: string): void => {
-                            AppLogger.getLogger().debug(`New reason: '${invalidReason}'`);
-                            const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                            if (goodsReceiptEntry) {
-                                goodsReceiptEntry.comment = invalidReason;
-                                this.setState({ goodsReceiptEntry });
-                            }
-                        }}
-                        style={{ height: this.state.commentInputHeight }}
-                        inputContainerStyle={{ borderBottomWidth: 0, marginTop: 5 }}
-                        onContentSizeChange={(event): void => {
-                            this.setState({ commentInputHeight: Math.max(35, event.nativeEvent.contentSize.height) });
-                        }}
-                    />
-                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                        <Button
-                            title="Enregistrer"
-                            onPress={(): void => {
-                                if (this.revisedGoodsReceiptEntryIsValid()) {
-                                    if (this.state.goodsReceiptEntry) {
-                                        const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                        getRepository(GoodsReceiptEntry)
-                                            .save(goodsReceiptEntry)
-                                            .then((): void => {
-                                                if (this.props.preselectedProductId) {
-                                                    Navigation.dismissModal(this.props.componentId);
-                                                    return;
-                                                }
-                                                this.setState({
-                                                    product: undefined,
-                                                    goodsReceiptEntry: undefined,
-                                                    isValid: undefined,
-                                                });
-                                            });
-                                    }
+        if (this.state.isValid !== false) {
+            return null;
+        }
+        return (
+            <View style={{ height: '100%' }}>
+                <ListItem
+                    onPress={(): void => {
+                        this.receivedQuantityInput?.focus();
+                    }}
+                    bottomDivider
+                >
+                    <ListItem.Content>
+                        <ListItem.Title>Quantité reçue</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <TextInput
+                            onChangeText={(receivedQtyStr: string): void => {
+                                let receivedQty: number | undefined;
+                                receivedQty = toNumber(receivedQtyStr);
+                                console.log(receivedQty);
+                                if (isNaN(receivedQty)) {
+                                    receivedQty = undefined;
+                                }
+                                AppLogger.getLogger().debug(`New receivedQty: '${receivedQtyStr}' => ${receivedQty}`);
+                                const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                if (goodsReceiptEntry) {
+                                    goodsReceiptEntry.quantity = receivedQty;
+                                    this.setState({ goodsReceiptEntry });
                                 }
                             }}
-                            style={{ marginVertical: 16 }}
-                            disabled={this.state.goodsReceiptEntry?.quantity == undefined}
+                            placeholder="Inconnue"
+                            keyboardType="decimal-pad"
+                            ref={(input: TextInput): void => {
+                                this.receivedQuantityInput = input;
+                            }}
+                            autoFocus={true}
                         />
-                    </View>
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem
+                    onPress={(): void => {
+                        this.receivedPackageQtyInput?.focus();
+                    }}
+                    bottomDivider
+                >
+                    <ListItem.Content>
+                        <ListItem.Title>Nombre de colis reçu</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <TextInput
+                            onChangeText={(receivedProductQtyPackageStr: string): void => {
+                                let receivedProductQtyPackage: number | null;
+                                receivedProductQtyPackage = toNumber(receivedProductQtyPackageStr);
+                                console.log(receivedProductQtyPackage);
+                                if (isNaN(receivedProductQtyPackage)) {
+                                    receivedProductQtyPackage = null;
+                                }
+                                AppLogger.getLogger().debug(
+                                    `New receivedQty: '${receivedProductQtyPackageStr}' => ${receivedProductQtyPackage}`,
+                                );
+                                const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                if (goodsReceiptEntry) {
+                                    goodsReceiptEntry.productQtyPackage = receivedProductQtyPackage;
+                                    this.setState({ goodsReceiptEntry });
+                                }
+                            }}
+                            placeholder="Inconnue"
+                            keyboardType="decimal-pad"
+                            ref={(input: TextInput): void => {
+                                this.receivedProductQtyPackageInput = input;
+                            }}
+                        />
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem
+                    onPress={(): void => {
+                        this.receivedPackageQtyInput?.focus();
+                    }}
+                    bottomDivider
+                >
+                    <ListItem.Content>
+                        <ListItem.Title>Nombre d&quot;articles par colis</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <TextInput
+                            onChangeText={(receivedPackageQtyStr: string): void => {
+                                let receivedPackageQty: number | null;
+                                receivedPackageQty = toNumber(receivedPackageQtyStr);
+                                console.log(receivedPackageQty);
+                                if (isNaN(receivedPackageQty)) {
+                                    receivedPackageQty = null;
+                                }
+                                AppLogger.getLogger().debug(
+                                    `New receivedQty: '${receivedPackageQtyStr}' => ${receivedPackageQty}`,
+                                );
+                                const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                if (goodsReceiptEntry) {
+                                    goodsReceiptEntry.packageQty = receivedPackageQty;
+                                    this.setState({ goodsReceiptEntry });
+                                }
+                            }}
+                            placeholder="Inconnue"
+                            keyboardType="decimal-pad"
+                            ref={(input: TextInput): void => {
+                                this.receivedPackageQtyInput = input;
+                            }}
+                        />
+                    </ListItem.Content>
+                </ListItem>
+                <ListItem
+                    onPress={(): void => {
+                        this.chooseUom();
+                    }}
+                    bottomDivider
+                >
+                    <ListItem.Content>
+                        <ListItem.Title>Unité de mesure</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Content right>
+                        <Text>{ProductProduct.quantityUnitAsString(this.state.goodsReceiptEntry?.unit)}</Text>
+                    </ListItem.Content>
+                    <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
+                </ListItem>
+                <Input
+                    placeholder="Commentaire (optionnel)"
+                    multiline={true}
+                    numberOfLines={4}
+                    onChangeText={(invalidReason: string): void => {
+                        AppLogger.getLogger().debug(`New reason: '${invalidReason}'`);
+                        const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                        if (goodsReceiptEntry) {
+                            goodsReceiptEntry.comment = invalidReason;
+                            this.setState({ goodsReceiptEntry });
+                        }
+                    }}
+                    style={{ height: this.state.commentInputHeight }}
+                    inputContainerStyle={{ borderBottomWidth: 0, marginTop: 5 }}
+                    onContentSizeChange={(event): void => {
+                        this.setState({ commentInputHeight: Math.max(35, event.nativeEvent.contentSize.height) });
+                    }}
+                />
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Button
+                        title="Enregistrer"
+                        onPress={(): void => {
+                            if (this.revisedGoodsReceiptEntryIsValid()) {
+                                if (this.state.goodsReceiptEntry) {
+                                    const goodsReceiptEntry = this.state.goodsReceiptEntry;
+                                    getRepository(GoodsReceiptEntry)
+                                        .save(goodsReceiptEntry)
+                                        .then((): void => {
+                                            if (this.props.preselectedProductId) {
+                                                Navigation.dismissModal(this.props.componentId);
+                                                return;
+                                            }
+                                            this.setState({
+                                                product: undefined,
+                                                goodsReceiptEntry: undefined,
+                                                isValid: undefined,
+                                            });
+                                        });
+                                }
+                            }
+                        }}
+                        style={{ marginVertical: 16 }}
+                        disabled={this.state.goodsReceiptEntry?.quantity == undefined}
+                    />
                 </View>
-            );
-        }
+            </View>
+        );
     }
 
     renderEntry(): React.ReactNode {
@@ -511,8 +494,9 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 ref={(ref: CodeScanner): void => {
                     this.scanner = ref !== null ? ref : undefined;
                 }}
-                onProductFound={(): void => {
-                    return;
+                showInfoPanel={false}
+                onProductFound={(product): void => {
+                    this.loadEntryFromProduct(product);
                 }}
             ></CodeScanner>
         );

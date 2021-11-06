@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import {
     StyleSheet,
     Text,
@@ -73,6 +73,8 @@ interface Props {
     ref?: (instance: CodeScanner) => void;
     extraInfoPanel?: (product: ProductProduct) => ReactNode;
     onProductFound?: (product: ProductProduct) => void;
+
+    showInfoPanel?: boolean;
 }
 
 interface State {
@@ -331,8 +333,6 @@ export default class CodeScanner extends React.Component<Props, State> {
             if (datawedgeVersion >= '6.3') this.datawedge63();
             if (datawedgeVersion >= '6.4') this.datawedge64();
             if (datawedgeVersion >= '6.5') this.datawedge65();
-
-            //this.setState(this.state);
         } else if (intent.hasOwnProperty('com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS')) {
             //  Return from our request to enumerate the available scanners
             const enumeratedScannersObj = intent['com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS'];
@@ -352,16 +352,11 @@ export default class CodeScanner extends React.Component<Props, State> {
         //  Create a profile for our application
         this.sendCommand('com.symbol.datawedge.api.CREATE_PROFILE', 'Supercoop');
 
-        //this.state.dwVersionText = '6.3.  Please configure profile manually.  See ReadMe for more details.';
-
         //  Although we created the profile we can only configure it with DW 6.4.
         this.sendCommand('com.symbol.datawedge.api.GET_ACTIVE_PROFILE', '');
 
         //  Enumerate the available scanners on the device
         this.sendCommand('com.symbol.datawedge.api.ENUMERATE_SCANNERS', '');
-
-        //  Functionality of the scan button is available
-        //this.state.scanButtonVisible = true;
     }
 
     datawedge64(): void {
@@ -424,17 +419,12 @@ export default class CodeScanner extends React.Component<Props, State> {
     datawedge65(): void {
         console.log('Datawedge 6.5 APIs are available');
 
-        //this.state.dwVersionText = '6.5 or higher.';
-
         //  Instruct the API to send
         this.sendCommandResult = 'true';
-        //this.state.lastApiVisible = true;
     }
 
     commandReceived(commandText: string): void {
-        //this.state.lastApiText = commandText;
         console.log('lastApiText: ' + commandText);
-        //this.setState(this.state);
     }
 
     enumerateScanners(enumeratedScanners: any): void {
@@ -453,13 +443,10 @@ export default class CodeScanner extends React.Component<Props, State> {
             if (i < enumeratedScanners.length - 1) humanReadableScannerList += ', ';
         }
         console.info(humanReadableScannerList);
-        //this.state.enumeratedScannersText = humanReadableScannerList;
     }
 
     activeProfile(theActiveProfile: string): void {
         console.log('Active Profile: ' + theActiveProfile);
-        //this.state.activeProfileText = theActiveProfile;
-        //this.setState(this.state);
     }
 
     dataWedgeBarcodeScanned(scanData: { [x: string]: any }, timeOfScan: string): void {
@@ -484,10 +471,6 @@ export default class CodeScanner extends React.Component<Props, State> {
             displayCamera: false,
         });
         this.barcodeRecognized(barcodeEvent);
-        //console.log('Scan: ' + scannedData);
-        //this.state.scans.unshift({ data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan });
-        //console.log(this.state.scans);
-        //this.setState(this.state);
     }
     /* End DataWedge */
 
@@ -496,9 +479,9 @@ export default class CodeScanner extends React.Component<Props, State> {
             const ratios = await this.camera.getSupportedRatiosAsync();
 
             // Usually the last element of "ratios" is the maximum supported ratio
-            let ratio = ratios.find(ratio => ratio === '16:9');
+            let ratio = ratios.find(ratioElement => ratioElement === '16:9');
             if (ratio === undefined) {
-                ratio = ratios.find(ratio => ratio === '4:3');
+                ratio = ratios.find(ratioElement => ratioElement === '4:3');
             }
 
             this.setState({
@@ -524,15 +507,6 @@ export default class CodeScanner extends React.Component<Props, State> {
     pauseCamera = (): void => this.setState({ displayCamera: false });
     resumeCamera = (): void => this.setState({ displayCamera: true });
 
-    // toggleFacing = (): void => {
-    //     this.setState(previousState => ({
-    //         type:
-    //             previousState.type === RNCamera.Constants.Type.back
-    //                 ? RNCamera.Constants.Type.front
-    //                 : RNCamera.Constants.Type.back,
-    //     }));
-    // };
-
     setFlash = (flash: keyof FlashMode): void => {
         this.setState({ flash });
     };
@@ -543,12 +517,6 @@ export default class CodeScanner extends React.Component<Props, State> {
         }
         this.setFlash(RNCamera.Constants.FlashMode.off);
     };
-
-    // toggleWB = (): void => {
-    //     this.setState(previousState => ({
-    //         whiteBalance: wbOrder[previousState.whiteBalance],
-    //     }));
-    // };
 
     setAutofocus = (autoFocus: keyof AutoFocus): void => {
         this.setState({ autoFocus });
@@ -583,155 +551,6 @@ export default class CodeScanner extends React.Component<Props, State> {
             },
         });
     };
-
-    // zoomOut = (): void => {
-    //     this.setState(previousState => ({
-    //         zoom: previousState.zoom - 0.1 < 0 ? 0 : previousState.zoom - 0.1,
-    //     }));
-    // };
-
-    // zoomIn = (): void => {
-    //     this.setState(previousState => ({
-    //         zoom: previousState.zoom + 0.1 > 1 ? 1 : previousState.zoom + 0.1,
-    //     }));
-    // };
-
-    // setFocusDepth = (depth: number) => (): void => {
-    //     this.setState({
-    //         depth,
-    //     });
-    // };
-
-    // takePicture = async (): Promise<void> => {
-    //     if (this.camera) {
-    //         const data = await this.camera.takePictureAsync();
-    //         console.warn('takePicture ', data);
-    //     }
-    // };
-
-    // takeVideo = async (): Promise<void> => {
-    //     if (this.camera) {
-    //         try {
-    //             const promise = this.camera.recordAsync(this.state.recordOptions);
-
-    //             if (promise) {
-    //                 this.setState({ isRecording: true });
-    //                 const data = await promise;
-    //                 this.setState({ isRecording: false });
-    //                 console.warn('takeVideo', data);
-    //             }
-    //         } catch (e) {
-    //             console.error(e);
-    //         }
-    //     }
-    // };
-
-    // toggle = (value: 'canDetectFaces' | 'canDetectText' | 'canDetectBarcode'): void => {
-    //     const oldValue = this.state[value] as boolean;
-    //     if (value == 'canDetectFaces') {
-    //         this.setState({ canDetectFaces: !oldValue });
-    //     }
-    //     if (value == 'canDetectText') {
-    //         this.setState({ canDetectText: !oldValue });
-    //     }
-    //     if (value == 'canDetectBarcode') {
-    //         this.setState({ canDetectBarcode: !oldValue });
-    //     }
-    // };
-
-    // facesDetected = (response: { faces: Face[] }): void => this.setState({ faces: response.faces });
-
-    // renderFace = ({ bounds, faceID, rollAngle, yawAngle }: Face): React.ReactElement => (
-    //     <View
-    //         key={faceID}
-    //         // transform={[
-    //         //   { perspective: 600 },
-    //         //   { rotateZ: `${rollAngle!.toFixed(0)}deg` },
-    //         //   { rotateY: `${yawAngle!.toFixed(0)}deg` },
-    //         // ]}
-    //         style={[
-    //             styles.face,
-    //             {
-    //                 ...bounds.size,
-    //                 left: bounds.origin.x,
-    //                 top: bounds.origin.y,
-    //             },
-    //         ]}
-    //     >
-    //         <Text style={styles.faceText}>ID: {faceID}</Text>
-    //         <Text style={styles.faceText}>rollAngle: {rollAngle && rollAngle.toFixed(0)}</Text>
-    //         <Text style={styles.faceText}>yawAngle: {yawAngle && yawAngle.toFixed(0)}</Text>
-    //     </View>
-    // );
-
-    // renderLandmarksOfFace = (face: Face): React.ReactElement => {
-    //     const renderLandmark = (position?: Point<number>): React.ReactElement | undefined =>
-    //         position && (
-    //             <View
-    //                 style={[
-    //                     styles.landmark,
-    //                     {
-    //                         left: position.x - landmarkSize / 2,
-    //                         top: position.y - landmarkSize / 2,
-    //                     },
-    //                 ]}
-    //             />
-    //         );
-    //     return (
-    //         <View key={`landmarks-${face.faceID}`}>
-    //             {renderLandmark(face.leftEyePosition)}
-    //             {renderLandmark(face.rightEyePosition)}
-    //             {renderLandmark(face.leftEarPosition)}
-    //             {renderLandmark(face.rightEarPosition)}
-    //             {renderLandmark(face.leftCheekPosition)}
-    //             {renderLandmark(face.rightCheekPosition)}
-    //             {renderLandmark(face.leftMouthPosition)}
-    //             {renderLandmark(face.mouthPosition)}
-    //             {renderLandmark(face.rightMouthPosition)}
-    //             {renderLandmark(face.noseBasePosition)}
-    //             {renderLandmark(face.bottomMouthPosition)}
-    //         </View>
-    //     );
-    // };
-
-    // renderFaces = (): React.ReactElement => (
-    //     <View style={styles.facesContainer} pointerEvents="none">
-    //         {this.state.faces.map(this.renderFace)}
-    //     </View>
-    // );
-
-    // renderLandmarks = (): React.ReactElement => (
-    //     <View style={styles.facesContainer} pointerEvents="none">
-    //         {this.state.faces.map(this.renderLandmarksOfFace)}
-    //     </View>
-    // );
-
-    // renderTextBlocks = (): React.ReactElement => (
-    //     <View style={styles.facesContainer} pointerEvents="none">
-    //         {this.state.textBlocks.map(this.renderTextBlock)}
-    //     </View>
-    // );
-
-    // renderTextBlock = ({ bounds, value }: TrackedTextFeature): React.ReactElement => (
-    //     <React.Fragment key={value + bounds.origin.x}>
-    //         <Text style={[styles.textBlock, { left: bounds.origin.x, top: bounds.origin.y }]}>{value}</Text>
-    //         <View
-    //             style={[
-    //                 styles.text,
-    //                 {
-    //                     ...bounds.size,
-    //                     left: bounds.origin.x,
-    //                     top: bounds.origin.y,
-    //                 },
-    //             ]}
-    //         />
-    //     </React.Fragment>
-    // );
-
-    // textRecognized = (response: { textBlocks: TrackedTextFeature[] }): void => {
-    //     const { textBlocks } = response;
-    //     this.setState({ textBlocks });
-    // };
 
     legacyBarcodeToBarcode = (legacy: BarcodeReadEvent): Barcode => {
         let width = 0;
@@ -1068,7 +887,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         );
     };
 
-    renderInfoPanel(): React.ReactElement {
+    renderInfoPanel(): React.ReactNode {
         let extraPanel: ReactNode = null;
         if (this.state.product && this.props.extraInfoPanel) {
             extraPanel = <View>{this.props.extraInfoPanel(this.state.product)}</View>;
@@ -1080,6 +899,11 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                 productNotFoundCallback={(): void => {
                     console.error('Product not found');
                     this.handleNotFoundProductProduct(this.state.barcodes[0]);
+                }}
+                productFoundCallback={(product): void => {
+                    if (this.props.onProductFound) {
+                        this.props.onProductFound(product);
+                    }
                 }}
                 onClose={(): void => {
                     this.setState({ barcodes: [] });

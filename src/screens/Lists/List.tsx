@@ -219,7 +219,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 }}
                 bottomDivider
             >
-                <Icon type="font-awesome-5" name="boxes" />
+                <Icon type="font-awesome-5" name={item.icon()} />
                 <ListItem.Content>
                     <ListItem.Title>{item.name}</ListItem.Title>
                 </ListItem.Content>

@@ -8,6 +8,7 @@ export interface Props {
     barcode?: string;
     extraPanel?: (product: ProductProduct) => void;
     productNotFoundCallback?: () => void;
+    productFoundCallback?: (product: ProductProduct) => void;
     onClose?: () => void;
 }
 
@@ -143,6 +144,9 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
             this.setState({ product });
             if (!product) {
                 return;
+            }
+            if (this.props.productFoundCallback) {
+                this.props.productFoundCallback(product);
             }
             this.odoo.fetchImageForProductProduct(product).then(image => {
                 if (!image) {

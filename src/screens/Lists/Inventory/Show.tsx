@@ -1,5 +1,5 @@
 import React from 'react';
-import { EmitterSubscription, FlatList, Platform, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { EmitterSubscription, FlatList, Platform, SafeAreaView, Text, View } from 'react-native';
 import { defaultScreenOptions } from '../../../utils/navigation';
 import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation';
 import bootstrapStyle from '../../../styles/bootstrap';
@@ -29,7 +29,7 @@ interface InventoryData {
     inventoryEntry: InventoryEntry;
 }
 
-export default class ListsInventoryShow extends React.Component<Props, State> {
+export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
     modalDismissedListener?: EmitterSubscription;
     inventoryListRepository: Repository<InventoryList>;
     inventoryEntryRepository: Repository<InventoryEntry>;

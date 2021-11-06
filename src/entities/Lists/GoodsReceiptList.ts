@@ -12,8 +12,8 @@ export type GoodsReceiptListExtraData = {
 
 @ChildEntity()
 export default class GoodsReceiptList extends BaseList {
-    static icon = 'truck-loading';
-    static label = 'Réception';
+    protected static icon = 'truck-loading';
+    protected static label = 'Réception';
 
     get purchaseOrderId(): number {
         return (this.extraData as GoodsReceiptListExtraData).purchaseOrderId;

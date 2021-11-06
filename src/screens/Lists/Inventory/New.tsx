@@ -23,7 +23,7 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
         },
     };
     zoneValue: number | undefined;
-    dateValue: DateTime = DateTime.utc();
+    dateValue: DateTime = DateTime.local();
 
     submitButton: Button | undefined;
 

@@ -27,6 +27,19 @@ import { GoodsReceiptListExtraData } from './GoodsReceiptList';
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export default abstract class BaseList {
+    protected static icon = 'clipboard-list';
+    protected static label = 'Liste';
+
+    icon(): string {
+        const list = this.constructor as typeof BaseList;
+        return list.icon;
+    }
+
+    label(): string {
+        const list = this.constructor as typeof BaseList;
+        return list.label;
+    }
+
     @PrimaryGeneratedColumn()
     public id?: number;
 
@@ -95,7 +108,4 @@ export default abstract class BaseList {
     constructor() {
         this.extraData = {};
     }
-
-    static label = 'Liste';
-    static icon = 'clipboard-list';
 }
