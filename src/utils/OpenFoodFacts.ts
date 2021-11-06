@@ -1,4 +1,5 @@
 import DeviceInfo from 'react-native-device-info';
+import { NutriScoreScore } from '../components/NutriScore';
 import AppLogger from './AppLogger';
 import Odoo from './Odoo';
 
@@ -10,7 +11,7 @@ interface OFFResponse {
 }
 
 export interface OFFProduct {
-    nutrition_grade_fr?: 'a' | 'b' | 'c' | 'd' | 'e';
+    nutrition_grade_fr?: NutriScoreScore;
     nova_group?: 1 | 2 | 3 | 4;
     categories_properties?: {
         'agribalyse_food_code:en'?: string;
