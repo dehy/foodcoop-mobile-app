@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { goHome, goToAuth } from '../utils/navigation';
-import Database from '../utils/Database';
 import Odoo from '../utils/Odoo';
+import { goHome, goToAuth } from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 
 export interface InitialisingProps {
@@ -50,16 +49,10 @@ export default class Initialising extends React.Component<InitialisingProps> {
     }
 
     componentDidMount(): void {
-        Database.sharedInstance()
-            .migrate()
-            .then(success => {
-                if (success) {
-                    Odoo.getInstance()
-                        .fetchBarcodeNomenclature()
-                        .then(() => {
-                            this.signInSilently();
-                        });
-                }
+        Odoo.getInstance()
+            .fetchBarcodeNomenclature()
+            .then(() => {
+                this.signInSilently();
             });
     }
 

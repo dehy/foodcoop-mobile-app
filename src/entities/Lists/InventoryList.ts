@@ -9,8 +9,8 @@ export type InventoryListExtraData = {
 
 @ChildEntity()
 export default class InventoryList extends BaseList {
-    static icon = 'boxes';
-    static label = 'Inventaire';
+    public static icon = 'boxes';
+    public static label = 'Inventaire';
 
     get zone(): number {
         return (this.extraData as InventoryListExtraData).zone;

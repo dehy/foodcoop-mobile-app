@@ -27,8 +27,8 @@ import { GoodsReceiptListExtraData } from './GoodsReceiptList';
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export default abstract class BaseList {
-    protected static icon = 'clipboard-list';
-    protected static label = 'Liste';
+    public static icon = 'clipboard-list';
+    public static label = 'Liste';
 
     icon(): string {
         const list = this.constructor as typeof BaseList;
