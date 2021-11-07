@@ -796,20 +796,22 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             title=" Clavier"
                         />
                     </View>
-                    <Button
-                        title="test"
-                        onPress={(): void => {
-                            const barcodeEvent: BarcodeReadEvent = {
-                                data: '3483981002176',
-                                type: 'ean13',
-                                bounds: {
-                                    origin: { x: '30', y: '60' },
-                                    size: { width: '320', height: '240' },
-                                },
-                            };
-                            this.barcodeRecognized(barcodeEvent);
-                        }}
-                    />
+                    {__DEV__ ? (
+                        <Button
+                            title="test"
+                            onPress={(): void => {
+                                const barcodeEvent: BarcodeReadEvent = {
+                                    data: '3483981002176',
+                                    type: 'ean13',
+                                    bounds: {
+                                        origin: { x: '30', y: '60' },
+                                        size: { width: '320', height: '240' },
+                                    },
+                                };
+                                this.barcodeRecognized(barcodeEvent);
+                            }}
+                        />
+                    ) : null}
                 </View>
                 {!!canDetectBarcode && this.renderBarcodes()}
             </RNCamera>
