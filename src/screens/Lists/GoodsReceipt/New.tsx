@@ -187,7 +187,7 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
         // Récupération du supplierCode pour chaque produit
         const supplierInfos = await Odoo.getInstance().fetchProductSupplierInfoFromProductTemplateIds(
             odooProducts.map(p => (p.templateId ? p.templateId : 0)),
-            goodsReceiptList.partnerId!,
+            goodsReceiptList.partnerId,
         );
         if (!supplierInfos) {
             return;
