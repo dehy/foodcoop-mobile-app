@@ -7,7 +7,7 @@ import { defaultScreenOptions } from '../../../utils/navigation';
 import Odoo from '../../../utils/Odoo';
 import ProductProduct, { UnitOfMeasurement } from '../../../entities/Odoo/ProductProduct';
 import { getConnection, getRepository } from 'typeorm';
-import GoodsReceiptEntry from '../../../entities/Lists/GoodsReceiptEntry';
+import GoodsReceiptEntry, { EntryStatus } from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import AppLogger from '../../../utils/AppLogger';
 import { toNumber, displayNumber, isFloat } from '../../../utils/helpers';
@@ -130,6 +130,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 this.setState({
                     product: product,
                     goodsReceiptEntry: entry,
+                    isValid: entry.isFilled() ? EntryStatus.VALID === entry.getStatus() : undefined,
                 });
             })
             .catch(() => {
@@ -286,6 +287,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                             ref={(input: TextInput): void => {
                                 this.receivedQuantityInput = input;
                             }}
+                            value={this.state.goodsReceiptEntry?.quantity?.toString()}
                             autoFocus={true}
                         />
                     </ListItem.Content>
@@ -322,6 +324,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                             ref={(input: TextInput): void => {
                                 this.receivedProductQtyPackageInput = input;
                             }}
+                            value={this.state.goodsReceiptEntry?.productQtyPackage?.toString()}
                         />
                     </ListItem.Content>
                 </ListItem>
@@ -357,6 +360,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                             ref={(input: TextInput): void => {
                                 this.receivedPackageQtyInput = input;
                             }}
+                            value={this.state.goodsReceiptEntry?.packageQty?.toString()}
                         />
                     </ListItem.Content>
                 </ListItem>
@@ -391,6 +395,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                     onContentSizeChange={(event): void => {
                         this.setState({ commentInputHeight: Math.max(35, event.nativeEvent.contentSize.height) });
                     }}
+                    value={this.state.goodsReceiptEntry?.comment}
                 />
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <Button

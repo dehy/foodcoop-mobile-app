@@ -110,6 +110,10 @@ export default class GoodsReceiptEntry extends BaseEntry {
         return this.comment.length > 0;
     }
 
+    public isFilled(): boolean {
+        return null !== this.quantity;
+    }
+
     public getStatus(): EntryStatus {
         if (true !== this.isValidQuantity()) {
             return EntryStatus.ERROR;
