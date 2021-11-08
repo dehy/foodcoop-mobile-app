@@ -100,7 +100,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             .then((products: ProductProduct[] | undefined) => {
                 if (products === undefined || products.length === 0) {
                     AppLogger.getLogger().debug(`Product with id '${id}' not found`);
-                    alert(`Produit avec l'id' ${id} non trouvé`);
+                    Alert.alert(`Produit avec l'id' ${id} non trouvé`);
                     return;
                 }
                 const product = products[0];
@@ -134,7 +134,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 });
             })
             .catch(() => {
-                alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
+                Alert.alert(`Ce produit ne semble pas avoir été commandé. (TODO)`);
             });
     }
 
