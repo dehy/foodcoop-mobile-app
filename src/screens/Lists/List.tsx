@@ -4,7 +4,7 @@ import { FlatList, Platform, SafeAreaView, Text, View } from 'react-native';
 import { Icon, ListItem, ThemeProvider } from 'react-native-elements';
 import { Navigation, NavigationComponent, Options } from 'react-native-navigation';
 import { defaultScreenOptions } from '../../utils/navigation';
-import { getConnection } from 'typeorm';
+import { FindConditions, getConnection, IsNull } from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
@@ -21,6 +21,7 @@ interface State {
     lists: BaseList[];
     listsEntriesCounts: EntriesCountList;
     refreshing: boolean;
+    showHidden: boolean;
 }
 
 export default class ListsList extends NavigationComponent<Props, State> {
@@ -43,6 +44,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
             lists: [],
             refreshing: false,
             listsEntriesCounts: {},
+            showHidden: false,
         };
     }
 
@@ -61,12 +63,29 @@ export default class ListsList extends NavigationComponent<Props, State> {
 
     componentDidMount(): void {
         this._handleRefresh();
+        this.renderHideIcon();
     }
 
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+        if (buttonId === 'hide-toggle') {
+            this.toggleHide();
+        }
         if (buttonId === 'list-new') {
             this.openListNewModal();
         }
+    }
+
+    toggleHide(): void {
+        const showHidden = !this.state.showHidden;
+        this.setState(
+            {
+                showHidden: showHidden,
+            },
+            () => {
+                this.loadData();
+                this.renderHideIcon();
+            },
+        );
     }
 
     openListNewModal = (): void => {
@@ -85,7 +104,10 @@ export default class ListsList extends NavigationComponent<Props, State> {
 
     loadData(): void {
         const listRepository = getConnection().getRepository(BaseList);
-        const whereOptions = {};
+        const whereOptions: FindConditions<BaseList> = {};
+        if (!this.state.showHidden) {
+            whereOptions._lastSentAt = IsNull();
+        }
         listRepository
             .find({
                 order: {
@@ -188,6 +210,39 @@ export default class ListsList extends NavigationComponent<Props, State> {
         );
     };
 
+    renderHideIcon(): void {
+        let icon;
+        if (!this.state.showHidden) {
+            icon = require('../../../assets/icons/eye-slash-regular.png');
+        } else {
+            icon = require('../../../assets/icons/eye-regular.png');
+        }
+        Navigation.mergeOptions(this.props.componentId, {
+            topBar: {
+                leftButtons: [
+                    {
+                        id: 'hide-toggle',
+                        icon: icon,
+                    },
+                ],
+            },
+        });
+    }
+
+    renderHiddenMessage(): React.ReactElement {
+        if (!this.state.showHidden) {
+            return (
+                <View style={{ padding: 10, margin: '3%', backgroundColor: '#17a2b8', borderRadius: 10 }}>
+                    <Text style={{ color: 'white' }}>
+                        Les réceptions déjà envoyées sont cachées. Pour les afficher, tapes l&apos;icône en forme
+                        d&apos;œil en haut à gauche.
+                    </Text>
+                </View>
+            );
+        }
+        return <View></View>;
+    }
+
     renderEmptyList = (): React.ReactNode => {
         if (this.state.lists.length > 0) {
             return null;
@@ -242,6 +297,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
                         list: list,
                     };
                 })}
+                ListHeaderComponent={this.renderHiddenMessage()}
                 renderItem={({ item }): React.ReactElement => this._renderEntry(item.list)}
                 // ListHeaderComponent={this.renderHeader}
                 onRefresh={this._handleRefresh}
