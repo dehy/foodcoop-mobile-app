@@ -212,7 +212,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
 
     renderHideIcon(): void {
         let icon;
-        if (!this.state.showHidden) {
+        if (this.state.showHidden) {
             icon = require('../../../assets/icons/eye-slash-regular.png');
         } else {
             icon = require('../../../assets/icons/eye-regular.png');
