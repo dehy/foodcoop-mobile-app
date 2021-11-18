@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class MultiList1636572223147 implements MigrationInterface {
+    name = 'MultiList1636572223147';
+
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `CREATE TABLE "lists" (
