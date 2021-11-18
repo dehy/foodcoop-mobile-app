@@ -75,7 +75,7 @@ export default class Database {
     }
 
     async resetDatabase(): Promise<boolean> {
-        getConnection().synchronize();
+        getConnection().synchronize(true);
 
         return true;
     }
