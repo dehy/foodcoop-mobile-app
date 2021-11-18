@@ -24,7 +24,7 @@ import { GoodsReceiptListExtraData } from './GoodsReceiptList';
 //     [ListType.other, 'ellipsis-h'],
 // ]);
 
-@Entity()
+@Entity('lists')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export default abstract class BaseList {
     public static icon = 'clipboard-list';

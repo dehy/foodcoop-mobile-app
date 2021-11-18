@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import * as RNFS from 'react-native-fs';
 import BaseList from './BaseList';
 
-@Entity()
+@Entity('list_attachments')
 export default class ListAttachment {
     @PrimaryGeneratedColumn()
     public id?: number;

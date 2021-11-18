@@ -15,6 +15,7 @@ import { UpdateGoodsReceiptEntry1588342677098 } from '../migrations/158834267709
 import { DeleteCascade1588861598725 } from '../migrations/1588861598725-DeleteCascade';
 import { AddExpectedPackageQty1589031691422 } from '../migrations/1589031691422-AddExpectedPackageQty';
 import { AddSessionAttachment1592642586405 } from '../migrations/1592642586405-AddSessionAttachment';
+import { MultiList1636572223147 } from '../migrations/1636572223147-MultiList';
 
 interface EntityDefinition {
     name: string;
@@ -66,6 +67,7 @@ export default class Database {
                 DeleteCascade1588861598725,
                 AddExpectedPackageQty1589031691422,
                 AddSessionAttachment1592642586405,
+                MultiList1636572223147,
             ],
         });
         console.log('connection created');

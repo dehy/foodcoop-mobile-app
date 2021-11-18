@@ -11,7 +11,7 @@ import InventoryEntryExtraData from './InventoryEntry';
 import BaseList from './BaseList';
 import { GoodsReceiptEntryExtraData } from './GoodsReceiptEntry';
 
-@Entity()
+@Entity('entries')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export default abstract class BaseEntry {
     @PrimaryGeneratedColumn()
