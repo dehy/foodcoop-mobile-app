@@ -61,7 +61,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
         return options;
     }
 
-    componentDidMount(): void {
+    componentDidAppear(): void {
         this._handleRefresh();
         this.renderHideIcon();
     }
