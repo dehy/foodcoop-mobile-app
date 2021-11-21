@@ -1,11 +1,11 @@
 'use strict';
 
 import Papa from 'papaparse';
-import InventoryEntryFactory from '../factories/InventoryEntryFactory';
-import InventorySession from '../entities/InventorySession';
+import InventoryList from '../entities/Lists/InventoryList';
 import AppLogger from './AppLogger';
 import * as RNFS from 'react-native-fs';
 import SupercoopSignIn from './SupercoopSignIn';
+import InventoryEntry from '../entities/Lists/InventoryEntry';
 
 export interface CSVData {
     [key: string]: string | number | boolean | null | undefined;
@@ -18,20 +18,18 @@ export default class CSVGenerator {
         this.DEFAULT_DIR = RNFS.TemporaryDirectoryPath + '/csv-generator';
     }
 
-    async exportInventorySession(inventorySession: InventorySession): Promise<string> {
-        const inventoryEntries = await InventoryEntryFactory.sharedInstance().findForInventorySession(inventorySession);
+    async exportInventoryList(inventoryList: InventoryList, inventoryEntries: InventoryEntry[]): Promise<string> {
         const entriesArray: CSVData[] = [];
 
         const userFirstname = SupercoopSignIn.getInstance().getFirstnameSlug();
-        const csvFilenameDateTime =
-            inventorySession.lastModifiedAt && inventorySession.lastModifiedAt.format('YYYYMMDDHHmmss');
-        const csvFilename = `Zone${inventorySession.zone}_${userFirstname}-${csvFilenameDateTime}.csv`;
+        const csvFilenameDateTime = inventoryList.lastModifiedAt && inventoryList.lastModifiedAt.toISO();
+        const csvFilename = `Zone${inventoryList.zone}_${userFirstname}-${csvFilenameDateTime}.csv`;
 
         for (const key in inventoryEntries) {
             const entry = inventoryEntries[key];
-            const articleBarcode = entry.articleBarcode || '';
-            const articleQuantity = entry.articleQuantity ? entry.articleQuantity.toString() : '';
-            const articleName = entry.articleName || '';
+            const articleBarcode = entry.productBarcode || '';
+            const articleQuantity = entry.quantity;
+            const articleName = entry.productName || '';
             entriesArray.push({
                 Code: articleBarcode,
                 Nb: articleQuantity,
@@ -39,7 +37,7 @@ export default class CSVGenerator {
             });
         }
 
-        return await this.generateCSVFile(csvFilename, entriesArray);
+        return this.generateCSVFile(csvFilename, entriesArray);
     }
 
     public generateCSV(data: CSVData[]): string {

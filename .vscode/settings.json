@@ -23,5 +23,21 @@
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
-    }
+    },
+    "cSpell.words": [
+        "barcodes",
+        "Firstname",
+        "Initialising",
+        "luxon",
+        "Réceptionneur",
+        "RNFS",
+        "Selectionner",
+        "soldout",
+        "supplierinfo",
+        "tmpl",
+        "unparse",
+        "uoms",
+        "UPCA",
+        "varchar"
+    ]
 }

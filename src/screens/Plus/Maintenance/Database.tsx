@@ -22,11 +22,7 @@ export default class DatabaseMaintenance extends React.Component<{}, {}> {
         Database.sharedInstance()
             .resetDatabase()
             .then(() => {
-                Database.sharedInstance()
-                    .migrate()
-                    .then(() => {
-                        Alert.alert('Base de donnée effacée');
-                    });
+                Alert.alert('Base de donnée effacée');
             });
     }
 

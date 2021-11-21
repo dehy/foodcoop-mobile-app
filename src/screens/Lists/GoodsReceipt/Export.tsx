@@ -7,21 +7,22 @@ import moment from 'moment';
 import Dialog from 'react-native-dialog';
 import ActionSheet from 'react-native-action-sheet';
 import { getRepository } from 'typeorm';
-import { defaultScreenOptions } from '../../utils/navigation';
-import CSVGenerator, { CSVData } from '../../utils/CSVGenerator';
-import Mailjet, { MailAttachment } from '../../utils/Mailjet';
-import GoodsReceiptEntry from '../../entities/GoodsReceiptEntry';
-import Attachment from '../../entities/Attachment';
-import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import SupercoopSignIn from '../../utils/SupercoopSignIn';
-import { asyncFilter } from '../../utils/helpers';
+import { defaultScreenOptions } from '../../../utils/navigation';
+import CSVGenerator, { CSVData } from '../../../utils/CSVGenerator';
+import Mailjet, { MailAttachment } from '../../../utils/Mailjet';
+import GoodsReceiptEntry from '../../../entities/Lists/GoodsReceiptEntry';
+import ListAttachment from '../../../entities/Lists/ListAttachment';
+import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
+import SupercoopSignIn from '../../../utils/SupercoopSignIn';
+import { asyncFilter } from '../../../utils/helpers';
+import { DateTime } from 'luxon';
 
-export interface GoodsReceiptExportProps {
+export interface Props {
     componentId: string;
-    session: GoodsReceiptSession;
+    list: GoodsReceiptList;
 }
 
-interface GoodsReceiptExportState {
+interface State {
     isSendingMail: boolean;
     filePath?: string | false;
     selectedGamme?: string;
@@ -32,12 +33,13 @@ interface GoodsReceiptExportState {
 const styles = StyleSheet.create({
     checkResult: {
         flexDirection: 'row',
+        alignItems: 'center',
     },
 });
 
-export default class GoodsReceiptExport extends React.Component<GoodsReceiptExportProps, GoodsReceiptExportState> {
-    private receiptEntries: Array<GoodsReceiptEntry> = [];
-    private images: Array<Attachment> = [];
+export default class ListsGoodsReceiptExport extends React.Component<Props, State> {
+    private receiptEntries: GoodsReceiptEntry[] = [];
+    private images: ListAttachment[] = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
     private senderNameInput?: string;
 
@@ -51,12 +53,12 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         'Gamme Viandes et Poissons': 'gamme-viandes-et-poissons@supercoop.fr',
     };
 
-    constructor(props: GoodsReceiptExportProps) {
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
 
-        this.receiptEntries = props.session.goodsReceiptEntries || [];
-        this.images = props.session.attachments || [];
+        this.receiptEntries = (props.list.entries as GoodsReceiptEntry[]) || [];
+        this.images = props.list.attachments || [];
 
         this.state = {
             isSendingMail: false,
@@ -82,25 +84,22 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
     navigationButtonPressed({ buttonId }: { buttonId: string }): void {
         if (buttonId === 'cancel') {
             Navigation.dismissModal(this.props.componentId);
-            return;
         }
     }
 
     componentDidMount(): void {
-        getRepository(GoodsReceiptSession)
-            .findOne(this.props.session.id, {
-                relations: ['goodsReceiptEntries', 'attachments'],
+        getRepository(GoodsReceiptList)
+            .findOne(this.props.list.id, {
+                relations: ['entries', 'attachments'],
             })
             .then((session): void => {
-                //console.log(session);
                 if (!session) {
                     throw new Error('Session not found');
                 }
-                this.receiptEntries = session.goodsReceiptEntries ?? [];
+                this.receiptEntries = (session.entries as GoodsReceiptEntry[]) ?? [];
                 this.images = session.attachments ?? [];
 
                 this.generateCSVFile().then(filePath => {
-                    // console.log(filePath);
                     this.setState({
                         filePath,
                     });
@@ -119,7 +118,6 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 cancelButtonIndex: recipientsIos.length - 1,
             },
             buttonIndex => {
-                //console.log('button clicked :', buttonIndex);
                 this.setState({
                     selectedGamme: Object.keys(this.gammes)[buttonIndex],
                 });
@@ -138,9 +136,9 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
                 product: entry.productName,
                 supplierCode: entry.productSupplierCode,
                 expectedQty: entry.expectedProductQty,
-                receivedQty: entry.productQty,
+                receivedQty: entry.quantity,
                 expectedUom: entry.expectedProductUom,
-                receivedUom: entry.productUom,
+                receivedUom: entry.unit,
                 expectedPackageQty: entry.expectedPackageQty, // Colisage (nombre de produits par colis)
                 receivedPackageQty: entry.packageQty,
                 expectedProductQtyPackage: entry.expectedProductQtyPackage, // Nombre de colis
@@ -151,18 +149,16 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
             sessionData.push(entryData);
         });
 
-        const csvFilenameDateTime = moment(this.props.session.updatedAt).format('YYYYMMDDHHmmss');
-        const csvFilename = `reception-${this.props.session.poName}-${csvFilenameDateTime}.csv`;
-        const filepath = await this.csvGenerator.generateCSVFile(csvFilename, sessionData);
-
-        return filepath;
+        const csvFilenameDateTime = this.props.list.lastModifiedAt?.toFormat('YYYYMMDDHHmmss');
+        const csvFilename = `reception-${this.props.list.purchaseOrderName}-${csvFilenameDateTime}.csv`;
+        return this.csvGenerator.generateCSVFile(csvFilename, sessionData);
     }
 
     async sendReceipt(): Promise<void> {
         this.setState({
             isSendingMail: true,
         });
-        if (!this.props.session.updatedAt) {
+        if (!this.props.list.lastModifiedAt) {
             throw new Error('Last Modified date unavailable');
         }
         if (!this.state.selectedGamme) {
@@ -173,10 +169,10 @@ export default class GoodsReceiptExport extends React.Component<GoodsReceiptExpo
         }
         const userEmail = SupercoopSignIn.getInstance().getEmail();
         const userName = this.state.senderName;
-        const poName = this.props.session.poName;
-        const partnerName = this.props.session.partnerName;
-        const date = moment(this.props.session.updatedAt).format('DD/MM/YYYY');
-        const time = moment(this.props.session.updatedAt).format('HH:mm:ss');
+        const poName = this.props.list.purchaseOrderName;
+        const partnerName = this.props.list.partnerName;
+        const date = this.props.list.lastModifiedAt.toLocaleString(DateTime.DATE_SHORT);
+        const time = this.props.list.lastModifiedAt.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
 
         const entriesCount = this.receiptEntries.length;
 
@@ -193,9 +189,8 @@ ${entriesCount} produits traités`;
         Mailjet.getInstance()
             .sendEmail(to, cc, subject, body, await this.getMailAttachments())
             .then(async () => {
-                this.props.session.lastSentAt = moment().toDate();
-                this.props.session.hidden = true;
-                await getRepository(GoodsReceiptSession).save(this.props.session);
+                this.props.list.lastSentAt = DateTime.local();
+                await getRepository(GoodsReceiptList).save(this.props.list);
                 AlertAsync('Envoyé', 'Ton compte-rendu a bien été envoyé. Merci !').then(() => {
                     Navigation.dismissModal(this.props.componentId);
                 });
@@ -206,7 +201,7 @@ ${entriesCount} produits traités`;
                 }
                 Alert.alert(
                     'ERREUR',
-                    "Houston, quelchose s'est mal passé et le mail n'est pas parti... Mais on n'en sait pas plus :(",
+                    "Houston, quelque chose s'est mal passé et le mail n'est pas parti... Mais on n'en sait pas plus :(",
                 );
             })
             .finally(() => {
@@ -217,12 +212,13 @@ ${entriesCount} produits traités`;
     }
 
     getMailAttachments = async (): Promise<MailAttachment[]> => {
-        const csvFilenameDateTime = moment(this.props.session.updatedAt).format('YYYYMMDDHHmmss');
-        const csvFilename = `reception-${this.props.session.poName}-${csvFilenameDateTime}.csv`;
+        // TODO pourquoi la génération du nom du fichier est dupliqué ? Voir ligne 153
+        const csvFilenameDateTime = this.props.list.lastModifiedAt?.toFormat('YYYYMMDDHHmmss');
+        const csvFilename = `reception-${this.props.list.purchaseOrderName}-${csvFilenameDateTime}.csv`;
 
-        const attachments: MailAttachment[] = await asyncFilter(this.images, async (image: Attachment) => {
+        const attachments: MailAttachment[] = await asyncFilter(this.images, async (image: ListAttachment) => {
             if (image.path && image.name) {
-                return await Mailjet.filepathToAttachment(image.path, image.name);
+                return Mailjet.filepathToAttachment(image.path, image.name);
             }
         });
 
@@ -248,11 +244,11 @@ ${entriesCount} produits traités`;
     };
 
     renderAlreadySent(): React.ReactNode {
-        if (this.props.session.lastSentAt) {
+        if (this.props.list.lastSentAt) {
             return (
-                <View style={{ padding: 8, margin: 8, backgroundColor: '#17a2b8' }}>
+                <View style={{ padding: 8, margin: 8, marginBottom: 0, backgroundColor: '#17a2b8' }}>
                     <Text style={{ color: 'white' }}>
-                        Cette réception a déjà été envoyée le {this.props.session.lastSentAt?.toLocaleString()}
+                        Cette réception a déjà été envoyée le {this.props.list.lastSentAt?.toLocaleString()}
                     </Text>
                 </View>
             );
@@ -265,7 +261,7 @@ ${entriesCount} produits traités`;
         if (this.state.filePath == undefined) {
             ReceiptCheck = (
                 <View style={styles.checkResult}>
-                    <ActivityIndicator size="small" color="#999999" style={{ paddingTop: 4, marginRight: 4 }} />
+                    <ActivityIndicator size="small" color="#999999" style={{ marginRight: 4 }} />
                     <Text>Création en cours</Text>
                 </View>
             );
@@ -273,7 +269,7 @@ ${entriesCount} produits traités`;
         if (this.state.filePath) {
             ReceiptCheck = (
                 <View style={styles.checkResult}>
-                    <Icon type="font-awesome-5" name="check" color="green" style={{ paddingTop: 3, marginRight: 4 }} />
+                    <Icon type="font-awesome-5" name="check" color="green" style={{ marginRight: 4 }} />
                     <Text style={{ color: 'green' }}>Prêt pour l&apos;envoi</Text>
                 </View>
             );
@@ -281,7 +277,7 @@ ${entriesCount} produits traités`;
         if (this.state.filePath === false) {
             ReceiptCheck = (
                 <View style={styles.checkResult}>
-                    <Icon type="font-awesome-5" name="times" color="red" style={{ paddingTop: 3, marginRight: 4 }} />
+                    <Icon type="font-awesome-5" name="times" color="red" style={{ marginRight: 4 }} />
                     <Text style={{ color: 'red' }}>Erreur !</Text>
                 </View>
             );
@@ -294,9 +290,8 @@ ${entriesCount} produits traités`;
                         {this.renderAlreadySent()}
                         <Text style={{ fontSize: 16, margin: 16 }}>
                             Tu es sur le point d&apos;envoyer ta réception du{' '}
-                            {this.props.session.createdAt &&
-                                moment(this.props.session.createdAt).format('dddd DD MMMM YYYY')}
-                            , PO {this.props.session.poName}, de {this.props.session.partnerName}. Elle contient{' '}
+                            {this.props.list.createdAt && moment(this.props.list.createdAt).format('dddd DD MMMM YYYY')}
+                            , PO {this.props.list.purchaseOrderName}, de {this.props.list.partnerName}. Elle contient{' '}
                             {this.receiptEntries.length} produit
                             {this.receiptEntries.length > 1 ? 's' : ''} et {this.images.length} image
                             {this.images.length > 1 ? 's' : ''}.
@@ -321,9 +316,7 @@ ${entriesCount} produits traités`;
                             <ListItem.Content>
                                 <ListItem.Title>État</ListItem.Title>
                             </ListItem.Content>
-                            <ListItem.Content right>
-                                {ReceiptCheck}
-                            </ListItem.Content>
+                            <ListItem.Content right>{ReceiptCheck}</ListItem.Content>
                         </ListItem>
                         <ListItem
                             onPress={(): void => {

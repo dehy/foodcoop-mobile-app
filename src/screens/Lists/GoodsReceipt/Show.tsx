@@ -3,31 +3,31 @@ import { View, Text, SafeAreaView, FlatList, Alert, Image } from 'react-native';
 import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
 import { Navigation, Options, EventSubscription } from 'react-native-navigation';
 import ImagePicker from 'react-native-image-picker';
-import GoodsReceiptEntry, { EntryStatus } from '../../entities/GoodsReceiptEntry';
-import GoodsReceiptSession from '../../entities/GoodsReceiptSession';
-import GoodsReceiptService from '../../services/GoodsReceiptService';
-import Attachment from '../../entities/Attachment';
-import ProductProduct from '../../entities/Odoo/ProductProduct';
-import { defaultScreenOptions } from '../../utils/navigation';
-import { displayNumber } from '../../utils/helpers';
+import GoodsReceiptEntry, { EntryStatus } from '../../../entities/Lists/GoodsReceiptEntry';
+import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
+import GoodsReceiptService from '../../../services/GoodsReceiptService';
+import Attachment from '../../../entities/Lists/ListAttachment';
+import ProductProduct from '../../../entities/Odoo/ProductProduct';
+import { defaultScreenOptions } from '../../../utils/navigation';
+import { displayNumber } from '../../../utils/helpers';
 import { getRepository } from 'typeorm';
 import moment from 'moment';
 import * as RNFS from 'react-native-fs';
 import Fuse from 'fuse.js';
 
-export interface GoodsReceiptShowProps {
+export interface Props {
     componentId: string;
-    session: GoodsReceiptSession;
+    list: GoodsReceiptList;
 }
 
-interface GoodsReceiptShowState {
-    sessionEntries: GoodsReceiptEntry[];
-    sessionAttachments: Attachment[];
+interface State {
+    listEntries: GoodsReceiptEntry[];
+    listAttachements: Attachment[];
     entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
 
-export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowProps, GoodsReceiptShowState> {
+export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
     theme = {
         Button: {
             iconContainerStyle: { marginRight: 5 },
@@ -41,16 +41,16 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     modalDismissedListener?: EventSubscription;
     entriesToDisplay: GoodsReceiptEntry[] = [];
 
-    constructor(props: GoodsReceiptShowProps) {
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {
-            sessionEntries: [],
-            sessionAttachments: [],
+            listEntries: [],
+            listAttachements: [],
             entriesToDisplay: [],
             filter: '',
         };
-        this.fuse = new Fuse(this.state.sessionEntries, {
+        this.fuse = new Fuse(this.state.listEntries, {
             keys: ['productName'],
             ignoreLocation: true,
             isCaseSensitive: false,
@@ -64,22 +64,22 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         topBar.rightButtons = [
             {
                 id: 'add-photo',
-                icon: require('../../../assets/icons/add-a-photo-regular.png'),
+                icon: require('../../../../assets/icons/add-a-photo-regular.png'),
                 text: 'Ajouter une photo',
             },
             {
                 id: 'add-extra',
-                icon: require('../../../assets/icons/cart-plus-regular.png'),
+                icon: require('../../../../assets/icons/cart-plus-regular.png'),
                 text: 'Ajouter un article',
             },
             {
                 id: 'scan',
-                icon: require('../../../assets/icons/barcode-read-regular.png'),
+                icon: require('../../../../assets/icons/barcode-read-regular.png'),
                 text: 'Scanner un article',
             },
             {
                 id: 'export',
-                icon: require('../../../assets/icons/paper-plane-regular.png'),
+                icon: require('../../../../assets/icons/paper-plane-regular.png'),
                 text: 'Envoyer',
             },
         ];
@@ -105,24 +105,24 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     loadData(): void {
-        getRepository(GoodsReceiptSession)
-            .findOne(this.props.session.id, {
-                relations: ['goodsReceiptEntries', 'attachments'],
+        getRepository(GoodsReceiptList)
+            .findOne(this.props.list.id, {
+                relations: ['entries', 'attachments'],
             })
             .then((session): void => {
-                //console.log(session);
                 if (!session) {
                     throw new Error('Session not found');
                 }
-                let entries;
+                const sessionEntries = session.entries as GoodsReceiptEntry[];
+                let entries: GoodsReceiptEntry[];
                 if (this.state.filter) {
-                    entries = this.filteredEntries(session.goodsReceiptEntries, this.state.filter);
+                    entries = this.filteredEntries(sessionEntries, this.state.filter);
                 } else {
-                    entries = this.orderedReceiptEntries(session.goodsReceiptEntries);
+                    entries = this.orderedReceiptEntries(sessionEntries);
                 }
                 this.setState({
-                    sessionEntries: session.goodsReceiptEntries ?? [],
-                    sessionAttachments: session.attachments ?? [],
+                    listEntries: (session.entries as GoodsReceiptEntry[]) ?? [],
+                    listAttachements: session.attachments ?? [],
                     entriesToDisplay: entries,
                 });
             });
@@ -131,7 +131,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     filterEntriesWith(text: string): void {
         this.setState({
             filter: text,
-            entriesToDisplay: this.filteredEntries(this.state.sessionEntries, text),
+            entriesToDisplay: this.filteredEntries(this.state.listEntries, text),
         });
     }
 
@@ -150,26 +150,15 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         }
     }
 
-    //   didTapGoodsReceiptSessionItem = (props: GoodsReceiptSessionTapProps) => {
-    //     Navigation.push(props.componentId, {
-    //       component: {
-    //         name: "GoodsReceipt/Show",
-    //         passProps: {
-    //           inventorySessionId: props.item.id
-    //         }
-    //       }
-    //     });
-    //   };
-
     openGoodsReceiptScan(productId?: number): void {
         Navigation.showModal({
             stack: {
                 children: [
                     {
                         component: {
-                            name: 'GoodsReceipt/Scan',
+                            name: 'Lists/GoodsReceipt/Scan',
                             passProps: {
-                                session: this.props.session,
+                                list: this.props.list,
                                 preselectedProductId: productId,
                             },
                         },
@@ -180,18 +169,14 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     openGoodsReceiptExport = (): void => {
-        // if (false == this.state.session.isReadyForExport()) {
-        //     Alert.alert(`Au moins un des produits n'a pas été scanné. Merci de finir la réception.`);
-        //     return;
-        // }
         Navigation.showModal({
             stack: {
                 children: [
                     {
                         component: {
-                            name: 'GoodsReceipt/Export',
+                            name: 'Lists/GoodsReceipt/Export',
                             passProps: {
-                                session: this.props.session,
+                                list: this.props.list,
                             },
                         },
                     },
@@ -226,10 +211,10 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             } else {
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                const session: GoodsReceiptSession = this.props.session;
+                const list = this.props.list;
 
                 GoodsReceiptService.getInstance()
-                    .attachementFromImagePicker(session, response)
+                    .attachementFromImagePicker(list, response)
                     .then(attachement => {
                         getRepository(Attachment)
                             .save(attachement)
@@ -246,23 +231,19 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     }
 
     itemBackgroundColor(entry: GoodsReceiptEntry): string {
-        if (entry.productQty === null) {
+        if (entry.quantity === null) {
             return 'white';
         }
 
         switch (entry.getStatus()) {
             case EntryStatus.ERROR:
                 return '#d9534f';
-                break;
             case EntryStatus.WARNING:
                 return '#ffc30f';
-                break;
             case EntryStatus.VALID:
                 return '#5cb85c';
-                break;
             default:
                 return 'white';
-                break;
         }
     }
 
@@ -303,9 +284,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
     renderHeader = (): React.ReactElement => {
         return (
             <View>
-                <Text style={{ fontSize: 25, margin: 5 }}>{this.props.session.partnerName}</Text>
-                <Text style={{ fontSize: 15, margin: 5, fontStyle: 'italic' }}>
-                    {this.props.session.poName} - {moment(this.props.session.createdAt).format('DD MMMM YYYY')}
+                <Text style={{ fontSize: 25, margin: 12, marginBottom: 0 }}>{this.props.list.partnerName}</Text>
+                <Text style={{ fontSize: 15, margin: 12, marginTop: 0, fontStyle: 'italic' }}>
+                    {this.props.list.purchaseOrderName} - {moment(this.props.list.createdAt).format('DD MMMM YYYY')}
                 </Text>
                 <SearchBar
                     placeholder="Filtrer ici ..."
@@ -335,7 +316,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         if (false === entry.isValidQuantity() || false === entry.isValidUom()) {
             correctQty = (
                 <Text style={{ fontSize: 16 }}>
-                    {displayNumber(entry.productQty)} {ProductProduct.quantityUnitAsString(entry.productUom)}
+                    {displayNumber(entry.quantity)} {ProductProduct.quantityUnitAsString(entry.unit)}
                 </Text>
             );
         }
@@ -363,7 +344,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
             <FlatList
                 scrollEnabled={false}
                 // style={{ backgroundColor: 'white' }}
-                data={this.state.sessionAttachments}
+                data={this.state.listAttachements}
                 keyExtractor={(item): string => {
                     return item.path ? item.path : '';
                 }}
@@ -396,8 +377,7 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
         if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
             correctPackageQty = (
                 <Text style={{ fontSize: 16 }}>
-                    {entry.productQtyPackage} x {entry.packageQty}{' '}
-                    {ProductProduct.quantityUnitAsString(entry.productUom)}
+                    {entry.productQtyPackage} x {entry.packageQty} {ProductProduct.quantityUnitAsString(entry.unit)}
                 </Text>
             );
         }
@@ -445,7 +425,9 @@ export default class GoodsReceiptShow extends React.Component<GoodsReceiptShowPr
                                 topDivider
                             >
                                 <ListItem.Content>
-                                    <ListItem.Title>{item.productName}</ListItem.Title>
+                                    <ListItem.Title numberOfLines={1} ellipsizeMode={'middle'}>
+                                        {item.productName}
+                                    </ListItem.Title>
                                     <ListItem.Subtitle
                                         style={item.productBarcode ? undefined : { fontStyle: 'italic' }}
                                     >

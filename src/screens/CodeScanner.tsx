@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
     StyleSheet,
     Text,
@@ -9,6 +9,7 @@ import {
     Platform,
     Vibration,
     DeviceEventEmitter,
+    Alert,
 } from 'react-native';
 import DialogInput from 'react-native-dialog-input';
 import {
@@ -32,6 +33,10 @@ import KeepAwake from '@sayem314/react-native-keep-awake';
 import DataWedgeIntents from 'react-native-datawedge-intents';
 import { deviceId } from '../utils/helpers';
 import { Button, Icon } from 'react-native-elements';
+import Odoo from '../utils/Odoo';
+import ProductProduct from '../entities/Odoo/ProductProduct';
+import Mailjet from '../utils/Mailjet';
+import ScannerInfoPanel from './ScannerInfoPanel';
 
 // const flashModeOrder: { [key: string]: keyof FlashMode } = {
 //     off: RNCamera.Constants.FlashMode.on,
@@ -40,14 +45,14 @@ import { Button, Icon } from 'react-native-elements';
 //     torch: RNCamera.Constants.FlashMode.off,
 // };
 
-const wbOrder: { [key: string]: keyof WhiteBalance } = {
-    auto: RNCamera.Constants.WhiteBalance.sunny,
-    sunny: RNCamera.Constants.WhiteBalance.cloudy,
-    cloudy: RNCamera.Constants.WhiteBalance.shadow,
-    shadow: RNCamera.Constants.WhiteBalance.fluorescent,
-    fluorescent: RNCamera.Constants.WhiteBalance.incandescent,
-    incandescent: RNCamera.Constants.WhiteBalance.auto,
-};
+// const wbOrder: { [key: string]: keyof WhiteBalance } = {
+//     auto: RNCamera.Constants.WhiteBalance.sunny,
+//     sunny: RNCamera.Constants.WhiteBalance.cloudy,
+//     cloudy: RNCamera.Constants.WhiteBalance.shadow,
+//     shadow: RNCamera.Constants.WhiteBalance.fluorescent,
+//     fluorescent: RNCamera.Constants.WhiteBalance.incandescent,
+//     incandescent: RNCamera.Constants.WhiteBalance.auto,
+// };
 
 interface BarcodeReadEvent {
     data: string;
@@ -64,12 +69,15 @@ interface BarcodeReadEvent {
 
 const landmarkSize = 2;
 
-interface Scanner2Props {
-    ref?: (instance: Scanner2) => void;
-    onBarcodeRead?: (barcode: Barcode) => void;
+interface Props {
+    ref?: (instance: CodeScanner) => void;
+    extraInfoPanel?: (product: ProductProduct) => ReactNode;
+    onProductFound?: (product: ProductProduct) => void;
+
+    showInfoPanel?: boolean;
 }
 
-interface Scanner2State {
+interface State {
     flash: keyof FlashMode;
     zoom: number;
     autoFocus?: keyof AutoFocus;
@@ -96,6 +104,8 @@ interface Scanner2State {
     textBlocks: TrackedTextFeature[];
     barcodes: Barcode[];
 
+    barcode?: Barcode;
+    product?: ProductProduct;
     previousBarcode?: Barcode;
     displayCamera: boolean;
     showManualSearchView: boolean;
@@ -195,19 +205,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         textAlign: 'center',
         backgroundColor: 'transparent',
+        width: '100%',
     },
 });
 
-export default class Scanner2 extends React.Component<Scanner2Props, Scanner2State> {
+export default class CodeScanner extends React.Component<Props, State> {
     private camera: RNCamera | null = null;
     private beepSound: Sound;
-    private scannerMode: 'legacyCamera' | 'dataWedge';
+    private scannerMode: 'camera' | 'dataWedge';
     /* DataWedge */
     private sendCommandResult: 'true' | 'false' = 'false';
     private broadcastReceiverHandler?: (intent: any) => void;
     /* End DataWedge */
 
-    state: Scanner2State = {
+    state: State = {
         flash: RNCamera.Constants.FlashMode.off,
         zoom: 0,
         autoFocus: RNCamera.Constants.AutoFocus.on,
@@ -235,22 +246,23 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         textBlocks: [],
         barcodes: [],
 
+        barcode: undefined,
+        product: undefined,
         previousBarcode: undefined,
         displayCamera: true,
         showManualSearchView: false,
     };
 
-    constructor(props: Scanner2Props) {
+    constructor(props: Props) {
         super(props);
         this.state.canDetectBarcode = true;
-        this.scannerMode = 'legacyCamera';
+        this.scannerMode = 'camera';
 
         // Sound
         Sound.setCategory('Ambient', true);
         this.beepSound = new Sound('beep.mp3', Sound.MAIN_BUNDLE, error => {
             if (error) {
                 console.log('failed to load the sound', error);
-                return;
             }
         });
         this.beepSound.stop();
@@ -267,6 +279,12 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             this.determineVersion();
         }
         /* End DataWedge */
+    }
+
+    componentWillUnmount(): void {
+        if (this.broadcastReceiverHandler) {
+            DeviceEventEmitter.removeListener('datawedge_broadcast_intent', this.broadcastReceiverHandler);
+        }
     }
 
     /* DataWedge */
@@ -315,8 +333,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             if (datawedgeVersion >= '6.3') this.datawedge63();
             if (datawedgeVersion >= '6.4') this.datawedge64();
             if (datawedgeVersion >= '6.5') this.datawedge65();
-
-            //this.setState(this.state);
         } else if (intent.hasOwnProperty('com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS')) {
             //  Return from our request to enumerate the available scanners
             const enumeratedScannersObj = intent['com.symbol.datawedge.api.RESULT_ENUMERATE_SCANNERS'];
@@ -336,16 +352,11 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         //  Create a profile for our application
         this.sendCommand('com.symbol.datawedge.api.CREATE_PROFILE', 'Supercoop');
 
-        //this.state.dwVersionText = '6.3.  Please configure profile manually.  See ReadMe for more details.';
-
         //  Although we created the profile we can only configure it with DW 6.4.
         this.sendCommand('com.symbol.datawedge.api.GET_ACTIVE_PROFILE', '');
 
         //  Enumerate the available scanners on the device
         this.sendCommand('com.symbol.datawedge.api.ENUMERATE_SCANNERS', '');
-
-        //  Functionality of the scan button is available
-        //this.state.scanButtonVisible = true;
     }
 
     datawedge64(): void {
@@ -408,17 +419,12 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     datawedge65(): void {
         console.log('Datawedge 6.5 APIs are available');
 
-        //this.state.dwVersionText = '6.5 or higher.';
-
         //  Instruct the API to send
         this.sendCommandResult = 'true';
-        //this.state.lastApiVisible = true;
     }
 
     commandReceived(commandText: string): void {
-        //this.state.lastApiText = commandText;
         console.log('lastApiText: ' + commandText);
-        //this.setState(this.state);
     }
 
     enumerateScanners(enumeratedScanners: any): void {
@@ -437,13 +443,10 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             if (i < enumeratedScanners.length - 1) humanReadableScannerList += ', ';
         }
         console.info(humanReadableScannerList);
-        //this.state.enumeratedScannersText = humanReadableScannerList;
     }
 
     activeProfile(theActiveProfile: string): void {
         console.log('Active Profile: ' + theActiveProfile);
-        //this.state.activeProfileText = theActiveProfile;
-        //this.setState(this.state);
     }
 
     dataWedgeBarcodeScanned(scanData: { [x: string]: any }, timeOfScan: string): void {
@@ -468,27 +471,17 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             displayCamera: false,
         });
         this.barcodeRecognized(barcodeEvent);
-        //console.log('Scan: ' + scannedData);
-        //this.state.scans.unshift({ data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan });
-        //console.log(this.state.scans);
-        //this.setState(this.state);
     }
     /* End DataWedge */
-
-    componentWillUnmount(): void {
-        if (this.broadcastReceiverHandler) {
-            DeviceEventEmitter.removeListener('datawedge_broadcast_intent', this.broadcastReceiverHandler);
-        }
-    }
 
     findBestRatio = async (): Promise<void> => {
         if (Platform.OS === 'android' && this.camera) {
             const ratios = await this.camera.getSupportedRatiosAsync();
 
             // Usually the last element of "ratios" is the maximum supported ratio
-            let ratio = ratios.find(ratio => ratio === '16:9');
+            let ratio = ratios.find(ratioElement => ratioElement === '16:9');
             if (ratio === undefined) {
-                ratio = ratios.find(ratio => ratio === '4:3');
+                ratio = ratios.find(ratioElement => ratioElement === '4:3');
             }
 
             this.setState({
@@ -500,7 +493,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     reset = (): void => {
         this.setState({
             barcodes: [],
-            previousBarcode: undefined,
             displayCamera: true,
             showManualSearchView: false,
         });
@@ -515,15 +507,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     pauseCamera = (): void => this.setState({ displayCamera: false });
     resumeCamera = (): void => this.setState({ displayCamera: true });
 
-    toggleFacing = (): void => {
-        this.setState(previousState => ({
-            type:
-                previousState.type === RNCamera.Constants.Type.back
-                    ? RNCamera.Constants.Type.front
-                    : RNCamera.Constants.Type.back,
-        }));
-    };
-
     setFlash = (flash: keyof FlashMode): void => {
         this.setState({ flash });
     };
@@ -533,12 +516,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
             return;
         }
         this.setFlash(RNCamera.Constants.FlashMode.off);
-    };
-
-    toggleWB = (): void => {
-        this.setState(previousState => ({
-            whiteBalance: wbOrder[previousState.whiteBalance],
-        }));
     };
 
     setAutofocus = (autoFocus: keyof AutoFocus): void => {
@@ -573,155 +550,6 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                 drawRectPosition: { x: pageX, y: pageY },
             },
         });
-    };
-
-    zoomOut = (): void => {
-        this.setState(previousState => ({
-            zoom: previousState.zoom - 0.1 < 0 ? 0 : previousState.zoom - 0.1,
-        }));
-    };
-
-    zoomIn = (): void => {
-        this.setState(previousState => ({
-            zoom: previousState.zoom + 0.1 > 1 ? 1 : previousState.zoom + 0.1,
-        }));
-    };
-
-    setFocusDepth = (depth: number) => (): void => {
-        this.setState({
-            depth,
-        });
-    };
-
-    takePicture = async (): Promise<void> => {
-        if (this.camera) {
-            const data = await this.camera.takePictureAsync();
-            console.warn('takePicture ', data);
-        }
-    };
-
-    takeVideo = async (): Promise<void> => {
-        if (this.camera) {
-            try {
-                const promise = this.camera.recordAsync(this.state.recordOptions);
-
-                if (promise) {
-                    this.setState({ isRecording: true });
-                    const data = await promise;
-                    this.setState({ isRecording: false });
-                    console.warn('takeVideo', data);
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    };
-
-    toggle = (value: 'canDetectFaces' | 'canDetectText' | 'canDetectBarcode'): void => {
-        const oldValue = this.state[value] as boolean;
-        if (value == 'canDetectFaces') {
-            this.setState({ canDetectFaces: !oldValue });
-        }
-        if (value == 'canDetectText') {
-            this.setState({ canDetectText: !oldValue });
-        }
-        if (value == 'canDetectBarcode') {
-            this.setState({ canDetectBarcode: !oldValue });
-        }
-    };
-
-    facesDetected = (response: { faces: Face[] }): void => this.setState({ faces: response.faces });
-
-    renderFace = ({ bounds, faceID, rollAngle, yawAngle }: Face): React.ReactElement => (
-        <View
-            key={faceID}
-            // transform={[
-            //   { perspective: 600 },
-            //   { rotateZ: `${rollAngle!.toFixed(0)}deg` },
-            //   { rotateY: `${yawAngle!.toFixed(0)}deg` },
-            // ]}
-            style={[
-                styles.face,
-                {
-                    ...bounds.size,
-                    left: bounds.origin.x,
-                    top: bounds.origin.y,
-                },
-            ]}
-        >
-            <Text style={styles.faceText}>ID: {faceID}</Text>
-            <Text style={styles.faceText}>rollAngle: {rollAngle && rollAngle.toFixed(0)}</Text>
-            <Text style={styles.faceText}>yawAngle: {yawAngle && yawAngle.toFixed(0)}</Text>
-        </View>
-    );
-
-    renderLandmarksOfFace = (face: Face): React.ReactElement => {
-        const renderLandmark = (position?: Point<number>): React.ReactElement | undefined =>
-            position && (
-                <View
-                    style={[
-                        styles.landmark,
-                        {
-                            left: position.x - landmarkSize / 2,
-                            top: position.y - landmarkSize / 2,
-                        },
-                    ]}
-                />
-            );
-        return (
-            <View key={`landmarks-${face.faceID}`}>
-                {renderLandmark(face.leftEyePosition)}
-                {renderLandmark(face.rightEyePosition)}
-                {renderLandmark(face.leftEarPosition)}
-                {renderLandmark(face.rightEarPosition)}
-                {renderLandmark(face.leftCheekPosition)}
-                {renderLandmark(face.rightCheekPosition)}
-                {renderLandmark(face.leftMouthPosition)}
-                {renderLandmark(face.mouthPosition)}
-                {renderLandmark(face.rightMouthPosition)}
-                {renderLandmark(face.noseBasePosition)}
-                {renderLandmark(face.bottomMouthPosition)}
-            </View>
-        );
-    };
-
-    renderFaces = (): React.ReactElement => (
-        <View style={styles.facesContainer} pointerEvents="none">
-            {this.state.faces.map(this.renderFace)}
-        </View>
-    );
-
-    renderLandmarks = (): React.ReactElement => (
-        <View style={styles.facesContainer} pointerEvents="none">
-            {this.state.faces.map(this.renderLandmarksOfFace)}
-        </View>
-    );
-
-    renderTextBlocks = (): React.ReactElement => (
-        <View style={styles.facesContainer} pointerEvents="none">
-            {this.state.textBlocks.map(this.renderTextBlock)}
-        </View>
-    );
-
-    renderTextBlock = ({ bounds, value }: TrackedTextFeature): React.ReactElement => (
-        <React.Fragment key={value + bounds.origin.x}>
-            <Text style={[styles.textBlock, { left: bounds.origin.x, top: bounds.origin.y }]}>{value}</Text>
-            <View
-                style={[
-                    styles.text,
-                    {
-                        ...bounds.size,
-                        left: bounds.origin.x,
-                        top: bounds.origin.y,
-                    },
-                ]}
-            />
-        </React.Fragment>
-    );
-
-    textRecognized = (response: { textBlocks: TrackedTextFeature[] }): void => {
-        const { textBlocks } = response;
-        this.setState({ textBlocks });
     };
 
     legacyBarcodeToBarcode = (legacy: BarcodeReadEvent): Barcode => {
@@ -772,18 +600,55 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({ barcodes: [barcode] });
         if (undefined === previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
-            if ('legacyCamera' === this.scannerMode) {
+            if ('camera' === this.scannerMode) {
                 Vibration.vibrate(500, false);
                 this.beepSound.play(() => {
                     this.beepSound.stop(); // Resets file for immediate play availability
                 });
             }
-            if (this.props.onBarcodeRead !== undefined) {
-                this.props.onBarcodeRead(barcode);
-                return;
-            }
         }
     };
+
+    lookupForBarcode(barcode: Barcode): void {
+        Odoo.getInstance()
+            .fetchProductFromBarcode(barcode.data)
+            .then(
+                odooProductProduct => {
+                    if (!odooProductProduct) {
+                        this.handleNotFoundProductProduct(barcode);
+                        return;
+                    }
+                    if (this.props.onProductFound !== undefined) {
+                        this.props.onProductFound(odooProductProduct);
+                    }
+                },
+                reason => {
+                    Alert.alert('Erreur', `Une erreur est survenue ("${reason}"). Merci de réessayer.`);
+                    this.reset();
+                },
+            );
+    }
+
+    handleNotFoundProductProduct(barcode: Barcode): void {
+        // TODO: Alert avec option de fermer ou de signaler avec reportUnknownProductProductByMail()
+    }
+
+    reportUnknownProductProductByMail(odooProductProduct: ProductProduct): void {
+        const to = 'inventaire@supercoop.fr';
+        const subject = `Code barre inconnu (${odooProductProduct.barcode})`;
+        const body = `Le code barre ${odooProductProduct.barcode} est introuvable dans Odoo.
+Il a été associé à un produit nommé "${odooProductProduct.name}"`;
+        try {
+            Mailjet.getInstance()
+                .sendEmail(to, '', subject, body)
+                .then(() => {
+                    Alert.alert('Mail envoyé', 'Merci pour le signalement ! 🎉');
+                });
+        } catch (e) {
+            Alert.alert('Erreur', "Houston, une erreur est survenue lors de l'envoi du mail de signalement 😢");
+        }
+        this.reset();
+    }
 
     renderBarcodes = (): React.ReactElement => (
         <View style={styles.facesContainer} pointerEvents="none">
@@ -791,7 +656,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         </View>
     );
 
-    renderBarcode = ({ bounds, data }: Barcode): React.ReactElement => (
+    renderBarcode = ({ bounds, data }: Barcode): React.ReactFragment => (
         <React.Fragment key={data + bounds.origin.x}>
             <View
                 style={[
@@ -803,7 +668,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                     },
                 ]}
             >
-                <Text style={[styles.textBlock]}>{`${data}`}</Text>
+                <Text style={[styles.textBlock]} numberOfLines={1}>{`${data}`}</Text>
             </View>
         </React.Fragment>
     );
@@ -842,7 +707,7 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
     }
 
     renderCamera = (): React.ReactElement => {
-        const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;
+        const { canDetectBarcode } = this.state;
         return (
             <RNCamera
                 ref={(ref): void => {
@@ -870,14 +735,14 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                     console.error(error.message);
                 }}
                 onCameraReady={this.findBestRatio}
-                faceDetectionLandmarks={
-                    RNCamera.Constants.FaceDetection.Landmarks
-                        ? RNCamera.Constants.FaceDetection.Landmarks.all
-                        : undefined
-                }
+                // faceDetectionLandmarks={
+                //     RNCamera.Constants.FaceDetection.Landmarks
+                //         ? RNCamera.Constants.FaceDetection.Landmarks.all
+                //         : undefined
+                // }
                 captureAudio={false}
-                onFacesDetected={canDetectFaces ? this.facesDetected : undefined}
-                onTextRecognized={canDetectText ? this.textRecognized : undefined}
+                // onFacesDetected={canDetectFaces ? this.facesDetected : undefined}
+                // onTextRecognized={canDetectText ? this.textRecognized : undefined}
                 onBarCodeRead={canDetectBarcode ? this.barcodeRecognized : undefined}
                 //onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : undefined}
             >
@@ -931,10 +796,23 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
                             title=" Clavier"
                         />
                     </View>
+                    {__DEV__ ? (
+                        <Button
+                            title="test"
+                            onPress={(): void => {
+                                const barcodeEvent: BarcodeReadEvent = {
+                                    data: '3483981002176',
+                                    type: 'ean13',
+                                    bounds: {
+                                        origin: { x: '30', y: '60' },
+                                        size: { width: '320', height: '240' },
+                                    },
+                                };
+                                this.barcodeRecognized(barcodeEvent);
+                            }}
+                        />
+                    ) : null}
                 </View>
-                {!!canDetectFaces && this.renderFaces()}
-                {!!canDetectFaces && this.renderLandmarks()}
-                {!!canDetectText && this.renderTextBlocks()}
                 {!!canDetectBarcode && this.renderBarcodes()}
             </RNCamera>
         );
@@ -1011,19 +889,47 @@ export default class Scanner2 extends React.Component<Scanner2Props, Scanner2Sta
         );
     };
 
-    render(): React.ReactNode {
-        let cameraView;
-        if ('dataWedge' === this.scannerMode) {
-            cameraView = this.state.displayCamera ? this.renderDataWedgeInstruction() : undefined;
+    renderInfoPanel(): React.ReactNode {
+        let extraPanel: ReactNode = null;
+        if (this.state.product && this.props.extraInfoPanel) {
+            extraPanel = <View>{this.props.extraInfoPanel(this.state.product)}</View>;
         }
-        if ('legacyCamera' === this.scannerMode) {
-            cameraView = this.state.displayCamera ? this.renderCamera() : undefined;
+        return (
+            <ScannerInfoPanel
+                barcode={this.state.barcodes.length > 0 ? this.state.barcodes[0].data : undefined}
+                extraPanel={this.props.extraInfoPanel}
+                productNotFoundCallback={(): void => {
+                    console.error('Product not found');
+                    this.handleNotFoundProductProduct(this.state.barcodes[0]);
+                }}
+                productFoundCallback={(product): void => {
+                    if (this.props.onProductFound) {
+                        this.props.onProductFound(product);
+                    }
+                }}
+                onClose={(): void => {
+                    this.setState({ barcodes: [] });
+                }}
+            >
+                {extraPanel}
+            </ScannerInfoPanel>
+        );
+    }
+
+    render(): React.ReactNode {
+        let mainView;
+        if ('dataWedge' === this.scannerMode) {
+            mainView = this.state.displayCamera ? this.renderDataWedgeInstruction() : undefined;
+        }
+        if ('camera' === this.scannerMode) {
+            mainView = this.state.displayCamera ? this.renderCamera() : undefined;
         }
         return (
             <View style={styles.container}>
                 <KeepAwake />
                 {this.renderManualSearchView()}
-                {cameraView}
+                {mainView}
+                {this.renderInfoPanel()}
             </View>
         );
     }
