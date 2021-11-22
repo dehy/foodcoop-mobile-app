@@ -1,10 +1,10 @@
 import React from 'react';
-import { Alert, FlatList, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import CookieManager from 'react-native-cookies';
+import {Alert, FlatList, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import CookieManager from '@react-native-cookies/cookies';
 import Odoo from '../../../utils/Odoo';
-import { Navigation, Options } from 'react-native-navigation';
-import { ListItem } from 'react-native-elements';
+import {Navigation, Options} from 'react-native-navigation';
+import {ListItem} from 'react-native-elements';
 
 interface CookiesMaintenanceState {
     cookieItemList: CookiesMaintenanceFlatListItem[];
@@ -57,7 +57,7 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
                         subtitle: cookie.domain,
                     });
                 }
-                this.setState({ cookieItemList: cookieItemList });
+                this.setState({cookieItemList: cookieItemList});
             });
         }
         if (Platform.OS == 'android') {
@@ -125,7 +125,7 @@ path: ${cookie.path}`;
                 keyExtractor={(item): string => {
                     return item.title;
                 }}
-                renderItem={({ item }): React.ReactElement => (
+                renderItem={({item}): React.ReactElement => (
                     <ListItem onPress={(): void => this.didTapCookieItem(item.key)} bottomDivider>
                         <ListItem.Content>
                             <ListItem.Title>{item.title}</ListItem.Title>
@@ -145,14 +145,14 @@ path: ${cookie.path}`;
                 {this.renderCookieList()}
                 <FlatList
                     scrollEnabled={false}
-                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    ItemSeparatorComponent={({highlighted}): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && {marginLeft: 0}]} />
                     )}
-                    data={[{ title: 'Effacer les cookies', key: 'clear-cookies', color: 'red' }]}
-                    renderItem={({ item }): React.ReactElement => (
+                    data={[{title: 'Effacer les cookies', key: 'clear-cookies', color: 'red'}]}
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem onPress={(): void => this.didTapActionItem(item.key)}>
                             <ListItem.Content>
-                                <ListItem.Title style={{ color: item.color ?? 'black' }}>{item.title}</ListItem.Title>
+                                <ListItem.Title style={{color: item.color ?? 'black'}}>{item.title}</ListItem.Title>
                             </ListItem.Content>
                         </ListItem>
                     )}

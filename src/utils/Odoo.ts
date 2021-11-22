@@ -3,8 +3,8 @@
 import OdooApi from 'react-native-odoo-promise-based';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
-import CookieManager from 'react-native-cookies';
-import { isInt, replaceStringAt } from './helpers';
+import CookieManager from '@react-native-cookies/cookies';
+import {isInt, replaceStringAt} from './helpers';
 import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
 import PurchaseOrderFactory from '../factories/Odoo/PurchaseOrderFactory';
 import moment from 'moment';
@@ -275,7 +275,7 @@ export default class Odoo {
     async fetchProductSupplierInfoFromProductTemplateIds(
         productTemplateIds: number[],
         partnerId: number,
-    ): Promise<{ [id: number]: string } | undefined> {
+    ): Promise<{[id: number]: string} | undefined> {
         await this.assertConnect();
 
         const params = {
@@ -290,7 +290,7 @@ export default class Odoo {
         const response = await this.odooApi.search_read('product.supplierinfo', params);
         this.assertApiResponse(response);
 
-        const mapSupplierCode: { [productId: number]: string } = {};
+        const mapSupplierCode: {[productId: number]: string} = {};
         if (response.data && response.data.length > 0) {
             response.data.forEach((entry: OdooApiProductSupplierInfo) => {
                 if (entry.product_tmpl_id) {
