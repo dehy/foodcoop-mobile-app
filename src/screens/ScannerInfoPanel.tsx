@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Icon } from 'react-native-elements';
+import React, {ReactNode} from 'react';
+import {ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Icon} from 'react-native-elements';
 import Odoo from '../utils/Odoo';
-import ProductProduct, { UnitOfMeasurement } from '../entities/Odoo/ProductProduct';
+import ProductProduct, {UnitOfMeasurement} from '../entities/Odoo/ProductProduct';
 
 export interface Props {
     barcode?: string;
@@ -141,7 +141,7 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
 
     fetchProduct(barcode: string): void {
         this.odoo.fetchProductFromBarcode(barcode).then(product => {
-            this.setState({ product });
+            this.setState({product});
             if (!product) {
                 return;
             }
@@ -164,7 +164,7 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         if (this.props.onClose) {
             this.props.onClose();
         }
-        this.setState({ product: undefined });
+        this.setState({product: undefined});
     }
 
     renderLoading = (): React.ReactElement => {
@@ -175,20 +175,18 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
                     width: '100%',
                     height: '100%',
                     justifyContent: 'center',
-                }}
-            >
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon name="barcode" type="font-awesome-5" style={{ paddingRight: 8 }} />
-                    <Text style={{ fontSize: 18 }}>{this.props.barcode}</Text>
+                }}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Icon name="barcode" type="font-awesome-5" style={{paddingRight: 8}} />
+                    <Text style={{fontSize: 18}}>{this.props.barcode}</Text>
                 </View>
                 <View
                     style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'center',
-                    }}
-                >
-                    <ActivityIndicator size="small" style={{ paddingRight: 10 }} />
+                    }}>
+                    <ActivityIndicator size="small" style={{paddingRight: 10}} />
                     <Text>Chargement des informations produit</Text>
                 </View>
             </View>
@@ -199,7 +197,7 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         if (this.state.product?.image) {
             return (
                 <Image
-                    source={{ uri: this.state.product.image }}
+                    source={{uri: this.state.product.image}}
                     style={[styles.articleImage]}
                     resizeMode={'contain'}
                     resizeMethod={'resize'}
@@ -208,7 +206,7 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         }
         if (null === this.state.product?.image) {
             return (
-                <View style={[styles.articleImage, { backgroundColor: '#EEE', justifyContent: 'center' }]}>
+                <View style={[styles.articleImage, {backgroundColor: '#EEE', justifyContent: 'center'}]}>
                     <Icon name={'image'} type={'font-awesome-5'} color={'#999'} />
                 </View>
             );
@@ -223,15 +221,15 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         }
         return (
             <View>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{flexDirection: 'row'}}>
                     {this.renderProductImage()}
                     <Text numberOfLines={2} style={styles.articleName}>
                         {this.state.product.name}
                     </Text>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
-                    <View style={{ flex: 1, flexDirection: 'row', marginVertical: 8 }}>
-                        <View style={{ flex: 1, flexDirection: 'column' }}>
+                <View style={{flex: 1, flexDirection: 'row', marginVertical: 8}}>
+                    <View style={{flex: 1, flexDirection: 'row', marginVertical: 8}}>
+                        <View style={{flex: 1, flexDirection: 'column'}}>
                             <Text style={styles.detailTitle}>Prix</Text>
                             <Text style={styles.detailValue}>
                                 {undefined !== this.state.product.lstPrice
@@ -239,7 +237,7 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
                                     : '-'}
                             </Text>
                         </View>
-                        <View style={{ flex: 1 }}>
+                        <View style={{flex: 1}}>
                             <Text style={styles.detailTitle}>
                                 {UnitOfMeasurement.unit === this.state.product?.packagingUnit() ? 'Unité' : null}
                                 {UnitOfMeasurement.kg === this.state.product?.packagingUnit() ? 'Poids' : null}
@@ -247,14 +245,13 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
                             </Text>
                             <Text style={styles.detailValue}>{this.state.product.packagingAsString()}</Text>
                         </View>
-                        <View style={{ flex: 1 }}>
+                        <View style={{flex: 1}}>
                             <Text style={styles.detailTitle}>Stock</Text>
                             <Text
                                 style={[
                                     styles.detailValue,
                                     !this.state.product.quantityIsValid() ? styles.detailValueInvalid : undefined,
-                                ]}
-                            >
+                                ]}>
                                 {this.state.product.quantityIsValid() ? this.state.product.quantityAsString() : '-'}
                             </Text>
                         </View>
@@ -281,8 +278,8 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
             return null;
         }
         return (
-            <View style={[styles.information, { marginTop: 8 }]}>
-                <TouchableOpacity style={{ position: 'absolute', right: 0, top: 0 }} onPress={(): void => this.close()}>
+            <View style={[styles.information, {marginTop: 8}]}>
+                <TouchableOpacity style={{position: 'absolute', right: 0, top: 0}} onPress={(): void => this.close()}>
                     <Icon name="times-circle" type="font-awesome-5" color={'#999'} style={styles.closeIcon} />
                 </TouchableOpacity>
                 {this.renderContent()}

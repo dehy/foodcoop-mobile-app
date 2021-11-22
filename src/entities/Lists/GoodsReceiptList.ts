@@ -1,6 +1,6 @@
 'use strict';
 
-import { ChildEntity } from 'typeorm';
+import {ChildEntity} from 'typeorm';
 import BaseList from './BaseList';
 
 export type GoodsReceiptListExtraData = {

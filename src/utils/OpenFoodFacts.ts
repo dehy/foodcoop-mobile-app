@@ -1,5 +1,5 @@
 import DeviceInfo from 'react-native-device-info';
-import { NutriScoreScore } from '../components/NutriScore';
+import {NutriScoreScore} from '../components/NutriScore';
 import AppLogger from './AppLogger';
 import Odoo from './Odoo';
 
@@ -41,7 +41,7 @@ export default class OpenFoodFacts {
                 'User-Agent': this.userAgent,
             },
         };
-        const parameters: { [key: string]: string | string[] } = {
+        const parameters: {[key: string]: string | string[]} = {
             fields: [
                 'nova_group',
                 'nutriscore_score',

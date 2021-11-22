@@ -9,10 +9,10 @@ import {
 } from 'typeorm';
 import InventoryEntryExtraData from './InventoryEntry';
 import BaseList from './BaseList';
-import { GoodsReceiptEntryExtraData } from './GoodsReceiptEntry';
+import {GoodsReceiptEntryExtraData} from './GoodsReceiptEntry';
 
 @Entity('entries')
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
+@TableInheritance({column: {type: 'varchar', name: 'type'}})
 export default abstract class BaseEntry {
     @PrimaryGeneratedColumn()
     public id?: number;
@@ -26,16 +26,16 @@ export default abstract class BaseEntry {
     @Column('varchar')
     public productName?: string;
 
-    @Column({ type: 'float', nullable: true })
+    @Column({type: 'float', nullable: true})
     public quantity?: number;
 
-    @Column({ type: 'int', nullable: true })
+    @Column({type: 'int', nullable: true})
     public unit?: number;
 
-    @Column({ type: 'float', nullable: true })
+    @Column({type: 'float', nullable: true})
     public price?: number;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({type: 'text', nullable: true})
     public comment?: string;
 
     @CreateDateColumn()
@@ -48,7 +48,7 @@ export default abstract class BaseEntry {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         type => BaseList,
         list => list.entries,
-        { onDelete: 'CASCADE' },
+        {onDelete: 'CASCADE'},
     )
     public list?: BaseList;
 

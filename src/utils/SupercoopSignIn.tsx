@@ -1,10 +1,10 @@
-import { KEYUTIL, KJUR, RSAKey } from 'jsrsasign';
+import {KEYUTIL, KJUR, RSAKey} from 'jsrsasign';
 import JwtDecode from 'jwt-decode';
-import { AuthConfiguration, authorize, AuthorizeResult, refresh, RefreshResult } from 'react-native-app-auth';
+import {AuthConfiguration, authorize, AuthorizeResult, refresh, RefreshResult} from 'react-native-app-auth';
 import * as Sentry from '@sentry/react-native';
-import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage';
-import { Button, ButtonProps } from 'react-native';
-import React, { Component, ReactElement } from 'react';
+import RNSecureStorage, {ACCESSIBLE} from 'rn-secure-storage';
+import {Button, ButtonProps} from 'react-native';
+import React, {Component, ReactElement} from 'react';
 import Mailjet from './Mailjet';
 import Config from 'react-native-config';
 
@@ -98,7 +98,7 @@ export default class SupercoopSignIn {
         // console.debug(user);
         this.currentUser = user;
         if (undefined !== user) {
-            Sentry.setUser({ email: user.email });
+            Sentry.setUser({email: user.email});
             Mailjet.getInstance().setSender(user.name);
         } else {
             Sentry.setUser(null);
@@ -106,11 +106,11 @@ export default class SupercoopSignIn {
     }
 
     signInSilently = async (): Promise<void> => {
-        const { refreshToken, idToken } = await this.getTokensFromSecureStorage();
+        const {refreshToken, idToken} = await this.getTokensFromSecureStorage();
         const user = await this.getUserFromToken(idToken);
         if (undefined === user) {
             try {
-                const result = await refresh(this.config, { refreshToken: refreshToken });
+                const result = await refresh(this.config, {refreshToken: refreshToken});
                 const user = await this.getUserFromToken(result.idToken);
                 this.saveTokensFromResult(result);
                 this.setCurrentUser(user);
@@ -166,18 +166,18 @@ export default class SupercoopSignIn {
 
     private async saveTokensFromResult(result: AuthorizeResult | RefreshResult): Promise<void> {
         if (result.refreshToken) {
-            await RNSecureStorage.set('refreshToken', result.refreshToken, { accessible: ACCESSIBLE.WHEN_UNLOCKED });
+            await RNSecureStorage.set('refreshToken', result.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
         } else {
             await RNSecureStorage.remove('refreshToken');
         }
-        await RNSecureStorage.set('idToken', result.idToken, { accessible: ACCESSIBLE.WHEN_UNLOCKED });
+        await RNSecureStorage.set('idToken', result.idToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
     }
 
     private async getTokensFromSecureStorage(): Promise<any> {
         const refreshToken = await RNSecureStorage.get('refreshToken');
         const idToken = await RNSecureStorage.get('idToken');
 
-        return { refreshToken, idToken };
+        return {refreshToken, idToken};
     }
 
     private async removeTokensFromSecureStorage(): Promise<void> {

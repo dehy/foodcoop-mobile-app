@@ -1,10 +1,10 @@
-import { DateTime } from 'luxon';
-import React, { ReactNode } from 'react';
-import { Alert, SafeAreaView, ScrollView, View } from 'react-native';
-import { Button, ListItem, ThemeProvider } from 'react-native-elements';
-import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import { getConnection } from 'typeorm';
+import {DateTime} from 'luxon';
+import React, {ReactNode} from 'react';
+import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
+import {Button, ListItem, ThemeProvider} from 'react-native-elements';
+import {Navigation, Options} from 'react-native-navigation';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import {getConnection} from 'typeorm';
 import InventoryList from '../../../entities/Lists/InventoryList';
 
 type Props = {
@@ -16,7 +16,7 @@ type State = {};
 export default class ListsInventoryNew extends React.Component<Props, State> {
     theme = {
         Button: {
-            iconContainerStyle: { marginRight: 5 },
+            iconContainerStyle: {marginRight: 5},
         },
         Icon: {
             type: 'font-awesome-5',
@@ -85,15 +85,15 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                                 <ListItem.Title>Date</ListItem.Title>
                             </ListItem.Content>
                             <ListItem.Content right>
-                                <ListItem.Title style={{ width: '150%', textAlign: 'right' }}>
+                                <ListItem.Title style={{width: '150%', textAlign: 'right'}}>
                                     {this.dateValue.setLocale('fr-fr').toLocaleString(DateTime.DATETIME_SHORT)}
                                 </ListItem.Title>
                             </ListItem.Content>
                         </ListItem>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                             <Button
                                 title="Commencer l'inventaire"
-                                style={{ margin: 20 }}
+                                style={{margin: 20}}
                                 onPress={(): void => {
                                     this.createListAndDismiss();
                                 }}

@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
-import { FlatList, SafeAreaView, View } from 'react-native';
-import { Icon, ListItem, Text, ThemeProvider } from 'react-native-elements';
-import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../utils/navigation';
+import React, {ReactElement} from 'react';
+import {FlatList, SafeAreaView, View} from 'react-native';
+import {Icon, ListItem, Text, ThemeProvider} from 'react-native-elements';
+import {Navigation, Options} from 'react-native-navigation';
+import {defaultScreenOptions} from '../../utils/navigation';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
@@ -18,7 +18,7 @@ export const RegisteredListTypes = [InventoryList, GoodsReceiptList];
 export default class ListsNewStepType extends React.Component<Props, State> {
     theme = {
         Button: {
-            iconContainerStyle: { marginRight: 5 },
+            iconContainerStyle: {marginRight: 5},
         },
         Icon: {
             type: 'font-awesome-5',
@@ -44,7 +44,7 @@ export default class ListsNewStepType extends React.Component<Props, State> {
         return options;
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+    navigationButtonPressed({buttonId}: {buttonId: string}): void {
         if (buttonId === 'cancel') {
             Navigation.dismissModal(this.props.componentId);
         }
@@ -76,7 +76,7 @@ export default class ListsNewStepType extends React.Component<Props, State> {
         return (
             <ThemeProvider theme={this.theme}>
                 <SafeAreaView>
-                    <View style={{ padding: 10 }}>
+                    <View style={{padding: 10}}>
                         <Text>
                             Pour quelle activité souhaites-tu créer une liste ? Cela va influer sur les outils mis à ta
                             disposition pour remplir cette liste.
@@ -89,12 +89,11 @@ export default class ListsNewStepType extends React.Component<Props, State> {
                                 listType: type,
                             };
                         })}
-                        renderItem={({ item }): ReactElement => (
+                        renderItem={({item}): ReactElement => (
                             <ListItem
                                 onPress={(): void => {
                                     this.didTapTypeItem(item.listType);
-                                }}
-                            >
+                                }}>
                                 <Icon type="font-awesome-5" name={item.listType.icon} />
                                 <ListItem.Content>
                                     <ListItem.Title>{item.listType.label}</ListItem.Title>

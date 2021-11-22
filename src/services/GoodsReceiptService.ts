@@ -5,11 +5,11 @@ import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
 import GoodsReceiptList from '../entities/Lists/GoodsReceiptList';
 import GoodsReceiptEntry from '../../src/entities/Lists/GoodsReceiptEntry';
 import ListAttachment from '../entities/Lists/ListAttachment';
-import { ImagePickerResponse } from 'react-native-image-picker';
+import {ImagePickerResponse} from 'react-native-image-picker';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
-import { lightRandomId } from '../../src/utils/helpers';
-import { getRepository } from 'typeorm';
+import {lightRandomId} from '../../src/utils/helpers';
+import {getRepository} from 'typeorm';
 
 export default class GoodsReceiptService {
     private static instance: GoodsReceiptService;

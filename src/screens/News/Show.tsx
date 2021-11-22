@@ -1,7 +1,7 @@
 import React from 'react';
-import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../utils/navigation';
-import { Moment } from 'moment';
+import {Navigation, Options} from 'react-native-navigation';
+import {defaultScreenOptions} from '../../utils/navigation';
+import {Moment} from 'moment';
 import WebView from 'react-native-webview';
 
 export interface NewsShowProps {
@@ -34,7 +34,7 @@ export default class NewsShow extends React.Component<NewsShowProps, NewsShowSta
     render(): React.ReactNode {
         return (
             <WebView
-                source={{ uri: this.props.newsItem.url }}
+                source={{uri: this.props.newsItem.url}}
                 onLoadProgress={(e): void => console.debug(e.nativeEvent.progress)}
                 injectedJavaScript={`
                         (function() {

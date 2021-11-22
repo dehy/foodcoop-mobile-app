@@ -1,11 +1,11 @@
 import React from 'react';
-import { SafeAreaView, FlatList } from 'react-native';
-import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../utils/navigation';
+import {SafeAreaView, FlatList} from 'react-native';
+import {Navigation, Options} from 'react-native-navigation';
+import {defaultScreenOptions} from '../../utils/navigation';
 import * as rssParser from 'react-native-rss-parser';
 import moment from 'moment';
-import { NewsItem } from './Show';
-import { Icon, ListItem } from 'react-native-elements';
+import {NewsItem} from './Show';
+import {Icon, ListItem} from 'react-native-elements';
 import Config from 'react-native-config';
 
 export interface NewsListProps {
@@ -83,15 +83,14 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
         return (
             <SafeAreaView>
                 <FlatList
-                    style={{ backgroundColor: 'white' }}
+                    style={{backgroundColor: 'white'}}
                     data={this.state.news}
-                    renderItem={({ item }): React.ReactElement => (
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem
                             onPress={(): void => {
                                 this.didTapNewsItem(item);
                             }}
-                            bottomDivider
-                        >
+                            bottomDivider>
                             <ListItem.Content>
                                 <ListItem.Title>{item.title}</ListItem.Title>
                                 <ListItem.Subtitle>publié le {item.published.format('DD MMMM YYYY')}</ListItem.Subtitle>

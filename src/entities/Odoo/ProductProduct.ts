@@ -1,6 +1,6 @@
 'use strict';
 
-import { isFloat } from '../../utils/helpers';
+import {isFloat} from '../../utils/helpers';
 
 export enum UnitOfMeasurement {
     unit = 1,

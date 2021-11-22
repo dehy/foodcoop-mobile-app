@@ -1,4 +1,4 @@
-import { ChildEntity } from 'typeorm';
+import {ChildEntity} from 'typeorm';
 import BaseEntry from './BaseEntry';
 
 export enum EntryStatus {

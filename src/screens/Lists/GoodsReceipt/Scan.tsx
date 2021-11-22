@@ -1,18 +1,18 @@
 import React from 'react';
-import { Image, Platform, SafeAreaView, Text, TextInput, View, Alert } from 'react-native';
+import {Image, Platform, SafeAreaView, Text, TextInput, View, Alert} from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import CodeScanner from '../../CodeScanner';
-import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../../utils/navigation';
+import {Navigation, Options} from 'react-native-navigation';
+import {defaultScreenOptions} from '../../../utils/navigation';
 import Odoo from '../../../utils/Odoo';
-import ProductProduct, { UnitOfMeasurement } from '../../../entities/Odoo/ProductProduct';
-import { getConnection, getRepository } from 'typeorm';
-import GoodsReceiptEntry, { EntryStatus } from '../../../entities/Lists/GoodsReceiptEntry';
+import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductProduct';
+import {getConnection, getRepository} from 'typeorm';
+import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import AppLogger from '../../../utils/AppLogger';
-import { toNumber, displayNumber, isFloat } from '../../../utils/helpers';
-import { Button, Icon, Input, ListItem, ThemeProvider } from 'react-native-elements';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {toNumber, displayNumber, isFloat} from '../../../utils/helpers';
+import {Button, Icon, Input, ListItem, ThemeProvider} from 'react-native-elements';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface Props {
     componentId: string;
@@ -32,7 +32,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
     colorSuccessDisabled = '#D6EDDB';
     colorDanger = '#DC3545';
     colorDangerDisabled = '#F7D8DB';
-    uomList: { [k: string]: number } = {
+    uomList: {[k: string]: number} = {
         unités: UnitOfMeasurement.unit,
         kg: UnitOfMeasurement.kg,
         litre: UnitOfMeasurement.litre,
@@ -40,7 +40,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
 
     theme = {
         Button: {
-            iconContainerStyle: { marginRight: 5 },
+            iconContainerStyle: {marginRight: 5},
         },
         Icon: {
             type: 'font-awesome-5',
@@ -85,7 +85,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
         return options;
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+    navigationButtonPressed({buttonId}: {buttonId: string}): void {
         if (buttonId === 'close') {
             Navigation.dismissModal(this.props.componentId);
         }
@@ -212,7 +212,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 const goodsReceiptEntry = this.state.goodsReceiptEntry;
                 if (goodsReceiptEntry) {
                     goodsReceiptEntry.unit = receivedUom;
-                    this.setState({ goodsReceiptEntry });
+                    this.setState({goodsReceiptEntry});
                 }
             },
         );
@@ -256,13 +256,12 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             return null;
         }
         return (
-            <View style={{ height: '100%' }}>
+            <View style={{height: '100%'}}>
                 <ListItem
                     onPress={(): void => {
                         this.receivedQuantityInput?.focus();
                     }}
-                    bottomDivider
-                >
+                    bottomDivider>
                     <ListItem.Content>
                         <ListItem.Title>Quantité reçue</ListItem.Title>
                     </ListItem.Content>
@@ -279,7 +278,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                                 const goodsReceiptEntry = this.state.goodsReceiptEntry;
                                 if (goodsReceiptEntry) {
                                     goodsReceiptEntry.quantity = receivedQty;
-                                    this.setState({ goodsReceiptEntry });
+                                    this.setState({goodsReceiptEntry});
                                 }
                             }}
                             placeholder="Inconnue"
@@ -296,8 +295,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                     onPress={(): void => {
                         this.receivedPackageQtyInput?.focus();
                     }}
-                    bottomDivider
-                >
+                    bottomDivider>
                     <ListItem.Content>
                         <ListItem.Title>Nombre de colis reçu</ListItem.Title>
                     </ListItem.Content>
@@ -316,7 +314,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                                 const goodsReceiptEntry = this.state.goodsReceiptEntry;
                                 if (goodsReceiptEntry) {
                                     goodsReceiptEntry.productQtyPackage = receivedProductQtyPackage;
-                                    this.setState({ goodsReceiptEntry });
+                                    this.setState({goodsReceiptEntry});
                                 }
                             }}
                             placeholder="Inconnue"
@@ -332,8 +330,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                     onPress={(): void => {
                         this.receivedPackageQtyInput?.focus();
                     }}
-                    bottomDivider
-                >
+                    bottomDivider>
                     <ListItem.Content>
                         <ListItem.Title>Nombre d&quot;articles par colis</ListItem.Title>
                     </ListItem.Content>
@@ -352,7 +349,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                                 const goodsReceiptEntry = this.state.goodsReceiptEntry;
                                 if (goodsReceiptEntry) {
                                     goodsReceiptEntry.packageQty = receivedPackageQty;
-                                    this.setState({ goodsReceiptEntry });
+                                    this.setState({goodsReceiptEntry});
                                 }
                             }}
                             placeholder="Inconnue"
@@ -368,8 +365,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                     onPress={(): void => {
                         this.chooseUom();
                     }}
-                    bottomDivider
-                >
+                    bottomDivider>
                     <ListItem.Content>
                         <ListItem.Title>Unité de mesure</ListItem.Title>
                     </ListItem.Content>
@@ -387,17 +383,17 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                         const goodsReceiptEntry = this.state.goodsReceiptEntry;
                         if (goodsReceiptEntry) {
                             goodsReceiptEntry.comment = invalidReason;
-                            this.setState({ goodsReceiptEntry });
+                            this.setState({goodsReceiptEntry});
                         }
                     }}
-                    style={{ height: this.state.commentInputHeight }}
-                    inputContainerStyle={{ borderBottomWidth: 0, marginTop: 5 }}
+                    style={{height: this.state.commentInputHeight}}
+                    inputContainerStyle={{borderBottomWidth: 0, marginTop: 5}}
                     onContentSizeChange={(event): void => {
-                        this.setState({ commentInputHeight: Math.max(35, event.nativeEvent.contentSize.height) });
+                        this.setState({commentInputHeight: Math.max(35, event.nativeEvent.contentSize.height)});
                     }}
                     value={this.state.goodsReceiptEntry?.comment}
                 />
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
                     <Button
                         title="Enregistrer"
                         onPress={(): void => {
@@ -420,7 +416,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                                 }
                             }
                         }}
-                        style={{ marginVertical: 16 }}
+                        style={{marginVertical: 16}}
                         disabled={this.state.goodsReceiptEntry?.quantity == undefined}
                     />
                 </View>
@@ -434,18 +430,18 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             image = this.state.product.image;
         }
         return (
-            <KeyboardAwareScrollView style={{ height: '100%' }} keyboardShouldPersistTaps="always">
-                <Image source={{ uri: image }} />
-                <Text style={{ fontSize: 25, margin: 5, textAlign: 'center' }}>
+            <KeyboardAwareScrollView style={{height: '100%'}} keyboardShouldPersistTaps="always">
+                <Image source={{uri: image}} />
+                <Text style={{fontSize: 25, margin: 5, textAlign: 'center'}}>
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.productName}
                 </Text>
-                <Text style={{ fontSize: 45, marginTop: 5, textAlign: 'center' }}>
+                <Text style={{fontSize: 45, marginTop: 5, textAlign: 'center'}}>
                     {this.state.goodsReceiptEntry && displayNumber(this.state.goodsReceiptEntry.expectedProductQty)}{' '}
                     {ProductProduct.quantityUnitAsString(
                         this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductUom,
                     )}
                 </Text>
-                <Text style={{ fontSize: 25, marginBottom: 5, textAlign: 'center' }}>
+                <Text style={{fontSize: 25, marginBottom: 5, textAlign: 'center'}}>
                     en {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedProductQtyPackage} colis de{' '}
                     {this.state.goodsReceiptEntry && this.state.goodsReceiptEntry.expectedPackageQty}{' '}
                     {ProductProduct.quantityUnitAsString(
@@ -459,8 +455,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                         justifyContent: 'space-around',
                         borderBottomWidth: 1,
                         borderBottomColor: '#CCCCCC',
-                    }}
-                >
+                    }}>
                     <Button
                         title=" Correct"
                         onPress={(): void => this.didTapValid()}
@@ -502,14 +497,13 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 showInfoPanel={false}
                 onProductFound={(product): void => {
                     this.loadEntryFromProduct(product);
-                }}
-            ></CodeScanner>
+                }}></CodeScanner>
         );
     }
 
     render(): React.ReactNode {
         return (
-            <SafeAreaView style={{ height: '100%' }}>
+            <SafeAreaView style={{height: '100%'}}>
                 <ThemeProvider theme={this.theme}>
                     {this.state.goodsReceiptEntry || this.props.preselectedProductId
                         ? this.renderEntry()

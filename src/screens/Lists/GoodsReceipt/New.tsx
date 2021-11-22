@@ -1,11 +1,11 @@
 import React from 'react';
-import { ActivityIndicator, SafeAreaView, SectionList, Text, View } from 'react-native';
-import { DateTime } from 'luxon';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import { filterUnique } from '../../../utils/helpers';
-import { getRepository } from 'typeorm';
-import { Icon, ListItem } from 'react-native-elements';
-import { Navigation, Options } from 'react-native-navigation';
+import {ActivityIndicator, SafeAreaView, SectionList, Text, View} from 'react-native';
+import {DateTime} from 'luxon';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import {filterUnique} from '../../../utils/helpers';
+import {getRepository} from 'typeorm';
+import {Icon, ListItem} from 'react-native-elements';
+import {Navigation, Options} from 'react-native-navigation';
 import GoodsReceiptEntry from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import Odoo from '../../../utils/Odoo';
@@ -33,7 +33,7 @@ type State = {
 export default class ListsGoodsReceiptNew extends React.Component<Props, State> {
     theme = {
         Button: {
-            iconContainerStyle: { marginRight: 5 },
+            iconContainerStyle: {marginRight: 5},
         },
         Icon: {
             type: 'font-awesome-5',
@@ -128,13 +128,13 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
         });
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+    navigationButtonPressed({buttonId}: {buttonId: string}): void {
         if (buttonId === 'cancel') {
             Navigation.dismissModal(this.props.componentId);
         }
     }
 
-    didTapPurchaseOrder = async (props: { item: PurchaseOrder }): Promise<void> => {
+    didTapPurchaseOrder = async (props: {item: PurchaseOrder}): Promise<void> => {
         this.setState({
             showLoadingModal: true,
         });
@@ -231,13 +231,10 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
                         alignContent: 'center',
                         justifyContent: 'center',
                         backgroundColor: 'rgba(52, 52, 52, 0.7)',
-                    }}
-                >
+                    }}>
                     <View>
                         <ActivityIndicator size="large" />
-                        <Text style={{ color: 'white', textAlign: 'center', marginTop: 8 }}>
-                            Enregistrement du PO...
-                        </Text>
+                        <Text style={{color: 'white', textAlign: 'center', marginTop: 8}}>Enregistrement du PO...</Text>
                     </View>
                 </View>
             );
@@ -248,7 +245,7 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
         if (!this.state.loadingMore) return null;
 
         return (
-            <View style={{ padding: 8 }}>
+            <View style={{padding: 8}}>
                 <ActivityIndicator animating size="large" />
             </View>
         );
@@ -256,9 +253,9 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
 
     render(): React.ReactNode {
         return (
-            <SafeAreaView style={{ padding: 16 }}>
+            <SafeAreaView style={{padding: 16}}>
                 <SectionList
-                    style={{ backgroundColor: 'white' }}
+                    style={{backgroundColor: 'white'}}
                     sections={this.state.waitingPurchaseOrders}
                     keyExtractor={(item): string => {
                         if (item.id && item.id.toString()) {
@@ -266,16 +263,15 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
                         }
                         return '';
                     }}
-                    renderSectionHeader={({ section: { title } }): React.ReactElement => (
+                    renderSectionHeader={({section: {title}}): React.ReactElement => (
                         <Text style={styles.listHeader}>{title}</Text>
                     )}
-                    renderItem={({ item }): React.ReactElement => (
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem
                             onPress={(): void => {
-                                this.didTapPurchaseOrder({ item: item });
+                                this.didTapPurchaseOrder({item: item});
                             }}
-                            bottomDivider
-                        >
+                            bottomDivider>
                             <Icon type="font-awesome-5" name="clipboard-list" />
                             <ListItem.Content>
                                 <ListItem.Title>

@@ -1,5 +1,5 @@
 import AppLogger from './AppLogger';
-import { userAgent } from './helpers';
+import {userAgent} from './helpers';
 
 interface AGBResponse {
     total: number;
@@ -59,7 +59,7 @@ export default class Agribalyse {
                 'User-Agent': userAgent,
             },
         };
-        const parameters: { [key: string]: string | string[] } = {
+        const parameters: {[key: string]: string | string[]} = {
             // eslint-disable-next-line @typescript-eslint/camelcase
             Code_AGB_in: AGBCode,
         };

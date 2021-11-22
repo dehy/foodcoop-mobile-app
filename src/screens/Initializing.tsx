@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Odoo from '../utils/Odoo';
-import { goHome, goToAuth } from '../utils/navigation';
+import {goHome, goToAuth} from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 
 export interface InitialisingProps {

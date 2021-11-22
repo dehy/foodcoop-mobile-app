@@ -1,8 +1,8 @@
 import React from 'react';
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import { defaultScreenOptions } from '../../utils/navigation';
-import { Navigation, Options } from 'react-native-navigation';
-import { ListItem } from 'react-native-elements';
+import {FlatList, SafeAreaView, StyleSheet, View} from 'react-native';
+import {defaultScreenOptions} from '../../utils/navigation';
+import {Navigation, Options} from 'react-native-navigation';
+import {ListItem} from 'react-native-elements';
 
 export interface MaintenanceProps {
     componentId: string;
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
 
 export default class Maintenance extends React.Component<MaintenanceProps, {}> {
     private flatListItems: MaintenanceFlatListItem[] = [
-        { title: 'Base de donnée locale', key: 'database' },
-        { title: 'Cookies', key: 'cookies' },
+        {title: 'Base de donnée locale', key: 'database'},
+        {title: 'Cookies', key: 'cookies'},
     ];
     constructor(props: MaintenanceProps) {
         super(props);
@@ -91,12 +91,12 @@ export default class Maintenance extends React.Component<MaintenanceProps, {}> {
         return (
             <SafeAreaView>
                 <FlatList
-                    style={{ height: '100%' }}
-                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    style={{height: '100%'}}
+                    ItemSeparatorComponent={({highlighted}): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && {marginLeft: 0}]} />
                     )}
                     data={this.flatListItems}
-                    renderItem={({ item }): React.ReactElement => (
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem onPress={(): void => this._onPress(item.key)} bottomDivider>
                             <ListItem.Content>
                                 <ListItem.Title>{item.title}</ListItem.Title>

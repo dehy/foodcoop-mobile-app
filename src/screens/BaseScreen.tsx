@@ -1,6 +1,6 @@
 import React from 'react';
-import { defaultScreenOptions } from '../utils/navigation';
-import { Navigation, Options } from 'react-native-navigation';
+import {defaultScreenOptions} from '../utils/navigation';
+import {Navigation, Options} from 'react-native-navigation';
 
 export interface BaseScreenProps {
     componentId: string;

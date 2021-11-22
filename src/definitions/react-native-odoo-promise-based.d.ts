@@ -11,7 +11,7 @@ interface OdooApiProductProduct {
     product_tmpl_id?: [number, string];
     barcode?: string;
     name?: string;
-    image?: string|null;
+    image?: string | null;
     qty_available?: number;
     uom_id?: [number, string];
     lst_price?: number;
@@ -21,8 +21,8 @@ interface OdooApiProductProduct {
 
 interface OdooApiProductSupplierInfo {
     id?: number;
-    name?: [number!, string!];
-    product_tmpl_id?: [number!, string!];
+    name?: [number, string];
+    product_tmpl_id?: [number, string];
     product_name?: string;
     product_code?: string;
 }
@@ -32,7 +32,7 @@ interface OdooApiPurchaseOrder {
     name?: string;
     date_order?: string;
     date_planned?: string;
-    partner_id?: [number!, string!];
+    partner_id?: [number, string];
 }
 
 interface OdooApiPurchaseOrderLine {

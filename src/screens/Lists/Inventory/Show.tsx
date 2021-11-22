@@ -1,15 +1,15 @@
 import React from 'react';
-import { EmitterSubscription, FlatList, Platform, SafeAreaView, Text, View } from 'react-native';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation';
+import {EmitterSubscription, FlatList, Platform, SafeAreaView, Text, View} from 'react-native';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import {Navigation, Options, OptionsModalPresentationStyle} from 'react-native-navigation';
 import bootstrapStyle from '../../../styles/bootstrap';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import ActionSheet from 'react-native-action-sheet';
-import { Button, Icon, ListItem } from 'react-native-elements';
+import {Button, Icon, ListItem} from 'react-native-elements';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
-import { getConnection, Repository } from 'typeorm';
-import { DateTime } from 'luxon';
+import {getConnection, Repository} from 'typeorm';
+import {DateTime} from 'luxon';
 
 export interface Props {
     list: InventoryList;
@@ -24,7 +24,7 @@ interface InventoryData {
     key: string;
     title?: string;
     subtitle?: string;
-    image: { uri: string } | null;
+    image: {uri: string} | null;
     metadata: string;
     inventoryEntry: InventoryEntry;
 }
@@ -228,23 +228,23 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
     renderHeader(): React.ReactElement {
         const inventory = this.props.list;
         return (
-            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#DDD' }}>
+            <View style={{borderBottomWidth: 0.5, borderBottomColor: '#DDD'}}>
                 {this.renderAlerts()}
-                <View style={{ flexDirection: 'row', backgroundColor: 'white', paddingTop: 16 }}>
-                    <View style={{ flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 20, textAlign: 'center' }}>
+                <View style={{flexDirection: 'row', backgroundColor: 'white', paddingTop: 16}}>
+                    <View style={{flexDirection: 'column', flex: 1, justifyContent: 'center'}}>
+                        <Text style={{fontSize: 20, textAlign: 'center'}}>
                             {inventory.createdAt ? inventory.createdAt.toFormat('cccc') : '-'}
                         </Text>
-                        <Text style={{ fontSize: 30, textAlign: 'center' }}>
+                        <Text style={{fontSize: 30, textAlign: 'center'}}>
                             {inventory.createdAt ? inventory.createdAt.toFormat('d LLLL') : '-'}
                         </Text>
-                        <Text style={{ fontSize: 20, textAlign: 'center' }}>
+                        <Text style={{fontSize: 20, textAlign: 'center'}}>
                             {inventory.createdAt ? inventory.createdAt.toFormat('yyyy') : '-'}
                         </Text>
                     </View>
-                    <View style={{ flexDirection: 'column', flex: 1 }}>
-                        <Text style={{ fontSize: 24, textAlign: 'center' }}>Zone</Text>
-                        <Text style={{ fontSize: 50, textAlign: 'center' }}>{inventory.zone}</Text>
+                    <View style={{flexDirection: 'column', flex: 1}}>
+                        <Text style={{fontSize: 24, textAlign: 'center'}}>Zone</Text>
+                        <Text style={{fontSize: 50, textAlign: 'center'}}>{inventory.zone}</Text>
                     </View>
                 </View>
                 <View
@@ -253,8 +253,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                         justifyContent: 'space-around',
                         backgroundColor: 'white',
                         paddingVertical: 16,
-                    }}
-                >
+                    }}>
                     <Button
                         onPress={(): void => {
                             this.openScannerModal();
@@ -281,7 +280,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         }
         return (
             <View>
-                <Text style={{ fontSize: 25, textAlign: 'center', marginTop: 30, marginHorizontal: 8 }}>
+                <Text style={{fontSize: 25, textAlign: 'center', marginTop: 30, marginHorizontal: 8}}>
                     Aucun article pour le moment. Appuie sur le bouton &quot;Scanner&quot; pour démarrer !
                 </Text>
             </View>
@@ -293,22 +292,21 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
             <SafeAreaView>
                 <FlatList
                     scrollEnabled={true}
-                    style={{ backgroundColor: 'white', height: '100%' }}
+                    style={{backgroundColor: 'white', height: '100%'}}
                     data={this.computeEntriesData()}
                     ListHeaderComponent={this.renderHeader()}
-                    renderItem={({ item }): React.ReactElement => (
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem
                             onPress={(): void => {
                                 this.didTapInventoryEntry(item.inventoryEntry);
                             }}
-                            bottomDivider
-                        >
+                            bottomDivider>
                             <ListItem.Content>
                                 <ListItem.Title>{item.title}</ListItem.Title>
                                 <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
                             </ListItem.Content>
                             <ListItem.Content right>
-                                <Text style={{ textAlign: 'right' }}>{item.metadata}</Text>
+                                <Text style={{textAlign: 'right'}}>{item.metadata}</Text>
                             </ListItem.Content>
                         </ListItem>
                     )}

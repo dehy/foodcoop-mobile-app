@@ -1,6 +1,6 @@
 'use strict';
 
-import { ChildEntity } from 'typeorm';
+import {ChildEntity} from 'typeorm';
 import ProductProduct from '../Odoo/ProductProduct';
 import BaseEntry from './BaseEntry';
 

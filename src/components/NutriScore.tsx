@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgProps } from 'react-native-svg';
+import {SvgProps} from 'react-native-svg';
 import NutriScoreA from '../../assets/svg/Nutri-score-A.svg';
 import NutriScoreB from '../../assets/svg/Nutri-score-B.svg';
 import NutriScoreC from '../../assets/svg/Nutri-score-C.svg';
