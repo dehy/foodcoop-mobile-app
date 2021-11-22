@@ -1,7 +1,7 @@
 import React from 'react';
 import {Alert, FlatList, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
 import {defaultScreenOptions} from '../../../utils/navigation';
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager, { Cookie, Cookies } from '@react-native-cookies/cookies';
 import Odoo from '../../../utils/Odoo';
 import {Navigation, Options} from 'react-native-navigation';
 import {ListItem} from 'react-native-elements';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 export default class CookiesMaintenance extends React.Component<{}, CookiesMaintenanceState> {
-    cookies: Cookie[] = [];
+    cookies: Cookies = {};
     state: CookiesMaintenanceState = {
         cookieItemList: [],
     };
@@ -47,14 +47,12 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
         const cookieItemList: CookiesMaintenanceFlatListItem[] = [];
         if (Platform.OS == 'ios') {
             CookieManager.getAll().then(cookies => {
-                // console.debug('CookieManager.getAll =>', cookies);
                 this.cookies = cookies;
-                for (const cookieKey in cookies) {
-                    const cookie = cookies[cookieKey];
+                for (let [cookieKey, cookie] of Object.entries(cookies)) {
                     cookieItemList.push({
                         key: cookieKey,
                         title: cookie.name,
-                        subtitle: cookie.domain,
+                        subtitle: cookie.domain ?? '',
                     });
                 }
                 this.setState({cookieItemList: cookieItemList});
@@ -74,9 +72,8 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
     }
 
     didTapCookieItem = (key: string): void => {
-        // console.debug('didTapCookieItem()', key);
-        const cookie = this.cookies.find(cookie => {
-            if (key === cookie.name) {
+        const cookie = Object.values(this.cookies).find((aCookie: Cookie) => {
+            if (key === aCookie.name) {
                 return true;
             }
             return false;
@@ -93,25 +90,23 @@ path: ${cookie.path}`;
     };
 
     didTapActionItem = (key: string): void => {
-        switch (key) {
-            case 'clear-cookies':
-                Alert.alert(
-                    'Effacer les 🍪',
-                    "Es-tu vraiment sûr(e) de vouloir effacer les cookies utilisés par l'application ?",
-                    [
-                        {
-                            text: 'NON ! 😱',
+        if ('clear-cookies' === key) {
+            Alert.alert(
+                'Effacer les 🍪',
+                "Es-tu vraiment sûr(e) de vouloir effacer les cookies utilisés par l'application ?",
+                [
+                    {
+                        text: 'NON ! 😱',
+                    },
+                    {
+                        text: 'Je suis sûr(e) et certain(e) ! 💣',
+                        style: 'destructive',
+                        onPress: (): void => {
+                            this.clearAllCookies();
                         },
-                        {
-                            text: 'Je suis sûr(e) et certain(e) ! 💣',
-                            style: 'destructive',
-                            onPress: (): void => {
-                                this.clearAllCookies();
-                            },
-                        },
-                    ],
-                );
-                break;
+                    },
+                ],
+            );
         }
     };
 

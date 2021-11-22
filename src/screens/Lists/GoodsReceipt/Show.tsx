@@ -1,12 +1,13 @@
 import React from 'react';
 import {View, Text, SafeAreaView, FlatList, Alert, Image} from 'react-native';
+import ActionSheet from 'react-native-action-sheet';
 import {ListItem, ThemeProvider, SearchBar} from 'react-native-elements';
 import {Navigation, Options, EventSubscription} from 'react-native-navigation';
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
 import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import GoodsReceiptService from '../../../services/GoodsReceiptService';
-import Attachment from '../../../entities/Lists/ListAttachment';
+import ListAttachment from '../../../entities/Lists/ListAttachment';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {displayNumber} from '../../../utils/helpers';
@@ -22,7 +23,7 @@ export interface Props {
 
 interface State {
     listEntries: GoodsReceiptEntry[];
-    listAttachements: Attachment[];
+    listAttachements: ListAttachment[];
     entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
@@ -63,7 +64,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         const topBar = options.topBar ?? {};
         topBar.rightButtons = [
             {
-                id: 'add-photo',
+                id: 'select-photo',
                 icon: require('../../../../assets/icons/add-a-photo-regular.png'),
                 text: 'Ajouter une photo',
             },
@@ -136,8 +137,8 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
     }
 
     navigationButtonPressed({buttonId}: {buttonId: string}): void {
-        if (buttonId === 'add-photo') {
-            this.addPhoto();
+        if (buttonId === 'select-photo') {
+            this.selectPhoto();
         }
         if (buttonId === 'add-extra') {
             this.searchExtraItem();
@@ -185,45 +186,47 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         });
     };
 
-    addPhoto(): void {
-        const options = {
-            title: 'Selectionner une photo',
-            cancelButtonTitle: 'Annuler',
-            takePhotoButtonTitle: 'Prendre une photo',
-            chooseFromLibraryButtonTitle: 'Sélectionner depuis la librairie',
-            // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-            noData: true,
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
+    selectPhoto = (): void => {
+            const options = ['Prendre une photo', 'Sélectionner depuis la librairie', 'Annuler'];
+            const destructiveButtonIndex = undefined;
+            const cancelButtonIndex = 2;
+            const title = 'Sélectionner une photo';
+          
+            ActionSheet.showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                destructiveButtonIndex,
+                title
+              },
+              (buttonIndex) => {
+                if (0 === buttonIndex) {
+                    ImagePicker.launchCamera({
+                        mediaType: 'photo',
+                    }, (response) => {
+                        this.addPhotos(response);
+                    });
+                }
+              }
+            );
 
-        ImagePicker.showImagePicker(options, response => {
-            console.debug('Response = ', response);
+    }
 
-            if (response.didCancel) {
-                console.debug('User cancelled image picker');
-            } else if (response.error) {
-                console.debug('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.debug('User tapped custom button: ', response.customButton);
-            } else {
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    addPhotos = async (response: ImagePickerResponse): Promise<void> => {
                 const list = this.props.list;
 
                 GoodsReceiptService.getInstance()
-                    .attachementFromImagePicker(list, response)
-                    .then(attachement => {
-                        getRepository(Attachment)
-                            .save(attachement)
+                    .attachementsFromImagePickerResponse(list, response)
+                    .then(attachments => {
+                        for (const attachment of attachments) {
+                            getRepository(ListAttachment)
+                            .save(attachment)
                             .then(() => {
                                 this.loadData();
                             });
+                        }
+                        
                     });
-            }
-        });
     }
 
     searchExtraItem(): void {

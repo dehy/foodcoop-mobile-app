@@ -32,27 +32,34 @@ export default class GoodsReceiptService {
         return this.purchaseOrdersPlannedToday;
     }
 
-    async attachementFromImagePicker(list: GoodsReceiptList, response: ImagePickerResponse): Promise<ListAttachment> {
-        if (!response.uri) {
-            Promise.reject();
-        }
+    async attachementsFromImagePickerResponse(list: GoodsReceiptList, response: ImagePickerResponse): Promise<ListAttachment[]> {
+        const attachments: ListAttachment[] = [];
 
-        const extension = response.type ? mime.extension(response.type) : 'jpeg';
-        const attachmentBasename = `${list.purchaseOrderName}-${lightRandomId()}`;
-        const attachmentFilename = `${attachmentBasename}.${extension}`;
-        const attachmentShortFilepath = `${this.dataDirectoryRelativePathForList(list)}/${attachmentFilename}`;
-        const attachmentFullFilepath = `${this.dataDirectoryAbsolutePathForList(list)}/${attachmentFilename}`;
+        response.assets?.forEach(async (asset) => {
+            if (!asset.uri) {
+                Promise.reject();
+                return;
+            }
+    
+            const extension = asset.type ? mime.extension(asset.type) : 'jpeg';
+            const attachmentBasename = `${list.purchaseOrderName}-${lightRandomId()}`;
+            const attachmentFilename = `${attachmentBasename}.${extension}`;
+            const attachmentShortFilepath = `${this.dataDirectoryRelativePathForList(list)}/${attachmentFilename}`;
+            const attachmentFullFilepath = `${this.dataDirectoryAbsolutePathForList(list)}/${attachmentFilename}`;
+    
+            await RNFS.mkdir(this.dataDirectoryAbsolutePathForList(list));
+            await RNFS.moveFile(asset.uri, attachmentFullFilepath);
+    
+            const listAttachment = new ListAttachment();
+            listAttachment.path = attachmentShortFilepath;
+            listAttachment.type = asset.type;
+            listAttachment.name = attachmentFilename;
+            listAttachment.list = list;
 
-        await RNFS.mkdir(this.dataDirectoryAbsolutePathForList(list));
-        await RNFS.moveFile(response.uri, attachmentFullFilepath);
-
-        const listAttachment = new ListAttachment();
-        listAttachment.path = attachmentShortFilepath;
-        listAttachment.type = response.type;
-        listAttachment.name = attachmentFilename;
-        listAttachment.list = list;
-
-        return listAttachment;
+            attachments.push(listAttachment);
+        })
+        
+        return attachments;
     }
 
     async deleteList(list: GoodsReceiptList): Promise<void> {

@@ -25,8 +25,6 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
     zoneValue: number | undefined;
     dateValue: DateTime = DateTime.local();
 
-    submitButton: Button | undefined;
-
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
@@ -37,10 +35,6 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
     }
 
     createListAndDismiss = (): void => {
-        if (undefined !== this.submitButton) {
-            console.log('TODO: disable button');
-        }
-
         if (undefined === this.zoneValue || isNaN(this.zoneValue)) {
             Alert.alert("Le numéro de zone n'est pas valide. Merci de la ressaisir.");
             return;
@@ -96,9 +90,6 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                                 style={{margin: 20}}
                                 onPress={(): void => {
                                     this.createListAndDismiss();
-                                }}
-                                ref={(ref): void => {
-                                    this.submitButton = ref ?? undefined;
                                 }}
                             />
                         </View>
