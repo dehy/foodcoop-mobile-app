@@ -1,9 +1,8 @@
 #import "AppDelegate.h"
+#import <ReactNativeNavigation/ReactNativeNavigation.h>
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
-#import <ReactNativeNavigation/ReactNativeNavigation.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -28,16 +27,22 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-#if FB_SONARKIT_ENABLED
+#ifdef FB_SONARKIT_ENABLED
  InitializeFlipper(application);
 #endif
 
-  [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  [ReactNativeNavigation bootstrapWithBridge:bridge];
 
+  
   return YES;
 }
 
--(NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+- (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge {
+  return [ReactNativeNavigation extraModulesForBridge:bridge];
+}
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
   #if DEBUG
     return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];

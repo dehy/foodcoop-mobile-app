@@ -4,15 +4,14 @@ import android.content.Context;
 import androidx.multidex.MultiDex;
 
 import com.facebook.react.PackageList;
+import com.reactnativenavigation.NavigationApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
+import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
-import com.reactnativenavigation.NavigationApplication;
-import com.reactnativenavigation.react.NavigationReactNativeHost;
 
 public class MainApplication extends NavigationApplication {
 
@@ -52,7 +51,6 @@ public class MainApplication extends NavigationApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        //SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
     }
 
