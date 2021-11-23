@@ -7,7 +7,7 @@ import SupercoopSignIn, {SupercoopSignInButton} from '../utils/SupercoopSignIn';
 
 interface State {
     signInInProgress: boolean;
-};
+}
 
 interface Props {
     componentId: string;
