@@ -1,16 +1,17 @@
 import React from 'react';
-import { View, Text, SafeAreaView, FlatList, Alert, Image } from 'react-native';
-import { ListItem, ThemeProvider, SearchBar } from 'react-native-elements';
-import { Navigation, Options, EventSubscription } from 'react-native-navigation';
-import ImagePicker from 'react-native-image-picker';
-import GoodsReceiptEntry, { EntryStatus } from '../../../entities/Lists/GoodsReceiptEntry';
+import {View, Text, SafeAreaView, FlatList, Alert, Image} from 'react-native';
+import ActionSheet from 'react-native-action-sheet';
+import {ListItem, ThemeProvider, SearchBar} from 'react-native-elements';
+import {Navigation, Options, EventSubscription} from 'react-native-navigation';
+import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
+import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import GoodsReceiptService from '../../../services/GoodsReceiptService';
-import Attachment from '../../../entities/Lists/ListAttachment';
+import ListAttachment from '../../../entities/Lists/ListAttachment';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import { displayNumber } from '../../../utils/helpers';
-import { getRepository } from 'typeorm';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import {displayNumber} from '../../../utils/helpers';
+import {getRepository} from 'typeorm';
 import moment from 'moment';
 import * as RNFS from 'react-native-fs';
 import Fuse from 'fuse.js';
@@ -22,15 +23,17 @@ export interface Props {
 
 interface State {
     listEntries: GoodsReceiptEntry[];
-    listAttachements: Attachment[];
+    listAttachements: ListAttachment[];
     entriesToDisplay: GoodsReceiptEntry[];
     filter: string;
 }
 
 export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
+    static screenName = "Lists/GoodsReceipt/Show";
+
     theme = {
         Button: {
-            iconContainerStyle: { marginRight: 5 },
+            iconContainerStyle: {marginRight: 5},
         },
         Icon: {
             type: 'font-awesome-5',
@@ -63,7 +66,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         const topBar = options.topBar ?? {};
         topBar.rightButtons = [
             {
-                id: 'add-photo',
+                id: 'select-photo',
                 icon: require('../../../../assets/icons/add-a-photo-regular.png'),
                 text: 'Ajouter une photo',
             },
@@ -135,9 +138,9 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         });
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
-        if (buttonId === 'add-photo') {
-            this.addPhoto();
+    navigationButtonPressed({buttonId}: {buttonId: string}): void {
+        if (buttonId === 'select-photo') {
+            this.selectPhoto();
         }
         if (buttonId === 'add-extra') {
             this.searchExtraItem();
@@ -185,45 +188,47 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         });
     };
 
-    addPhoto(): void {
-        const options = {
-            title: 'Selectionner une photo',
-            cancelButtonTitle: 'Annuler',
-            takePhotoButtonTitle: 'Prendre une photo',
-            chooseFromLibraryButtonTitle: 'Sélectionner depuis la librairie',
-            // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-            noData: true,
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
+    selectPhoto = (): void => {
+            const options = ['Prendre une photo', 'Sélectionner depuis la librairie', 'Annuler'];
+            const destructiveButtonIndex = undefined;
+            const cancelButtonIndex = 2;
+            const title = 'Sélectionner une photo';
+          
+            ActionSheet.showActionSheetWithOptions(
+              {
+                options,
+                cancelButtonIndex,
+                destructiveButtonIndex,
+                title
+              },
+              (buttonIndex) => {
+                if (0 === buttonIndex) {
+                    ImagePicker.launchCamera({
+                        mediaType: 'photo',
+                    }, (response) => {
+                        this.addPhotos(response);
+                    });
+                }
+              }
+            );
 
-        ImagePicker.showImagePicker(options, response => {
-            console.debug('Response = ', response);
+    }
 
-            if (response.didCancel) {
-                console.debug('User cancelled image picker');
-            } else if (response.error) {
-                console.debug('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.debug('User tapped custom button: ', response.customButton);
-            } else {
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    addPhotos = async (response: ImagePickerResponse): Promise<void> => {
                 const list = this.props.list;
 
                 GoodsReceiptService.getInstance()
-                    .attachementFromImagePicker(list, response)
-                    .then(attachement => {
-                        getRepository(Attachment)
-                            .save(attachement)
+                    .attachementsFromImagePickerResponse(list, response)
+                    .then(attachments => {
+                        for (const attachment of attachments) {
+                            getRepository(ListAttachment)
+                            .save(attachment)
                             .then(() => {
                                 this.loadData();
                             });
+                        }
+                        
                     });
-            }
-        });
     }
 
     searchExtraItem(): void {
@@ -284,8 +289,8 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
     renderHeader = (): React.ReactElement => {
         return (
             <View>
-                <Text style={{ fontSize: 25, margin: 12, marginBottom: 0 }}>{this.props.list.partnerName}</Text>
-                <Text style={{ fontSize: 15, margin: 12, marginTop: 0, fontStyle: 'italic' }}>
+                <Text style={{fontSize: 25, margin: 12, marginBottom: 0}}>{this.props.list.partnerName}</Text>
+                <Text style={{fontSize: 15, margin: 12, marginTop: 0, fontStyle: 'italic'}}>
                     {this.props.list.purchaseOrderName} - {moment(this.props.list.createdAt).format('DD MMMM YYYY')}
                 </Text>
                 <SearchBar
@@ -304,7 +309,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         return (
             <View>
                 <View>
-                    <Text style={{ fontSize: 15, margin: 5 }}>Images jointes</Text>
+                    <Text style={{fontSize: 15, margin: 5}}>Images jointes</Text>
                 </View>
                 {this.renderImageAttachments()}
             </View>
@@ -315,7 +320,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         let correctQty;
         if (false === entry.isValidQuantity() || false === entry.isValidUom()) {
             correctQty = (
-                <Text style={{ fontSize: 16 }}>
+                <Text style={{fontSize: 16}}>
                     {displayNumber(entry.quantity)} {ProductProduct.quantityUnitAsString(entry.unit)}
                 </Text>
             );
@@ -329,8 +334,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                         fontSize: false === entry.isValidQuantity() || false === entry.isValidUom() ? 12 : 16,
                         textDecorationLine:
                             false === entry.isValidQuantity() || false === entry.isValidUom() ? 'line-through' : 'none',
-                    }}
-                >
+                    }}>
                     {displayNumber(entry.expectedProductQty)}{' '}
                     {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
@@ -348,7 +352,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                 keyExtractor={(item): string => {
                     return item.path ? item.path : '';
                 }}
-                renderItem={({ item }): React.ReactElement => {
+                renderItem={({item}): React.ReactElement => {
                     const attachmentUri = `file://${RNFS.DocumentDirectoryPath}/${item.path}`;
                     console.debug(`attachment path: ${attachmentUri}`);
                     return (
@@ -376,7 +380,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
         let correctPackageQty;
         if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
             correctPackageQty = (
-                <Text style={{ fontSize: 16 }}>
+                <Text style={{fontSize: 16}}>
                     {entry.productQtyPackage} x {entry.packageQty} {ProductProduct.quantityUnitAsString(entry.unit)}
                 </Text>
             );
@@ -392,8 +396,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                             false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()
                                 ? 'line-through'
                                 : 'none',
-                    }}
-                >
+                    }}>
                     {entry.expectedProductQtyPackage} x {entry.expectedPackageQty}{' '}
                     {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
                 </Text>
@@ -404,11 +407,11 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
 
     render(): React.ReactNode {
         return (
-            <SafeAreaView style={{ height: '100%' }}>
+            <SafeAreaView style={{height: '100%'}}>
                 <ThemeProvider theme={this.theme}>
                     <FlatList
                         keyboardShouldPersistTaps="always"
-                        style={{ backgroundColor: 'white', height: '100%' }}
+                        style={{backgroundColor: 'white', height: '100%'}}
                         data={this.state.entriesToDisplay}
                         keyExtractor={(item): string => {
                             if (item.id && item.id.toString()) {
@@ -416,21 +419,18 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                             }
                             return '';
                         }}
-                        renderItem={({ item }): React.ReactElement => (
+                        renderItem={({item}): React.ReactElement => (
                             <ListItem
-                                containerStyle={{ backgroundColor: this.itemBackgroundColor(item) }}
+                                containerStyle={{backgroundColor: this.itemBackgroundColor(item)}}
                                 onPress={(): void => {
                                     this.openGoodsReceiptScan(item.productId);
                                 }}
-                                topDivider
-                            >
+                                topDivider>
                                 <ListItem.Content>
                                     <ListItem.Title numberOfLines={1} ellipsizeMode={'middle'}>
                                         {item.productName}
                                     </ListItem.Title>
-                                    <ListItem.Subtitle
-                                        style={item.productBarcode ? undefined : { fontStyle: 'italic' }}
-                                    >
+                                    <ListItem.Subtitle style={item.productBarcode ? undefined : {fontStyle: 'italic'}}>
                                         {item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'}
                                     </ListItem.Subtitle>
                                 </ListItem.Content>

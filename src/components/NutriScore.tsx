@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgProps } from 'react-native-svg';
+import {SvgProps} from 'react-native-svg';
 import NutriScoreA from '../../assets/svg/Nutri-score-A.svg';
 import NutriScoreB from '../../assets/svg/Nutri-score-B.svg';
 import NutriScoreC from '../../assets/svg/Nutri-score-C.svg';
@@ -14,11 +14,11 @@ export enum NutriScoreScore {
     e = 'e',
 }
 
-interface NutriScoreProps extends SvgProps {
+interface Props extends SvgProps {
     score: NutriScoreScore;
 }
 
-export default class NutriScore extends React.Component<NutriScoreProps> {
+export default class NutriScore extends React.Component<Props> {
     render(): React.ReactNode {
         console.debug(this.props.score);
         switch (this.props.score) {

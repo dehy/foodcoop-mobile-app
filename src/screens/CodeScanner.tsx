@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { ReactNode } from 'react';
+import React, {ReactNode} from 'react';
 import {
     StyleSheet,
     Text,
@@ -31,8 +31,8 @@ import BarcodeMask from 'react-native-barcode-mask';
 import Sound from 'react-native-sound';
 import KeepAwake from '@sayem314/react-native-keep-awake';
 import DataWedgeIntents from 'react-native-datawedge-intents';
-import { deviceId } from '../utils/helpers';
-import { Button, Icon } from 'react-native-elements';
+import {deviceId} from '../utils/helpers';
+import {Button, Icon} from 'react-native-elements';
 import Odoo from '../utils/Odoo';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import Mailjet from '../utils/Mailjet';
@@ -62,9 +62,7 @@ interface BarcodeReadEvent {
      * @description For Android use `{ width: number, height: number, origin: Array<Point<string>> }`
      * @description For iOS use `{ origin: Point<string>, size: Size<string> }`
      */
-    bounds:
-        | { width: number; height: number; origin: Array<Point<string>> }
-        | { origin: Point<string>; size: Size<string> };
+    bounds: {width: number; height: number; origin: Array<Point<string>>} | {origin: Point<string>; size: Size<string>};
 }
 
 const landmarkSize = 2;
@@ -223,7 +221,7 @@ export default class CodeScanner extends React.Component<Props, State> {
         zoom: 0,
         autoFocus: RNCamera.Constants.AutoFocus.on,
         autoFocusPoint: {
-            normalized: { x: 0.5, y: 0.5 }, // normalized values required for autoFocusPointOfInterest
+            normalized: {x: 0.5, y: 0.5}, // normalized values required for autoFocusPointOfInterest
             drawRectPosition: {
                 x: Dimensions.get('window').width * 0.5,
                 y: Dimensions.get('window').height * 0.5 - 64,
@@ -294,7 +292,7 @@ export default class CodeScanner extends React.Component<Props, State> {
 
     sendCommand(extraName: string, extraValue: any): void {
         console.log('Sending Command: ' + extraName + ', ' + JSON.stringify(extraValue));
-        const broadcastExtras: { [x: string]: string } = {};
+        const broadcastExtras: {[x: string]: string} = {};
         broadcastExtras[extraName] = extraValue;
         broadcastExtras['SEND_RESULT'] = this.sendCommandResult;
         DataWedgeIntents.sendBroadcastWithExtras({
@@ -310,7 +308,7 @@ export default class CodeScanner extends React.Component<Props, State> {
         });
     }
 
-    broadcastReceiver(intent: { [x: string]: string }): void {
+    broadcastReceiver(intent: {[x: string]: string}): void {
         //  Broadcast received
         console.log('Received Intent: ' + JSON.stringify(intent));
         if (intent.hasOwnProperty('RESULT_INFO')) {
@@ -449,13 +447,13 @@ export default class CodeScanner extends React.Component<Props, State> {
         console.log('Active Profile: ' + theActiveProfile);
     }
 
-    dataWedgeBarcodeScanned(scanData: { [x: string]: any }, timeOfScan: string): void {
+    dataWedgeBarcodeScanned(scanData: {[x: string]: any}, timeOfScan: string): void {
         let scannedData = scanData['com.symbol.datawedge.data_string'];
         const scannedType = scanData['com.symbol.datawedge.label_type'];
         if ('LABEL-TYPE-UPCA' === scannedType) {
             scannedData = `0${scannedData}`;
         }
-        const scan = { data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan };
+        const scan = {data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan};
         console.log(scan);
         const barcodeEvent: BarcodeReadEvent = {
             data: scannedData,
@@ -464,7 +462,7 @@ export default class CodeScanner extends React.Component<Props, State> {
             bounds: {
                 width: 0,
                 height: 0,
-                origin: [{ x: '0', y: '0' }],
+                origin: [{x: '0', y: '0'}],
             },
         };
         this.setState({
@@ -500,15 +498,15 @@ export default class CodeScanner extends React.Component<Props, State> {
 
     showManualSearchView = (): void => {
         this.pauseCamera();
-        this.setState({ showManualSearchView: true });
+        this.setState({showManualSearchView: true});
     };
-    hideManualSearchView = (): void => this.setState({ showManualSearchView: false });
+    hideManualSearchView = (): void => this.setState({showManualSearchView: false});
 
-    pauseCamera = (): void => this.setState({ displayCamera: false });
-    resumeCamera = (): void => this.setState({ displayCamera: true });
+    pauseCamera = (): void => this.setState({displayCamera: false});
+    resumeCamera = (): void => this.setState({displayCamera: true});
 
     setFlash = (flash: keyof FlashMode): void => {
-        this.setState({ flash });
+        this.setState({flash});
     };
     toggleFlash = (): void => {
         if (this.state.flash == RNCamera.Constants.FlashMode.off) {
@@ -519,7 +517,7 @@ export default class CodeScanner extends React.Component<Props, State> {
     };
 
     setAutofocus = (autoFocus: keyof AutoFocus): void => {
-        this.setState({ autoFocus });
+        this.setState({autoFocus});
     };
     toggleFocus = (): void => {
         this.setState(previousState => ({
@@ -531,7 +529,7 @@ export default class CodeScanner extends React.Component<Props, State> {
     };
 
     touchToFocus = (event: GestureResponderEvent) => (): void => {
-        const { pageX, pageY } = event.nativeEvent;
+        const {pageX, pageY} = event.nativeEvent;
         const screenWidth = Dimensions.get('window').width;
         const screenHeight = Dimensions.get('window').height;
         const isPortrait = screenHeight > screenWidth;
@@ -546,8 +544,8 @@ export default class CodeScanner extends React.Component<Props, State> {
 
         this.setState({
             autoFocusPoint: {
-                normalized: { x, y },
-                drawRectPosition: { x: pageX, y: pageY },
+                normalized: {x, y},
+                drawRectPosition: {x: pageX, y: pageY},
             },
         });
     };
@@ -574,8 +572,8 @@ export default class CodeScanner extends React.Component<Props, State> {
             data: legacy.data,
             dataRaw: legacy.rawData ? legacy.rawData : '',
             bounds: {
-                size: { width: width, height: height },
-                origin: { x: x, y: y },
+                size: {width: width, height: height},
+                origin: {x: x, y: y},
             },
             type: this.legacyBarcodeTypeToBarcodeType(legacy.type),
         };
@@ -598,7 +596,7 @@ export default class CodeScanner extends React.Component<Props, State> {
     barcodeRecognized = (event: BarcodeReadEvent): void => {
         const barcode = this.legacyBarcodeToBarcode(event);
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
-        this.setState({ barcodes: [barcode] });
+        this.setState({barcodes: [barcode]});
         if (undefined === previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
             if ('camera' === this.scannerMode) {
                 Vibration.vibrate(500, false);
@@ -656,7 +654,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         </View>
     );
 
-    renderBarcode = ({ bounds, data }: Barcode): React.ReactFragment => (
+    renderBarcode = ({bounds, data}: Barcode): React.ReactFragment => (
         <React.Fragment key={data + bounds.origin.x}>
             <View
                 style={[
@@ -666,8 +664,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                         left: bounds.origin.x,
                         top: bounds.origin.y,
                     },
-                ]}
-            >
+                ]}>
                 <Text style={[styles.textBlock]} numberOfLines={1}>{`${data}`}</Text>
             </View>
         </React.Fragment>
@@ -687,7 +684,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                     const barcode: BarcodeReadEvent = {
                         data: barcodeData,
                         type: type,
-                        bounds: { origin: { x: '0', y: '0' }, size: { width: '0', height: '0' } },
+                        bounds: {origin: {x: '0', y: '0'}, size: {width: '0', height: '0'}},
                     };
                     this.hideManualSearchView();
                     this.barcodeRecognized(barcode);
@@ -707,7 +704,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
     }
 
     renderCamera = (): React.ReactElement => {
-        const { canDetectBarcode } = this.state;
+        const {canDetectBarcode} = this.state;
         return (
             <RNCamera
                 ref={(ref): void => {
@@ -731,7 +728,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                     buttonPositive: 'Ok',
                     buttonNegative: 'Cancel',
                 }}
-                onMountError={(error: { message: string }): void => {
+                onMountError={(error: {message: string}): void => {
                     console.error(error.message);
                 }}
                 onCameraReady={this.findBestRatio}
@@ -791,7 +788,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                     <View style={styles.actionButton}>
                         <Button
                             icon={<Icon type="font-awesome-5" name="keyboard" color="white" solid />}
-                            buttonStyle={{ backgroundColor: 'black' }}
+                            buttonStyle={{backgroundColor: 'black'}}
                             onPress={this.showManualSearchView}
                             title=" Clavier"
                         />
@@ -804,8 +801,8 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                     data: '3483981002176',
                                     type: 'ean13',
                                     bounds: {
-                                        origin: { x: '30', y: '60' },
-                                        size: { width: '320', height: '240' },
+                                        origin: {x: '30', y: '60'},
+                                        size: {width: '320', height: '240'},
                                     },
                                 };
                                 this.barcodeRecognized(barcodeEvent);
@@ -820,21 +817,21 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
 
     renderDataWedgeInstruction = (): React.ReactElement => {
         return (
-            <View style={{ backgroundColor: 'white', height: '100%' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 8 }}>
+            <View style={{backgroundColor: 'white', height: '100%'}}>
+                <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 8}}>
                     <Icon
                         type="font-awesome-5"
                         name="arrow-up"
                         size={20}
-                        style={{ textAlignVertical: 'center', marginRight: 8 }}
+                        style={{textAlignVertical: 'center', marginRight: 8}}
                     />
-                    <Text style={{ fontSize: 20 }}>Laser</Text>
+                    <Text style={{fontSize: 20}}>Laser</Text>
                     <Icon
                         type="font-awesome-5"
                         name="exclamation-triangle"
                         size={20}
                         color="red"
-                        style={{ textAlignVertical: 'center', marginLeft: 8 }}
+                        style={{textAlignVertical: 'center', marginLeft: 8}}
                     />
                 </View>
                 <View
@@ -843,8 +840,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                         marginBottom: 60,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                    }}
-                >
+                    }}>
                     <View
                         style={{
                             width: 10,
@@ -852,22 +848,21 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             backgroundColor: 'black',
                             borderBottomRightRadius: 30,
                             borderTopRightRadius: 30,
-                        }}
-                    ></View>
+                        }}></View>
                     <Icon
                         type="font-awesome-5"
                         name="arrow-left"
                         size={30}
-                        style={{ marginTop: 25, textAlignVertical: 'center' }}
+                        style={{marginTop: 25, textAlignVertical: 'center'}}
                     />
-                    <Text style={{ width: '50%', textAlign: 'center', textAlignVertical: 'center' }}>
+                    <Text style={{width: '50%', textAlign: 'center', textAlignVertical: 'center'}}>
                         Reste appuyé sur un des boutons latéraux pour activer le scanner laser.
                     </Text>
                     <Icon
                         type="font-awesome-5"
                         name="arrow-right"
                         size={30}
-                        style={{ marginTop: 25, textAlignVertical: 'center' }}
+                        style={{marginTop: 25, textAlignVertical: 'center'}}
                     />
                     <View
                         style={{
@@ -876,15 +871,14 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             backgroundColor: 'black',
                             borderBottomLeftRadius: 30,
                             borderTopLeftRadius: 30,
-                        }}
-                    ></View>
+                        }}></View>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                     <Icon type="font-awesome-5" name="exclamation-triangle" solid size={30} color="red" />
                     <Icon type="font-awesome-5" name="eye" solid size={30} color="red" />
                 </View>
-                <Text style={{ textAlign: 'center', fontSize: 24 }}>Attention aux yeux.</Text>
-                <Text style={{ textAlign: 'center' }}>Ne pas pointer le laser vers un visage !</Text>
+                <Text style={{textAlign: 'center', fontSize: 24}}>Attention aux yeux.</Text>
+                <Text style={{textAlign: 'center'}}>Ne pas pointer le laser vers un visage !</Text>
             </View>
         );
     };
@@ -908,9 +902,8 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                     }
                 }}
                 onClose={(): void => {
-                    this.setState({ barcodes: [] });
-                }}
-            >
+                    this.setState({barcodes: []});
+                }}>
                 {extraPanel}
             </ScannerInfoPanel>
         );

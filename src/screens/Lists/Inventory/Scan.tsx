@@ -1,13 +1,13 @@
-import React, { ReactNode } from 'react';
-import { Alert, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Barcode } from 'react-native-camera';
+import React, {ReactNode} from 'react';
+import {Alert, SafeAreaView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Barcode} from 'react-native-camera';
 import CodeScanner from '../../CodeScanner';
-import { Navigation, Options } from 'react-native-navigation';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import { Button, Divider } from 'react-native-elements';
-import ProductProduct, { UnitOfMeasurement } from '../../../entities/Odoo/ProductProduct';
-import { isInt } from '../../../utils/helpers';
-import { getRepository } from 'typeorm';
+import {Navigation, Options} from 'react-native-navigation';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import {Button, Divider} from 'react-native-elements';
+import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductProduct';
+import {isInt} from '../../../utils/helpers';
+import {getRepository} from 'typeorm';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import InventoryList from '../../../entities/Lists/InventoryList';
 
@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsInventoryScan extends React.Component<Props, {}> {
+    static screenName = "Lists/Inventory/Scan";
+
     codeScanner?: CodeScanner;
     articleQuantityValue?: string;
 
@@ -52,7 +54,7 @@ export default class ListsInventoryScan extends React.Component<Props, {}> {
         return options;
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+    navigationButtonPressed({buttonId}: {buttonId: string}): void {
         if (buttonId === 'cancel') {
             Navigation.dismissModal(this.props.componentId);
         }
@@ -104,8 +106,8 @@ export default class ListsInventoryScan extends React.Component<Props, {}> {
         return (
             <View>
                 <Divider></Divider>
-                <Text style={{ fontWeight: 'bold', paddingTop: 8 }}>Nouveau stock</Text>
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
+                <Text style={{fontWeight: 'bold', paddingTop: 8}}>Nouveau stock</Text>
+                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8}}>
                     <TextInput
                         onChangeText={(value): void => {
                             this.articleQuantityValue = value;
@@ -128,7 +130,7 @@ export default class ListsInventoryScan extends React.Component<Props, {}> {
                         }}
                         autoFocus={true}
                     />
-                    <Text style={{ fontSize: 28, flex: 1 }}>{product.unitAsString()}</Text>
+                    <Text style={{fontSize: 28, flex: 1}}>{product.unitAsString()}</Text>
                     <Button
                         onPress={(): void => {
                             this.didTapSaveButton(product);
@@ -149,8 +151,7 @@ export default class ListsInventoryScan extends React.Component<Props, {}> {
                     }}
                     extraInfoPanel={(product): ReactNode => {
                         return this.renderInventoryInput(product);
-                    }}
-                ></CodeScanner>
+                    }}></CodeScanner>
             </SafeAreaView>
         );
     }

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import {MigrationInterface, QueryRunner} from 'typeorm';
 
 export class MultiList1636572223147 implements MigrationInterface {
     name = 'MultiList1636572223147';

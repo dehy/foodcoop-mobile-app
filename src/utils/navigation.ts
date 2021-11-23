@@ -1,4 +1,4 @@
-import { Navigation, Options } from 'react-native-navigation';
+import {Navigation, Options} from 'react-native-navigation';
 import GoodsReceiptService from '../services/GoodsReceiptService';
 
 export function goToAuth(): void {

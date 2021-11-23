@@ -1,12 +1,12 @@
 import React from 'react';
-import { Alert, FlatList, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import CookieManager from 'react-native-cookies';
+import {Alert, FlatList, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import CookieManager, { Cookie, Cookies } from '@react-native-cookies/cookies';
 import Odoo from '../../../utils/Odoo';
-import { Navigation, Options } from 'react-native-navigation';
-import { ListItem } from 'react-native-elements';
+import {Navigation, Options} from 'react-native-navigation';
+import {ListItem} from 'react-native-elements';
 
-interface CookiesMaintenanceState {
+interface State {
     cookieItemList: CookiesMaintenanceFlatListItem[];
 }
 
@@ -25,9 +25,11 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class CookiesMaintenance extends React.Component<{}, CookiesMaintenanceState> {
-    cookies: Cookie[] = [];
-    state: CookiesMaintenanceState = {
+export default class PlusMaintenanceCookies extends React.Component<{}, State> {
+    static screenName = "Plus/Maintenance/Cookies";
+
+    cookies: Cookies = {};
+    state: State = {
         cookieItemList: [],
     };
     constructor(props: {}) {
@@ -47,17 +49,15 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
         const cookieItemList: CookiesMaintenanceFlatListItem[] = [];
         if (Platform.OS == 'ios') {
             CookieManager.getAll().then(cookies => {
-                // console.debug('CookieManager.getAll =>', cookies);
                 this.cookies = cookies;
-                for (const cookieKey in cookies) {
-                    const cookie = cookies[cookieKey];
+                for (let [cookieKey, cookie] of Object.entries(cookies)) {
                     cookieItemList.push({
                         key: cookieKey,
                         title: cookie.name,
-                        subtitle: cookie.domain,
+                        subtitle: cookie.domain ?? '',
                     });
                 }
-                this.setState({ cookieItemList: cookieItemList });
+                this.setState({cookieItemList: cookieItemList});
             });
         }
         if (Platform.OS == 'android') {
@@ -74,9 +74,8 @@ export default class CookiesMaintenance extends React.Component<{}, CookiesMaint
     }
 
     didTapCookieItem = (key: string): void => {
-        // console.debug('didTapCookieItem()', key);
-        const cookie = this.cookies.find(cookie => {
-            if (key === cookie.name) {
+        const cookie = Object.values(this.cookies).find((aCookie: Cookie) => {
+            if (key === aCookie.name) {
                 return true;
             }
             return false;
@@ -93,25 +92,23 @@ path: ${cookie.path}`;
     };
 
     didTapActionItem = (key: string): void => {
-        switch (key) {
-            case 'clear-cookies':
-                Alert.alert(
-                    'Effacer les 🍪',
-                    "Es-tu vraiment sûr(e) de vouloir effacer les cookies utilisés par l'application ?",
-                    [
-                        {
-                            text: 'NON ! 😱',
+        if ('clear-cookies' === key) {
+            Alert.alert(
+                'Effacer les 🍪',
+                "Es-tu vraiment sûr(e) de vouloir effacer les cookies utilisés par l'application ?",
+                [
+                    {
+                        text: 'NON ! 😱',
+                    },
+                    {
+                        text: 'Je suis sûr(e) et certain(e) ! 💣',
+                        style: 'destructive',
+                        onPress: (): void => {
+                            this.clearAllCookies();
                         },
-                        {
-                            text: 'Je suis sûr(e) et certain(e) ! 💣',
-                            style: 'destructive',
-                            onPress: (): void => {
-                                this.clearAllCookies();
-                            },
-                        },
-                    ],
-                );
-                break;
+                    },
+                ],
+            );
         }
     };
 
@@ -125,7 +122,7 @@ path: ${cookie.path}`;
                 keyExtractor={(item): string => {
                     return item.title;
                 }}
-                renderItem={({ item }): React.ReactElement => (
+                renderItem={({item}): React.ReactElement => (
                     <ListItem onPress={(): void => this.didTapCookieItem(item.key)} bottomDivider>
                         <ListItem.Content>
                             <ListItem.Title>{item.title}</ListItem.Title>
@@ -145,14 +142,14 @@ path: ${cookie.path}`;
                 {this.renderCookieList()}
                 <FlatList
                     scrollEnabled={false}
-                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    ItemSeparatorComponent={({highlighted}): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && {marginLeft: 0}]} />
                     )}
-                    data={[{ title: 'Effacer les cookies', key: 'clear-cookies', color: 'red' }]}
-                    renderItem={({ item }): React.ReactElement => (
+                    data={[{title: 'Effacer les cookies', key: 'clear-cookies', color: 'red'}]}
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem onPress={(): void => this.didTapActionItem(item.key)}>
                             <ListItem.Content>
-                                <ListItem.Title style={{ color: item.color ?? 'black' }}>{item.title}</ListItem.Title>
+                                <ListItem.Title style={{color: item.color ?? 'black'}}>{item.title}</ListItem.Title>
                             </ListItem.Content>
                         </ListItem>
                     )}

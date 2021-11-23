@@ -1,7 +1,7 @@
 'use strict';
 
 export default class AppLogger {
-    static loggers: { [id: string]: AppLogger } = {};
+    static loggers: {[id: string]: AppLogger} = {};
     static defaultId = 'AppLogger';
 
     id = AppLogger.defaultId;

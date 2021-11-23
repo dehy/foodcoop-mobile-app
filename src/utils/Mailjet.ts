@@ -1,4 +1,4 @@
-import { Base64 } from 'js-base64';
+import {Base64} from 'js-base64';
 import Config from 'react-native-config';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
@@ -70,7 +70,7 @@ export default class Mailjet {
     }
 
     public send = async (messages: Message[]): Promise<any> => {
-        const messagesString = JSON.stringify({ Messages: messages });
+        const messagesString = JSON.stringify({Messages: messages});
         const options: RequestInit = {
             method: 'POST',
             body: messagesString,

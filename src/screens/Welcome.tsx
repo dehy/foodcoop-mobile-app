@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Alert } from 'react-native';
-import { goHome } from '../utils/navigation';
-import { readableVersion } from '../utils/helpers';
+import React, {Component} from 'react';
+import {StyleSheet, Text, View, SafeAreaView, Alert} from 'react-native';
+import {goHome} from '../utils/navigation';
+import {readableVersion} from '../utils/helpers';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
-import SupercoopSignIn, { SupercoopSignInButton } from '../utils/SupercoopSignIn';
+import SupercoopSignIn, {SupercoopSignInButton} from '../utils/SupercoopSignIn';
 
-type WelcomeState = {
-    signinInProgress: boolean;
-};
+interface State {
+    signInInProgress: boolean;
+}
 
-export interface WelcomeProps {
+interface Props {
     componentId: string;
 }
 
@@ -42,24 +42,26 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class Welcome extends Component<WelcomeProps, WelcomeState> {
-    constructor(props: WelcomeProps) {
+export default class Welcome extends Component<Props, State> {
+    static screenName = "Welcome";
+
+    constructor(props: Props) {
         super(props);
         this.state = {
-            signinInProgress: false,
+            signInInProgress: false,
         };
     }
 
     authWithSupercoop = async (): Promise<void> => {
         this.setState({
-            signinInProgress: true,
+            signInInProgress: true,
         });
         SupercoopSignIn.getInstance()
             .signIn()
             .then(
                 () => {
                     this.setState({
-                        signinInProgress: false,
+                        signInInProgress: false,
                     });
                     goHome();
                 },
@@ -67,7 +69,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                     Alert.alert('Erreur', "Une erreur s'est produite lors de la connexion");
                     console.error(reason);
                     this.setState({
-                        signinInProgress: false,
+                        signInInProgress: false,
                     });
                 },
             );
@@ -76,7 +78,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
     render(): React.ReactNode {
         return (
             <SafeAreaView style={styles.container}>
-                <View style={{ flex: 1, width: '100%', marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{flex: 1, width: '100%', marginTop: 20, justifyContent: 'center', alignItems: 'center'}}>
                     <LogoSupercoop height="80%" width="80%" />
                 </View>
                 <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
@@ -84,11 +86,11 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                     Pour commencer à utiliser l&apos;application, connectes-toi à ton compte Supercoop grâce au bouton
                     ci-dessous. On se retrouve juste après !
                 </Text>
-                <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
+                <View style={{height: 96, flex: 0, alignItems: 'center'}}>
                     <SupercoopSignInButton
                         title="Se connecter"
                         onPress={this.authWithSupercoop}
-                        disabled={this.state.signinInProgress}
+                        disabled={this.state.signInInProgress}
                     />
                 </View>
                 <Text style={styles.version}>{readableVersion()}</Text>

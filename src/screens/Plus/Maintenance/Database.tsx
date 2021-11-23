@@ -1,15 +1,17 @@
 import React from 'react';
-import { Alert, FlatList, SafeAreaView, TouchableHighlight, Text, StyleSheet, View } from 'react-native';
-import { defaultScreenOptions } from '../../../utils/navigation';
+import {Alert, FlatList, SafeAreaView, TouchableHighlight, Text, StyleSheet, View} from 'react-native';
+import {defaultScreenOptions} from '../../../utils/navigation';
 import Database from '../../../utils/Database';
 import materialStyle from '../../../styles/material';
-import { Options } from 'react-native-navigation';
+import {Options} from 'react-native-navigation';
 
 const styles = StyleSheet.create({
     separator: {},
 });
 
-export default class DatabaseMaintenance extends React.Component<{}, {}> {
+export default class PlusMaintenanceDatabase extends React.Component<{}, {}> {
+    static screenName = "Plus/Maintenance/Database";
+
     constructor(props: {}) {
         super(props);
     }
@@ -53,21 +55,18 @@ export default class DatabaseMaintenance extends React.Component<{}, {}> {
         return (
             <SafeAreaView>
                 <FlatList
-                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    ItemSeparatorComponent={({highlighted}): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && {marginLeft: 0}]} />
                     )}
-                    data={[{ title: 'Effacer la base de donnée locale', key: 'reset-db', color: 'red' }]}
-                    renderItem={({ item, separators }): React.ReactElement => (
+                    data={[{title: 'Effacer la base de donnée locale', key: 'reset-db', color: 'red'}]}
+                    renderItem={({item, separators}): React.ReactElement => (
                         <TouchableHighlight
                             onPress={(): void => this._onPress(item.key)}
                             onShowUnderlay={separators.highlight}
-                            onHideUnderlay={separators.unhighlight}
-                        >
+                            onHideUnderlay={separators.unhighlight}>
                             <View style={materialStyle.row}>
                                 <View style={materialStyle.rowContent}>
-                                    <Text
-                                        style={[materialStyle.rowTitle, { color: item.color ? item.color : 'black' }]}
-                                    >
+                                    <Text style={[materialStyle.rowTitle, {color: item.color ? item.color : 'black'}]}>
                                         {item.title}
                                     </Text>
                                 </View>

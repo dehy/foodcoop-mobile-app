@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgProps } from 'react-native-svg';
+import {SvgProps} from 'react-native-svg';
 import NovaGroup1 from '../../assets/svg/nova-group-1.svg';
 import NovaGroup2 from '../../assets/svg/nova-group-2.svg';
 import NovaGroup3 from '../../assets/svg/nova-group-3.svg';
@@ -12,11 +12,11 @@ export enum NovaGroupGroups {
     four = 4,
 }
 
-interface NovaGroupProps extends SvgProps {
+interface Props extends SvgProps {
     group: NovaGroupGroups;
 }
 
-export default class NovaGroup extends React.Component<NovaGroupProps> {
+export default class NovaGroup extends React.Component<Props> {
     render(): React.ReactNode {
         switch (this.props.group) {
             case NovaGroupGroups.one:

@@ -9,11 +9,11 @@ import {
     TableInheritance,
     UpdateDateColumn,
 } from 'typeorm';
-import { InventoryListExtraData } from './InventoryList';
+import {InventoryListExtraData} from './InventoryList';
 import ListAttachment from './ListAttachment';
 import BaseEntry from './BaseEntry';
-import { DateTime } from 'luxon';
-import { GoodsReceiptListExtraData } from './GoodsReceiptList';
+import {DateTime} from 'luxon';
+import {GoodsReceiptListExtraData} from './GoodsReceiptList';
 
 // export const ListTypeIcon = new Map<string, string>([
 //     [ListType.inventory, 'boxes'],
@@ -25,7 +25,7 @@ import { GoodsReceiptListExtraData } from './GoodsReceiptList';
 // ]);
 
 @Entity('lists')
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
+@TableInheritance({column: {type: 'varchar', name: 'type'}})
 export default abstract class BaseList {
     public static icon = 'clipboard-list';
     public static label = 'Liste';
@@ -52,7 +52,7 @@ export default abstract class BaseList {
     })
     comment?: string;
 
-    @CreateDateColumn({ type: 'datetime' })
+    @CreateDateColumn({type: 'datetime'})
     public _createdAt?: Date;
 
     get createdAt(): DateTime | undefined {
@@ -63,7 +63,7 @@ export default abstract class BaseList {
         this._createdAt = date ? date.toJSDate() : undefined;
     }
 
-    @UpdateDateColumn({ type: 'datetime' })
+    @UpdateDateColumn({type: 'datetime'})
     public _lastModifiedAt?: Date;
 
     get lastModifiedAt(): DateTime | undefined {

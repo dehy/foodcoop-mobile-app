@@ -1,16 +1,16 @@
 import React from 'react';
-import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
-import { defaultScreenOptions } from '../../../utils/navigation';
-import { Navigation, Options } from 'react-native-navigation';
+import {ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Button, Icon} from 'react-native-elements';
+import {defaultScreenOptions} from '../../../utils/navigation';
+import {Navigation, Options} from 'react-native-navigation';
 import CSVGenerator from '../../../utils/CSVGenerator';
 import SupercoopSignIn from '../../../utils/SupercoopSignIn';
-import Mailjet, { MailAttachment } from '../../../utils/Mailjet';
+import Mailjet, {MailAttachment} from '../../../utils/Mailjet';
 import merge from 'deepmerge';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
-import { getConnection } from 'typeorm';
-import { DateTime } from 'luxon';
+import {getConnection} from 'typeorm';
+import {DateTime} from 'luxon';
 
 export interface Props {
     componentId: string;
@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsInventoryExport extends React.Component<Props, State> {
+    static screenName = "Lists/Inventory/Export";
+
     private inventoryEntries: Array<InventoryEntry> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
 
@@ -60,7 +62,7 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
         return merge(options, buttons);
     }
 
-    navigationButtonPressed({ buttonId }: { buttonId: string }): void {
+    navigationButtonPressed({buttonId}: {buttonId: string}): void {
         if (buttonId === 'cancel') {
             Navigation.dismissModal(this.props.componentId);
         }
@@ -127,7 +129,7 @@ ${notFoundInOdooString}`);
                 }
                 getConnection()
                     .getRepository(InventoryList)
-                    .update(this.props.inventory.id, { _lastSentAt: new Date() });
+                    .update(this.props.inventory.id, {_lastSentAt: new Date()});
                 Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
             })
             .catch((e: Error) => {
@@ -151,7 +153,7 @@ ${notFoundInOdooString}`);
         if (null === this.state.inventoryCheckPassed) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
-                    <ActivityIndicator size="small" color="#999999" style={{ paddingTop: 4, marginRight: 4 }} />
+                    <ActivityIndicator size="small" color="#999999" style={{paddingTop: 4, marginRight: 4}} />
                     <Text>Création en cours</Text>
                 </View>
             );
@@ -159,23 +161,23 @@ ${notFoundInOdooString}`);
         if (true === this.state.inventoryCheckPassed) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
-                    <Icon type="font-awesome-5" name="check" color="green" style={{ paddingTop: 3, marginRight: 4 }} />
-                    <Text style={{ color: 'green' }}>Prêt pour l&apos;envoi</Text>
+                    <Icon type="font-awesome-5" name="check" color="green" style={{paddingTop: 3, marginRight: 4}} />
+                    <Text style={{color: 'green'}}>Prêt pour l&apos;envoi</Text>
                 </View>
             );
         }
         if (false === this.state.inventoryCheckPassed) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
-                    <Icon type="font-awesome-5" name="times" color="red" style={{ paddingTop: 3, marginRight: 4 }} />
-                    <Text style={{ color: 'red' }}>Erreur !</Text>
+                    <Icon type="font-awesome-5" name="times" color="red" style={{paddingTop: 3, marginRight: 4}} />
+                    <Text style={{color: 'red'}}>Erreur !</Text>
                 </View>
             );
         }
 
         return (
-            <SafeAreaView style={{ backgroundColor: 'white' }}>
-                <View style={{ padding: 16 }}>
+            <SafeAreaView style={{backgroundColor: 'white'}}>
+                <View style={{padding: 16}}>
                     <Text>
                         Tu es sur le point d&apos;envoyer ton inventaire du{' '}
                         {this.props.inventory.createdAt &&
@@ -183,12 +185,12 @@ ${notFoundInOdooString}`);
                         , zone {this.props.inventory.zone}. Il contient {this.props.inventoryEntries.length} article
                         {this.props.inventoryEntries.length > 1 ? 's' : ''}.
                     </Text>
-                    <View style={{ flexDirection: 'row' }}>
+                    <View style={{flexDirection: 'row'}}>
                         <Text>État : </Text>
                         {inventoryCheck}
                     </View>
                     <Text>En tapant sur le bouton ci-dessous, il sera envoyé à l&apos;équipe inventaire :</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', margin: 16 }}>
+                    <View style={{flexDirection: 'row', justifyContent: 'center', margin: 16}}>
                         <Button
                             onPress={(): void => {
                                 this.sendInventory();

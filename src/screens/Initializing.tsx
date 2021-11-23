@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Odoo from '../utils/Odoo';
-import { goHome, goToAuth } from '../utils/navigation';
+import {goHome, goToAuth} from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 
-export interface InitialisingProps {
+export interface Props {
     componentId: string;
 }
 
@@ -40,8 +40,10 @@ const welcomeMessages = [
     'Dans une galaxie très très lointaine...',
 ];
 
-export default class Initialising extends React.Component<InitialisingProps> {
-    constructor(props: InitialisingProps) {
+export default class Initializing extends React.Component<Props> {
+    static screenName = "Initializing";
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             loggedUser: null,
