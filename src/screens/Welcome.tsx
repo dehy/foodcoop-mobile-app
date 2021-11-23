@@ -5,11 +5,11 @@ import {readableVersion} from '../utils/helpers';
 import LogoSupercoop from '../../assets/svg/supercoop.svg';
 import SupercoopSignIn, {SupercoopSignInButton} from '../utils/SupercoopSignIn';
 
-type WelcomeState = {
-    signinInProgress: boolean;
+interface State {
+    signInInProgress: boolean;
 };
 
-export interface WelcomeProps {
+interface Props {
     componentId: string;
 }
 
@@ -42,24 +42,26 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class Welcome extends Component<WelcomeProps, WelcomeState> {
-    constructor(props: WelcomeProps) {
+export default class Welcome extends Component<Props, State> {
+    static screenName = "Welcome";
+
+    constructor(props: Props) {
         super(props);
         this.state = {
-            signinInProgress: false,
+            signInInProgress: false,
         };
     }
 
     authWithSupercoop = async (): Promise<void> => {
         this.setState({
-            signinInProgress: true,
+            signInInProgress: true,
         });
         SupercoopSignIn.getInstance()
             .signIn()
             .then(
                 () => {
                     this.setState({
-                        signinInProgress: false,
+                        signInInProgress: false,
                     });
                     goHome();
                 },
@@ -67,7 +69,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                     Alert.alert('Erreur', "Une erreur s'est produite lors de la connexion");
                     console.error(reason);
                     this.setState({
-                        signinInProgress: false,
+                        signInInProgress: false,
                     });
                 },
             );
@@ -88,7 +90,7 @@ export default class Welcome extends Component<WelcomeProps, WelcomeState> {
                     <SupercoopSignInButton
                         title="Se connecter"
                         onPress={this.authWithSupercoop}
-                        disabled={this.state.signinInProgress}
+                        disabled={this.state.signInInProgress}
                     />
                 </View>
                 <Text style={styles.version}>{readableVersion()}</Text>

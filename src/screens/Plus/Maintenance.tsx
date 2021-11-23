@@ -4,7 +4,7 @@ import {defaultScreenOptions} from '../../utils/navigation';
 import {Navigation, Options} from 'react-native-navigation';
 import {ListItem} from 'react-native-elements';
 
-export interface MaintenanceProps {
+export interface Props {
     componentId: string;
 }
 
@@ -57,12 +57,14 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class Maintenance extends React.Component<MaintenanceProps, {}> {
+export default class PlusMaintenance extends React.Component<Props, {}> {
+    static screenName = "Plus/Maintenance";
+
     private flatListItems: MaintenanceFlatListItem[] = [
         {title: 'Base de donnée locale', key: 'database'},
         {title: 'Cookies', key: 'cookies'},
     ];
-    constructor(props: MaintenanceProps) {
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
     }

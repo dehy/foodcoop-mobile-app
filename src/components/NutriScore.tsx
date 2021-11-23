@@ -14,11 +14,11 @@ export enum NutriScoreScore {
     e = 'e',
 }
 
-interface NutriScoreProps extends SvgProps {
+interface Props extends SvgProps {
     score: NutriScoreScore;
 }
 
-export default class NutriScore extends React.Component<NutriScoreProps> {
+export default class NutriScore extends React.Component<Props> {
     render(): React.ReactNode {
         console.debug(this.props.score);
         switch (this.props.score) {

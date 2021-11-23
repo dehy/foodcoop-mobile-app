@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsInventoryScan extends React.Component<Props, {}> {
+    static screenName = "Lists/Inventory/Scan";
+
     codeScanner?: CodeScanner;
     articleQuantityValue?: string;
 

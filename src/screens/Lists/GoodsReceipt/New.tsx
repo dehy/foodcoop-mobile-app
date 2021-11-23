@@ -31,6 +31,8 @@ type State = {
 };
 
 export default class ListsGoodsReceiptNew extends React.Component<Props, State> {
+    static screenName = "Lists/GoodsReceipt/New";
+
     theme = {
         Button: {
             iconContainerStyle: {marginRight: 5},

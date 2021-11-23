@@ -4,12 +4,12 @@ import {defaultScreenOptions} from '../../utils/navigation';
 import {Moment} from 'moment';
 import WebView from 'react-native-webview';
 
-export interface NewsShowProps {
+export interface Props {
     componentId: string;
     newsItem: NewsItem;
 }
 
-interface NewsShowState {
+interface State {
     componentId: string;
 }
 
@@ -20,11 +20,12 @@ export interface NewsItem {
     url: string;
 }
 
-export default class NewsShow extends React.Component<NewsShowProps, NewsShowState> {
-    constructor(props: NewsShowProps) {
+export default class NewsShow extends React.Component<Props, State> {
+    static screenName = "News/Show";
+
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
-        //console.debug(this.props.newsItem.url);
     }
 
     get options(): Options {

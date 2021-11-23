@@ -29,6 +29,8 @@ interface State {
 }
 
 export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
+    static screenName = "Lists/GoodsReceipt/Show";
+
     theme = {
         Button: {
             iconContainerStyle: {marginRight: 5},

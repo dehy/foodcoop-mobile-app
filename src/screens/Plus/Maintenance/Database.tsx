@@ -9,7 +9,9 @@ const styles = StyleSheet.create({
     separator: {},
 });
 
-export default class DatabaseMaintenance extends React.Component<{}, {}> {
+export default class PlusMaintenanceDatabase extends React.Component<{}, {}> {
+    static screenName = "Plus/Maintenance/Database";
+
     constructor(props: {}) {
         super(props);
     }

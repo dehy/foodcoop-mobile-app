@@ -26,6 +26,8 @@ const styles = StyleSheet.create({
 });
 
 export default class Scanner extends React.Component<Props, State> {
+    static screenName = "Scanner";
+
     private scanner?: CodeScanner;
 
     private navigationEventListener?: EventSubscription;

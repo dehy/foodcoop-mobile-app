@@ -8,17 +8,19 @@ import {NewsItem} from './Show';
 import {Icon, ListItem} from 'react-native-elements';
 import Config from 'react-native-config';
 
-export interface NewsListProps {
+export interface Props {
     componentId: string;
 }
 
-interface NewsListState {
+interface State {
     news: NewsItem[];
     refreshing: boolean;
 }
 
-export default class NewsList extends React.Component<NewsListProps, NewsListState> {
-    constructor(props: NewsListProps) {
+export default class NewsList extends React.Component<Props, State> {
+    static screenName = "News/List";
+
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
         this.state = {

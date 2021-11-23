@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsInventoryExport extends React.Component<Props, State> {
+    static screenName = "Lists/Inventory/Export";
+
     private inventoryEntries: Array<InventoryEntry> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
 

@@ -12,11 +12,11 @@ export enum NovaGroupGroups {
     four = 4,
 }
 
-interface NovaGroupProps extends SvgProps {
+interface Props extends SvgProps {
     group: NovaGroupGroups;
 }
 
-export default class NovaGroup extends React.Component<NovaGroupProps> {
+export default class NovaGroup extends React.Component<Props> {
     render(): React.ReactNode {
         switch (this.props.group) {
             case NovaGroupGroups.one:

@@ -28,6 +28,8 @@ interface State {
 }
 
 export default class ListsGoodsReceiptScan extends React.Component<Props, State> {
+    static screenName = "Lists/GoodsReceipt/Scan";
+
     colorSuccess = '#5cb85c';
     colorSuccessDisabled = '#D6EDDB';
     colorDanger = '#DC3545';

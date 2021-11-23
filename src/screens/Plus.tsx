@@ -5,7 +5,7 @@ import {goToAuth} from '../utils/navigation';
 import {Navigation} from 'react-native-navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 
-export interface PlusProps {
+export interface Props {
     componentId: string;
 }
 
@@ -52,8 +52,10 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class Plus extends React.Component<PlusProps> {
-    constructor(props: PlusProps) {
+export default class Plus extends React.Component<Props> {
+    static screenName = "Plus";
+
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
     }

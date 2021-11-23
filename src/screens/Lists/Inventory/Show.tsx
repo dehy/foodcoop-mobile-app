@@ -30,6 +30,8 @@ interface InventoryData {
 }
 
 export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
+    static screenName = "Lists/GoodsReceipt/Show";
+
     modalDismissedListener?: EmitterSubscription;
     inventoryListRepository: Repository<InventoryList>;
     inventoryEntryRepository: Repository<InventoryEntry>;

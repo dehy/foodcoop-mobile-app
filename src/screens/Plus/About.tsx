@@ -15,7 +15,9 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class ProfileAbout extends React.Component<{}, {}> {
+export default class PlusAbout extends React.Component<{}, {}> {
+    static screenName = "Plus/About";
+
     constructor(props: {}) {
         super(props);
     }

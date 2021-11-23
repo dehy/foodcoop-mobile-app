@@ -25,6 +25,8 @@ interface State {
 }
 
 export default class ListsList extends NavigationComponent<Props, State> {
+    static screenName = "Lists/List";
+
     theme = {
         Button: {
             iconContainerStyle: {marginRight: 5},

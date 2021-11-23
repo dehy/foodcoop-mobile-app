@@ -6,7 +6,7 @@ import Odoo from '../../../utils/Odoo';
 import {Navigation, Options} from 'react-native-navigation';
 import {ListItem} from 'react-native-elements';
 
-interface CookiesMaintenanceState {
+interface State {
     cookieItemList: CookiesMaintenanceFlatListItem[];
 }
 
@@ -25,9 +25,11 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class CookiesMaintenance extends React.Component<{}, CookiesMaintenanceState> {
+export default class PlusMaintenanceCookies extends React.Component<{}, State> {
+    static screenName = "Plus/Maintenance/Cookies";
+
     cookies: Cookies = {};
-    state: CookiesMaintenanceState = {
+    state: State = {
         cookieItemList: [],
     };
     constructor(props: {}) {

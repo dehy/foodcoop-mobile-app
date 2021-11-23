@@ -14,6 +14,8 @@ type Props = {
 type State = {};
 
 export default class ListsInventoryNew extends React.Component<Props, State> {
+    static screenName = "Lists/Inventory/New";
+
     theme = {
         Button: {
             iconContainerStyle: {marginRight: 5},

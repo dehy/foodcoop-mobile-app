@@ -16,6 +16,8 @@ type State = {};
 export const RegisteredListTypes = [InventoryList, GoodsReceiptList];
 
 export default class ListsNewStepType extends React.Component<Props, State> {
+    static screenName = "Lists/NewStepType";
+
     theme = {
         Button: {
             iconContainerStyle: {marginRight: 5},

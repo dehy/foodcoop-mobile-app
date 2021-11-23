@@ -38,6 +38,8 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsGoodsReceiptExport extends React.Component<Props, State> {
+    static screenName = "Lists/GoodsReceipt/Export";
+
     private receiptEntries: GoodsReceiptEntry[] = [];
     private images: ListAttachment[] = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
