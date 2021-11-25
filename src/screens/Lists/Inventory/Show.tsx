@@ -29,8 +29,8 @@ interface InventoryData {
     inventoryEntry: InventoryEntry;
 }
 
-export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
-    static screenName = "Lists/GoodsReceipt/Show";
+export default class ListsInventoryShow extends React.Component<Props, State> {
+    static screenName = "Lists/Inventory/Show";
 
     modalDismissedListener?: EmitterSubscription;
     inventoryListRepository: Repository<InventoryList>;
