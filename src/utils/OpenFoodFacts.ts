@@ -1,5 +1,7 @@
 import DeviceInfo from 'react-native-device-info';
-import {NutriScoreScore} from '../components/NutriScore';
+import { EcoScoreScore } from '../components/EcoScore';
+import { NovaGroupGroups } from '../components/NovaGroup';
+import { NutriScoreScore } from '../components/NutriScore';
 import AppLogger from './AppLogger';
 import Odoo from './Odoo';
 
@@ -12,10 +14,8 @@ interface OFFResponse {
 
 export interface OFFProduct {
     nutrition_grade_fr?: NutriScoreScore;
-    nova_group?: 1 | 2 | 3 | 4;
-    categories_properties?: {
-        'agribalyse_food_code:en'?: string;
-    };
+    ecoscore_grade?: EcoScoreScore;
+    nova_group?: NovaGroupGroups;
 }
 
 export default class OpenFoodFacts {
@@ -44,8 +44,7 @@ export default class OpenFoodFacts {
         const parameters: {[key: string]: string | string[]} = {
             fields: [
                 'nova_group',
-                'nutriscore_score',
-                'nutrition_grades_tags',
+                'ecoscore_grade',
                 'nutrition_grade_fr',
                 'ingredients_text_with_allergens_fr',
                 'categories_properties',

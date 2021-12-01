@@ -4,6 +4,7 @@ import {defaultScreenOptions} from '../utils/navigation';
 import {Navigation, Options, EventSubscription} from 'react-native-navigation';
 import CodeScanner from './CodeScanner';
 import OpenFoodFacts, {OFFProduct} from '../utils/OpenFoodFacts';
+import EcoScore, {EcoScoreScore} from '../components/EcoScore';
 import NutriScore, {NutriScoreScore} from '../components/NutriScore';
 import NovaGroup, {NovaGroupGroups} from '../components/NovaGroup';
 
@@ -84,28 +85,47 @@ export default class Scanner extends React.Component<Props, State> {
             });
     }
 
+    renderEcoScore(score?: EcoScoreScore): React.ReactNode {
+        let ecoScore;
+        if (undefined !== score && EcoScoreScore.unknown !== score) {
+            ecoScore = <EcoScore score={score} height={40} />;
+        } else {
+            ecoScore = (
+                <View style={{alignItems: 'center'}}>
+                    <Text style={{fontWeight: 'bold', fontSize: 11, color: 'grey'}}>ECO-SCORE</Text>
+                    <Text style={{marginTop: 12}}>non disponible</Text>
+                </View>
+            );
+        }
+        return <View>{ecoScore}</View>;
+    }
+
     renderNutriScore(score?: NutriScoreScore): React.ReactNode {
-        let nutriScore = (
-            <View style={{alignItems: 'center'}}>
-                <Text style={{fontWeight: 'bold', fontSize: 11, color: 'grey'}}>NUTRI-SCORE</Text>
-                <Text style={{marginTop: 12}}>non disponible</Text>
-            </View>
-        );
+        let nutriScore;
         if (undefined !== score) {
-            nutriScore = <NutriScore score={score} height={60} />;
+            nutriScore = <NutriScore score={score} height={40} />;
+        } else {
+            nutriScore = (
+                <View style={{alignItems: 'center'}}>
+                    <Text style={{fontWeight: 'bold', fontSize: 11, color: 'grey'}}>NUTRI-SCORE</Text>
+                    <Text style={{marginTop: 12}}>non disponible</Text>
+                </View>
+            );
         }
         return <View>{nutriScore}</View>;
     }
 
     renderNovaGroup(group?: NovaGroupGroups): React.ReactNode {
-        let novaGroup = (
-            <View style={{alignItems: 'center'}}>
-                <Text style={{fontWeight: 'bold', fontSize: 11, color: 'grey'}}>GROUPE NOVA</Text>
-                <Text style={{marginTop: 12}}>non disponible</Text>
-            </View>
-        );
+        let novaGroup;
         if (undefined !== group) {
-            novaGroup = <NovaGroup group={group} height={60} />;
+            novaGroup = <NovaGroup group={group} height={40} />;
+        } else {
+            novaGroup = (
+                <View style={{alignItems: 'center'}}>
+                    <Text style={{fontWeight: 'bold', fontSize: 11, color: 'grey'}}>GROUPE NOVA</Text>
+                    <Text style={{marginTop: 12}}>non disponible</Text>
+                </View>
+            );
         }
         return <View>{novaGroup}</View>;
     }
@@ -134,9 +154,14 @@ export default class Scanner extends React.Component<Props, State> {
                         return (
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{flex: 1}}>
+                                    {this.renderEcoScore(this.state.offProduct.ecoscore_grade)}
+                                </View>
+                                <View style={{flex: 1}}>
                                     {this.renderNutriScore(this.state.offProduct.nutrition_grade_fr)}
                                 </View>
-                                <View style={{flex: 1}}>{this.renderNovaGroup(this.state.offProduct.nova_group)}</View>
+                                <View style={{flex: 1}}>
+                                    {this.renderNovaGroup(this.state.offProduct.nova_group)}
+                                </View>
                             </View>
                         );
                     }

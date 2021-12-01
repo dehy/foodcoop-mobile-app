@@ -798,7 +798,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             title="test"
                             onPress={(): void => {
                                 const barcodeEvent: BarcodeReadEvent = {
-                                    data: '3483981002176',
+                                    data: '3478820030915',
                                     type: 'ean13',
                                     bounds: {
                                         origin: {x: '30', y: '60'},
