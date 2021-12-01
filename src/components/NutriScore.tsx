@@ -20,7 +20,7 @@ interface Props extends SvgProps {
 
 export default class NutriScore extends React.Component<Props> {
     render(): React.ReactNode {
-        console.debug(this.props.score);
+        console.debug('NutriScore: ' + this.props.score);
         switch (this.props.score) {
             case NutriScoreScore.a:
                 return <NutriScoreA width={this.props.width} height={this.props.height} />;
@@ -33,6 +33,5 @@ export default class NutriScore extends React.Component<Props> {
             case NutriScoreScore.e:
                 return <NutriScoreE width={this.props.width} height={this.props.height} />;
         }
-        return null;
     }
 }
