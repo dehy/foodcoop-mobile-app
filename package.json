@@ -75,7 +75,6 @@
         "reflect-metadata": "^0.1.13",
         "rn-secure-storage": "^2.0.6",
         "sha.js": "^2.4.11",
-        "sqlite3": "^5.0.0",
         "ts-money": "^0.4.6",
         "typeorm": "0.2.34",
         "url": "^0.11.0"
