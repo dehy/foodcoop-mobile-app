@@ -29,25 +29,23 @@ export default class PlusMaintenanceDatabase extends React.Component<{}, {}> {
     }
 
     _onPress = (key: string): void => {
-        switch (key) {
-            case 'reset-db':
-                Alert.alert(
-                    'Effacer la base de donnée locale 💣',
-                    'Es-tu vraiment sûr(e) de vouloir effacer la base de donnée locale ? ⚠ Aucune récupération possible !',
-                    [
-                        {
-                            text: '😱 NON !',
+        if ('reset-db' === key) {
+            Alert.alert(
+                'Effacer la base de donnée locale 💣',
+                'Es-tu vraiment sûr(e) de vouloir effacer la base de donnée locale ? ⚠ Aucune récupération possible !',
+                [
+                    {
+                        text: '😱 NON !',
+                    },
+                    {
+                        text: 'Je suis sûr(e) et certain(e) !',
+                        style: 'destructive',
+                        onPress: (): void => {
+                            this.resetDatabase();
                         },
-                        {
-                            text: 'Je suis sûr(e) et certain(e) !',
-                            style: 'destructive',
-                            onPress: (): void => {
-                                this.resetDatabase();
-                            },
-                        },
-                    ],
-                );
-                break;
+                    },
+                ],
+            );
         }
     };
 

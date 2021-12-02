@@ -115,7 +115,6 @@ export function goHome(): void {
 }
 
 export function goToScreen(screen: string): void {
-    // Drawer.close('left');
     Navigation.setStackRoot('App', [
         {
             component: {

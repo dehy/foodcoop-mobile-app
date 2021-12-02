@@ -64,7 +64,7 @@ export default class SupercoopSignIn {
             const result = await fetch(`${this.config.issuer}/oauth/jwks.json`);
             const json = (await result.json()) as SupercoopJWKsResponse;
             json.keys.forEach(key => {
-                const keyObj = KEYUTIL.getKey(key) as RSAKey;
+                const keyObj = KEYUTIL.getKey(key);
                 this.PEMs.push(KEYUTIL.getPEM(keyObj));
             });
         }
@@ -95,7 +95,7 @@ export default class SupercoopSignIn {
     }
 
     setCurrentUser(user: User | undefined): void {
-        // console.debug(user);
+        console.debug(user);
         this.currentUser = user;
         if (undefined !== user) {
             Sentry.setUser({email: user.email});
@@ -107,37 +107,29 @@ export default class SupercoopSignIn {
 
     signInSilently = async (): Promise<void> => {
         const {refreshToken, idToken} = await this.getTokensFromSecureStorage();
-        const user = await this.getUserFromToken(idToken);
+        let user = await this.getUserFromToken(idToken);
         if (undefined === user) {
-            try {
-                const result = await refresh(this.config, {refreshToken: refreshToken});
-                const user = await this.getUserFromToken(result.idToken);
-                this.saveTokensFromResult(result);
-                this.setCurrentUser(user);
-                return;
-            } catch (error) {
-                throw error;
-            }
+            const result = await refresh(this.config, {refreshToken: refreshToken});
+            user = await this.getUserFromToken(result.idToken);
+            this.saveTokensFromResult(result);
+            this.setCurrentUser(user);
+            return;
         }
         this.setCurrentUser(user);
     };
 
     signIn = async (): Promise<void> => {
-        try {
-            const result = await authorize(this.config);
-            console.debug(result);
-            const user = await this.getUserFromToken(result.idToken);
-            this.saveTokensFromResult(result);
-            this.setCurrentUser(user);
-            return;
-        } catch (error) {
-            throw error; // TODO: Throw better
-        }
+        const result = await authorize(this.config);
+        console.debug(result);
+        const user = await this.getUserFromToken(result.idToken);
+        this.saveTokensFromResult(result);
+        this.setCurrentUser(user);
+        return;
     };
 
     signOut = async (): Promise<void> => {
         await this.removeTokensFromSecureStorage();
-        Mailjet.getInstance().setSender(undefined);
+        Mailjet.getInstance().setSender();
     };
 
     async idTokenIsValid(token: string): Promise<boolean> {
@@ -150,7 +142,6 @@ export default class SupercoopSignIn {
             if (true === isValid) {
                 return true;
             }
-            continue;
         }
         return false;
     }
@@ -161,7 +152,7 @@ export default class SupercoopSignIn {
             console.info('idToken is valid');
             return JwtDecode<User>(token);
         }
-        throw undefined;
+        throw new Error('Invalid idToken');
     }
 
     private async saveTokensFromResult(result: AuthorizeResult | RefreshResult): Promise<void> {

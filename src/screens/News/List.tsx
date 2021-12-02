@@ -5,7 +5,7 @@ import {defaultScreenOptions} from '../../utils/navigation';
 import * as rssParser from 'react-native-rss-parser';
 import moment from 'moment';
 import {NewsItem} from './Show';
-import {Icon, ListItem} from 'react-native-elements';
+import {ListItem} from 'react-native-elements';
 import Config from 'react-native-config';
 
 export interface Props {
