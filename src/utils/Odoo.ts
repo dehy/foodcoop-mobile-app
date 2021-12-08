@@ -4,7 +4,7 @@ import OdooApi from 'react-native-odoo-promise-based';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
 import CookieManager from '@react-native-cookies/cookies';
-import {isInt, replaceStringAt} from './helpers';
+import { isInt, replaceStringAt, round } from './helpers';
 import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
 import PurchaseOrderFactory from '../factories/Odoo/PurchaseOrderFactory';
 import moment from 'moment';
@@ -27,6 +27,7 @@ export interface ParsedBarcode {
     original: string;
     base?: string;
     weight?: number;
+    price?: number;
 }
 
 export default class Odoo {
@@ -142,6 +143,7 @@ export default class Odoo {
                 console.debug(`barcode regex: ${barcodeRule.regex}`);
                 if (null !== barcodeRule.regex.exec(barcodeWoChecksum)) {
                     // we have a match!
+                    console.debug(barcodeRule);
                     return barcodeRule;
                 }
             }
@@ -171,13 +173,14 @@ export default class Odoo {
             original: barcode,
             base: undefined,
             weight: undefined,
+            price: undefined,
         };
         let baseBarcode: string = JSON.parse(JSON.stringify(barcode));
         const rule = Odoo.barcodeRuleForBarcode(barcode);
         if (!rule) {
             return parsedBarcode;
         }
-        if ('weight' !== rule.type) {
+        if ('weight' !== rule.type && 'price' !== rule.type) {
             return parsedBarcode;
         }
         const pattern = rule.pattern.replace(/[\{\}]/g, '');
@@ -194,12 +197,20 @@ export default class Odoo {
         baseBarcode = replaceStringAt(baseBarcode, unitsPositionStart, '0'.repeat(unitsSize));
 
         const decimalsResult = new RegExp(/D+/g).exec(pattern);
+        let decimalsSize = 0;
+        let decimals = '0';
         if (null !== decimalsResult) {
             const decimalsPositionStart = decimalsResult?.index;
-            const decimalsSize = decimalsResult[0].length;
-            const decimals = barcode.slice(decimalsPositionStart, decimalsPositionStart + decimalsSize);
+            decimalsSize = decimalsResult[0].length;
+            decimals = barcode.slice(decimalsPositionStart, decimalsPositionStart + decimalsSize);
             baseBarcode = replaceStringAt(baseBarcode, decimalsPositionStart, '0'.repeat(decimalsSize));
+        }
+
+        if ('weight' === rule.type) {
             parsedBarcode.weight = parseInt(units) + parseInt(decimals) / Math.pow(10, decimalsSize);
+        }
+        if ('price' === rule.type) {
+            parsedBarcode.price = parseInt(units) + parseInt(decimals) / Math.pow(10, decimalsSize);
         }
 
         // Recalculate the checksum digit for the base barcode
@@ -405,8 +416,15 @@ export default class Odoo {
         this.assertApiResponse(response);
         if (response.data && response.data.length > 0) {
             const product = ProductProductFactory.ProductProductFromResponse(response.data[0]);
-            if (parsedBarcode.weight) {
+            if (parsedBarcode.weight && product.weightNet && product.lstPrice) {
+                const ratio = parsedBarcode.weight / product.weightNet;
                 product.weightNet = parsedBarcode.weight;
+                product.lstPrice = round(product.lstPrice * ratio, 2);
+            }
+            if (parsedBarcode.price && product.lstPrice && product.weightNet) {
+                const ratio = parsedBarcode.price / product.lstPrice;
+                product.lstPrice = parsedBarcode.price;
+                product.weightNet = round(product.weightNet * ratio, 3);
             }
             return product;
         }
