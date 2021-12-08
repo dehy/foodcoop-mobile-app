@@ -6,6 +6,7 @@ import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage';
 import { Button, ButtonProps } from 'react-native';
 import React, { Component, ReactElement } from 'react';
 import Mailjet from './Mailjet';
+import Config from 'react-native-config';
 
 interface User {
     email: string;
@@ -38,9 +39,9 @@ export default class SupercoopSignIn {
     private PEMs: string[] = [];
 
     config: AuthConfiguration = {
-        issuer: '***REMOVED***',
-        clientId: '***REMOVED***',
-        redirectUrl: '***REMOVED***',
+        issuer: Config.OPENID_CONNECT_ISSUER,
+        clientId: Config.OPENID_CONNECT_CLIENT_ID,
+        redirectUrl: Config.OPENID_CONNECT_REDIRECT_URL,
         scopes: ['openid', 'profile', 'email'],
         usePKCE: true,
         useNonce: true,
@@ -98,7 +99,7 @@ export default class SupercoopSignIn {
         this.currentUser = user;
         if (undefined !== user) {
             Sentry.setUser({ email: user.email });
-            Mailjet.getInstance().setSender(user.email, user.name);
+            Mailjet.getInstance().setSender(user.name);
         } else {
             Sentry.setUser(null);
         }
@@ -136,7 +137,7 @@ export default class SupercoopSignIn {
 
     signOut = async (): Promise<void> => {
         await this.removeTokensFromSecureStorage();
-        Mailjet.getInstance().setSender(undefined, undefined);
+        Mailjet.getInstance().setSender(undefined);
     };
 
     async idTokenIsValid(token: string): Promise<boolean> {
@@ -144,7 +145,7 @@ export default class SupercoopSignIn {
         for (const pem of this.PEMs) {
             const isValid = KJUR.jws.JWS.verifyJWT(token, pem, {
                 alg: ['RS256'],
-                iss: ['***REMOVED***'],
+                iss: [Config.OPENID_CONNECT_ISSUER],
             });
             if (true === isValid) {
                 return true;

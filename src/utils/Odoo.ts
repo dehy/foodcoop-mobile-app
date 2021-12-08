@@ -13,6 +13,7 @@ import PurchaseOrderLineFactory from '../factories/Odoo/PurchaseOrderLineFactory
 import iconv from 'iconv-lite';
 import Dates from './Dates';
 import { Barcode } from 'react-native-camera';
+import Config from 'react-native-config';
 
 interface BarcodeRule {
     name: string;
@@ -42,7 +43,7 @@ export default class Odoo {
     ];
 
     private static instance: Odoo;
-    private static odooEnpoint = '***REMOVED***';
+    private static odooEnpoint = Config.ODOO_ENDPOINT;
     private static barcodeRules: BarcodeRule[] = [];
     private isConnected: boolean;
     private odooApi: OdooApi;
@@ -63,8 +64,8 @@ export default class Odoo {
             port: 443,
             protocol: 'https',
             database: 'PROD',
-            username: '***REMOVED***',
-            password: '***REMOVED***',
+            username: Config.ODOO_USERNAME,
+            password: Config.ODOO_PASSWORD,
         });
     }
 
@@ -130,10 +131,11 @@ export default class Odoo {
         }
         if (response.error.code == 100) {
             // "Odoo Session Expired"
-            console.error(response);
             this.resetApiAuthDetails();
-            throw new Error(response.error.message);
+            console.error(JSON.stringify(response));
+            throw new Error(JSON.stringify(response));
         }
+        throw new Error(JSON.stringify(response));
     }
 
     async fetchBarcodeNomenclature(): Promise<void> {
@@ -487,7 +489,7 @@ export default class Odoo {
                     .connect()
                     .then(response => {
                         this.assertApiResponse(response);
-                        if (isInt(response.data.uid) && response.data.uid > 0) {
+                        if (response.data && isInt(response.data.uid) && response.data.uid > 0) {
                             // console.debug('[Odoo] connection ok');
                             // // console.debug(context.odooApi);
                             this.isConnected = true;
