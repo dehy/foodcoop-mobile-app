@@ -43,7 +43,7 @@ export default class Odoo {
     ];
 
     private static instance: Odoo;
-    private static odooEnpoint = Config.ODOO_ENDPOINT;
+    private static odooEndpoint = Config.ODOO_ENDPOINT;
     private static barcodeRules: BarcodeRule[] = [];
     private isConnected: boolean;
     private odooApi: OdooApi;
@@ -60,7 +60,7 @@ export default class Odoo {
         this.isConnected = false;
 
         this.odooApi = new OdooApi({
-            host: Odoo.odooEnpoint,
+            host: Odoo.odooEndpoint,
             port: Config.ODOO_PORT,
             protocol: Config.ODOO_SCHEME,
             username: Config.ODOO_USERNAME,
@@ -123,7 +123,7 @@ export default class Odoo {
     assertApiResponse(response: OdooApiResponse): void {
         // console.debug('assertApiResponse()');
         // console.debug(response);
-        CookieManager.get(Odoo.odooEnpoint).then(() => {
+        CookieManager.get(Odoo.odooEndpoint).then(() => {
             // console.debug('CookieManager.get => ', res);
         });
         if (response.success == true) {
