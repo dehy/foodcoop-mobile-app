@@ -52,7 +52,7 @@
         "react-native-device-info": "8.4.8",
         "react-native-dialog": "^9.2.0",
         "react-native-dialog-input": "^1.0.7",
-        "react-native-elements": "https://github.com/react-native-elements/react-native-elements#26aebe4512a0a2827aaa8da8d071e944a594b66d",
+        "react-native-elements": "^3.4.2",
         "react-native-extended-stylesheet": "^0.12.0",
         "react-native-fs": "^2.16.2",
         "react-native-image-picker": "^4.3.0",
