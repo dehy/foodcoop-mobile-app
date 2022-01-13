@@ -4,7 +4,7 @@ import OdooApi from 'react-native-odoo-promise-based';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
 import CookieManager from '@react-native-cookies/cookies';
-import { isInt, replaceStringAt, round } from './helpers';
+import {isInt, replaceStringAt, round} from './helpers';
 import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
 import PurchaseOrderFactory from '../factories/Odoo/PurchaseOrderFactory';
 import moment from 'moment';
@@ -102,7 +102,6 @@ export default class Odoo {
             order: 'sequence ASC',
         };
         const response = await this.odooApi.search_read('barcode.rule', params);
-        console.log(JSON.stringify(response));
 
         this.assertApiResponse(response);
         if (response.data && response.data.length > 0) {
@@ -113,6 +112,7 @@ export default class Odoo {
                 regexString = regexString.replace(/[ND]/g, '.');
                 rule.regex = new RegExp(`^${regexString}$`);
             }
+            console.debug(rules);
             Odoo.barcodeRules = rules;
         }
     }
@@ -127,24 +127,31 @@ export default class Odoo {
                 barcodeEncoding = 'ean8';
                 break;
             case 13:
-            default:
                 barcodeEncoding = 'ean13';
                 break;
+            default:
+                barcodeEncoding = 'any';
         }
         console.debug(`barcode encoding: ${barcodeEncoding}`);
         for (const barcodeRule of Odoo.barcodeRules) {
             console.debug(`Trying barcode rule: ${barcodeRule.pattern}`);
             if (barcodeEncoding !== barcodeRule.encoding) {
                 // skip if not the same encoding rule
-                // console.log(`+ encoding not matching`);
+                console.debug(`+ encoding not matching (${barcodeEncoding} != ${barcodeRule.encoding})`);
                 continue;
             }
             if (barcodeRule.regex) {
                 console.debug(`barcode regex: ${barcodeRule.regex}`);
-                if (null !== barcodeRule.regex.exec(barcodeWoChecksum)) {
+                const barcodeToTest = 'any' === barcodeEncoding ? barcode : barcodeWoChecksum;
+                if (null !== barcodeRule.regex.exec(barcodeToTest)) {
                     // we have a match!
-                    console.debug(barcodeRule);
+                    console.debug(`+ It's a match! ${barcodeRule.name}`);
                     return barcodeRule;
+                } else {
+                    console.debug("+ Encoding matching but regex don't");
+                    console.debug(`Regex: ${barcodeRule.regex}`);
+                    console.debug(`Barcode: ${barcodeToTest}`);
+                    console.debug(`Result: ${barcodeRule.regex.exec(barcodeToTest)}`);
                 }
             }
         }
@@ -229,20 +236,8 @@ export default class Odoo {
         const params = {
             domain: [
                 ['state', '=', 'purchase'],
-                [
-                    'date_planned',
-                    '>=',
-                    moment()
-                        .startOf('day')
-                        .format(Dates.ODOO_DATETIME_FORMAT),
-                ],
-                [
-                    'date_planned',
-                    '<',
-                    moment()
-                        .endOf('day')
-                        .format(Dates.ODOO_DATETIME_FORMAT),
-                ],
+                ['date_planned', '>=', moment().startOf('day').format(Dates.ODOO_DATETIME_FORMAT)],
+                ['date_planned', '<', moment().endOf('day').format(Dates.ODOO_DATETIME_FORMAT)],
             ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
             offset: 0,

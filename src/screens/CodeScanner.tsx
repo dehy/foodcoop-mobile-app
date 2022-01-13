@@ -594,6 +594,7 @@ export default class CodeScanner extends React.Component<Props, State> {
     };
 
     barcodeRecognized = (event: BarcodeReadEvent): void => {
+        console.debug(event);
         const barcode = this.legacyBarcodeToBarcode(event);
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({barcodes: [barcode]});
