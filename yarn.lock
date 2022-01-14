@@ -6981,10 +6981,21 @@ react-native-navigation-register-screens@^1.3.0:
   dependencies:
     react-native-navigation "^7.0.0"
 
-react-native-navigation@^7.0.0, react-native-navigation@^7.23.1:
+react-native-navigation@^7.0.0:
   version "7.23.1"
   resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-7.23.1.tgz#11db7aa84cc8b0ea3f2492113e69d65a3d5a0be0"
   integrity sha512-KkO9LCoiXGRvEMPWju7rxTrAGXdTVmVGYcEJNQipZSwFIvIE+3hwBCp11ELyWHd9h0e8FDlT0vqHdxE2osOF+w==
+  dependencies:
+    hoist-non-react-statics "3.x.x"
+    lodash "4.17.x"
+    prop-types "15.x.x"
+    react-lifecycles-compat "2.0.0"
+    tslib "1.9.3"
+
+react-native-navigation@^7.24.3:
+  version "7.25.0"
+  resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-7.25.0.tgz#ce7ae6ad01009c7cfcbf753fd2e66a4e18d9c83b"
+  integrity sha512-JmoM58MGU/2JXR0216Ps2ZAAcFo4CHiddK9/6KYysUC7VUkWNjKcq2FOYgW4tpcQ3h/ckfQ54VlNN5nIFzu7Fw==
   dependencies:
     hoist-non-react-statics "3.x.x"
     lodash "4.17.x"
