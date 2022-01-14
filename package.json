@@ -26,7 +26,7 @@
         "@react-native-cookies/cookies": "6.0.11",
         "@react-native-picker/picker": "^2.2.1",
         "@sayem314/react-native-keep-awake": "^1.0.3",
-        "@sentry/react-native": "^3.2.3",
+        "@sentry/react-native": "^3.2.10",
         "base64url": "^3.0.1",
         "deepmerge": "^4.2.2",
         "fuse.js": "^6.4.0",
