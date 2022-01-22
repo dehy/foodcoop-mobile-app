@@ -144,7 +144,7 @@ android {
         versionCode 42
         versionName "1.4.2"
         missingDimensionStrategy 'react-native-camera', 'general'
-        missingDimensionStrategy 'RNN.reactNativeVersion', 'reactNative62'
+        missingDimensionStrategy 'RNN.reactNativeVersion', 'reactNative63'
         multiDexEnabled true
         manifestPlaceholders = [
                 appAuthRedirectScheme: 'fr.supercoop.app'
