@@ -1,7 +1,10 @@
 # README
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_shield)
-![TSC](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/tsc.yml/badge.svg?branch=develop)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dehy_foodcoop-mobile-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dehy_foodcoop-mobile-app)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dehy_foodcoop-mobile-app&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=dehy_foodcoop-mobile-app)
+[![ESLint](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/eslint.yml/badge.svg)](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/eslint.yml)
+[![Typescript Compilation Errors](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/tsc.yml/badge.svg)](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/tsc.yml)
 
 ## Développement
 
