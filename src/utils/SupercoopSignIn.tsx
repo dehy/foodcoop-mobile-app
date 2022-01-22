@@ -1,4 +1,4 @@
-import {KEYUTIL, KJUR, RSAKey} from 'jsrsasign';
+import {KEYUTIL, KJUR} from 'jsrsasign';
 import JwtDecode from 'jwt-decode';
 import {AuthConfiguration, authorize, AuthorizeResult, refresh, RefreshResult} from 'react-native-app-auth';
 import * as Sentry from '@sentry/react-native';
@@ -28,11 +28,6 @@ interface SupercoopJWKsResponse {
     keys: SupercoopKey[];
 }
 
-interface RawRsaKey {
-    n: string;
-    e: string;
-}
-
 export default class SupercoopSignIn {
     private static instance: SupercoopSignIn;
     private currentUser?: User;
@@ -48,7 +43,7 @@ export default class SupercoopSignIn {
     };
 
     public static getInstance(): SupercoopSignIn {
-        if (SupercoopSignIn.instance == undefined) {
+        if (SupercoopSignIn.instance === undefined) {
             SupercoopSignIn.instance = new SupercoopSignIn();
         }
 
@@ -83,7 +78,7 @@ export default class SupercoopSignIn {
         if (email === null) {
             return null;
         }
-        return email.match(/^[^\.]+/);
+        return email.match(/^[^.]+/);
     }
 
     getEmail(): string {
@@ -139,7 +134,7 @@ export default class SupercoopSignIn {
                 alg: ['RS256'],
                 iss: [Config.OPENID_CONNECT_ISSUER],
             });
-            if (true === isValid) {
+            if (isValid === true) {
                 return true;
             }
         }
@@ -148,7 +143,7 @@ export default class SupercoopSignIn {
 
     async getUserFromToken(token: string): Promise<User> {
         const tokenIsValid = await this.idTokenIsValid(token);
-        if (true === tokenIsValid) {
+        if (tokenIsValid === true) {
             console.info('idToken is valid');
             return JwtDecode<User>(token);
         }

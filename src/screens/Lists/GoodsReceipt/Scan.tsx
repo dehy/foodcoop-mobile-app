@@ -28,7 +28,7 @@ interface State {
 }
 
 export default class ListsGoodsReceiptScan extends React.Component<Props, State> {
-    static screenName = "Lists/GoodsReceipt/Scan";
+    static screenName = 'Lists/GoodsReceipt/Scan';
 
     colorSuccess = '#5cb85c';
     colorSuccessDisabled = '#D6EDDB';
@@ -201,12 +201,12 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
 
         ActionSheet.showActionSheetWithOptions(
             {
-                options: Platform.OS == 'ios' ? uomsIos : uomsAndroid,
+                options: Platform.OS === 'ios' ? uomsIos : uomsAndroid,
                 cancelButtonIndex: uomsIos.length - 1,
             },
             buttonIndex => {
                 AppLogger.getLogger().debug(`button clicked: ${buttonIndex}`);
-                if (Platform.OS == 'ios' && buttonIndex == uomsIos.length - 1) {
+                if (Platform.OS === 'ios' && buttonIndex === uomsIos.length - 1) {
                     return;
                 }
                 const receivedUom = Object.values(this.uomList)[buttonIndex];
@@ -222,31 +222,31 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
 
     revisedGoodsReceiptEntryIsValid = (): boolean => {
         const goodsReceiptEntry = this.state.goodsReceiptEntry;
-        if (goodsReceiptEntry == undefined) {
+        if (goodsReceiptEntry === undefined) {
             return false;
         }
         const quantity = goodsReceiptEntry.quantity;
-        if (quantity == undefined || quantity < 0) {
+        if (quantity === undefined || quantity < 0) {
             Alert.alert('La quantité ne peut être inférieur à 0 !');
             return false;
         }
         const packageQty = goodsReceiptEntry.packageQty;
-        if (packageQty == undefined || packageQty < 0) {
+        if (packageQty === undefined || packageQty === null || packageQty < 0) {
             Alert.alert('Le nombre de colis ne peut être inférieur à 0 !');
             return false;
         }
         const quantityPackage = goodsReceiptEntry.productQtyPackage;
-        if (quantityPackage == undefined || quantityPackage < 0) {
+        if (quantityPackage === undefined || quantityPackage === null || quantityPackage < 0) {
             Alert.alert('Le nombre de produits par colis ne peut être inférieur à 0 !');
             return false;
         }
         const unit = goodsReceiptEntry.unit;
         const UnitOfMeasurements = [UnitOfMeasurement.unit, UnitOfMeasurement.kg, UnitOfMeasurement.litre];
-        if (unit == undefined || !UnitOfMeasurements.includes(unit)) {
+        if (unit === undefined || !UnitOfMeasurements.includes(unit)) {
             Alert.alert(`Unité de mesure inconnue: ${unit}`);
             return false;
         }
-        if (unit == UnitOfMeasurement.unit && isFloat(quantity)) {
+        if (unit === UnitOfMeasurement.unit && isFloat(quantity)) {
             Alert.alert('Impossible d\'avoir un nombre à virgule pour l\'unité de mesure "unités".');
             return false;
         }
@@ -419,7 +419,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                             }
                         }}
                         style={{marginVertical: 16}}
-                        disabled={this.state.goodsReceiptEntry?.quantity == undefined}
+                        disabled={this.state.goodsReceiptEntry?.quantity === undefined}
                     />
                 </View>
             </View>
@@ -427,8 +427,8 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
     }
 
     renderEntry(): React.ReactNode {
-        let image: string | undefined = undefined;
-        if (this.state.product && null !== this.state.product.image) {
+        let image: string | undefined;
+        if (this.state.product && this.state.product.image !== null) {
             image = this.state.product.image;
         }
         return (
@@ -499,7 +499,8 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 showInfoPanel={false}
                 onProductFound={(product): void => {
                     this.loadEntryFromProduct(product);
-                }}></CodeScanner>
+                }}
+            />
         );
     }
 

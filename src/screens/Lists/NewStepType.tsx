@@ -16,7 +16,7 @@ type State = {};
 export const RegisteredListTypes = [InventoryList, GoodsReceiptList];
 
 export default class ListsNewStepType extends React.Component<Props, State> {
-    static screenName = "Lists/NewStepType";
+    static screenName = 'Lists/NewStepType';
 
     theme = {
         Button: {
@@ -53,7 +53,7 @@ export default class ListsNewStepType extends React.Component<Props, State> {
     }
 
     didTapTypeItem = (listType: typeof BaseList): void => {
-        let componentName: string | undefined = undefined;
+        let componentName: string | undefined;
         switch (listType) {
             case InventoryList:
                 componentName = 'Lists/Inventory/New';

@@ -204,7 +204,7 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
                 />
             );
         }
-        if (null === this.state.product?.image) {
+        if (this.state.product?.image === null) {
             return (
                 <View style={[styles.articleImage, {backgroundColor: '#EEE', justifyContent: 'center'}]}>
                     <Icon name={'image'} type={'font-awesome-5'} color={'#999'} />

@@ -25,31 +25,34 @@ export default class GoodsReceiptService {
     }
 
     async getPurchaseOrdersPlannedTodays(): Promise<PurchaseOrder[]> {
-        if (this.purchaseOrdersPlannedToday == undefined) {
+        if (this.purchaseOrdersPlannedToday === undefined) {
             this.purchaseOrdersPlannedToday = await Odoo.getInstance().fetchPurchaseOrdersPlannedToday();
         }
 
         return this.purchaseOrdersPlannedToday;
     }
 
-    async attachementsFromImagePickerResponse(list: GoodsReceiptList, response: ImagePickerResponse): Promise<ListAttachment[]> {
+    async attachementsFromImagePickerResponse(
+        list: GoodsReceiptList,
+        response: ImagePickerResponse,
+    ): Promise<ListAttachment[]> {
         const attachments: ListAttachment[] = [];
 
-        response.assets?.forEach(async (asset) => {
+        response.assets?.forEach(async asset => {
             if (!asset.uri) {
                 Promise.reject();
                 return;
             }
-    
+
             const extension = asset.type ? mime.extension(asset.type) : 'jpeg';
             const attachmentBasename = `${list.purchaseOrderName}-${lightRandomId()}`;
             const attachmentFilename = `${attachmentBasename}.${extension}`;
             const attachmentShortFilepath = `${this.dataDirectoryRelativePathForList(list)}/${attachmentFilename}`;
             const attachmentFullFilepath = `${this.dataDirectoryAbsolutePathForList(list)}/${attachmentFilename}`;
-    
+
             await RNFS.mkdir(this.dataDirectoryAbsolutePathForList(list));
             await RNFS.moveFile(asset.uri, attachmentFullFilepath);
-    
+
             const listAttachment = new ListAttachment();
             listAttachment.path = attachmentShortFilepath;
             listAttachment.type = asset.type;
@@ -57,8 +60,8 @@ export default class GoodsReceiptService {
             listAttachment.list = list;
 
             attachments.push(listAttachment);
-        })
-        
+        });
+
         return attachments;
     }
 

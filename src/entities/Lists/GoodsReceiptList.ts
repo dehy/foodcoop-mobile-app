@@ -44,14 +44,14 @@ export default class GoodsReceiptList extends BaseList {
     }
 
     isReadyForExport = (): boolean => {
-        if (undefined == this.entries) {
+        if (undefined === this.entries) {
             return false;
         }
         for (const entry of this.entries) {
-            if (undefined == entry.quantity) {
+            if (undefined === entry.quantity) {
                 return false;
             }
-            if (undefined == entry.unit) {
+            if (undefined === entry.unit) {
                 return false;
             }
         }

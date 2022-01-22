@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, FlatList, Alert, Image} from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import {ListItem, ThemeProvider, SearchBar} from 'react-native-elements';
 import {Navigation, Options, EventSubscription} from 'react-native-navigation';
-import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
+import ImagePicker, {ImagePickerResponse} from 'react-native-image-picker';
 import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import GoodsReceiptService from '../../../services/GoodsReceiptService';
@@ -29,7 +29,7 @@ interface State {
 }
 
 export default class ListsGoodsReceiptShow extends React.Component<Props, State> {
-    static screenName = "Lists/GoodsReceipt/Show";
+    static screenName = 'Lists/GoodsReceipt/Show';
 
     theme = {
         Button: {
@@ -189,47 +189,48 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
     };
 
     selectPhoto = (): void => {
-            const options = ['Prendre une photo', 'Sélectionner depuis la librairie', 'Annuler'];
-            const destructiveButtonIndex = undefined;
-            const cancelButtonIndex = 2;
-            const title = 'Sélectionner une photo';
-          
-            ActionSheet.showActionSheetWithOptions(
-              {
+        const options = ['Prendre une photo', 'Sélectionner depuis la librairie', 'Annuler'];
+        const destructiveButtonIndex = undefined;
+        const cancelButtonIndex = 2;
+        const title = 'Sélectionner une photo';
+
+        ActionSheet.showActionSheetWithOptions(
+            {
                 options,
                 cancelButtonIndex,
                 destructiveButtonIndex,
-                title
-              },
-              (buttonIndex) => {
-                if (0 === buttonIndex) {
-                    ImagePicker.launchCamera({
-                        mediaType: 'photo',
-                    }, (response) => {
-                        this.addPhotos(response);
-                    });
+                title,
+            },
+            buttonIndex => {
+                if (buttonIndex === 0) {
+                    ImagePicker.launchCamera(
+                        {
+                            mediaType: 'photo',
+                        },
+                        response => {
+                            this.addPhotos(response);
+                        },
+                    );
                 }
-              }
-            );
-
-    }
+            },
+        );
+    };
 
     addPhotos = async (response: ImagePickerResponse): Promise<void> => {
-                const list = this.props.list;
+        const list = this.props.list;
 
-                GoodsReceiptService.getInstance()
-                    .attachementsFromImagePickerResponse(list, response)
-                    .then(attachments => {
-                        for (const attachment of attachments) {
-                            getRepository(ListAttachment)
-                            .save(attachment)
-                            .then(() => {
-                                this.loadData();
-                            });
-                        }
-                        
-                    });
-    }
+        GoodsReceiptService.getInstance()
+            .attachementsFromImagePickerResponse(list, response)
+            .then(attachments => {
+                for (const attachment of attachments) {
+                    getRepository(ListAttachment)
+                        .save(attachment)
+                        .then(() => {
+                            this.loadData();
+                        });
+                }
+            });
+    };
 
     searchExtraItem(): void {
         Alert.alert('Développement en cours');
@@ -318,7 +319,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
 
     renderEntryQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctQty;
-        if (false === entry.isValidQuantity() || false === entry.isValidUom()) {
+        if (entry.isValidQuantity() === false || entry.isValidUom() === false) {
             correctQty = (
                 <Text style={{fontSize: 16}}>
                     {displayNumber(entry.quantity)} {ProductProduct.quantityUnitAsString(entry.unit)}
@@ -331,9 +332,9 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                 <Text
                     style={{
                         textAlign: 'right',
-                        fontSize: false === entry.isValidQuantity() || false === entry.isValidUom() ? 12 : 16,
+                        fontSize: entry.isValidQuantity() === false || entry.isValidUom() === false ? 12 : 16,
                         textDecorationLine:
-                            false === entry.isValidQuantity() || false === entry.isValidUom() ? 'line-through' : 'none',
+                            entry.isValidQuantity() === false || entry.isValidUom() === false ? 'line-through' : 'none',
                     }}>
                     {displayNumber(entry.expectedProductQty)}{' '}
                     {ProductProduct.quantityUnitAsString(entry.expectedProductUom)}
@@ -378,7 +379,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
 
     renderPackageQty(entry: GoodsReceiptEntry): React.ReactElement {
         let correctPackageQty;
-        if (false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()) {
+        if (entry.isValidPackageQty() === false || entry.isValidProductQtyPackage() === false) {
             correctPackageQty = (
                 <Text style={{fontSize: 16}}>
                     {entry.productQtyPackage} x {entry.packageQty} {ProductProduct.quantityUnitAsString(entry.unit)}
@@ -391,9 +392,9 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                     style={{
                         textAlign: 'right',
                         fontSize:
-                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage() ? 12 : 16,
+                            entry.isValidPackageQty() === false || entry.isValidProductQtyPackage() === false ? 12 : 16,
                         textDecorationLine:
-                            false === entry.isValidPackageQty() || false === entry.isValidProductQtyPackage()
+                            entry.isValidPackageQty() === false || entry.isValidProductQtyPackage() === false
                                 ? 'line-through'
                                 : 'none',
                     }}>

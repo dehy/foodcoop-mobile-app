@@ -48,7 +48,7 @@ export class MultiList1636572223147 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "goods_receipt_session"`);
     }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
+    public async down(_queryRunner: QueryRunner): Promise<void> {
         // TODO
     }
 }

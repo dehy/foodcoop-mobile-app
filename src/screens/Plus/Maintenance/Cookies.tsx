@@ -1,7 +1,7 @@
 import React from 'react';
 import {Alert, FlatList, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
 import {defaultScreenOptions} from '../../../utils/navigation';
-import CookieManager, { Cookie, Cookies } from '@react-native-cookies/cookies';
+import CookieManager, {Cookie, Cookies} from '@react-native-cookies/cookies';
 import Odoo from '../../../utils/Odoo';
 import {Navigation, Options} from 'react-native-navigation';
 import {ListItem} from 'react-native-elements';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 export default class PlusMaintenanceCookies extends React.Component<{}, State> {
-    static screenName = "Plus/Maintenance/Cookies";
+    static screenName = 'Plus/Maintenance/Cookies';
 
     cookies: Cookies = {};
     state: State = {
@@ -47,7 +47,7 @@ export default class PlusMaintenanceCookies extends React.Component<{}, State> {
 
     fetchAllCookies(): void {
         const cookieItemList: CookiesMaintenanceFlatListItem[] = [];
-        if (Platform.OS == 'ios') {
+        if (Platform.OS === 'ios') {
             CookieManager.getAll().then(cookies => {
                 this.cookies = cookies;
                 for (let [cookieKey, cookie] of Object.entries(cookies)) {
@@ -60,7 +60,7 @@ export default class PlusMaintenanceCookies extends React.Component<{}, State> {
                 this.setState({cookieItemList: cookieItemList});
             });
         }
-        if (Platform.OS == 'android') {
+        if (Platform.OS === 'android') {
             // TODO
         }
     }
@@ -92,7 +92,7 @@ path: ${cookie.path}`;
     };
 
     didTapActionItem = (key: string): void => {
-        if ('clear-cookies' === key) {
+        if (key === 'clear-cookies') {
             Alert.alert(
                 'Effacer les 🍪',
                 "Es-tu vraiment sûr(e) de vouloir effacer les cookies utilisés par l'application ?",

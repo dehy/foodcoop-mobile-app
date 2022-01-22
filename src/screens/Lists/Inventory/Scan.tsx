@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class ListsInventoryScan extends React.Component<Props, {}> {
-    static screenName = "Lists/Inventory/Scan";
+export default class ListsInventoryScan extends React.Component<Props, State> {
+    static screenName = 'Lists/Inventory/Scan';
 
     codeScanner?: CodeScanner;
     articleQuantityValue?: string;
@@ -105,7 +105,7 @@ export default class ListsInventoryScan extends React.Component<Props, {}> {
     renderInventoryInput(product: ProductProduct): ReactNode {
         return (
             <View>
-                <Divider></Divider>
+                <Divider />
                 <Text style={{fontWeight: 'bold', paddingTop: 8}}>Nouveau stock</Text>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8}}>
                     <TextInput
@@ -151,7 +151,8 @@ export default class ListsInventoryScan extends React.Component<Props, {}> {
                     }}
                     extraInfoPanel={(product): ReactNode => {
                         return this.renderInventoryInput(product);
-                    }}></CodeScanner>
+                    }}
+                />
             </SafeAreaView>
         );
     }

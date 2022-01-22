@@ -18,7 +18,7 @@ interface State {
 }
 
 export default class NewsList extends React.Component<Props, State> {
-    static screenName = "News/List";
+    static screenName = 'News/List';
 
     constructor(props: Props) {
         super(props);

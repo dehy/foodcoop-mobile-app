@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 });
 
 export default class Welcome extends Component<Props, State> {
-    static screenName = "Welcome";
+    static screenName = 'Welcome';
 
     constructor(props: Props) {
         super(props);

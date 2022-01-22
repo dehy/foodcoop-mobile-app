@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsInventoryExport extends React.Component<Props, State> {
-    static screenName = "Lists/Inventory/Export";
+    static screenName = 'Lists/Inventory/Export';
 
     private inventoryEntries: Array<InventoryEntry> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
@@ -127,9 +127,7 @@ ${notFoundInOdooString}`);
                 if (!this.props.inventory.id) {
                     return;
                 }
-                getConnection()
-                    .getRepository(InventoryList)
-                    .update(this.props.inventory.id, {_lastSentAt: new Date()});
+                getConnection().getRepository(InventoryList).update(this.props.inventory.id, {_lastSentAt: new Date()});
                 Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
             })
             .catch((e: Error) => {
@@ -150,7 +148,7 @@ ${notFoundInOdooString}`);
 
     render(): React.ReactNode {
         let inventoryCheck = null;
-        if (null === this.state.inventoryCheckPassed) {
+        if (this.state.inventoryCheckPassed === null) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
                     <ActivityIndicator size="small" color="#999999" style={{paddingTop: 4, marginRight: 4}} />
@@ -158,7 +156,7 @@ ${notFoundInOdooString}`);
                 </View>
             );
         }
-        if (true === this.state.inventoryCheckPassed) {
+        if (this.state.inventoryCheckPassed === true) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
                     <Icon type="font-awesome-5" name="check" color="green" style={{paddingTop: 3, marginRight: 4}} />
@@ -166,7 +164,7 @@ ${notFoundInOdooString}`);
                 </View>
             );
         }
-        if (false === this.state.inventoryCheckPassed) {
+        if (this.state.inventoryCheckPassed === false) {
             inventoryCheck = (
                 <View style={styles.checkResult}>
                     <Icon type="font-awesome-5" name="times" color="red" style={{paddingTop: 3, marginRight: 4}} />

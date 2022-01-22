@@ -25,7 +25,7 @@ interface State {
 }
 
 export default class ListsList extends NavigationComponent<Props, State> {
-    static screenName = "Lists/List";
+    static screenName = 'Lists/List';
 
     theme = {
         Button: {
@@ -126,7 +126,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
                     .getRawMany();
                 const entriesCount: EntriesCountList = {};
                 for (const result of queryResult) {
-                    entriesCount[result['listId']] = result['entries'];
+                    entriesCount[result.listId] = result.entries;
                 }
                 this.setState({
                     lists: lists,
@@ -199,13 +199,13 @@ export default class ListsList extends NavigationComponent<Props, State> {
         ActionSheet.showActionSheetWithOptions(
             {
                 title: title,
-                options: Platform.OS == 'ios' ? buttonsIos : buttonsAndroid,
+                options: Platform.OS === 'ios' ? buttonsIos : buttonsAndroid,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
                 tintColor: 'blue',
             },
             buttonIndex => {
-                if (buttonIndex == DESTRUCTIVE_INDEX) {
+                if (buttonIndex === DESTRUCTIVE_INDEX) {
                     this.deleteGoodsReceiptList(list);
                 }
             },
@@ -242,7 +242,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 </View>
             );
         }
-        return <View></View>;
+        return <View />;
     }
 
     renderEmptyList = (): React.ReactNode => {
@@ -262,7 +262,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
     _renderEntry(item: BaseList): React.ReactElement {
         console.log(item.constructor.name);
         if (!item.id) {
-            return <ListItem></ListItem>;
+            return <ListItem />;
         }
         return (
             <ListItem

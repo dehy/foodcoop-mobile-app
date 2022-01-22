@@ -37,7 +37,7 @@ export function replaceStringAt(value: string, index: number, replacement: strin
 }
 
 export function displayNumber(value?: number): string {
-    if (undefined == value) {
+    if (undefined === value) {
         return '';
     }
     return value.toString().replace('.', ',');
@@ -47,10 +47,7 @@ export function lightRandomId(): string {
     // Math.random should be unique because of its seeding algorithm.
     // Convert it to base 36 (numbers + letters), and grab the first 9 characters
     // after the decimal.
-    return Math.random()
-        .toString(36)
-        .substr(2, 9)
-        .toString();
+    return Math.random().toString(36).substr(2, 9).toString();
 }
 
 /**
@@ -63,7 +60,7 @@ export function filterUnique(value: any, index: number, self: any): boolean {
 
 export function round(number: number | undefined, decimals: number): number | undefined {
     if (undefined === number) {
-        return undefined
+        return undefined;
     }
     return Math.round((number + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }

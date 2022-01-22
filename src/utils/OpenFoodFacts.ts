@@ -1,7 +1,7 @@
 import DeviceInfo from 'react-native-device-info';
-import { EcoScoreScore } from '../components/EcoScore';
-import { NovaGroupGroups } from '../components/NovaGroup';
-import { NutriScoreScore } from '../components/NutriScore';
+import {EcoScoreScore} from '../components/EcoScore';
+import {NovaGroupGroups} from '../components/NovaGroup';
+import {NutriScoreScore} from '../components/NutriScore';
 import AppLogger from './AppLogger';
 import Odoo from './Odoo';
 
@@ -24,7 +24,7 @@ export default class OpenFoodFacts {
     userAgent = `Supercoop - ${DeviceInfo.getSystemName()} - Version ${DeviceInfo.getVersion()} - www.supercoop.fr`;
 
     public static getInstance(): OpenFoodFacts {
-        if (OpenFoodFacts.instance == undefined) {
+        if (OpenFoodFacts.instance === undefined) {
             OpenFoodFacts.instance = new OpenFoodFacts();
         }
 
@@ -69,7 +69,7 @@ export default class OpenFoodFacts {
         const uri = `${this.base}/product/${barcode}.json?${parametersString}`;
         AppLogger.getLogger().debug(uri);
         const result = await fetch(uri, options);
-        const response = ((await result.json()) as unknown) as OFFResponse;
+        const response = (await result.json()) as unknown as OFFResponse;
         AppLogger.getLogger().debug(JSON.stringify(response));
 
         if (!response.product) {

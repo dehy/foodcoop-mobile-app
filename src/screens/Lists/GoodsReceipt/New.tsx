@@ -31,7 +31,7 @@ type State = {
 };
 
 export default class ListsGoodsReceiptNew extends React.Component<Props, State> {
-    static screenName = "Lists/GoodsReceipt/New";
+    static screenName = 'Lists/GoodsReceipt/New';
 
     theme = {
         Button: {
@@ -104,8 +104,8 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
         let data: PurchaseOrder[];
         purchaseOrders.forEach((po, index, array) => {
             const dateAsString = DateTime.fromJSDate(po.plannedDeliveryDate!).toFormat('cccc dd MMMM');
-            if (previousTitle != dateAsString) {
-                if (previousTitle != undefined) {
+            if (previousTitle !== dateAsString) {
+                if (previousTitle !== undefined) {
                     purchaseOrderList.push({
                         title: previousTitle,
                         data: data,
@@ -115,7 +115,7 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
                 data = [];
             }
             data.push(po);
-            if (index == array.length - 1) {
+            if (index === array.length - 1) {
                 purchaseOrderList.push({
                     title: previousTitle,
                     data: data,
@@ -208,7 +208,7 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
 
                     if (product.templateId) {
                         const supplierCode = supplierInfos[product.templateId];
-                        entry.productSupplierCode = '' === supplierCode ? supplierCode : null;
+                        entry.productSupplierCode = supplierCode === '' ? supplierCode : null;
                     }
                 }
             });

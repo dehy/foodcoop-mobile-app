@@ -41,7 +41,7 @@ const welcomeMessages = [
 ];
 
 export default class Initializing extends React.Component<Props> {
-    static screenName = "Initializing";
+    static screenName = 'Initializing';
 
     constructor(props: Props) {
         super(props);

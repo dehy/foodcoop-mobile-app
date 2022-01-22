@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 });
 
 export default class Scanner extends React.Component<Props, State> {
-    static screenName = "Scanner";
+    static screenName = 'Scanner';
 
     private scanner?: CodeScanner;
 
@@ -159,13 +159,11 @@ export default class Scanner extends React.Component<Props, State> {
                                 <View style={{flex: 1}}>
                                     {this.renderNutriScore(this.state.offProduct.nutrition_grade_fr)}
                                 </View>
-                                <View style={{flex: 1}}>
-                                    {this.renderNovaGroup(this.state.offProduct.nova_group)}
-                                </View>
+                                <View style={{flex: 1}}>{this.renderNovaGroup(this.state.offProduct.nova_group)}</View>
                             </View>
                         );
                     }
-                    if (null === this.state.offProduct) {
+                    if (this.state.offProduct === null) {
                         return null;
                     }
                     return (
@@ -173,7 +171,8 @@ export default class Scanner extends React.Component<Props, State> {
                             <Text>Chargement des infos produit</Text>
                         </View>
                     );
-                }}></CodeScanner>
+                }}
+            />
         );
     }
 

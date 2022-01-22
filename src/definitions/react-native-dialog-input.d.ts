@@ -1,5 +1,4 @@
-declare module 'react-native-dialog-input';
-{
+declare module 'react-native-dialog-input' {
     interface DialogInputProps {
         isDialogVisible: boolean;
         title?: string;

@@ -30,7 +30,7 @@ interface InventoryData {
 }
 
 export default class ListsInventoryShow extends React.Component<Props, State> {
-    static screenName = "Lists/Inventory/Show";
+    static screenName = 'Lists/Inventory/Show';
 
     modalDismissedListener?: EmitterSubscription;
     inventoryListRepository: Repository<InventoryList>;
@@ -179,13 +179,13 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         ActionSheet.showActionSheetWithOptions(
             {
                 title: title,
-                options: Platform.OS == 'ios' ? buttonsIos : buttonsAndroid,
+                options: Platform.OS === 'ios' ? buttonsIos : buttonsAndroid,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
                 tintColor: 'blue',
             },
             buttonIndex => {
-                if (buttonIndex == DESTRUCTIVE_INDEX) {
+                if (buttonIndex === DESTRUCTIVE_INDEX) {
                     this.deleteInventoryEntry(inventoryEntry);
                 }
             },

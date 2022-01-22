@@ -21,7 +21,7 @@ export interface NewsItem {
 }
 
 export default class NewsShow extends React.Component<Props, State> {
-    static screenName = "News/Show";
+    static screenName = 'News/Show';
 
     constructor(props: Props) {
         super(props);

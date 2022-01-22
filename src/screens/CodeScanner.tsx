@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {ReactNode} from 'react';
 import {
     StyleSheet,
@@ -266,7 +265,7 @@ export default class CodeScanner extends React.Component<Props, State> {
         this.beepSound.stop();
 
         /* DataWedge */
-        if ('MC40' == deviceId) {
+        if (deviceId === 'MC40') {
             this.scannerMode = 'dataWedge';
             this.sendCommandResult = 'false';
             this.broadcastReceiverHandler = (intent): void => {
@@ -294,7 +293,7 @@ export default class CodeScanner extends React.Component<Props, State> {
         console.log('Sending Command: ' + extraName + ', ' + JSON.stringify(extraValue));
         const broadcastExtras: {[x: string]: string} = {};
         broadcastExtras[extraName] = extraValue;
-        broadcastExtras['SEND_RESULT'] = this.sendCommandResult;
+        broadcastExtras.SEND_RESULT = this.sendCommandResult;
         DataWedgeIntents.sendBroadcastWithExtras({
             action: 'com.symbol.datawedge.api.ACTION',
             extras: broadcastExtras,
@@ -324,7 +323,7 @@ export default class CodeScanner extends React.Component<Props, State> {
             //  The version has been returned (DW 6.3 or higher).  Includes the DW version along with other subsystem versions e.g MX
             const versionInfo: any = intent['com.symbol.datawedge.api.RESULT_GET_VERSION_INFO'];
             console.log('Version Info: ' + JSON.stringify(versionInfo));
-            const datawedgeVersion = versionInfo['DATAWEDGE'];
+            const datawedgeVersion = versionInfo.DATAWEDGE;
             console.log('Datawedge version: ' + datawedgeVersion);
 
             //  Fire events sequentially so the application can gracefully degrade the functionality available on earlier DW versions
@@ -397,11 +396,8 @@ export default class CodeScanner extends React.Component<Props, State> {
                 PLUGIN_NAME: 'INTENT',
                 RESET_CONFIG: 'true',
                 PARAM_LIST: {
-                    // eslint-disable-next-line @typescript-eslint/camelcase
                     intent_output_enabled: 'true',
-                    // eslint-disable-next-line @typescript-eslint/camelcase
                     intent_action: 'fr.supercoop.app_android.ACTION',
-                    // eslint-disable-next-line @typescript-eslint/camelcase
                     intent_delivery: '2',
                 },
             },
@@ -450,7 +446,7 @@ export default class CodeScanner extends React.Component<Props, State> {
     dataWedgeBarcodeScanned(scanData: {[x: string]: any}, timeOfScan: string): void {
         let scannedData = scanData['com.symbol.datawedge.data_string'];
         const scannedType = scanData['com.symbol.datawedge.label_type'];
-        if ('LABEL-TYPE-UPCA' === scannedType) {
+        if (scannedType === 'LABEL-TYPE-UPCA') {
             scannedData = `0${scannedData}`;
         }
         const scan = {data: scannedData, decoder: scannedType, timeAtDecode: timeOfScan};
@@ -509,7 +505,7 @@ export default class CodeScanner extends React.Component<Props, State> {
         this.setState({flash});
     };
     toggleFlash = (): void => {
-        if (this.state.flash == RNCamera.Constants.FlashMode.off) {
+        if (this.state.flash === RNCamera.Constants.FlashMode.off) {
             this.setFlash(RNCamera.Constants.FlashMode.torch);
             return;
         }
@@ -598,7 +594,7 @@ export default class CodeScanner extends React.Component<Props, State> {
         const previousBarcode: Barcode | undefined = this.state.barcodes[0] ? this.state.barcodes[0] : undefined;
         this.setState({barcodes: [barcode]});
         if (undefined === previousBarcode || (previousBarcode && previousBarcode.data !== barcode.data)) {
-            if ('camera' === this.scannerMode) {
+            if (this.scannerMode === 'camera') {
                 Vibration.vibrate(500, false);
                 this.beepSound.play(() => {
                     this.beepSound.stop(); // Resets file for immediate play availability
@@ -627,7 +623,7 @@ export default class CodeScanner extends React.Component<Props, State> {
             );
     }
 
-    handleNotFoundProductProduct(barcode: Barcode): void {
+    handleNotFoundProductProduct(_barcode: Barcode): void {
         // TODO: Alert avec option de fermer ou de signaler avec reportUnknownProductProductByMail()
     }
 
@@ -751,7 +747,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                 <Icon
                                     type="font-awesome-5"
                                     name="bolt"
-                                    color={this.state.flash == RNCamera.Constants.FlashMode.torch ? 'yellow' : 'white'}
+                                    color={this.state.flash === RNCamera.Constants.FlashMode.torch ? 'yellow' : 'white'}
                                     solid
                                 />
                             }
@@ -759,7 +755,7 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                                 backgroundColor: 'black',
                             }}
                             titleStyle={{
-                                color: this.state.flash == RNCamera.Constants.FlashMode.torch ? 'yellow' : 'white',
+                                color: this.state.flash === RNCamera.Constants.FlashMode.torch ? 'yellow' : 'white',
                             }}
                             onPress={this.toggleFlash}
                             title=" Flash"
@@ -848,7 +844,8 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             backgroundColor: 'black',
                             borderBottomRightRadius: 30,
                             borderTopRightRadius: 30,
-                        }}></View>
+                        }}
+                    />
                     <Icon
                         type="font-awesome-5"
                         name="arrow-left"
@@ -871,7 +868,8 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                             backgroundColor: 'black',
                             borderBottomLeftRadius: 30,
                             borderTopLeftRadius: 30,
-                        }}></View>
+                        }}
+                    />
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                     <Icon type="font-awesome-5" name="exclamation-triangle" solid size={30} color="red" />
@@ -911,10 +909,10 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
 
     render(): React.ReactNode {
         let mainView;
-        if ('dataWedge' === this.scannerMode) {
+        if (this.scannerMode === 'dataWedge') {
             mainView = this.state.displayCamera ? this.renderDataWedgeInstruction() : undefined;
         }
-        if ('camera' === this.scannerMode) {
+        if (this.scannerMode === 'camera') {
             mainView = this.state.displayCamera ? this.renderCamera() : undefined;
         }
         return (

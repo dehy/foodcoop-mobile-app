@@ -59,7 +59,7 @@ export default class Mailjet {
     }
 
     public static getInstance(): Mailjet {
-        if (Mailjet.instance == undefined) {
+        if (Mailjet.instance === undefined) {
             Mailjet.instance = new Mailjet();
         }
         return this.instance;
@@ -88,7 +88,7 @@ export default class Mailjet {
         if (json.hasOwnProperty('Messages')) {
             json.Messages.forEach((message: any) => {
                 if (message.hasOwnProperty('Status')) {
-                    if ('error' === message.Status) {
+                    if (message.Status === 'error') {
                         throw json;
                     }
                 }

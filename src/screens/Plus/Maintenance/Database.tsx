@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
 });
 
 export default class PlusMaintenanceDatabase extends React.Component<{}, {}> {
-    static screenName = "Plus/Maintenance/Database";
+    static screenName = 'Plus/Maintenance/Database';
 
     constructor(props: {}) {
         super(props);
@@ -29,7 +29,7 @@ export default class PlusMaintenanceDatabase extends React.Component<{}, {}> {
     }
 
     _onPress = (key: string): void => {
-        if ('reset-db' === key) {
+        if (key === 'reset-db') {
             Alert.alert(
                 'Effacer la base de donnée locale 💣',
                 'Es-tu vraiment sûr(e) de vouloir effacer la base de donnée locale ? ⚠ Aucune récupération possible !',

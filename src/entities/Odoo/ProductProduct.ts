@@ -22,7 +22,7 @@ export default class ProductProduct {
 
     static imageFromOdooBase64(imageBase64: string): string | undefined {
         // https://stackoverflow.com/a/50111377/2287525
-        let imageType: string | undefined = undefined;
+        let imageType: string | undefined;
         switch (imageBase64.charAt(0)) {
             case '/':
                 imageType = 'jpg';
@@ -97,7 +97,7 @@ export default class ProductProduct {
     }
 
     quantityIsValid(): boolean {
-        if (this.qtyAvailable == undefined || this.qtyAvailable < 0) {
+        if (this.qtyAvailable === undefined || this.qtyAvailable < 0) {
             return false;
         }
         if (this.uomId === UnitOfMeasurement.unit && isFloat(this.qtyAvailable)) {

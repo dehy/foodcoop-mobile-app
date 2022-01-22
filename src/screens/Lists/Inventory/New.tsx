@@ -14,7 +14,7 @@ type Props = {
 type State = {};
 
 export default class ListsInventoryNew extends React.Component<Props, State> {
-    static screenName = "Lists/Inventory/New";
+    static screenName = 'Lists/Inventory/New';
 
     theme = {
         Button: {
@@ -69,7 +69,7 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                                     placeholder="Zone"
                                     autoFocus={true}
                                     onChangeText={(text): void => {
-                                        this.zoneValue = parseInt(text);
+                                        this.zoneValue = parseInt(text, 10);
                                     }}
                                     blurOnSubmit={true}
                                     keyboardType="number-pad"

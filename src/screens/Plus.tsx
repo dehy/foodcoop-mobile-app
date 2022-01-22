@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 });
 
 export default class Plus extends React.Component<Props> {
-    static screenName = "Plus";
+    static screenName = 'Plus';
 
     constructor(props: Props) {
         super(props);
@@ -94,10 +94,7 @@ export default class Plus extends React.Component<Props> {
     };
 
     renderHeader = (): React.ReactElement => {
-        const initialsMatch =
-            SupercoopSignIn.getInstance()
-                .getName()
-                .match(/\b\w/g) || [];
+        const initialsMatch = SupercoopSignIn.getInstance().getName().match(/\b\w/g) || [];
         const initials: string = ((initialsMatch.shift() || '') + (initialsMatch.pop() || '')).toUpperCase();
 
         return (
@@ -129,7 +126,7 @@ export default class Plus extends React.Component<Props> {
                             <ListItem.Content>
                                 <ListItem.Title style={{color: item.color ?? 'black'}}>{item.title}</ListItem.Title>
                             </ListItem.Content>
-                            {false === item.chevron ? null : (
+                            {item.chevron === false ? null : (
                                 <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
                             )}
                         </ListItem>

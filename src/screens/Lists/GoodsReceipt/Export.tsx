@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 });
 
 export default class ListsGoodsReceiptExport extends React.Component<Props, State> {
-    static screenName = "Lists/GoodsReceipt/Export";
+    static screenName = 'Lists/GoodsReceipt/Export';
 
     private receiptEntries: GoodsReceiptEntry[] = [];
     private images: ListAttachment[] = [];
@@ -116,7 +116,7 @@ export default class ListsGoodsReceiptExport extends React.Component<Props, Stat
 
         ActionSheet.showActionSheetWithOptions(
             {
-                options: Platform.OS == 'ios' ? recipientsIos : recipientsAndroid,
+                options: Platform.OS === 'ios' ? recipientsIos : recipientsAndroid,
                 cancelButtonIndex: recipientsIos.length - 1,
             },
             buttonIndex => {
@@ -130,7 +130,7 @@ export default class ListsGoodsReceiptExport extends React.Component<Props, Stat
     async generateCSVFile(): Promise<string> {
         const sessionData: CSVData[] = [];
         this.receiptEntries?.forEach(entry => {
-            if (!entry.productBarcode || entry.expectedProductQty == undefined || !entry.productName) {
+            if (!entry.productBarcode || entry.expectedProductQty === undefined || !entry.productName) {
                 throw new Error('Missing mandatory entry parameters');
             }
             const entryData: CSVData = {
@@ -233,7 +233,7 @@ ${entriesCount} produits traités`;
 
     buttonTitle = (): string => {
         if (this.state.isSendingMail) {
-            return 'Envoi en cours ... Merci de patienter, l\'envoi peut être long en fonction du nombre de pièces jointes';
+            return "Envoi en cours ... Merci de patienter, l'envoi peut être long en fonction du nombre de pièces jointes";
         }
         return 'Envoyer maintenant';
     };
@@ -258,9 +258,9 @@ ${entriesCount} produits traités`;
     }
 
     render(): React.ReactNode {
-        let ReceiptCheck: React.ReactElement | undefined = undefined;
+        let ReceiptCheck: React.ReactElement | undefined;
 
-        if (this.state.filePath == undefined) {
+        if (this.state.filePath === undefined) {
             ReceiptCheck = (
                 <View style={styles.checkResult}>
                     <ActivityIndicator size="small" color="#999999" style={{marginRight: 4}} />

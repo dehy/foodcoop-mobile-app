@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 });
 
 export default class PlusMaintenance extends React.Component<Props, {}> {
-    static screenName = "Plus/Maintenance";
+    static screenName = 'Plus/Maintenance';
 
     private flatListItems: MaintenanceFlatListItem[] = [
         {title: 'Base de donnée locale', key: 'database'},

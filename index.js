@@ -75,7 +75,7 @@ registerScreens([
     PlusMaintenanceCookies,
     PlusMaintenanceDatabase,
     Scanner,
-    Welcome
+    Welcome,
 ]);
 
 Database.connect().then(() => {

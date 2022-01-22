@@ -76,28 +76,28 @@ export default class GoodsReceiptEntry extends BaseEntry {
     }
 
     public isValidPackageQty(): boolean | null {
-        if (null === this.packageQty) {
+        if (this.packageQty === null) {
             return null;
         }
         return this.expectedPackageQty === this.packageQty;
     }
 
     public isValidProductQtyPackage(): boolean | null {
-        if (null === this.productQtyPackage) {
+        if (this.productQtyPackage === null) {
             return null;
         }
         return this.expectedProductQtyPackage === this.productQtyPackage;
     }
 
     public isValidQuantity(): boolean | null {
-        if (null === this.quantity) {
+        if (this.quantity === null) {
             return null;
         }
         return this.expectedProductQty === this.quantity;
     }
 
     public isValidUom(): boolean | null {
-        if (null === this.unit) {
+        if (this.unit === null) {
             return null;
         }
         return this.expectedProductUom === this.unit;
@@ -111,18 +111,18 @@ export default class GoodsReceiptEntry extends BaseEntry {
     }
 
     public isFilled(): boolean {
-        return null !== this.quantity;
+        return this.quantity !== null;
     }
 
     public getStatus(): EntryStatus {
-        if (true !== this.isValidQuantity()) {
+        if (this.isValidQuantity() !== true) {
             return EntryStatus.ERROR;
         }
         if (
-            true !== this.isValidUom() ||
+            this.isValidUom() !== true ||
             this.hasComment() ||
-            true !== this.isValidPackageQty() ||
-            true !== this.isValidProductQtyPackage()
+            this.isValidPackageQty() !== true ||
+            this.isValidProductQtyPackage() !== true
         ) {
             return EntryStatus.WARNING;
         }
