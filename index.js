@@ -17,7 +17,6 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import moment from 'moment';
 import 'moment/locale/fr';
 import {Settings} from 'luxon';
-import Database from './src/utils/Database';
 import {readableVersion} from './src/utils/helpers';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
@@ -43,8 +42,6 @@ import PlusMaintenanceCookies from './src/screens/Plus/Maintenance/Cookies';
 import PlusMaintenanceDatabase from './src/screens/Plus/Maintenance/Database';
 import Scanner from './src/screens/Scanner';
 import Welcome from './src/screens/Welcome';
-
-console.log(Initializing.screenName);
 
 moment.locale('fr');
 
@@ -77,22 +74,18 @@ registerScreens([
     Scanner,
     Welcome,
 ]);
-
-Database.connect().then(() => {
+Navigation.events().registerAppLaunchedListener(() => {
     EStyleSheet.build({});
-
-    Navigation.events().registerAppLaunchedListener(() => {
-        Navigation.setDefaultOptions({
-            layout: {
-                orientation: ['portrait'],
+    Navigation.setDefaultOptions({
+        layout: {
+            orientation: ['portrait'],
+        },
+    });
+    Navigation.setRoot({
+        root: {
+            component: {
+                name: 'Initializing',
             },
-        });
-        Navigation.setRoot({
-            root: {
-                component: {
-                    name: 'Initializing',
-                },
-            },
-        });
+        },
     });
 });

@@ -3,6 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import Odoo from '../utils/Odoo';
 import {goHome, goToAuth} from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
+import Database from '../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -51,11 +52,13 @@ export default class Initializing extends React.Component<Props> {
     }
 
     componentDidMount(): void {
-        Odoo.getInstance()
-            .fetchBarcodeNomenclature()
-            .then(() => {
-                this.signInSilently();
-            });
+        Database.connect().then(() => {
+            Odoo.getInstance()
+                .fetchBarcodeNomenclature()
+                .then(() => {
+                    this.signInSilently();
+                });
+        });
     }
 
     signInSilently(): void {

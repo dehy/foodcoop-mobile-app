@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -80,6 +81,7 @@ import com.android.build.OutputFile
 project.ext.react = [
     extraPackagerArgs: [ '--minify=false' ],
     enableHermes: false,  // clean and rebuild if changing
+    iconFontNames: [ 'FontAwesome5_Brands.ttf', 'FontAwesome5_Regular.ttf', 'FontAwesome5_Solid.ttf' ]
 
 ]
 
