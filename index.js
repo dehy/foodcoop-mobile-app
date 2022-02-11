@@ -17,7 +17,6 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import moment from 'moment';
 import 'moment/locale/fr';
 import {Settings} from 'luxon';
-import {readableVersion} from './src/utils/helpers';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
 import {registerScreens} from 'react-native-navigation-register-screens';
@@ -43,14 +42,10 @@ import PlusMaintenanceDatabase from './src/screens/Plus/Maintenance/Database';
 import Scanner from './src/screens/Scanner';
 import Welcome from './src/screens/Welcome';
 
-moment.locale('fr');
-
 Sentry.init({
     dsn: Config.SENTRY_DSN,
+    environment: __DEV__ ? 'dev' : 'production',
 });
-Sentry.setRelease(`mobile-app-${readableVersion()}`);
-
-Settings.defaultLocale = 'fr';
 
 registerScreens([
     Initializing,
@@ -74,8 +69,16 @@ registerScreens([
     Scanner,
     Welcome,
 ]);
+
 Navigation.events().registerAppLaunchedListener(() => {
+    // Moment
+    moment.locale('fr');
+
+    // Luxon
+    Settings.defaultLocale = 'fr';
+
     EStyleSheet.build({});
+
     Navigation.setDefaultOptions({
         layout: {
             orientation: ['portrait'],
