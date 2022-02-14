@@ -6,7 +6,7 @@ import {defaultScreenOptions} from '../../../utils/navigation';
 import {Divider} from 'react-native-elements';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import {getRepository} from 'typeorm';
-import {Icon} from 'react-native-elements/dist/Icon';
+import {Button} from 'react-native-elements';
 import LabelEntry from '../../../entities/Lists/LabelEntry';
 import LabelList from '../../../entities/Lists/LabelList';
 
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
 
 export default class ListsLabelScan extends React.Component<Props, State> {
     static screenName = 'Lists/Label/Scan';
+    private codeScanner: CodeScanner | undefined;
 
     constructor(props: Props) {
         super(props);
@@ -54,7 +55,7 @@ export default class ListsLabelScan extends React.Component<Props, State> {
         }
     }
 
-    saveEntry(product: ProductProduct): void {
+    saveEntry = (product: ProductProduct): void => {
         const newEntry = new LabelEntry();
         newEntry.productId = product.id;
         newEntry.productBarcode = product.barcode;
@@ -63,7 +64,7 @@ export default class ListsLabelScan extends React.Component<Props, State> {
         newEntry.addedAt = new Date();
 
         getRepository(LabelEntry).save(newEntry);
-    }
+    };
 
     renderAlert(_product: ProductProduct): ReactNode {
         return (
@@ -72,7 +73,18 @@ export default class ListsLabelScan extends React.Component<Props, State> {
                 <Text style={{fontWeight: 'bold', textAlign: 'center', marginTop: 16}}>
                     Étiquette ajoutée à la liste
                 </Text>
-                <Icon name="check-circle" style={{marginTop: 8}} />
+                <Button
+                    title="OK"
+                    icon={{
+                        name: 'check-circle',
+                        type: 'font-awesome-5',
+                        color: 'white',
+                    }}
+                    containerStyle={{marginTop: 8}}
+                    onPress={() => {
+                        this.codeScanner?.closeInfoPanel();
+                    }}
+                />
             </View>
         );
     }
@@ -85,6 +97,9 @@ export default class ListsLabelScan extends React.Component<Props, State> {
                         return this.renderAlert(product);
                     }}
                     onProductFound={this.saveEntry}
+                    ref={(ref: CodeScanner) => {
+                        this.codeScanner = ref;
+                    }}
                 />
             </SafeAreaView>
         );
