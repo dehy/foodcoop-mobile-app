@@ -7131,10 +7131,9 @@ react-native-extended-stylesheet@^0.12.0:
     css-mediaquery "^0.1.2"
     object-resolve-path "^1.1.0"
 
-react-native-fs@^2.16.2:
+"react-native-fs@https://github.com/itinance/react-native-fs.git#01952b46f27d133ebad382b7fb5053a44d9de7c8":
   version "2.18.0"
-  resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.18.0.tgz#987b99cc90518ef26663a8d60e62104694b41c21"
-  integrity sha512-9iQhkUNnN2JNED0in06JwZy88YEVyIGKWz4KLlQYxa5Y2U0U2AZh9FUHtA04oWj+xt2LlHh0LFPCzhmNsAsUDg==
+  resolved "https://github.com/itinance/react-native-fs.git#01952b46f27d133ebad382b7fb5053a44d9de7c8"
   dependencies:
     base-64 "^0.1.0"
     utf8 "^3.0.0"
