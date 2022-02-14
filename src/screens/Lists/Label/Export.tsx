@@ -47,7 +47,7 @@ export default class ListsLabelExport extends React.Component<Props, State> {
     }
 
     static options(): Options {
-        const options = defaultScreenOptions("Envoi d'inventaire");
+        const options = defaultScreenOptions('Envoi');
         const buttons = {
             topBar: {
                 leftButtons: [
@@ -105,10 +105,10 @@ export default class ListsLabelExport extends React.Component<Props, State> {
 
         const entriesCount = this.labelEntries.length;
 
-        const to = 'inventaire@supercoop.fr';
-        const subject = (__DEV__ ? '[Test]' : '') + `[${date}] Liste pour étiquettes`;
-        let body = `Inventaire fait par ${username}, le ${date} à ${time}
-${entriesCount} produits scannés`;
+        const to = 'etiquette@supercoop.fr';
+        const subject = (__DEV__ ? '[Test]' : '') + `[${date}] ${this.props.label.name}`;
+        let body = `Liste effectuée par ${username}, le ${date} à ${time}
+${entriesCount} étiquettes scannées`;
 
         const attachments: MailAttachment[] = [await Mailjet.filepathToAttachment(this.state.filepath)];
 
@@ -119,7 +119,7 @@ ${entriesCount} produits scannés`;
                     return;
                 }
                 getConnection().getRepository(LabelList).update(this.props.label.id, {_lastSentAt: new Date()});
-                Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
+                Alert.alert('Envoyé', 'La liste a été envoyé !');
             })
             .catch((e: Error) => {
                 if (__DEV__) {
@@ -168,22 +168,24 @@ ${entriesCount} produits scannés`;
             <SafeAreaView style={{backgroundColor: 'white'}}>
                 <View style={{padding: 16}}>
                     <Text>
-                        Tu es sur le point d&apos;envoyer ton inventaire du{' '}
-                        {this.props.label.createdAt && this.props.label.createdAt.toLocaleString(DateTime.DATE_FULL)},
-                        zone. Il contient {this.props.labelEntries.length} article
+                        Tu es sur le point d&apos;envoyer la liste d'étiquettes du{' '}
+                        {this.props.label.createdAt && this.props.label.createdAt.toLocaleString(DateTime.DATE_FULL)}.
+                        Elle contient {this.props.labelEntries.length} étiquette
                         {this.props.labelEntries.length > 1 ? 's' : ''}.
                     </Text>
                     <View style={{flexDirection: 'row'}}>
                         <Text>État : </Text>
                         {labelCheck}
                     </View>
-                    <Text>En tapant sur le bouton ci-dessous, il sera envoyé à l&apos;équipe inventaire :</Text>
+                    <Text>
+                        En tapant sur le bouton ci-dessous, il sera envoyé à l&apos;adresse etiquette@supercoop.fr :
+                    </Text>
                     <View style={{flexDirection: 'row', justifyContent: 'center', margin: 16}}>
                         <Button
                             onPress={(): void => {
                                 this.sendMail();
                             }}
-                            title="Envoyer mon inventaire"
+                            title="Envoyer la liste"
                             disabled={this.state.sendingMail || !this.state.labelCheckPassed}
                         />
                     </View>
