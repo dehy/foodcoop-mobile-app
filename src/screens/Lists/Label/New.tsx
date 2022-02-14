@@ -11,12 +11,12 @@ type Props = {
     componentId: string;
 };
 
-type State = {};
+type State = {
+    listTitle: string;
+};
 
 export default class ListsLabelNew extends React.Component<Props, State> {
     static screenName = 'Lists/Label/New';
-
-    labelListTitle = `Étiquettes du ${DateTime.local().toFormat('d LLLL')}`;
 
     theme = {
         Button: {
@@ -29,6 +29,9 @@ export default class ListsLabelNew extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
+        this.state = {
+            listTitle: `Étiquettes du ${DateTime.local().toFormat('d LLLL')}`,
+        };
     }
 
     static options(): Options {
@@ -36,12 +39,14 @@ export default class ListsLabelNew extends React.Component<Props, State> {
     }
 
     updateLabelListTitle = (newTitle: string): void => {
-        this.labelListTitle = newTitle;
+        this.setState({
+            listTitle: newTitle,
+        });
     };
 
     createListAndDismiss = (): void => {
         const list = new LabelList();
-        list.name = this.labelListTitle;
+        list.name = this.state.listTitle;
 
         getConnection()
             .getRepository(LabelList)
@@ -62,7 +67,7 @@ export default class ListsLabelNew extends React.Component<Props, State> {
                     </Text>
                     <Input
                         label="Nom de la liste"
-                        value={this.labelListTitle}
+                        value={this.state.listTitle}
                         onChangeText={this.updateLabelListTitle}
                     />
                     <View style={{flexDirection: 'row', justifyContent: 'center'}}>
