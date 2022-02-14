@@ -1,5 +1,6 @@
 import {Navigation, Options} from 'react-native-navigation';
 import GoodsReceiptService from '../services/GoodsReceiptService';
+import Odoo from './Odoo';
 
 export function goToAuth(): void {
     Navigation.setRoot({
@@ -24,6 +25,8 @@ function loadBadges(): void {
 }
 
 export function goHome(): void {
+    Odoo.getInstance().fetchBarcodeNomenclature();
+
     Navigation.setDefaultOptions({
         bottomTab: {
             iconColor: 'black',
