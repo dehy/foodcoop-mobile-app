@@ -17,6 +17,8 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import moment from 'moment';
 import 'moment/locale/fr';
 import {Settings} from 'luxon';
+import 'intl';
+import 'intl/locale-data/jsonp/fr';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
 import {registerScreens} from 'react-native-navigation-register-screens';
