@@ -22,7 +22,8 @@ export default class CSVGenerator {
         const entriesArray: CSVData[] = [];
 
         const userFirstname = SupercoopSignIn.getInstance().getFirstnameSlug();
-        const csvFilenameDateTime = inventoryList.lastModifiedAt && inventoryList.lastModifiedAt.toISO();
+        const csvFilenameDateTime =
+            inventoryList.lastModifiedAt && inventoryList.lastModifiedAt.toFormat('yyyyLLddHHmmss');
         const csvFilename = `Zone${inventoryList.zone}_${userFirstname}-${csvFilenameDateTime}.csv`;
 
         for (const key in inventoryEntries) {

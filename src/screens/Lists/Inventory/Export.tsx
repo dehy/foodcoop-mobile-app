@@ -20,7 +20,7 @@ export interface Props {
 
 interface State {
     sendingMail: boolean;
-    inventoryCheckPassed: boolean;
+    inventoryCheckPassed: boolean | null;
     filepath?: string;
 }
 
@@ -42,7 +42,7 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
 
         this.state = {
             sendingMail: false,
-            inventoryCheckPassed: false,
+            inventoryCheckPassed: null,
         };
     }
 
