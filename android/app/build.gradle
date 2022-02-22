@@ -143,8 +143,8 @@ android {
         applicationId "fr.supercoop.app_android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 42
-        versionName "1.4.2"
+        versionCode 45
+        versionName "1.5.0"
         missingDimensionStrategy 'react-native-camera', 'general'
         missingDimensionStrategy 'RNN.reactNativeVersion', 'reactNative63'
         multiDexEnabled true
