@@ -388,7 +388,7 @@ PODS:
   - RNDeviceInfo (8.4.8):
     - React-Core
   - RNFS (2.18.0):
-    - React
+    - React-Core
   - RNSecureStorage (1.0.82):
     - React
   - RNSentry (3.2.13):
@@ -674,7 +674,7 @@ SPEC CHECKSUMS:
   RNCPicker: cb57c823d5ce8d2d0b5dfb45ad97b737260dc59e
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
   RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9
-  RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
+  RNFS: 7bdbd2472eac73a7f266b43da1d1bd68b3ed7bf5
   RNSecureStorage: 8b2b07278d80c48b3a881c56e604ab147372f243
   RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852

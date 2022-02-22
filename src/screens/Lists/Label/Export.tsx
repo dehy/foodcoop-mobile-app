@@ -7,20 +7,20 @@ import CSVGenerator from '../../../utils/CSVGenerator';
 import SupercoopSignIn from '../../../utils/SupercoopSignIn';
 import Mailjet, {MailAttachment} from '../../../utils/Mailjet';
 import merge from 'deepmerge';
-import InventoryList from '../../../entities/Lists/InventoryList';
-import InventoryEntry from '../../../entities/Lists/InventoryEntry';
+import LabelList from '../../../entities/Lists/LabelList';
+import LabelEntry from '../../../entities/Lists/LabelEntry';
 import {getConnection} from 'typeorm';
 import {DateTime} from 'luxon';
 
 export interface Props {
     componentId: string;
-    inventory: InventoryList;
-    inventoryEntries: Array<InventoryEntry>;
+    label: LabelList;
+    labelEntries: Array<LabelEntry>;
 }
 
 interface State {
     sendingMail: boolean;
-    inventoryCheckPassed: boolean | null;
+    labelCheckPassed: boolean;
     filepath?: string;
 }
 
@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class ListsInventoryExport extends React.Component<Props, State> {
-    static screenName = 'Lists/Inventory/Export';
+export default class ListsLabelExport extends React.Component<Props, State> {
+    static screenName = 'Lists/Label/Export';
 
-    private inventoryEntries: Array<InventoryEntry> = [];
+    private labelEntries: Array<LabelEntry> = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
 
     constructor(props: Props) {
@@ -42,12 +42,12 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
 
         this.state = {
             sendingMail: false,
-            inventoryCheckPassed: null,
+            labelCheckPassed: false,
         };
     }
 
     static options(): Options {
-        const options = defaultScreenOptions("Envoi d'inventaire");
+        const options = defaultScreenOptions('Envoi');
         const buttons = {
             topBar: {
                 leftButtons: [
@@ -69,23 +69,30 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
     }
 
     componentDidMount(): void {
-        this.checkInventory();
+        this.checkLabel();
     }
 
-    async checkInventory(): Promise<void> {
-        this.inventoryEntries = this.props.inventoryEntries ?? [];
-        const filepath = await this.csvGenerator.exportInventoryList(this.props.inventory, this.props.inventoryEntries);
+    async checkLabel(): Promise<void> {
+        this.labelEntries = this.props.labelEntries ?? [];
+        const csvData: {[key: string]: string}[] = [];
+        this.labelEntries.forEach(entry => {
+            csvData.push({
+                Nom: entry.productName ?? '',
+                Barcode: entry.productBarcode ?? '',
+            });
+        });
+        const filepath = await this.csvGenerator.generateCSVFile('etiquettes.csv', csvData);
         this.setState({
             filepath: filepath,
-            inventoryCheckPassed: true,
+            labelCheckPassed: true,
         });
     }
 
-    async sendInventory(): Promise<void> {
+    async sendMail(): Promise<void> {
         this.setState({
             sendingMail: true,
         });
-        if (!this.props.inventory.lastModifiedAt) {
+        if (!this.props.label.lastModifiedAt) {
             throw new Error('Last Modified date unavailable');
         }
         if (!this.state.filepath) {
@@ -93,42 +100,26 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
         }
         const signInService = SupercoopSignIn.getInstance();
         const username = signInService.getName();
-        const zone = this.props.inventory.zone;
-        const date = this.props.inventory.lastModifiedAt.toLocaleString(DateTime.DATE_SHORT);
-        const time = this.props.inventory.lastModifiedAt.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+        const date = this.props.label.lastModifiedAt.toLocaleString(DateTime.DATE_SHORT);
+        const time = this.props.label.lastModifiedAt.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
 
-        const entriesCount = this.inventoryEntries.length;
+        const entriesCount = this.labelEntries.length;
 
-        const notFoundInOdoo: Array<string> = [];
-        this.inventoryEntries.forEach(inventoryEntry => {
-            if (!inventoryEntry.barcodeFoundInOdoo()) {
-                notFoundInOdoo.push(`${inventoryEntry.productBarcode} - ${inventoryEntry.productName}`);
-            }
-        });
-        const notFoundInOdooString = '- ' + notFoundInOdoo.join('\n- ');
-
-        const to = 'inventaire@supercoop.fr';
-        const subject = (__DEV__ ? '[Test]' : '') + `[Zone ${zone}][${date}] Résultat d'inventaire`;
-        let body = `Inventaire fait par ${username}, zone ${zone}, le ${date} à ${time}
-${entriesCount} produits scannés`;
-
-        if (notFoundInOdoo.length > 0) {
-            body = body.concat(`
-            
-Attention, ces codes barre n'ont pas été trouvé dans Odoo:
-${notFoundInOdooString}`);
-        }
+        const to = 'etiquette@supercoop.fr';
+        const subject = (__DEV__ ? '[Test]' : '') + `[${date}] ${this.props.label.name}`;
+        let body = `Liste effectuée par ${username}, le ${date} à ${time}
+${entriesCount} étiquettes scannées`;
 
         const attachments: MailAttachment[] = [await Mailjet.filepathToAttachment(this.state.filepath)];
 
         Mailjet.getInstance()
             .sendEmail(to, '', subject, body, attachments)
             .then(() => {
-                if (!this.props.inventory.id) {
+                if (!this.props.label.id) {
                     return;
                 }
-                getConnection().getRepository(InventoryList).update(this.props.inventory.id, {_lastSentAt: new Date()});
-                Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
+                getConnection().getRepository(LabelList).update(this.props.label.id, {_lastSentAt: new Date()});
+                Alert.alert('Envoyé', 'La liste a été envoyé !');
             })
             .catch((e: Error) => {
                 if (__DEV__) {
@@ -147,25 +138,25 @@ ${notFoundInOdooString}`);
     }
 
     render(): React.ReactNode {
-        let inventoryCheck = null;
-        if (this.state.inventoryCheckPassed === null) {
-            inventoryCheck = (
+        let labelCheck = null;
+        if (this.state.labelCheckPassed === null) {
+            labelCheck = (
                 <View style={styles.checkResult}>
                     <ActivityIndicator size="small" color="#999999" style={{paddingTop: 4, marginRight: 4}} />
                     <Text>Création en cours</Text>
                 </View>
             );
         }
-        if (this.state.inventoryCheckPassed === true) {
-            inventoryCheck = (
+        if (this.state.labelCheckPassed === true) {
+            labelCheck = (
                 <View style={styles.checkResult}>
                     <Icon type="font-awesome-5" name="check" color="green" style={{paddingTop: 3, marginRight: 4}} />
                     <Text style={{color: 'green'}}>Prêt pour l&apos;envoi</Text>
                 </View>
             );
         }
-        if (this.state.inventoryCheckPassed === false) {
-            inventoryCheck = (
+        if (this.state.labelCheckPassed === false) {
+            labelCheck = (
                 <View style={styles.checkResult}>
                     <Icon type="font-awesome-5" name="times" color="red" style={{paddingTop: 3, marginRight: 4}} />
                     <Text style={{color: 'red'}}>Erreur !</Text>
@@ -177,24 +168,25 @@ ${notFoundInOdooString}`);
             <SafeAreaView style={{backgroundColor: 'white'}}>
                 <View style={{padding: 16}}>
                     <Text>
-                        Tu es sur le point d&apos;envoyer ton inventaire du{' '}
-                        {this.props.inventory.createdAt &&
-                            this.props.inventory.createdAt.toLocaleString(DateTime.DATE_FULL)}
-                        , zone {this.props.inventory.zone}. Il contient {this.props.inventoryEntries.length} article
-                        {this.props.inventoryEntries.length > 1 ? 's' : ''}.
+                        Tu es sur le point d&apos;envoyer la liste d'étiquettes du{' '}
+                        {this.props.label.createdAt && this.props.label.createdAt.toLocaleString(DateTime.DATE_FULL)}.
+                        Elle contient {this.props.labelEntries.length} étiquette
+                        {this.props.labelEntries.length > 1 ? 's' : ''}.
                     </Text>
                     <View style={{flexDirection: 'row'}}>
                         <Text>État : </Text>
-                        {inventoryCheck}
+                        {labelCheck}
                     </View>
-                    <Text>En tapant sur le bouton ci-dessous, il sera envoyé à l&apos;équipe inventaire :</Text>
+                    <Text>
+                        En tapant sur le bouton ci-dessous, il sera envoyé à l&apos;adresse etiquette@supercoop.fr :
+                    </Text>
                     <View style={{flexDirection: 'row', justifyContent: 'center', margin: 16}}>
                         <Button
                             onPress={(): void => {
-                                this.sendInventory();
+                                this.sendMail();
                             }}
-                            title="Envoyer mon inventaire"
-                            disabled={this.state.sendingMail || !this.state.inventoryCheckPassed}
+                            title="Envoyer la liste"
+                            disabled={this.state.sendingMail || !this.state.labelCheckPassed}
                         />
                     </View>
                 </View>

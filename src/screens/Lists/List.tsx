@@ -8,6 +8,7 @@ import {FindConditions, getConnection, IsNull} from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
+import LabelList from '../../entities/Lists/LabelList';
 import BaseEntry from '../../entities/Lists/BaseEntry';
 
 interface EntriesCountList {
@@ -165,6 +166,8 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 return 'Lists/Inventory/Show';
             case GoodsReceiptList.name:
                 return 'Lists/GoodsReceipt/Show';
+            case LabelList.name:
+                return 'Lists/Label/Show';
 
             default:
                 return undefined;

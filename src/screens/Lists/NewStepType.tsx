@@ -6,6 +6,7 @@ import {defaultScreenOptions} from '../../utils/navigation';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
+import LabelList from '../../entities/Lists/LabelList';
 
 type Props = {
     componentId: string;
@@ -13,7 +14,7 @@ type Props = {
 
 type State = {};
 
-export const RegisteredListTypes = [InventoryList, GoodsReceiptList];
+export const RegisteredListTypes = [InventoryList, GoodsReceiptList, LabelList];
 
 export default class ListsNewStepType extends React.Component<Props, State> {
     static screenName = 'Lists/NewStepType';
@@ -60,6 +61,9 @@ export default class ListsNewStepType extends React.Component<Props, State> {
                 break;
             case GoodsReceiptList:
                 componentName = 'Lists/GoodsReceipt/New';
+                break;
+            case LabelList:
+                componentName = 'Lists/Label/New';
                 break;
             default:
                 break;

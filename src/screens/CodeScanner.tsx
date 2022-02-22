@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
 
 export default class CodeScanner extends React.Component<Props, State> {
     private camera: RNCamera | null = null;
+    private infoPanel: ScannerInfoPanel | undefined;
     private beepSound: Sound;
     private scannerMode: 'camera' | 'dataWedge';
     /* DataWedge */
@@ -888,6 +889,9 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
         }
         return (
             <ScannerInfoPanel
+                ref={(ref: ScannerInfoPanel) => {
+                    this.infoPanel = ref;
+                }}
                 barcode={this.state.barcodes.length > 0 ? this.state.barcodes[0].data : undefined}
                 extraPanel={this.props.extraInfoPanel}
                 productNotFoundCallback={(): void => {
@@ -905,6 +909,10 @@ Il a été associé à un produit nommé "${odooProductProduct.name}"`;
                 {extraPanel}
             </ScannerInfoPanel>
         );
+    }
+
+    closeInfoPanel(): void {
+        this.infoPanel?.close();
     }
 
     render(): React.ReactNode {

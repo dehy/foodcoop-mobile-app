@@ -17,6 +17,8 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import moment from 'moment';
 import 'moment/locale/fr';
 import {Settings} from 'luxon';
+import 'intl';
+import 'intl/locale-data/jsonp/fr';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
 import {registerScreens} from 'react-native-navigation-register-screens';
@@ -30,6 +32,10 @@ import ListsInventoryExport from './src/screens/Lists/Inventory/Export';
 import ListsInventoryNew from './src/screens/Lists/Inventory/New';
 import ListsInventoryScan from './src/screens/Lists/Inventory/Scan';
 import ListsInventoryShow from './src/screens/Lists/Inventory/Show';
+import ListsLabelNew from './src/screens/Lists/Label/New';
+import ListsLabelShow from './src/screens/Lists/Label/Show';
+import ListsLabelScan from './src/screens/Lists/Label/Scan';
+import ListsLabelExport from './src/screens/Lists/Label/Export';
 import ListsList from './src/screens/Lists/List';
 import ListsNewStepType from './src/screens/Lists/NewStepType';
 import NewsList from './src/screens/News/List';
@@ -57,6 +63,10 @@ registerScreens([
     ListsInventoryNew,
     ListsInventoryScan,
     ListsInventoryShow,
+    ListsLabelNew,
+    ListsLabelShow,
+    ListsLabelScan,
+    ListsLabelExport,
     ListsList,
     ListsNewStepType,
     NewsList,

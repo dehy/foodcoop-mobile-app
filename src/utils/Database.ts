@@ -16,6 +16,8 @@ import {DeleteCascade1588861598725} from '../migrations/1588861598725-DeleteCasc
 import {AddExpectedPackageQty1589031691422} from '../migrations/1589031691422-AddExpectedPackageQty';
 import {AddSessionAttachment1592642586405} from '../migrations/1592642586405-AddSessionAttachment';
 import {MultiList1636572223147} from '../migrations/1636572223147-MultiList';
+import LabelList from '../entities/Lists/LabelList';
+import LabelEntry from '../entities/Lists/LabelEntry';
 
 interface EntityDefinition {
     name: string;
@@ -56,6 +58,8 @@ export default class Database {
                 BaseEntry,
                 InventoryEntry,
                 GoodsReceiptEntry,
+                LabelList,
+                LabelEntry,
                 ListAttachment,
             ],
             migrationsRun: migrationsRun,
