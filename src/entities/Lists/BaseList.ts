@@ -108,4 +108,15 @@ export default abstract class BaseList {
     constructor() {
         this.extraData = {};
     }
+
+    entryWithBarcode = (barcode: string): BaseEntry | null => {
+        if (this.entries !== undefined) {
+            for (const entry of this.entries) {
+                if (entry.productBarcode === barcode) {
+                    return entry;
+                }
+            }
+        }
+        return null;
+    };
 }

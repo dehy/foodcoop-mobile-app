@@ -10,14 +10,21 @@ import {isInt} from '../../../utils/helpers';
 import {getRepository} from 'typeorm';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import InventoryList from '../../../entities/Lists/InventoryList';
+import {DateTime} from 'luxon';
 
 export interface Props {
     componentId: string;
     inventory: InventoryList;
 }
 
+enum SaveMode {
+    replace = 'replace',
+    add = 'add',
+}
+
 interface State {
     barcode?: Barcode;
+    saveMode: SaveMode;
 }
 
 const styles = StyleSheet.create({
@@ -38,6 +45,9 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
+        this.state = {
+            saveMode: SaveMode.replace,
+        };
     }
 
     static options(): Options {
@@ -58,6 +68,45 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
         if (buttonId === 'cancel') {
             Navigation.dismissModal(this.props.componentId);
         }
+    }
+
+    checkForDuplicate(product: ProductProduct): void {
+        console.debug(this.props.inventory.entries);
+        if (this.props.inventory === undefined || this.props.inventory.entries === undefined || !product.barcode) {
+            return;
+        }
+        const existingEntry: InventoryEntry | null = this.props.inventory.entryWithBarcode(
+            product.barcode,
+        ) as InventoryEntry;
+        if (existingEntry === null) {
+            return;
+        }
+
+        const timeAgo = DateTime.fromJSDate(existingEntry.lastModifiedAt ?? existingEntry.addedAt!).toRelative();
+        Alert.alert('Déjà scanné', `Ce produit a déjà été scanné ${timeAgo}. Que souhaites-tu faire ?`, [
+            {
+                text: 'Remplacer',
+                style: 'cancel',
+                onPress: () => {
+                    getRepository(InventoryEntry).delete(existingEntry.id!);
+                    const indexInList = this.props.inventory.entries!.indexOf(existingEntry);
+                    if (indexInList > -1) {
+                        this.props.inventory.entries?.splice(indexInList, 1);
+                    }
+                    this.setState({
+                        saveMode: SaveMode.replace,
+                    });
+                },
+            },
+            {
+                text: 'Additionner',
+                onPress: () => {
+                    this.setState({
+                        saveMode: SaveMode.add,
+                    });
+                },
+            },
+        ]);
     }
 
     didTapSaveButton(product: ProductProduct): void {
@@ -86,28 +135,46 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
             }
         }
 
-        // TODO: Prendre en compte les doublons et demander si addition ou remplacement.
-
-        const newEntry = InventoryEntry.createFromProductProduct(product);
-        newEntry.list = this.props.inventory;
-        newEntry.quantity = quantity;
-        newEntry.addedAt = new Date();
+        let newEntry: InventoryEntry | undefined | null;
+        if (this.state.saveMode === 'add' && product.barcode) {
+            newEntry = this.props.inventory.entryWithBarcode(product.barcode) as InventoryEntry;
+            newEntry.quantity = newEntry.quantity! + quantity;
+        } else {
+            // replace or new element
+            newEntry = InventoryEntry.createFromProductProduct(product);
+            newEntry.list = this.props.inventory;
+            newEntry.quantity = quantity;
+            newEntry.addedAt = new Date();
+            this.props.inventory.entries?.push(newEntry);
+        }
         newEntry.scannedAt = new Date();
 
-        console.log(newEntry);
+        console.debug(newEntry);
         getRepository(InventoryEntry)
             .save(newEntry)
             .then(() => {
                 this.codeScanner?.reset();
+                this.setState({
+                    saveMode: SaveMode.replace,
+                });
             });
     }
 
     renderInventoryInput(product: ProductProduct): ReactNode {
+        let previousQuantity: ReactNode | undefined;
+        if (this.state.saveMode === SaveMode.add && product.barcode) {
+            previousQuantity = (
+                <Text style={{fontSize: 28}}>
+                    {this.props.inventory.entryWithBarcode(product.barcode)?.quantity} +{' '}
+                </Text>
+            );
+        }
         return (
             <View>
                 <Divider />
                 <Text style={{fontWeight: 'bold', paddingTop: 8}}>Nouveau stock</Text>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', marginVertical: 8}}>
+                    {previousQuantity}
                     <TextInput
                         onChangeText={(value): void => {
                             this.articleQuantityValue = value;
@@ -135,7 +202,7 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
                         onPress={(): void => {
                             this.didTapSaveButton(product);
                         }}
-                        title="Enregistrer"
+                        title={this.state.saveMode === SaveMode.add ? 'Ajouter' : 'Enregistrer'}
                     />
                 </View>
             </View>
@@ -148,6 +215,9 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
                 <CodeScanner
                     ref={(ref: CodeScanner): void => {
                         this.codeScanner = ref !== null ? ref : undefined;
+                    }}
+                    onProductFound={(product: ProductProduct): void => {
+                        this.checkForDuplicate(product);
                     }}
                     extraInfoPanel={(product): ReactNode => {
                         return this.renderInventoryInput(product);

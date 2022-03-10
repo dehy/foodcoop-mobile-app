@@ -78,6 +78,7 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
                 },
             })
             .then(entries => {
+                this.props.list.entries = entries;
                 this.setState({
                     listEntries: entries,
                 });
