@@ -527,6 +527,11 @@ $RECYCLE.BIN/
 *.lnk
 
 
+### LibreOffice ###
+# LibreOffice locks
+.~lock.*#
+
+
 # End of https://www.gitignore.io/api/java,linux,macos,windows,objective-c,reactnative,androidstudio,visualstudiocode
 android/app/release/
 *.sqlite
