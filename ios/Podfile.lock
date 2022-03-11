@@ -303,7 +303,7 @@ PODS:
     - React-Core
   - react-native-sqlite-storage (6.0.1):
     - React-Core
-  - react-native-webview (11.17.0):
+  - react-native-webview (11.17.2):
     - React-Core
   - React-perflogger (0.66.4)
   - React-RCTActionSheet (0.66.4):
@@ -370,13 +370,13 @@ PODS:
     - React-jsi (= 0.66.4)
     - React-logger (= 0.66.4)
     - React-perflogger (= 0.66.4)
-  - ReactNativeNavigation (7.25.3):
+  - ReactNativeNavigation (7.26.0):
     - HMSegmentedControl
     - React-Core
     - React-RCTImage
     - React-RCTText
-    - ReactNativeNavigation/Core (= 7.25.3)
-  - ReactNativeNavigation/Core (7.25.3):
+    - ReactNativeNavigation/Core (= 7.26.0)
+  - ReactNativeNavigation/Core (7.26.0):
     - HMSegmentedControl
     - React-Core
     - React-RCTImage
@@ -391,16 +391,16 @@ PODS:
     - React-Core
   - RNSecureStorage (1.0.82):
     - React
-  - RNSentry (3.2.13):
+  - RNSentry (3.3.2):
     - React-Core
-    - Sentry (= 7.9.0)
+    - Sentry (= 7.10.1)
   - RNSound (0.11.2):
     - React-Core
     - RNSound/Core (= 0.11.2)
   - RNSound/Core (0.11.2):
     - React-Core
-  - RNSVG (12.1.1):
-    - React
+  - RNSVG (12.3.0):
+    - React-Core
   - RNVectorIcons (9.0.0):
     - React-Core
   - RNZipArchive (6.0.6):
@@ -410,9 +410,9 @@ PODS:
   - RNZipArchive/Core (6.0.6):
     - React-Core
     - SSZipArchive (= 2.2.3)
-  - Sentry (7.9.0):
-    - Sentry/Core (= 7.9.0)
-  - Sentry/Core (7.9.0)
+  - Sentry (7.10.1):
+    - Sentry/Core (= 7.10.1)
+  - Sentry/Core (7.10.1)
   - SSZipArchive (2.2.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -657,7 +657,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: e63964d58c890de02bfb6519dedb7d90b5c782de
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-sqlite-storage: f6d515e1c446d1e6d026aa5352908a25d4de3261
-  react-native-webview: 10996be8bcc5e37a30dbc139fc544bb651dc8612
+  react-native-webview: 380c1a03ec94b7ed764dac8db1e7c9952d08c93a
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
   React-RCTActionSheet: 7d3041e6761b4f3044a37079ddcb156575fb6d89
   React-RCTAnimation: 743e88b55ac62511ae5c2e22803d4f503f2a3a13
@@ -670,18 +670,18 @@ SPEC CHECKSUMS:
   React-RCTVibration: e3ffca672dd3772536cb844274094b0e2c31b187
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
-  ReactNativeNavigation: 81628d0bac0c0d214d13f08bcd1721879ba70da7
+  ReactNativeNavigation: b3344828dfe4a696425cbc00d61e05c4c0150f98
   RNCPicker: cb57c823d5ce8d2d0b5dfb45ad97b737260dc59e
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
   RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9
   RNFS: 7bdbd2472eac73a7f266b43da1d1bd68b3ed7bf5
   RNSecureStorage: 8b2b07278d80c48b3a881c56e604ab147372f243
-  RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
+  RNSentry: f8c14c77e400a93331b38538f735c2538f8108a8
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
-  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
+  RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   RNVectorIcons: 4143ba35feebab8fdbe6bc43d1e776b393d47ac8
   RNZipArchive: 9e6af1bebc9c7ddb42893bc4e70804321227c3ec
-  Sentry: 2f7e91f247cfb05b05bd01e0b5d0692557a7687b
+  Sentry: ddcd9fde63cfe7e9e2243da59d98daa382413e49
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
