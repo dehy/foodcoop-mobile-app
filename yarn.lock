@@ -3256,10 +3256,17 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8:
   dependencies:
     ms "2.0.0"
 
-debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2:
+debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.2:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
   integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
+  dependencies:
+    ms "2.1.2"
+
+debug@^4.3.1:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
+  integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
 
@@ -7144,24 +7151,6 @@ react-native-modal-datetime-picker@^13.0.0:
   integrity sha512-uPgonEKa/nIotmboEEriTCVfWLgrtuR+fybqSw6XcPc/+ve7Q6p55cbUGKtne3+sFcelk+QHcb0aPu56+VbsJA==
   dependencies:
     prop-types "^15.7.2"
-
-react-native-navigation-register-screens@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-navigation-register-screens/-/react-native-navigation-register-screens-1.3.0.tgz#ed9935621c940f76d2552311c99a208fea1f2d47"
-  integrity sha512-NyzmaW5ABVWTmrdjAh3EqTwm66HVs/fWxI6d904Z6bWMPh8rZJ276s8cLOAMAHTh93lBpUvhuEuqGUAlaILBaA==
-  dependencies:
-    react-native-navigation "^7.0.0"
-
-react-native-navigation@^7.0.0:
-  version "7.25.3"
-  resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-7.25.3.tgz#1ab5e9b9612bbed9f768ab7a5108f295b1963b5a"
-  integrity sha512-fRmBOfxfS86LrhpTkDXV36VWDwK565zxiWgVganmcmmOWvgfBWllO6fINeKQ11p/Wf7/bpEwLPgXCzZDWGzIyQ==
-  dependencies:
-    hoist-non-react-statics "3.x.x"
-    lodash "4.17.x"
-    prop-types "15.x.x"
-    react-lifecycles-compat "2.0.0"
-    tslib "1.9.3"
 
 react-native-navigation@^7.25.1:
   version "7.26.0"
