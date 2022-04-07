@@ -3,7 +3,6 @@ import {ActivityIndicator, SafeAreaView, SectionList, Text, View} from 'react-na
 import {DateTime} from 'luxon';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {filterUnique} from '../../../utils/helpers';
-import {getRepository} from 'typeorm';
 import {Icon, ListItem} from 'react-native-elements';
 import {Navigation, Options} from 'react-native-navigation';
 import GoodsReceiptEntry from '../../../entities/Lists/GoodsReceiptEntry';
@@ -11,6 +10,7 @@ import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import Odoo from '../../../utils/Odoo';
 import PurchaseOrder from '../../../entities/Odoo/PurchaseOrder';
 import styles from '../../../styles/material';
+import Database from '../../../utils/Database';
 
 interface PurchaseOrderList {
     title: string;
@@ -150,7 +150,9 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
         goodsReceiptList.purchaseOrderName = props.item.name ?? 'Inconnu';
         goodsReceiptList.partnerId = props.item.partnerId ?? 0;
         goodsReceiptList.partnerName = props.item.partnerName ?? 'Inconnu';
-        const savedList = await getRepository(GoodsReceiptList).save(goodsReceiptList);
+        const savedList = await Database.sharedInstance()
+            .dataSource.getRepository(GoodsReceiptList)
+            .save(goodsReceiptList);
         console.log(`goodsReceiptList saved with id ${savedList.id}`);
 
         // Récupération des détails de chaque ligne du bon de commande via Odoo
@@ -215,7 +217,9 @@ export default class ListsGoodsReceiptNew extends React.Component<Props, State> 
         });
 
         // Sauvegarde en bdd de chaque Entry
-        await getRepository(GoodsReceiptEntry).save(Object.values(goodsReceiptEntries));
+        await Database.sharedInstance()
+            .dataSource.getRepository(GoodsReceiptEntry)
+            .save(Object.values(goodsReceiptEntries));
 
         Navigation.dismissModal(this.props.componentId);
     };

@@ -4,8 +4,8 @@ import {SafeAreaView, Text, View} from 'react-native';
 import {Button, Input, ThemeProvider} from 'react-native-elements';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
-import {getConnection} from 'typeorm';
 import LabelList from '../../../entities/Lists/LabelList';
+import Database from '../../../utils/Database';
 
 type Props = {
     componentId: string;
@@ -48,8 +48,8 @@ export default class ListsLabelNew extends React.Component<Props, State> {
         const list = new LabelList();
         list.name = this.state.listTitle;
 
-        getConnection()
-            .getRepository(LabelList)
+        Database.sharedInstance()
+            .dataSource.getRepository(LabelList)
             .save(list)
             .then(savedList => {
                 console.log(savedList);

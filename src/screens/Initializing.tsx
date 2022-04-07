@@ -51,9 +51,8 @@ export default class Initializing extends React.Component<Props> {
     }
 
     componentDidMount(): void {
-        Database.connect().then(() => {
-            this.signInSilently();
-        });
+        Database.sharedInstance(); // Init database
+        this.signInSilently();
     }
 
     signInSilently(): void {

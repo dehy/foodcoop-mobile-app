@@ -7,10 +7,10 @@ import {defaultScreenOptions} from '../../../utils/navigation';
 import {Button, Divider} from 'react-native-elements';
 import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductProduct';
 import {isInt} from '../../../utils/helpers';
-import {getRepository} from 'typeorm';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -88,7 +88,7 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
                 text: 'Remplacer',
                 style: 'cancel',
                 onPress: () => {
-                    getRepository(InventoryEntry).delete(existingEntry.id!);
+                    Database.sharedInstance().dataSource.getRepository(InventoryEntry).delete(existingEntry.id!);
                     const indexInList = this.props.inventory.entries!.indexOf(existingEntry);
                     if (indexInList > -1) {
                         this.props.inventory.entries?.splice(indexInList, 1);
@@ -150,7 +150,8 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
         newEntry.scannedAt = new Date();
 
         console.debug(newEntry);
-        getRepository(InventoryEntry)
+        Database.sharedInstance()
+            .dataSource.getRepository(InventoryEntry)
             .save(newEntry)
             .then(() => {
                 this.codeScanner?.reset();

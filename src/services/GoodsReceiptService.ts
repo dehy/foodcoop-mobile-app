@@ -9,7 +9,7 @@ import {ImagePickerResponse} from 'react-native-image-picker';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
 import {lightRandomId} from '../../src/utils/helpers';
-import {getRepository} from 'typeorm';
+import Database from '../utils/Database';
 
 export default class GoodsReceiptService {
     private static instance: GoodsReceiptService;
@@ -66,21 +66,29 @@ export default class GoodsReceiptService {
     }
 
     async deleteList(list: GoodsReceiptList): Promise<void> {
-        const attachmentRepository = getRepository(ListAttachment);
-        const entryRepository = getRepository(GoodsReceiptEntry);
-        const listRepository = getRepository(GoodsReceiptList);
+        const attachmentRepository = Database.sharedInstance().dataSource.getRepository(ListAttachment);
+        const entryRepository = Database.sharedInstance().dataSource.getRepository(GoodsReceiptEntry);
+        const listRepository = Database.sharedInstance().dataSource.getRepository(GoodsReceiptList);
 
         await this.deleteAttachmentsFilesFromList(list);
 
         const attachments = await attachmentRepository.find({
-            list: list,
+            where: {
+                list: {
+                    id: list.id,
+                },
+            },
         });
         for (const attachement of attachments) {
             await attachmentRepository.remove(attachement);
         }
 
         const entries = await entryRepository.find({
-            list: list,
+            where: {
+                list: {
+                    id: list.id,
+                },
+            },
         });
         for (const entry of entries) {
             await entryRepository.remove(entry);

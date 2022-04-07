@@ -5,10 +5,10 @@ import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {Divider} from 'react-native-elements';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
-import {getRepository} from 'typeorm';
 import {Button} from 'react-native-elements';
 import LabelEntry from '../../../entities/Lists/LabelEntry';
 import LabelList from '../../../entities/Lists/LabelList';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -63,7 +63,7 @@ export default class ListsLabelScan extends React.Component<Props, State> {
         newEntry.list = this.props.list;
         newEntry.addedAt = new Date();
 
-        getRepository(LabelEntry).save(newEntry);
+        Database.sharedInstance().dataSource.getRepository(LabelEntry).save(newEntry);
     };
 
     renderAlert(_product: ProductProduct): ReactNode {

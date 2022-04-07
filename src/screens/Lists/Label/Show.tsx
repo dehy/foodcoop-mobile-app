@@ -7,8 +7,9 @@ import ActionSheet from 'react-native-action-sheet';
 import {Button, Icon, ListItem} from 'react-native-elements';
 import LabelList from '../../../entities/Lists/LabelList';
 import LabelEntry from '../../../entities/Lists/LabelEntry';
-import {getConnection, Repository} from 'typeorm';
+import {Repository} from 'typeorm';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     list: LabelList;
@@ -38,8 +39,8 @@ export default class ListsLabelShow extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
-        this.labelListRepository = getConnection().getRepository(LabelList);
-        this.labelEntryRepository = getConnection().getRepository(LabelEntry);
+        this.labelListRepository = Database.sharedInstance().dataSource.getRepository(LabelList);
+        this.labelEntryRepository = Database.sharedInstance().dataSource.getRepository(LabelEntry);
 
         this.state = {
             listEntries: [],
@@ -73,7 +74,9 @@ export default class ListsLabelShow extends React.Component<Props, State> {
         this.labelEntryRepository
             .find({
                 where: {
-                    list: this.props.list.id,
+                    list: {
+                        id: this.props.list.id,
+                    },
                 },
             })
             .then(entries => {
@@ -98,8 +101,8 @@ export default class ListsLabelShow extends React.Component<Props, State> {
         if (!labelEntry.id) {
             return;
         }
-        getConnection()
-            .getRepository(LabelEntry)
+        Database.sharedInstance()
+            .dataSource.getRepository(LabelEntry)
             .delete(labelEntry.id)
             .then(() => {
                 this.loadLabelEntries();
