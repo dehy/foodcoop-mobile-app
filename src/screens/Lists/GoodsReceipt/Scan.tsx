@@ -118,7 +118,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                 where: {
                     productBarcode: product.barcode,
                     list: {
-                        id: this.props.list.id,
+                        id: this.props.list.id!,
                     },
                 },
                 relations: ['list'],

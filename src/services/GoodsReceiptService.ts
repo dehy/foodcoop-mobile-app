@@ -75,7 +75,7 @@ export default class GoodsReceiptService {
         const attachments = await attachmentRepository.find({
             where: {
                 list: {
-                    id: list.id,
+                    id: list.id!,
                 },
             },
         });
@@ -86,7 +86,7 @@ export default class GoodsReceiptService {
         const entries = await entryRepository.find({
             where: {
                 list: {
-                    id: list.id,
+                    id: list.id!,
                 },
             },
         });

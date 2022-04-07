@@ -112,7 +112,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
             .dataSource.getRepository(GoodsReceiptList)
             .findOne({
                 where: {
-                    id: this.props.list.id,
+                    id: this.props.list.id!,
                 },
                 relations: {
                     entries: true,

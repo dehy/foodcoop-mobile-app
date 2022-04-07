@@ -41,7 +41,7 @@ export default abstract class BaseList {
     }
 
     @PrimaryGeneratedColumn()
-    public id?: number;
+    public id?: number | null = null; // null est un workaround pour un bug typeorm
 
     @Column('text')
     public name?: string;

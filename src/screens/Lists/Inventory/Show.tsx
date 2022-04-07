@@ -76,7 +76,7 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
             .find({
                 where: {
                     list: {
-                        id: this.props.list.id,
+                        id: this.props.list.id!,
                     },
                 },
             })
