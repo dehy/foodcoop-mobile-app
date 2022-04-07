@@ -21,67 +21,48 @@ import 'intl';
 import 'intl/locale-data/jsonp/fr';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
-import {registerScreens} from 'react-native-navigation-register-screens';
 import 'reflect-metadata';
 
-import Initializing from './src/screens/Initializing';
-import ListsGoodsReceiptExport from './src/screens/Lists/GoodsReceipt/Export';
-import ListsGoodsReceiptNew from './src/screens/Lists/GoodsReceipt/New';
-import ListsGoodsReceiptScan from './src/screens/Lists/GoodsReceipt/Scan';
-import ListsGoodsReceiptShow from './src/screens/Lists/GoodsReceipt/Show';
-import ListsInventoryExport from './src/screens/Lists/Inventory/Export';
-import ListsInventoryNew from './src/screens/Lists/Inventory/New';
-import ListsInventoryScan from './src/screens/Lists/Inventory/Scan';
-import ListsInventoryShow from './src/screens/Lists/Inventory/Show';
-import ListsLabelNew from './src/screens/Lists/Label/New';
-import ListsLabelShow from './src/screens/Lists/Label/Show';
-import ListsLabelScan from './src/screens/Lists/Label/Scan';
-import ListsLabelExport from './src/screens/Lists/Label/Export';
-import ListsList from './src/screens/Lists/List';
-import ListsNewStepType from './src/screens/Lists/NewStepType';
-import NewsList from './src/screens/News/List';
-import NewsShow from './src/screens/News/Show';
-import Plus from './src/screens/Plus';
-import PlusAbout from './src/screens/Plus/About';
-import PlusMaintenance from './src/screens/Plus/Maintenance';
-import PlusMaintenanceCookies from './src/screens/Plus/Maintenance/Cookies';
-import PlusMaintenanceDatabase from './src/screens/Plus/Maintenance/Database';
-import Scanner from './src/screens/Scanner';
-import Welcome from './src/screens/Welcome';
-
-Sentry.init({
-    dsn: Config.SENTRY_DSN,
-    environment: __DEV__ ? 'dev' : 'production',
-});
-
-registerScreens([
-    Initializing,
-    ListsGoodsReceiptExport,
-    ListsGoodsReceiptNew,
-    ListsGoodsReceiptScan,
-    ListsGoodsReceiptShow,
-    ListsInventoryExport,
-    ListsInventoryNew,
-    ListsInventoryScan,
-    ListsInventoryShow,
-    ListsLabelNew,
-    ListsLabelShow,
-    ListsLabelScan,
-    ListsLabelExport,
-    ListsList,
-    ListsNewStepType,
-    NewsList,
-    NewsShow,
-    Plus,
-    PlusAbout,
-    PlusMaintenance,
-    PlusMaintenanceCookies,
-    PlusMaintenanceDatabase,
-    Scanner,
-    Welcome,
-]);
+Navigation.registerComponent('Initializing', () => require('./src/screens/Initializing').default);
+Navigation.registerComponent(
+    'Lists/GoodsReceipt/Export',
+    () => require('./src/screens/Lists/GoodsReceipt/Export').default,
+);
+Navigation.registerComponent('Lists/GoodsReceipt/New', () => require('./src/screens/Lists/GoodsReceipt/New').default);
+Navigation.registerComponent('Lists/GoodsReceipt/Scan', () => require('./src/screens/Lists/GoodsReceipt/Scan').default);
+Navigation.registerComponent('Lists/GoodsReceipt/Show', () => require('./src/screens/Lists/GoodsReceipt/Show').default);
+Navigation.registerComponent('Lists/Inventory/Export', () => require('./src/screens/Lists/Inventory/Export').default);
+Navigation.registerComponent('Lists/Inventory/New', () => require('./src/screens/Lists/Inventory/New').default);
+Navigation.registerComponent('Lists/Inventory/Scan', () => require('./src/screens/Lists/Inventory/Scan').default);
+Navigation.registerComponent('Lists/Inventory/Show', () => require('./src/screens/Lists/Inventory/Show').default);
+Navigation.registerComponent('Lists/Label/New', () => require('./src/screens/Lists/Label/New').default);
+Navigation.registerComponent('Lists/Label/Show', () => require('./src/screens/Lists/Label/Show').default);
+Navigation.registerComponent('Lists/Label/Scan', () => require('./src/screens/Lists/Label/Scan').default);
+Navigation.registerComponent('Lists/Label/Export', () => require('./src/screens/Lists/Label/Export').default);
+Navigation.registerComponent('Lists/List', () => require('./src/screens/Lists/List').default);
+Navigation.registerComponent('Lists/NewStepType', () => require('./src/screens/Lists/NewStepType').default);
+Navigation.registerComponent('News/List', () => require('./src/screens/News/List').default);
+Navigation.registerComponent('News/Show', () => require('./src/screens/News/Show').default);
+Navigation.registerComponent('Plus', () => require('./src/screens/Plus').default);
+Navigation.registerComponent('Plus/About', () => require('./src/screens/Plus/About').default);
+Navigation.registerComponent('Plus/Maintenance', () => require('./src/screens/Plus/Maintenance').default);
+Navigation.registerComponent(
+    'Plus/Maintenance/Cookies',
+    () => require('./src/screens/Plus/Maintenance/Cookies').default,
+);
+Navigation.registerComponent(
+    'Plus/Maintenance/Database',
+    () => require('./src/screens/Plus/Maintenance/Database').default,
+);
+Navigation.registerComponent('Scanner', () => require('./src/screens/Scanner').default);
+Navigation.registerComponent('Welcome', () => require('./src/screens/Welcome').default);
 
 Navigation.events().registerAppLaunchedListener(() => {
+    Sentry.init({
+        dsn: Config.SENTRY_DSN,
+        environment: __DEV__ ? 'dev' : 'production',
+    });
+
     // Moment
     moment.locale('fr');
 
