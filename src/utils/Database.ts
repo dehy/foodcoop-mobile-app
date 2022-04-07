@@ -66,6 +66,15 @@ export default class Database {
                 MultiList1636572223147,
             ],
         });
+
+        this.dataSource
+            .initialize()
+            .then(() => {
+                console.log('Data Source has been initialized!');
+            })
+            .catch(err => {
+                console.error('Error during Data Source initialization', err);
+            });
     }
 
     public static sharedInstance(): Database {
