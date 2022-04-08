@@ -10,3 +10,7 @@ echo "Cleaning gradle project..."
 cd android
 ./gradlew clean
 cd ..
+cd ios
+rm -rf Pods
+pod install
+cd ..
