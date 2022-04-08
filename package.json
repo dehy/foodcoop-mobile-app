@@ -41,7 +41,7 @@
         "postinstall-postinstall": "^2.0.0",
         "prop-types": "^15.5.10",
         "react": "17.0.2",
-        "react-native": "0.66.4",
+        "react-native": "0.67.4",
         "react-native-action-sheet": "^2.2.0",
         "react-native-alert-async": "^1.0.5",
         "react-native-app-auth": "^6.4.0",
