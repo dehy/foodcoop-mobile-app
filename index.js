@@ -22,6 +22,7 @@ import 'intl/locale-data/jsonp/fr';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
 import {registerScreens} from 'react-native-navigation-register-screens';
+import 'reflect-metadata';
 
 import Initializing from './src/screens/Initializing';
 import ListsGoodsReceiptExport from './src/screens/Lists/GoodsReceipt/Export';
