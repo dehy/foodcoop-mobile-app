@@ -21,6 +21,7 @@ import 'intl';
 import 'intl/locale-data/jsonp/fr';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
+import 'reflect-metadata';
 
 Sentry.init({
     dsn: Config.SENTRY_DSN,
