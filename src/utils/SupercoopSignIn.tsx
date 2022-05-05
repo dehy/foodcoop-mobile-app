@@ -89,7 +89,7 @@ export default class SupercoopSignIn {
         return undefined;
     }
 
-    setCurrentUser(user: User | undefined): void {
+    setCurrentUser(user?: User | undefined): void {
         console.debug(user);
         this.currentUser = user;
         if (undefined !== user) {
@@ -97,6 +97,7 @@ export default class SupercoopSignIn {
             Mailjet.getInstance().setSender(user.name);
         } else {
             Sentry.setUser(null);
+            Mailjet.getInstance().setSender();
         }
     }
 
@@ -123,8 +124,8 @@ export default class SupercoopSignIn {
     };
 
     signOut = async (): Promise<void> => {
+        this.setCurrentUser();
         await this.removeTokensFromSecureStorage();
-        Mailjet.getInstance().setSender();
     };
 
     async idTokenIsValid(token: string): Promise<boolean> {
