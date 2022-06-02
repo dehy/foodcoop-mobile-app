@@ -4,8 +4,8 @@ import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
 import {Button, ListItem, ThemeProvider} from 'react-native-elements';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
-import {getConnection} from 'typeorm';
 import InventoryList from '../../../entities/Lists/InventoryList';
+import Database from '../../../utils/Database';
 
 type Props = {
     componentId: string;
@@ -24,7 +24,7 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
             type: 'font-awesome-5',
         },
     };
-    zoneValue: number | undefined;
+    zoneValue: string | undefined;
     dateValue: DateTime = DateTime.local();
 
     constructor(props: Props) {
@@ -37,22 +37,20 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
     }
 
     createListAndDismiss = (): void => {
-        if (undefined === this.zoneValue || isNaN(this.zoneValue)) {
-            Alert.alert("Le numéro de zone n'est pas valide. Merci de la ressaisir.");
+        if (undefined === this.zoneValue) {
+            Alert.alert('Le numéro de zone est manquante. Merci de le saisir.');
             return;
         }
 
-        const list = new InventoryList();
-        list.name = `Inventaire du ${DateTime.local().toFormat('d LLLL')}`;
-        list.zone = this.zoneValue;
+        const name = `Inventaire du ${DateTime.local().toFormat('d LLLL')}`;
 
-        getConnection()
-            .getRepository(InventoryList)
-            .save(list)
-            .then(savedList => {
-                console.log(savedList);
-                Navigation.dismissModal(this.props.componentId);
-            });
+        const list = new InventoryList(name, this.zoneValue);
+        console.debug(list);
+
+        Database.realm?.write(() => {
+            Database.realm?.create('List', list);
+            Navigation.dismissModal(this.props.componentId);
+        });
     };
 
     render(): ReactNode {
@@ -69,7 +67,7 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
                                     placeholder="Zone"
                                     autoFocus={true}
                                     onChangeText={(text): void => {
-                                        this.zoneValue = parseInt(text, 10);
+                                        this.zoneValue = text;
                                     }}
                                     blurOnSubmit={true}
                                     keyboardType="number-pad"

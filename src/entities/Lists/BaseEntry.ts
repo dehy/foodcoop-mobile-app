@@ -1,62 +1,37 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    TableInheritance,
-    CreateDateColumn,
-    UpdateDateColumn,
-} from 'typeorm';
-import InventoryEntryExtraData from './InventoryEntry';
-import BaseList from './BaseList';
-import {GoodsReceiptEntryExtraData} from './GoodsReceiptEntry';
+import ProductProduct from '../Odoo/ProductProduct';
 
-@Entity('entries')
-@TableInheritance({column: {type: 'varchar', name: 'type'}})
-export default abstract class BaseEntry {
-    @PrimaryGeneratedColumn()
-    public id?: number;
+export default class BaseEntry {
+    static schema: Realm.ObjectSchema = {
+        name: 'Entry',
+        embedded: true,
+        properties: {
+            name: 'string',
+            barcode: 'string',
+            odooId: 'int?',
+            unit: 'int',
+            price: 'float',
+            quantity: 'float',
+            comment: 'string?',
+            addedAt: 'date',
+            lastModifiedAt: 'date',
+        },
+    };
 
-    @Column('varchar')
-    public productBarcode?: string;
-
-    @Column('int')
-    public productId?: number;
-
-    @Column('varchar')
-    public productName?: string;
-
-    @Column({type: 'float', nullable: true})
-    public quantity?: number;
-
-    @Column({type: 'int', nullable: true})
+    public name?: string;
+    public barcode?: string;
+    public odooId?: number;
     public unit?: number;
-
-    @Column({type: 'float', nullable: true})
     public price?: number;
-
-    @Column({type: 'text', nullable: true})
+    public quantity?: number;
     public comment?: string;
-
-    @CreateDateColumn()
     public addedAt?: Date;
-
-    @UpdateDateColumn()
     public lastModifiedAt?: Date;
 
-    @ManyToOne(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type => BaseList,
-        list => list.entries,
-        {onDelete: 'CASCADE'},
-    )
-    public list?: BaseList;
-
-    @Column('simple-json')
-    public extraData: InventoryEntryExtraData | GoodsReceiptEntryExtraData | {};
-
-    constructor() {
-        this.extraData = {};
+    constructor(name: string, barcode: string | undefined) {
+        this.name = name;
+        this.barcode = barcode;
+        this.addedAt = new Date();
+        this.lastModifiedAt = this.addedAt;
     }
 
     public hasComment(): boolean {
@@ -64,5 +39,18 @@ export default abstract class BaseEntry {
             return false;
         }
         return this.comment.length > 0;
+    }
+
+    static createFromProductProduct(product: ProductProduct): BaseEntry {
+        const newEntry = new this(product.name, product.barcode);
+        newEntry.odooId = product.id;
+        newEntry.unit = product.uomId;
+        newEntry.price = product.lstPrice;
+        newEntry.quantity = product.qtyAvailable;
+        return newEntry;
+    }
+
+    barcodeFoundInOdoo(): boolean {
+        return this.odooId !== undefined;
     }
 }

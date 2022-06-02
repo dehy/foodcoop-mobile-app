@@ -6,6 +6,7 @@ import AppLogger from './AppLogger';
 import * as RNFS from 'react-native-fs';
 import SupercoopSignIn from './SupercoopSignIn';
 import InventoryEntry from '../entities/Lists/InventoryEntry';
+import {DateTime} from 'luxon';
 
 export interface CSVData {
     [key: string]: string | number | boolean | null | undefined;
@@ -18,19 +19,19 @@ export default class CSVGenerator {
         this.DEFAULT_DIR = RNFS.TemporaryDirectoryPath + '/csv-generator';
     }
 
-    async exportInventoryList(inventoryList: InventoryList, inventoryEntries: InventoryEntry[]): Promise<string> {
+    async exportInventoryList(inventoryList: InventoryList): Promise<string> {
         const entriesArray: CSVData[] = [];
 
         const userFirstname = SupercoopSignIn.getInstance().getFirstnameSlug();
         const csvFilenameDateTime =
-            inventoryList.lastModifiedAt && inventoryList.lastModifiedAt.toFormat('yyyyLLddHHmmss');
+            inventoryList.lastModifiedAt &&
+            DateTime.fromJSDate(inventoryList.lastModifiedAt).toFormat('yyyyLLddHHmmss');
         const csvFilename = `Zone${inventoryList.zone}_${userFirstname}-${csvFilenameDateTime}.csv`;
 
-        for (const key in inventoryEntries) {
-            const entry = inventoryEntries[key];
-            const articleBarcode = entry.productBarcode || '';
+        for (const entry of inventoryList.entries as InventoryEntry[]) {
+            const articleBarcode = entry.barcode || '';
             const articleQuantity = entry.quantity;
-            const articleName = entry.productName || '';
+            const articleName = entry.name || '';
             entriesArray.push({
                 Code: articleBarcode,
                 Nb: articleQuantity,

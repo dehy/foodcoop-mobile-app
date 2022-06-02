@@ -1,32 +1,28 @@
-import React, {ReactText} from 'react';
+import React from 'react';
 import ActionSheet from 'react-native-action-sheet';
 import {FlatList, Platform, SafeAreaView, Text, View} from 'react-native';
 import {Icon, ListItem, ThemeProvider} from 'react-native-elements';
 import {Navigation, NavigationComponent, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../utils/navigation';
-import {FindConditions, getConnection, IsNull} from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
 import LabelList from '../../entities/Lists/LabelList';
-import BaseEntry from '../../entities/Lists/BaseEntry';
-
-interface EntriesCountList {
-    [listId: string]: number;
-}
+import Database from '../../utils/Database';
 
 interface Props {
     componentId: string;
 }
 interface State {
     lists: BaseList[];
-    listsEntriesCounts: EntriesCountList;
     refreshing: boolean;
     showHidden: boolean;
 }
 
 export default class ListsList extends NavigationComponent<Props, State> {
     static screenName = 'Lists/List';
+    lists: Realm.Results<BaseList>;
+    openedList: BaseList | undefined;
 
     theme = {
         Button: {
@@ -43,10 +39,26 @@ export default class ListsList extends NavigationComponent<Props, State> {
         Navigation.events().registerModalDismissedListener(() => {
             this.loadData();
         });
+        this.lists = Database.realm.objects<BaseList>('List');
+        this.lists?.addListener(() => {
+            console.log('database changed');
+            this.setState(
+                {
+                    lists: [...this.lists],
+                },
+                () => {
+                    if (this.openedList) {
+                        console.log(this.openedList._id);
+                        Navigation.updateProps('INVENTORY_LIST_SHOW', {
+                            list: this.openedList,
+                        });
+                    }
+                },
+            );
+        });
         this.state = {
-            lists: [],
+            lists: [...this.lists],
             refreshing: false,
-            listsEntriesCounts: {},
             showHidden: false,
         };
     }
@@ -67,6 +79,10 @@ export default class ListsList extends NavigationComponent<Props, State> {
     componentDidAppear(): void {
         this._handleRefresh();
         this.renderHideIcon();
+    }
+
+    componentWillUnmount(): void {
+        this.lists?.removeAllListeners();
     }
 
     navigationButtonPressed({buttonId}: {buttonId: string}): void {
@@ -106,47 +122,15 @@ export default class ListsList extends NavigationComponent<Props, State> {
     };
 
     loadData(): void {
-        const listRepository = getConnection().getRepository(BaseList);
-        const whereOptions: FindConditions<BaseList> = {};
-        if (!this.state.showHidden) {
-            whereOptions._lastSentAt = IsNull();
-        }
-        listRepository
-            .find({
-                order: {
-                    _createdAt: 'DESC',
-                },
-                where: whereOptions,
-            })
-            .then(async lists => {
-                const queryResult = await getConnection()
-                    .getRepository(BaseEntry)
-                    .createQueryBuilder('entries')
-                    .select('listId, COUNT(id) as entries')
-                    .groupBy('listId')
-                    .getRawMany();
-                const entriesCount: EntriesCountList = {};
-                for (const result of queryResult) {
-                    entriesCount[result.listId] = result.entries;
-                }
-                this.setState({
-                    lists: lists,
-                    refreshing: false,
-                    listsEntriesCounts: entriesCount,
-                });
-            });
+        this.setState({
+            refreshing: false,
+        });
     }
 
-    deleteGoodsReceiptList(list: BaseList): void {
-        if (!list.id) {
-            return;
-        }
-        getConnection()
-            .getRepository(BaseList)
-            .delete(list.id)
-            .then(() => {
-                this.loadData();
-            });
+    deleteList(list: BaseList): void {
+        Database.realm?.write(() => {
+            Database.realm?.delete(list);
+        });
     }
 
     _handleRefresh = (): void => {
@@ -160,7 +144,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
         );
     };
 
-    componentNameFromList = (list: BaseList): ReactText | undefined => {
+    componentNameFromList = (list: BaseList): string | undefined => {
         switch (list.constructor.name) {
             case InventoryList.name:
                 return 'Lists/Inventory/Show';
@@ -181,10 +165,12 @@ export default class ListsList extends NavigationComponent<Props, State> {
             console.error('Undefined component name for list of type ' + list.constructor.name);
             return;
         }
+        this.openedList = list;
 
         Navigation.push(this.props.componentId, {
             component: {
                 name: componentName,
+                id: 'INVENTORY_LIST_SHOW',
                 passProps: {
                     list: list,
                 },
@@ -209,7 +195,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
             },
             buttonIndex => {
                 if (buttonIndex === DESTRUCTIVE_INDEX) {
-                    this.deleteGoodsReceiptList(list);
+                    this.deleteList(list);
                 }
             },
         );
@@ -262,26 +248,37 @@ export default class ListsList extends NavigationComponent<Props, State> {
         );
     };
 
-    _renderEntry(item: BaseList): React.ReactElement {
-        console.log(item.constructor.name);
-        if (!item.id) {
+    _renderListItemSubtitle(list: BaseList): React.ReactElement | undefined {
+        let subtitle: string;
+        switch (list.constructor.name) {
+            case InventoryList.name:
+                subtitle = `Zone ${(list as InventoryList).zone}`;
+                return <ListItem.Subtitle>{subtitle}</ListItem.Subtitle>;
+            default:
+                return undefined;
+        }
+    }
+
+    _renderEntry(list: BaseList): React.ReactElement {
+        if (!list._id) {
             return <ListItem />;
         }
         return (
             <ListItem
                 onPress={(): void => {
-                    this.didTapList(item);
+                    this.didTapList(list);
                 }}
                 onLongPress={(): void => {
-                    this.didLongPressList(item);
+                    this.didLongPressList(list);
                 }}
                 bottomDivider>
-                <Icon type="font-awesome-5" name={item.icon()} />
+                <Icon type="font-awesome-5" name={list.icon()} />
                 <ListItem.Content>
-                    <ListItem.Title>{item.name}</ListItem.Title>
+                    <ListItem.Title>{list.name}</ListItem.Title>
+                    {this._renderListItemSubtitle(list)}
                 </ListItem.Content>
                 <ListItem.Content right>
-                    <ListItem.Title right>{this.state.listsEntriesCounts[item.id] ?? '0'}</ListItem.Title>
+                    <ListItem.Title right>{list.entries?.length}</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
             </ListItem>
@@ -289,7 +286,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
     }
 
     renderList(): React.ReactNode {
-        if (this.state.lists.length <= 0) {
+        if (this.state.lists.length === 0) {
             return this.renderEmptyList();
         }
         return (
@@ -297,7 +294,7 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 style={{backgroundColor: 'white', height: '100%'}}
                 data={this.state.lists.map(list => {
                     return {
-                        key: list.id?.toString(),
+                        key: list._id,
                         list: list,
                     };
                 })}

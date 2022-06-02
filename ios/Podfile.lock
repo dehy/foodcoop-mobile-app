@@ -15,6 +15,9 @@ PODS:
     - React-jsi (= 0.67.4)
     - ReactCommon/turbomodule/core (= 0.67.4)
   - fmt (6.2.1)
+  - GCDWebServer (3.5.4):
+    - GCDWebServer/Core (= 3.5.4)
+  - GCDWebServer/Core (3.5.4)
   - glog (0.3.5)
   - HMSegmentedControl (1.5.6)
   - RCT-Folly (2021.06.28.00-v2):
@@ -232,6 +235,8 @@ PODS:
     - React-Core
   - react-native-cookies (6.0.11):
     - React-Core
+  - react-native-get-random-values (1.8.0):
+    - React-Core
   - react-native-image-picker (4.8.3):
     - React-Core
   - react-native-keep-awake (1.1.0):
@@ -318,6 +323,9 @@ PODS:
     - React-Core
     - React-RCTImage
     - React-RCTText
+  - RealmJS (10.18.0):
+    - GCDWebServer
+    - React
   - RNCPicker (2.4.1):
     - React-Core
   - RNDateTimePicker (3.5.2):
@@ -377,6 +385,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-config (from `../node_modules/react-native-config`)
   - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-keep-awake (from `../node_modules/@sayem314/react-native-keep-awake`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -395,6 +404,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeNavigation (from `../node_modules/react-native-navigation`)
+  - RealmJS (from `../node_modules/realm`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -411,6 +421,7 @@ SPEC REPOS:
   trunk:
     - AppAuth
     - fmt
+    - GCDWebServer
     - HMSegmentedControl
     - Sentry
     - SSZipArchive
@@ -458,6 +469,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-config"
   react-native-cookies:
     :path: "../node_modules/@react-native-cookies/cookies"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-keep-awake:
@@ -494,6 +507,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeNavigation:
     :path: "../node_modules/react-native-navigation"
+  RealmJS:
+    :path: "../node_modules/realm"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNDateTimePicker:
@@ -524,6 +539,7 @@ SPEC CHECKSUMS:
   FBLazyVector: f7b0632c6437e312acf6349288d9aa4cb6d59030
   FBReactNativeSpec: 0f4e1f4cfeace095694436e7c7fcc5bf4b03a0ff
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
+  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
   HMSegmentedControl: 34c1f54d822d8308e7b24f5d901ec674dfa31352
   RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
@@ -542,6 +558,7 @@ SPEC CHECKSUMS:
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-config: 6502b1879f97ed5ac570a029961fc35ea606cd14
   react-native-cookies: cd92f3824ed1e32a20802e8185101e14bb5b76da
+  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-image-picker: e95b4785b685cfc06609bc50ed6fb55b59990c99
   react-native-keep-awake: acbee258db16483744910f0da3ace39eb9ab47fd
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
@@ -560,6 +577,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: a9d3c82ddf7ffdad9fbe6a81c6d6f8c06385464d
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   ReactNativeNavigation: d82a136212f3a581e256b181e5703aa2f79ecba4
+  RealmJS: 79308ff21b2810d6e9a022b9e2f9068397b74934
   RNCPicker: abc646b53a3d28ccfa3232c927a0ca52e0cf024d
   RNDateTimePicker: 7658208086d86d09e1627b5c34ba0cf237c60140
   RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9

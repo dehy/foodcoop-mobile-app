@@ -21,11 +21,7 @@ export default class PlusMaintenanceDatabase extends React.Component<{}, {}> {
     }
 
     resetDatabase(): void {
-        Database.sharedInstance()
-            .resetDatabase()
-            .then(() => {
-                Alert.alert('Base de donnée effacée');
-            });
+        Database.sharedInstance().resetDatabase();
     }
 
     _onPress = (key: string): void => {

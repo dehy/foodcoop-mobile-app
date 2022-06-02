@@ -9,18 +9,17 @@ import Mailjet, {MailAttachment} from '../../../utils/Mailjet';
 import merge from 'deepmerge';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
-import {getConnection} from 'typeorm';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
     inventory: InventoryList;
-    inventoryEntries: Array<InventoryEntry>;
 }
 
 interface State {
     sendingMail: boolean;
-    inventoryCheckPassed: boolean | null;
+    inventoryCheckPassed: boolean | undefined;
     filepath?: string;
 }
 
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
 export default class ListsInventoryExport extends React.Component<Props, State> {
     static screenName = 'Lists/Inventory/Export';
 
-    private inventoryEntries: Array<InventoryEntry> = [];
+    private inventoryEntries: InventoryEntry[] = [];
     private csvGenerator: CSVGenerator = new CSVGenerator();
 
     constructor(props: Props) {
@@ -42,7 +41,7 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
 
         this.state = {
             sendingMail: false,
-            inventoryCheckPassed: null,
+            inventoryCheckPassed: undefined,
         };
     }
 
@@ -73,8 +72,7 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
     }
 
     async checkInventory(): Promise<void> {
-        this.inventoryEntries = this.props.inventoryEntries ?? [];
-        const filepath = await this.csvGenerator.exportInventoryList(this.props.inventory, this.props.inventoryEntries);
+        const filepath = await this.csvGenerator.exportInventoryList(this.props.inventory);
         this.setState({
             filepath: filepath,
             inventoryCheckPassed: true,
@@ -88,21 +86,22 @@ export default class ListsInventoryExport extends React.Component<Props, State> 
         if (!this.props.inventory.lastModifiedAt) {
             throw new Error('Last Modified date unavailable');
         }
+        const lastModifiedAt = DateTime.fromJSDate(this.props.inventory.lastModifiedAt);
         if (!this.state.filepath) {
             throw new Error('File not generated');
         }
         const signInService = SupercoopSignIn.getInstance();
         const username = signInService.getName();
         const zone = this.props.inventory.zone;
-        const date = this.props.inventory.lastModifiedAt.toLocaleString(DateTime.DATE_SHORT);
-        const time = this.props.inventory.lastModifiedAt.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
+        const date = lastModifiedAt.toLocaleString(DateTime.DATE_SHORT);
+        const time = lastModifiedAt.toLocaleString(DateTime.TIME_24_WITH_SECONDS);
 
         const entriesCount = this.inventoryEntries.length;
 
         const notFoundInOdoo: Array<string> = [];
         this.inventoryEntries.forEach(inventoryEntry => {
             if (!inventoryEntry.barcodeFoundInOdoo()) {
-                notFoundInOdoo.push(`${inventoryEntry.productBarcode} - ${inventoryEntry.productName}`);
+                notFoundInOdoo.push(`${inventoryEntry.barcode} - ${inventoryEntry.name}`);
             }
         });
         const notFoundInOdooString = '- ' + notFoundInOdoo.join('\n- ');
@@ -124,11 +123,17 @@ ${notFoundInOdooString}`);
         Mailjet.getInstance()
             .sendEmail(to, '', subject, body, attachments)
             .then(() => {
-                if (!this.props.inventory.id) {
+                if (!this.props.inventory._id) {
                     return;
                 }
-                getConnection().getRepository(InventoryList).update(this.props.inventory.id, {_lastSentAt: new Date()});
-                Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
+                Database.realm.write(() => {
+                    this.props.inventory.lastSentAt = new Date();
+                    Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
+
+                    this.setState({
+                        sendingMail: false,
+                    });
+                });
             })
             .catch((e: Error) => {
                 if (__DEV__) {
@@ -138,11 +143,6 @@ ${notFoundInOdooString}`);
                     'ERREUR',
                     "Houston, quelque chose s'est mal passé et le mail n'est pas parti... Mais on n'en sait pas plus :(",
                 );
-            })
-            .finally(() => {
-                this.setState({
-                    sendingMail: false,
-                });
             });
     }
 
@@ -172,16 +172,16 @@ ${notFoundInOdooString}`);
                 </View>
             );
         }
+        const createdAt = DateTime.fromJSDate(this.props.inventory.createdAt);
 
         return (
             <SafeAreaView style={{backgroundColor: 'white'}}>
                 <View style={{padding: 16}}>
                     <Text>
                         Tu es sur le point d&apos;envoyer ton inventaire du{' '}
-                        {this.props.inventory.createdAt &&
-                            this.props.inventory.createdAt.toLocaleString(DateTime.DATE_FULL)}
-                        , zone {this.props.inventory.zone}. Il contient {this.props.inventoryEntries.length} article
-                        {this.props.inventoryEntries.length > 1 ? 's' : ''}.
+                        {createdAt.toLocaleString(DateTime.DATE_FULL)}, zone {this.props.inventory.zone}. Il contient{' '}
+                        {this.props.inventory.entries?.length} article
+                        {this.props.inventory.entries?.length ?? 0 > 1 ? 's' : ''}.
                     </Text>
                     <View style={{flexDirection: 'row'}}>
                         <Text>État : </Text>

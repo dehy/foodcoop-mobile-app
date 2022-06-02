@@ -52,6 +52,7 @@ export default class Initializing extends React.Component<Props> {
 
     componentDidMount(): void {
         Database.connect().then(() => {
+            console.log('Database connected()');
             this.signInSilently();
         });
     }

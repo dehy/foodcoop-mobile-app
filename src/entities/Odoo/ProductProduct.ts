@@ -12,13 +12,17 @@ export default class ProductProduct {
     public id?: number;
     public templateId?: number;
     public barcode?: string;
-    public name?: string;
+    public name: string;
     public image?: string | null;
     public qtyAvailable?: number;
     public uomId?: number;
     public lstPrice?: number;
     public weightNet?: number;
     public volume?: number;
+
+    constructor(name: string) {
+        this.name = name;
+    }
 
     static imageFromOdooBase64(imageBase64: string): string | undefined {
         // https://stackoverflow.com/a/50111377/2287525

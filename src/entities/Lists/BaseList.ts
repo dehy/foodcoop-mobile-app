@@ -1,34 +1,16 @@
 'use strict';
 
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    TableInheritance,
-    UpdateDateColumn,
-} from 'typeorm';
-import {InventoryListExtraData} from './InventoryList';
 import ListAttachment from './ListAttachment';
 import BaseEntry from './BaseEntry';
-import {DateTime} from 'luxon';
-import {GoodsReceiptListExtraData} from './GoodsReceiptList';
 
-// export const ListTypeIcon = new Map<string, string>([
-//     [ListType.inventory, 'boxes'],
-//     [ListType.goodsReceipt, 'truck-loading'],
-//     [ListType.loss, 'dumpster'],
-//     [ListType.soldout, 'battery-empty'],
-//     [ListType.stickers, 'tags'],
-//     [ListType.other, 'ellipsis-h'],
-// ]);
+export enum ListType {
+    Inventory = 'Inventory',
+}
 
-@Entity('lists')
-@TableInheritance({column: {type: 'varchar', name: 'type'}})
 export default abstract class BaseList {
     public static icon = 'clipboard-list';
     public static label = 'Liste';
+    public static entryClass = BaseEntry;
 
     icon(): string {
         const list = this.constructor as typeof BaseList;
@@ -40,83 +22,44 @@ export default abstract class BaseList {
         return list.label;
     }
 
-    @PrimaryGeneratedColumn()
-    public id?: number;
-
-    @Column('text')
-    public name?: string;
-
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
-    comment?: string;
-
-    @CreateDateColumn({type: 'datetime'})
-    public _createdAt?: Date;
-
-    get createdAt(): DateTime | undefined {
-        return this._createdAt ? DateTime.fromJSDate(this._createdAt) : undefined;
-    }
-
-    set createdAt(date: DateTime | undefined) {
-        this._createdAt = date ? date.toJSDate() : undefined;
-    }
-
-    @UpdateDateColumn({type: 'datetime'})
-    public _lastModifiedAt?: Date;
-
-    get lastModifiedAt(): DateTime | undefined {
-        return this._lastModifiedAt ? DateTime.fromJSDate(this._lastModifiedAt) : undefined;
-    }
-
-    set lastModifiedAt(date: DateTime | undefined) {
-        this._lastModifiedAt = date ? date.toJSDate() : undefined;
-    }
-
-    @Column({
-        type: 'datetime',
-        nullable: true,
-    })
-    public _lastSentAt?: Date;
-
-    get lastSentAt(): DateTime | undefined {
-        return this._lastSentAt ? DateTime.fromJSDate(this._lastSentAt) : undefined;
-    }
-
-    set lastSentAt(date: DateTime | undefined) {
-        this._lastSentAt = date ? date.toJSDate() : undefined;
-    }
-
-    @OneToMany(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type => ListAttachment,
-        attachment => attachment.list,
-    )
-    attachments?: ListAttachment[];
-
-    @OneToMany(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type => BaseEntry,
-        entry => entry.list,
-    )
-    entries?: BaseEntry[];
-
-    @Column('simple-json')
-    extraData: InventoryListExtraData | GoodsReceiptListExtraData | {};
-
-    constructor() {
-        this.extraData = {};
-    }
-
-    entryWithBarcode = (barcode: string): BaseEntry | null => {
-        if (this.entries !== undefined) {
-            for (const entry of this.entries) {
-                if (entry.productBarcode === barcode) {
-                    return entry;
-                }
-            }
-        }
-        return null;
+    static schema: Realm.ObjectSchema = {
+        name: 'List',
+        primaryKey: '_id',
+        properties: {
+            _id: 'objectId',
+            _type: {type: 'string', indexed: true},
+            name: 'string',
+            comment: 'string?',
+            createdAt: 'date',
+            lastModifiedAt: 'date',
+            lastSentAt: {type: 'date?', indexed: true},
+            entries: {type: 'list', objectType: 'Entry'},
+        },
     };
+
+    public _id?: Realm.BSON.ObjectId;
+
+    public _type: ListType;
+
+    public name: string;
+
+    public comment?: string;
+
+    public createdAt: Date;
+
+    public lastModifiedAt: Date;
+
+    public lastSentAt?: Date;
+
+    public attachments?: ListAttachment[];
+
+    public entries?: BaseEntry[];
+
+    constructor(type: ListType, name: string) {
+        this._id = new Realm.BSON.ObjectID();
+        this._type = type;
+        this.name = name;
+        this.createdAt = new Date();
+        this.lastModifiedAt = this.createdAt;
+    }
 }

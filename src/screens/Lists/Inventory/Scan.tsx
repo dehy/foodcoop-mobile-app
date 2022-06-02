@@ -7,10 +7,10 @@ import {defaultScreenOptions} from '../../../utils/navigation';
 import {Button, Divider} from 'react-native-elements';
 import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductProduct';
 import {isInt} from '../../../utils/helpers';
-import {getRepository} from 'typeorm';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -75,10 +75,8 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
         if (this.props.inventory === undefined || this.props.inventory.entries === undefined || !product.barcode) {
             return;
         }
-        const existingEntry: InventoryEntry | null = this.props.inventory.entryWithBarcode(
-            product.barcode,
-        ) as InventoryEntry;
-        if (existingEntry === null) {
+        const existingEntry = this.props.inventory.entries.find(entry => entry.barcode === product.barcode);
+        if (existingEntry === undefined) {
             return;
         }
 
@@ -88,13 +86,14 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
                 text: 'Remplacer',
                 style: 'cancel',
                 onPress: () => {
-                    getRepository(InventoryEntry).delete(existingEntry.id!);
-                    const indexInList = this.props.inventory.entries!.indexOf(existingEntry);
-                    if (indexInList > -1) {
-                        this.props.inventory.entries?.splice(indexInList, 1);
-                    }
-                    this.setState({
-                        saveMode: SaveMode.replace,
+                    Database.realm?.write(() => {
+                        const indexInList = this.props.inventory.entries!.indexOf(existingEntry);
+                        if (indexInList > -1) {
+                            this.props.inventory.entries?.splice(indexInList, 1);
+                        }
+                        this.setState({
+                            saveMode: SaveMode.replace,
+                        });
                     });
                 },
             },
@@ -135,29 +134,25 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
             }
         }
 
-        let newEntry: InventoryEntry | undefined | null;
         if (this.state.saveMode === 'add' && product.barcode) {
-            newEntry = this.props.inventory.entryWithBarcode(product.barcode) as InventoryEntry;
-            newEntry.quantity = newEntry.quantity! + quantity;
+            const existingEntry = this.props.inventory.entryWithBarcode(product.barcode)!;
+            existingEntry.quantity = existingEntry.quantity! + quantity;
+            existingEntry.lastModifiedAt = new Date();
         } else {
             // replace or new element
-            newEntry = InventoryEntry.createFromProductProduct(product);
-            newEntry.list = this.props.inventory;
-            newEntry.quantity = quantity;
+            const newEntry = InventoryEntry.createFromProductProduct(product) as InventoryEntry;
+            newEntry.newQuantity = quantity;
             newEntry.addedAt = new Date();
-            this.props.inventory.entries?.push(newEntry);
-        }
-        newEntry.scannedAt = new Date();
 
-        console.debug(newEntry);
-        getRepository(InventoryEntry)
-            .save(newEntry)
-            .then(() => {
+            Database.realm?.write(() => {
+                this.props.inventory.entries?.push(newEntry);
+
                 this.codeScanner?.reset();
                 this.setState({
                     saveMode: SaveMode.replace,
                 });
             });
+        }
     }
 
     renderInventoryInput(product: ProductProduct): ReactNode {

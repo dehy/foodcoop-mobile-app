@@ -1,21 +1,29 @@
 'use strict';
 
-import {ChildEntity} from 'typeorm';
-import BaseList from './BaseList';
+import deepmerge from 'deepmerge';
+import BaseEntry from './BaseEntry';
+import BaseList, {ListType} from './BaseList';
+import InventoryEntry from './InventoryEntry';
 
-export type InventoryListExtraData = {
-    zone: number;
-};
-
-@ChildEntity()
 export default class InventoryList extends BaseList {
     public static icon = 'boxes';
     public static label = 'Inventaire';
+    public static entryClass = InventoryEntry;
 
-    get zone(): number {
-        return (this.extraData as InventoryListExtraData).zone;
+    static schema: Realm.ObjectSchema = deepmerge(BaseList.schema, {
+        properties: {
+            zone: 'string',
+        },
+    });
+
+    public zone: string;
+
+    constructor(name: string, zone: string) {
+        super(ListType.Inventory, name);
+        this.zone = zone;
     }
-    set zone(zone: number) {
-        (this.extraData as InventoryListExtraData).zone = zone;
+
+    entryWithBarcode(barcode: string): BaseEntry | undefined {
+        return this.entries?.find(entry => entry.barcode === barcode);
     }
 }

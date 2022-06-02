@@ -8,15 +8,14 @@ import ActionSheet from 'react-native-action-sheet';
 import {Button, Icon, ListItem} from 'react-native-elements';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
-import {getConnection, Repository} from 'typeorm';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     list: InventoryList;
 }
 
 interface State {
-    listEntries: InventoryEntry[];
     refreshing: boolean;
 }
 
@@ -33,17 +32,12 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
     static screenName = 'Lists/Inventory/Show';
 
     modalDismissedListener?: EmitterSubscription;
-    inventoryListRepository: Repository<InventoryList>;
-    inventoryEntryRepository: Repository<InventoryEntry>;
 
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
-        this.inventoryListRepository = getConnection().getRepository(InventoryList);
-        this.inventoryEntryRepository = getConnection().getRepository(InventoryEntry);
 
         this.state = {
-            listEntries: [],
             refreshing: false,
         };
     }
@@ -52,81 +46,38 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         return defaultScreenOptions('Inventaire');
     }
 
-    componentDidMount(): void {
-        this.modalDismissedListener = Navigation.events().registerModalDismissedListener(() => {
-            this.loadInventoryEntries();
-        });
-
-        this.loadInventoryEntries();
-    }
-
-    componentWillUnmount(): void {
-        if (this.modalDismissedListener) {
-            this.modalDismissedListener.remove();
-        }
-    }
-
-    componentDidAppear(): void {
-        this.loadInventoryEntries();
-    }
-
-    loadInventoryEntries(): void {
-        this.inventoryEntryRepository
-            .find({
-                where: {
-                    list: this.props.list.id,
-                },
-            })
-            .then(entries => {
-                this.props.list.entries = entries;
-                this.setState({
-                    listEntries: entries,
-                });
-            });
-    }
-
-    _handleRefresh = (): void => {
-        this.setState(
-            {
-                refreshing: true,
-            },
-            () => {
-                this.loadInventoryEntries();
-            },
-        );
-    };
-
     deleteInventoryEntry(inventoryEntry: InventoryEntry): void {
-        if (!inventoryEntry.id) {
+        const idx = this.props.list.entries?.findIndex(entry => entry === inventoryEntry);
+        if (!idx) {
             return;
         }
-        getConnection()
-            .getRepository(InventoryEntry)
-            .delete(inventoryEntry.id)
-            .then(() => {
-                this.loadInventoryEntries();
-            });
+        Database.realm?.write(() => {
+            this.props.list.entries?.splice(idx, 1);
+        });
     }
 
     computeEntriesData(): InventoryData[] {
         // TODO: gérer les entrées multiples
         const listDatas = [];
-        for (const k in this.state.listEntries) {
-            const entry = this.state.listEntries[k];
-            const data: InventoryData = {
-                key: 'inventory-entry-' + entry.id,
-                title: entry.productName,
-                subtitle: entry.productBarcode,
-                image: null,
-                metadata: `${entry.quantity} ${ProductProduct.quantityUnitAsString(entry.unit)}`,
-                inventoryEntry: entry,
-            };
-            listDatas.push(data);
+        if (this.props.list.entries !== undefined) {
+            for (const idx in this.props.list.entries) {
+                const entry = this.props.list.entries[idx];
+                const data: InventoryData = {
+                    key: 'inventory-entry-' + idx,
+                    title: entry.name,
+                    subtitle: entry.barcode,
+                    image: null,
+                    metadata: `${entry.quantity} ${ProductProduct.quantityUnitAsString(entry.unit)}`,
+                    inventoryEntry: entry,
+                };
+                listDatas.push(data);
+            }
         }
         return listDatas;
     }
 
     openScannerModal(): void {
+        console.log(this.props.list);
         Navigation.showModal({
             stack: {
                 children: [
@@ -156,7 +107,7 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
                             name: 'Lists/Inventory/Export',
                             passProps: {
                                 inventory: this.props.list,
-                                inventoryEntries: this.state.listEntries,
+                                inventoryEntries: this.props.list.entries,
                             },
                             options: {
                                 topBar: {},
@@ -169,7 +120,7 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
     }
 
     didTapInventoryEntry(inventoryEntry: InventoryEntry): void {
-        const title = inventoryEntry.productName;
+        const title = inventoryEntry.name;
         const buttonsIos = ['Supprimer', 'Annuler'];
         const buttonsAndroid = ['Supprimer'];
         const DESTRUCTIVE_INDEX = 0;
@@ -200,19 +151,16 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         }
         let lastSentAtInfo, wasModifiedWarning;
         if (inventory.lastSentAt != null) {
+            const lastSentAt = DateTime.fromJSDate(inventory.lastSentAt);
             lastSentAtInfo = (
                 <View style={bootstrapStyle.infoView}>
                     <Text style={bootstrapStyle.infoText}>
-                        Inventaire déjà envoyé le {inventory.lastSentAt.toLocaleString(DateTime.DATETIME_SHORT)}
+                        Inventaire déjà envoyé le {lastSentAt.toLocaleString(DateTime.DATETIME_SHORT)}
                     </Text>
                 </View>
             );
         }
-        if (
-            inventory.lastSentAt &&
-            inventory.lastModifiedAt &&
-            inventory.lastSentAt.toSeconds() < inventory.lastModifiedAt.toSeconds()
-        ) {
+        if (inventory.lastSentAt && inventory.lastModifiedAt && inventory.lastSentAt < inventory.lastModifiedAt) {
             wasModifiedWarning = (
                 <View style={bootstrapStyle.warningView}>
                     <Text style={bootstrapStyle.warningText}>Inventaire modifié depuis le dernier envoi !</Text>
@@ -230,20 +178,15 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
 
     renderHeader(): React.ReactElement {
         const inventory = this.props.list;
+        const createdAt = inventory.createdAt ? DateTime.fromJSDate(inventory.createdAt) : undefined;
         return (
             <View style={{borderBottomWidth: 0.5, borderBottomColor: '#DDD'}}>
                 {this.renderAlerts()}
                 <View style={{flexDirection: 'row', backgroundColor: 'white', paddingTop: 16}}>
                     <View style={{flexDirection: 'column', flex: 1, justifyContent: 'center'}}>
-                        <Text style={{fontSize: 20, textAlign: 'center'}}>
-                            {inventory.createdAt ? inventory.createdAt.toFormat('cccc') : '-'}
-                        </Text>
-                        <Text style={{fontSize: 30, textAlign: 'center'}}>
-                            {inventory.createdAt ? inventory.createdAt.toFormat('d LLLL') : '-'}
-                        </Text>
-                        <Text style={{fontSize: 20, textAlign: 'center'}}>
-                            {inventory.createdAt ? inventory.createdAt.toFormat('yyyy') : '-'}
-                        </Text>
+                        <Text style={{fontSize: 20, textAlign: 'center'}}>{createdAt?.toFormat('cccc') ?? '-'}</Text>
+                        <Text style={{fontSize: 30, textAlign: 'center'}}>{createdAt?.toFormat('d LLLL') ?? '-'}</Text>
+                        <Text style={{fontSize: 20, textAlign: 'center'}}>{createdAt?.toFormat('yyyy') ?? '-'}</Text>
                     </View>
                     <View style={{flexDirection: 'column', flex: 1}}>
                         <Text style={{fontSize: 24, textAlign: 'center'}}>Zone</Text>
@@ -278,7 +221,7 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
     }
 
     renderNoEntry(): React.ReactNode {
-        if (this.state.listEntries.length > 0) {
+        if (!this.props.list.entries || this.props.list.entries.length > 0) {
             return null;
         }
         return (
