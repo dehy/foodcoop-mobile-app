@@ -1,7 +1,6 @@
 'use strict';
 
 import deepmerge from 'deepmerge';
-import BaseEntry from './BaseEntry';
 import BaseList, {ListType} from './BaseList';
 import InventoryEntry from './InventoryEntry';
 
@@ -23,7 +22,11 @@ export default class InventoryList extends BaseList {
         this.zone = zone;
     }
 
-    entryWithBarcode(barcode: string): BaseEntry | undefined {
+    entryWithBarcode(barcode: string): InventoryEntry | undefined {
         return this.entries?.find(entry => entry.barcode === barcode);
+    }
+
+    indexOfEntryWithBarcode(barcode?: string): number | undefined {
+        return this.entries?.findIndex(entry => entry.barcode === barcode);
     }
 }

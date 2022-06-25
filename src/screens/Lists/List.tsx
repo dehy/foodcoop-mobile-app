@@ -48,7 +48,6 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 },
                 () => {
                     if (this.openedList) {
-                        console.log(this.openedList._id);
                         Navigation.updateProps('INVENTORY_LIST_SHOW', {
                             list: this.openedList,
                         });

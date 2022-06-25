@@ -53,7 +53,7 @@ export default abstract class BaseList {
 
     public attachments?: ListAttachment[];
 
-    public entries?: BaseEntry[];
+    public entries: BaseEntry[] = [];
 
     constructor(type: ListType, name: string) {
         this._id = new Realm.BSON.ObjectID();

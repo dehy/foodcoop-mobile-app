@@ -134,10 +134,19 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
             }
         }
 
-        if (this.state.saveMode === 'add' && product.barcode) {
-            const existingEntry = this.props.inventory.entryWithBarcode(product.barcode)!;
-            existingEntry.quantity = existingEntry.quantity! + quantity;
-            existingEntry.lastModifiedAt = new Date();
+        const existingEntryIndex = this.props.inventory.indexOfEntryWithBarcode(product.barcode);
+        if (this.state.saveMode === 'add' && product.barcode && existingEntryIndex !== undefined) {
+            const entry = this.props.inventory.entries[existingEntryIndex] as InventoryEntry;
+            const previousQuantity = entry.newQuantity ?? 0;
+            Database.realm?.write(() => {
+                entry.newQuantity = previousQuantity + quantity;
+                entry.lastModifiedAt = new Date();
+
+                this.codeScanner?.reset();
+                this.setState({
+                    saveMode: SaveMode.replace,
+                });
+            });
         } else {
             // replace or new element
             const newEntry = InventoryEntry.createFromProductProduct(product) as InventoryEntry;
@@ -145,7 +154,7 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
             newEntry.addedAt = new Date();
 
             Database.realm?.write(() => {
-                this.props.inventory.entries?.push(newEntry);
+                this.props.inventory.entries.push(newEntry);
 
                 this.codeScanner?.reset();
                 this.setState({
@@ -160,7 +169,7 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
         if (this.state.saveMode === SaveMode.add && product.barcode) {
             previousQuantity = (
                 <Text style={{fontSize: 28}}>
-                    {this.props.inventory.entryWithBarcode(product.barcode)?.quantity} +{' '}
+                    {this.props.inventory.entryWithBarcode(product.barcode)?.newQuantity} +{' '}
                 </Text>
             );
         }

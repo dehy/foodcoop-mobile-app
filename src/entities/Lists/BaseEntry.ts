@@ -42,7 +42,7 @@ export default class BaseEntry {
     }
 
     static createFromProductProduct(product: ProductProduct): BaseEntry {
-        const newEntry = new this(product.name, product.barcode);
+        const newEntry = new BaseEntry(product.name, product.barcode);
         newEntry.odooId = product.id;
         newEntry.unit = product.uomId;
         newEntry.price = product.lstPrice;

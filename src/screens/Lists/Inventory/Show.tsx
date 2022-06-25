@@ -61,13 +61,13 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         const listDatas = [];
         if (this.props.list.entries !== undefined) {
             for (const idx in this.props.list.entries) {
-                const entry = this.props.list.entries[idx];
+                const entry = this.props.list.entries[idx] as InventoryEntry;
                 const data: InventoryData = {
                     key: 'inventory-entry-' + idx,
                     title: entry.name,
                     subtitle: entry.barcode,
                     image: null,
-                    metadata: `${entry.quantity} ${ProductProduct.quantityUnitAsString(entry.unit)}`,
+                    metadata: `${entry.newQuantity} ${ProductProduct.quantityUnitAsString(entry.unit)}`,
                     inventoryEntry: entry,
                 };
                 listDatas.push(data);
@@ -77,7 +77,6 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
     }
 
     openScannerModal(): void {
-        console.log(this.props.list);
         Navigation.showModal({
             stack: {
                 children: [
