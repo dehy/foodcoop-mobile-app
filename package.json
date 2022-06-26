@@ -32,7 +32,7 @@
         "fuse.js": "^6.4.0",
         "install": "^0.13.0",
         "js-base64": "^3.6.0",
-        "jsrsasign": "^10.0.0",
+        "jsrsasign": "^10.5.25",
         "jwt-decode": "^3.0.0",
         "luxon": "^2.1.1",
         "moment": "^2.24.0",
