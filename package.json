@@ -138,5 +138,6 @@
         "extends": [
             "@commitlint/config-conventional"
         ]
-    }
+    },
+    "packageManager": "yarn@3.2.3"
 }
