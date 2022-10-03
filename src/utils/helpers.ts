@@ -60,3 +60,10 @@ export function randomId(): string {
 export function filterUnique(value: any, index: number, self: any): boolean {
     return self.indexOf(value) === index;
 }
+
+export function round(number: number | undefined, decimals: number): number | undefined {
+    if (undefined === number) {
+        return undefined
+    }
+    return Math.round((number + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}

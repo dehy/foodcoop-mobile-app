@@ -1,6 +1,7 @@
 'use strict';
 
 import ProductProduct from '../../entities/Odoo/ProductProduct';
+import { round } from '../../utils/helpers';
 
 export default class ProductProductFactory {
     public static ProductProductFromResponse(response: OdooApiProductProduct): ProductProduct {
@@ -12,7 +13,7 @@ export default class ProductProductFactory {
         product.barcode = response.barcode;
         product.name = response.name;
         product.image = response.image != null ? response.image : undefined;
-        product.qtyAvailable = response.qty_available;
+        product.qtyAvailable = round(response.qty_available, 3);
         product.uomId = response.uom_id && response.uom_id[0];
         product.lstPrice = response.lst_price;
         product.weightNet = response.weight_net;

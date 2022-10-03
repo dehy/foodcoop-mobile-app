@@ -6,6 +6,7 @@ import * as rssParser from 'react-native-rss-parser';
 import moment from 'moment';
 import { NewsItem } from './Show';
 import { Icon, ListItem } from 'react-native-elements';
+import Config from 'react-native-config';
 
 export interface NewsListProps {
     componentId: string;
@@ -31,7 +32,7 @@ export default class NewsList extends React.Component<NewsListProps, NewsListSta
     }
 
     loadData(): void {
-        fetch('https://supercoop.fr/feed/')
+        fetch(Config.NEWSFEED_URL)
             .then(response => response.text())
             .then(responseData => rssParser.parse(responseData))
             .then(rss => {
