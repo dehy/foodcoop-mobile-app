@@ -600,5 +600,6 @@ android/app/release/
 # Yarn v2
 .yarn/*
 !.yarn/releases
+!.yarn/patches
 !.yarn/plugins
 .pnp.*

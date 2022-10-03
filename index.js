@@ -22,13 +22,13 @@ import 'intl/locale-data/jsonp/fr';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
 import 'reflect-metadata';
+import Initializing from './src/screens/Initializing';
 
 Sentry.init({
     dsn: Config.SENTRY_DSN,
     environment: __DEV__ ? 'dev' : 'production',
 });
 
-Navigation.registerComponent('Initializing', () => require('./src/screens/Initializing').default);
 Navigation.registerComponent(
     'Lists/GoodsReceipt/Export',
     () => require('./src/screens/Lists/GoodsReceipt/Export').default,
@@ -62,6 +62,7 @@ Navigation.registerComponent(
 Navigation.registerComponent('Scanner', () => require('./src/screens/Scanner').default);
 Navigation.registerComponent('Welcome', () => require('./src/screens/Welcome').default);
 
+Navigation.registerComponent('Initializing', () => Initializing);
 Navigation.events().registerAppLaunchedListener(() => {
     // Moment
     moment.locale('fr');
