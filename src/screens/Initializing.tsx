@@ -4,7 +4,7 @@ import {goHome, goToAuth} from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 import Database from '../utils/Database';
 
-export interface InitializingProps {
+export interface Props {
     componentId: string;
 }
 
@@ -40,10 +40,11 @@ const welcomeMessages = [
     'Dans une galaxie très très lointaine...',
 ];
 
-export default class Initializing extends React.Component<InitializingProps> {
+export default class Initializing extends React.Component<Props> {
     static screenName = 'Initializing';
 
-    constructor(props: InitializingProps) {
+    constructor(props: Props) {
+        console.log(props);
         super(props);
         this.state = {
             loggedUser: null,

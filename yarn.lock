@@ -10594,9 +10594,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-navigation@npm:^7.25.1":
-  version: 7.26.0
-  resolution: "react-native-navigation@npm:7.26.0"
+"react-native-navigation@npm:^7.29.1":
+  version: 7.29.1
+  resolution: "react-native-navigation@npm:7.29.1"
   dependencies:
     hoist-non-react-statics: 3.x.x
     lodash: 4.17.x
@@ -10612,7 +10612,7 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: a8b8071f6d682fd4a3389991cb73a51fa09d9dc76ed70229ef227fcfb84e371fde81fb2905995f224920d8c19935a9cdcc3520df2cd84dbdd6f0d1e32d82fd39
+  checksum: 82ed5ca7698271072db376416ec2d7f4d5fdd40062be5d01ac0a8f2676b715dcc2c899420cd00bbf9b530ca112e6e21c23fd6da800e66f5b286a85244bc690bb
   languageName: node
   linkType: hard
 
@@ -12158,7 +12158,7 @@ __metadata:
     react-native-keyboard-aware-scroll-view: ^0.9.1
     react-native-mime-types: ^2.2.1
     react-native-modal-datetime-picker: ^13.0.0
-    react-native-navigation: ^7.25.1
+    react-native-navigation: ^7.29.1
     react-native-odoo: ^0.5.0
     react-native-odoo-promise-based: ^0.6.3
     react-native-rss-parser: "dehy/react-native-rss-parser#master"
