@@ -279,7 +279,9 @@ export default class ScannerInfoPanel extends React.Component<Props, State> {
         }
         return (
             <View style={[styles.information, {marginTop: 8}]}>
-                <TouchableOpacity style={{position: 'absolute', right: 0, top: 0}} onPress={(): void => this.close()}>
+                <TouchableOpacity
+                    style={{position: 'absolute', right: 0, top: 0, zIndex: 10}}
+                    onPress={(): void => this.close()}>
                     <Icon name="times-circle" type="font-awesome-5" color={'#999'} style={styles.closeIcon} />
                 </TouchableOpacity>
                 {this.renderContent()}
