@@ -24,7 +24,7 @@
         "fix-dependencies": "rnx-dep-check --write"
     },
     "dependencies": {
-        "@react-native-community/datetimepicker": "^3.5.2",
+        "@react-native-community/datetimepicker": "^6.0.2",
         "@react-native-cookies/cookies": "6.0.11",
         "@react-native-picker/picker": "^2.2.1",
         "@sayem314/react-native-keep-awake": "^1.0.3",
@@ -44,7 +44,7 @@
         "postinstall-postinstall": "^2.0.0",
         "prop-types": "^15.5.10",
         "react": "17.0.2",
-        "react-native": "0.68.3",
+        "react-native": "^0.68.0",
         "react-native-action-sheet": "^2.2.0",
         "react-native-alert-async": "^1.0.5",
         "react-native-app-auth": "^6.4.0",
@@ -57,7 +57,7 @@
         "react-native-dialog-input": "^1.0.7",
         "react-native-elements": "^4.0.0-beta.0",
         "react-native-extended-stylesheet": "^0.12.0",
-        "react-native-fs": "https://github.com/itinance/react-native-fs.git#01952b46f27d133ebad382b7fb5053a44d9de7c8",
+        "react-native-fs": "^2.18.0",
         "react-native-image-picker": "^4.3.0",
         "react-native-keyboard-aware-scroll-view": "^0.9.1",
         "react-native-mime-types": "^2.2.1",
@@ -66,13 +66,13 @@
         "react-native-odoo": "^0.5.0",
         "react-native-odoo-promise-based": "^0.6.3",
         "react-native-rss-parser": "dehy/react-native-rss-parser#master",
-        "react-native-safe-area-context": "^3.3.2",
+        "react-native-safe-area-context": "^3.2.0",
         "react-native-sound": "^0.11.1",
-        "react-native-sqlite-storage": "^6.0.1",
-        "react-native-svg": "^12.0.3",
+        "react-native-sqlite-storage": "^5.0.0",
+        "react-native-svg": "^12.3.0",
         "react-native-svg-transformer": "^1.0.0",
         "react-native-vector-icons": "^9.0.0",
-        "react-native-webview": "^11.0.2",
+        "react-native-webview": "^11.22.6",
         "react-native-zip-archive": "^6.0.5",
         "reflect-metadata": "^0.1.13",
         "rn-secure-storage": "^2.0.6",
@@ -88,7 +88,7 @@
         "@commitlint/cli": "^15.0.0",
         "@commitlint/config-conventional": "^15.0.0",
         "@react-native-community/eslint-config": "^2.0.0",
-        "@rnx-kit/dep-check": "^1.13.0",
+        "@rnx-kit/align-deps": "^2.0.1",
         "@types/intl": "^1.2.0",
         "@types/jest": "^26.0.23",
         "@types/jsrsasign": "^8.0.5",
@@ -141,5 +141,28 @@
             "@commitlint/config-conventional"
         ]
     },
-    "packageManager": "yarn@3.2.3"
+    "packageManager": "yarn@3.2.3",
+    "rnx-kit": {
+        "kitType": "app",
+        "alignDeps": {
+            "requirements": [
+                "react-native@0.68"
+            ],
+            "capabilities": [
+                "babel-preset-react-native",
+                "core",
+                "core-android",
+                "core-ios",
+                "datetime-picker",
+                "filesystem",
+                "jest",
+                "react",
+                "react-test-renderer",
+                "safe-area",
+                "sqlite",
+                "svg",
+                "webview"
+            ]
+        }
+    }
 }

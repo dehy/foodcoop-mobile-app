@@ -35,7 +35,7 @@
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
+{ 
   #if DEBUG
     return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
   #else
