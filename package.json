@@ -16,8 +16,6 @@
         "test": "jest",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "postinstall": "./postinstall.sh",
-        "ios:beta": "fastlane ios beta",
-        "android:beta": "fastlane android beta",
         "typeorm": "ts-node ./node_modules/typeorm/cli.js",
         "prepare": "husky install",
         "check-dependencies": "rnx-dep-check",
