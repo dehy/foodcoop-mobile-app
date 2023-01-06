@@ -34,7 +34,7 @@
         "js-base64": "^3.6.0",
         "jsrsasign": "^10.0.0",
         "jwt-decode": "^3.0.0",
-        "luxon": "^2.1.1",
+        "luxon": "^2.5.2",
         "moment": "^2.24.0",
         "papaparse": "^5.0.0",
         "pluralize": "^8.0.0",
