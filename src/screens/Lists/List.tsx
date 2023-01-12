@@ -4,12 +4,13 @@ import {FlatList, Platform, SafeAreaView, Text, View} from 'react-native';
 import {Icon, ListItem, ThemeProvider} from 'react-native-elements';
 import {Navigation, NavigationComponent, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../utils/navigation';
-import {FindConditions, getConnection, IsNull} from 'typeorm';
+import {FindOptionsWhere, IsNull} from 'typeorm';
 import BaseList from '../../entities/Lists/BaseList';
 import InventoryList from '../../entities/Lists/InventoryList';
 import GoodsReceiptList from '../../entities/Lists/GoodsReceiptList';
 import LabelList from '../../entities/Lists/LabelList';
 import BaseEntry from '../../entities/Lists/BaseEntry';
+import Database from '../../utils/Database';
 
 interface EntriesCountList {
     [listId: string]: number;
@@ -106,8 +107,8 @@ export default class ListsList extends NavigationComponent<Props, State> {
     };
 
     loadData(): void {
-        const listRepository = getConnection().getRepository(BaseList);
-        const whereOptions: FindConditions<BaseList> = {};
+        const listRepository = Database.sharedInstance().dataSource.getRepository(BaseList);
+        const whereOptions: FindOptionsWhere<BaseList> = {};
         if (!this.state.showHidden) {
             whereOptions._lastSentAt = IsNull();
         }
@@ -119,8 +120,8 @@ export default class ListsList extends NavigationComponent<Props, State> {
                 where: whereOptions,
             })
             .then(async lists => {
-                const queryResult = await getConnection()
-                    .getRepository(BaseEntry)
+                const queryResult = await Database.sharedInstance()
+                    .dataSource.getRepository(BaseEntry)
                     .createQueryBuilder('entries')
                     .select('listId, COUNT(id) as entries')
                     .groupBy('listId')
@@ -141,8 +142,8 @@ export default class ListsList extends NavigationComponent<Props, State> {
         if (!list.id) {
             return;
         }
-        getConnection()
-            .getRepository(BaseList)
+        Database.sharedInstance()
+            .dataSource.getRepository(BaseList)
             .delete(list.id)
             .then(() => {
                 this.loadData();

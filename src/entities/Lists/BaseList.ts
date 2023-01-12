@@ -41,7 +41,7 @@ export default abstract class BaseList {
     }
 
     @PrimaryGeneratedColumn()
-    public id?: number;
+    public id?: number | null = null; // null est un workaround pour un bug typeorm
 
     @Column('text')
     public name?: string;
@@ -108,4 +108,15 @@ export default abstract class BaseList {
     constructor() {
         this.extraData = {};
     }
+
+    entryWithBarcode = (barcode: string): BaseEntry | null => {
+        if (this.entries !== undefined) {
+            for (const entry of this.entries) {
+                if (entry.productBarcode === barcode) {
+                    return entry;
+                }
+            }
+        }
+        return null;
+    };
 }

@@ -11,10 +11,10 @@ import ListAttachment from '../../../entities/Lists/ListAttachment';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {displayNumber} from '../../../utils/helpers';
-import {getRepository} from 'typeorm';
 import moment from 'moment';
 import * as RNFS from 'react-native-fs';
 import Fuse from 'fuse.js';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -108,9 +108,16 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
     }
 
     loadData(): void {
-        getRepository(GoodsReceiptList)
-            .findOne(this.props.list.id, {
-                relations: ['entries', 'attachments'],
+        Database.sharedInstance()
+            .dataSource.getRepository(GoodsReceiptList)
+            .findOne({
+                where: {
+                    id: this.props.list.id!,
+                },
+                relations: {
+                    entries: true,
+                    attachments: true,
+                },
             })
             .then((session): void => {
                 if (!session) {
@@ -223,7 +230,8 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
             .attachementsFromImagePickerResponse(list, response)
             .then(attachments => {
                 for (const attachment of attachments) {
-                    getRepository(ListAttachment)
+                    Database.sharedInstance()
+                        .dataSource.getRepository(ListAttachment)
                         .save(attachment)
                         .then(() => {
                             this.loadData();

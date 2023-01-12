@@ -8,8 +8,9 @@ import ActionSheet from 'react-native-action-sheet';
 import {Button, Icon, ListItem} from 'react-native-elements';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
-import {getConnection, Repository} from 'typeorm';
+import {Repository} from 'typeorm';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     list: InventoryList;
@@ -39,8 +40,8 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
-        this.inventoryListRepository = getConnection().getRepository(InventoryList);
-        this.inventoryEntryRepository = getConnection().getRepository(InventoryEntry);
+        this.inventoryListRepository = Database.sharedInstance().dataSource.getRepository(InventoryList);
+        this.inventoryEntryRepository = Database.sharedInstance().dataSource.getRepository(InventoryEntry);
 
         this.state = {
             listEntries: [],
@@ -74,10 +75,13 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         this.inventoryEntryRepository
             .find({
                 where: {
-                    list: this.props.list.id,
+                    list: {
+                        id: this.props.list.id!,
+                    },
                 },
             })
             .then(entries => {
+                this.props.list.entries = entries;
                 this.setState({
                     listEntries: entries,
                 });
@@ -99,8 +103,8 @@ export default class ListsInventoryShow extends React.Component<Props, State> {
         if (!inventoryEntry.id) {
             return;
         }
-        getConnection()
-            .getRepository(InventoryEntry)
+        Database.sharedInstance()
+            .dataSource.getRepository(InventoryEntry)
             .delete(inventoryEntry.id)
             .then(() => {
                 this.loadInventoryEntries();

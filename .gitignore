@@ -42,17 +42,6 @@ buck-out/
 *.keystore
 !debug.keystore
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/
-
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
-
 # Bundle artifact
 *.jsbundle
 
@@ -61,7 +50,7 @@ buck-out/
 
 
 
-# Created by https://www.gitignore.io/api/java,linux,macos,windows,objective-c,reactnative,androidstudio,visualstudiocode
+# Created by https://www.gitignore.io/api/java,linux,macos,windows,objective-c,reactnative,androidstudio,visualstudiocode,ruby
 
 ### AndroidStudio ###
 # Covers files to be ignored for android development using Android Studio.
@@ -297,18 +286,6 @@ Pods/
 
 Carthage/Build
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-
 # Code Injection
 #
 # After new code Injection tools there's a generated folder /iOSInjectionProject
@@ -361,10 +338,6 @@ google-services.json
 freeline.py
 freeline/
 freeline_project_description.json
-
-# fastlane
-fastlane/screenshots
-fastlane/readme.md
 
 ### ReactNative.Linux Stack ###
 
@@ -527,7 +500,70 @@ $RECYCLE.BIN/
 *.lnk
 
 
-# End of https://www.gitignore.io/api/java,linux,macos,windows,objective-c,reactnative,androidstudio,visualstudiocode
+### LibreOffice ###
+# LibreOffice locks
+.~lock.*#
+
+
+### Ruby ###
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+# Used by dotenv library to load environment variables.
+# .env
+
+# Ignore Byebug command history file.
+.byebug_history
+
+## Specific to RubyMotion:
+.dat*
+.repl_history
+build/
+*.bridgesupport
+build-iPhoneOS/
+build-iPhoneSimulator/
+
+## Specific to RubyMotion (use of CocoaPods):
+#
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should judge for yourself, the pros and cons are mentioned at:
+# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
+# vendor/Pods/
+
+## Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/doc/
+/rdoc/
+
+## Environment normalization:
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+
+# for a library or gem, you might want to ignore these files since the code is
+# intended to run in multiple environments; otherwise, check them in:
+# Gemfile.lock
+# .ruby-version
+# .ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+.rvmrc
+
+# Used by RuboCop. Remote config files pulled in from inherit_from directive.
+# .rubocop-https?--*
+
+
+# End of https://www.gitignore.io/api/java,linux,macos,windows,objective-c,reactnative,androidstudio,visualstudiocode,ruby
 android/app/release/
 *.sqlite
 .xcodebuild
@@ -537,5 +573,6 @@ android/app/release/
 # Yarn v2
 .yarn/*
 !.yarn/releases
+!.yarn/patches
 !.yarn/plugins
 .pnp.*

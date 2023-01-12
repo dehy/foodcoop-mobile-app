@@ -9,7 +9,7 @@ import InventoryEntry from '../entities/Lists/InventoryEntry';
 import GoodsReceiptEntry from '../entities/Lists/GoodsReceiptEntry';
 
 import ListAttachment from '../entities/Lists/ListAttachment';
-import {createConnection, Connection, getConnection, getRepository} from 'typeorm';
+import {DataSource} from 'typeorm';
 import {Init1580395050084} from '../migrations/1580395050084-Init';
 import {UpdateGoodsReceiptEntry1588342677098} from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
 import {DeleteCascade1588861598725} from '../migrations/1588861598725-DeleteCascade';
@@ -26,16 +26,9 @@ interface EntityDefinition {
 
 export default class Database {
     private static instance: Database;
+    public dataSource: DataSource;
 
-    public static sharedInstance(): Database {
-        if (Database.instance === undefined) {
-            Database.instance = new Database();
-        }
-
-        return this.instance;
-    }
-
-    static async connect(): Promise<Connection> {
+    constructor(database: string) {
         let dropSchema = false;
         let synchronize = false;
         let migrationsRun = true;
@@ -44,9 +37,9 @@ export default class Database {
             migrationsRun = false;
         }
 
-        const connection = await createConnection({
+        this.dataSource = new DataSource({
             type: 'react-native',
-            database: 'supercoop.sqlite',
+            database: database,
             location: 'Documents',
             logging: true,
             dropSchema: dropSchema,
@@ -73,26 +66,41 @@ export default class Database {
                 MultiList1636572223147,
             ],
         });
-        console.log('connection created');
-        return connection;
+
+        this.dataSource
+            .initialize()
+            .then(() => {
+                console.log('Data Source has been initialized!');
+            })
+            .catch(err => {
+                console.error('Error during Data Source initialization', err);
+            });
+    }
+
+    public static sharedInstance(): Database {
+        if (Database.instance === undefined) {
+            Database.instance = new Database('supercoop.sqlite');
+        }
+
+        return this.instance;
     }
 
     async resetDatabase(): Promise<boolean> {
-        getConnection().synchronize(true);
+        this.dataSource.synchronize(true);
 
         return true;
     }
 
     async getEntities(): Promise<EntityDefinition[]> {
         const entities: EntityDefinition[] = [];
-        getConnection().entityMetadatas.forEach(x => entities.push({name: x.name, tableName: x.tableName}));
+        this.dataSource.entityMetadatas.forEach(x => entities.push({name: x.name, tableName: x.tableName}));
         return entities;
     }
 
     async cleanAll(entities: EntityDefinition[]): Promise<void> {
         try {
             for (const entity of entities) {
-                const repository = getRepository(entity.name);
+                const repository = this.dataSource.getRepository(entity.name);
                 await repository.query(`DELETE FROM \`${entity.tableName}\`;`);
             }
         } catch (error) {

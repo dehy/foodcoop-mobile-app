@@ -6,7 +6,6 @@ import {Navigation, Options} from 'react-native-navigation';
 import moment from 'moment';
 import Dialog from 'react-native-dialog';
 import ActionSheet from 'react-native-action-sheet';
-import {getRepository} from 'typeorm';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import CSVGenerator, {CSVData} from '../../../utils/CSVGenerator';
 import Mailjet, {MailAttachment} from '../../../utils/Mailjet';
@@ -16,6 +15,7 @@ import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import SupercoopSignIn from '../../../utils/SupercoopSignIn';
 import {asyncFilter} from '../../../utils/helpers';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -90,9 +90,16 @@ export default class ListsGoodsReceiptExport extends React.Component<Props, Stat
     }
 
     componentDidMount(): void {
-        getRepository(GoodsReceiptList)
-            .findOne(this.props.list.id, {
-                relations: ['entries', 'attachments'],
+        Database.sharedInstance()
+            .dataSource.getRepository(GoodsReceiptList)
+            .findOne({
+                where: {
+                    id: this.props.list.id!,
+                },
+                relations: {
+                    entries: true,
+                    attachments: true,
+                },
             })
             .then((session): void => {
                 if (!session) {
@@ -192,7 +199,7 @@ ${entriesCount} produits traités`;
             .sendEmail(to, cc, subject, body, await this.getMailAttachments())
             .then(async () => {
                 this.props.list.lastSentAt = DateTime.local();
-                await getRepository(GoodsReceiptList).save(this.props.list);
+                await Database.sharedInstance().dataSource.getRepository(GoodsReceiptList).save(this.props.list);
                 AlertAsync('Envoyé', 'Ton compte-rendu a bien été envoyé. Merci !').then(() => {
                     Navigation.dismissModal(this.props.componentId);
                 });

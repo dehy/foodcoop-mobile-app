@@ -4,8 +4,8 @@ import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
 import {Button, ListItem, ThemeProvider} from 'react-native-elements';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
-import {getConnection} from 'typeorm';
 import InventoryList from '../../../entities/Lists/InventoryList';
+import Database from '../../../utils/Database';
 
 type Props = {
     componentId: string;
@@ -46,8 +46,8 @@ export default class ListsInventoryNew extends React.Component<Props, State> {
         list.name = `Inventaire du ${DateTime.local().toFormat('d LLLL')}`;
         list.zone = this.zoneValue;
 
-        getConnection()
-            .getRepository(InventoryList)
+        Database.sharedInstance()
+            .dataSource.getRepository(InventoryList)
             .save(list)
             .then(savedList => {
                 console.log(savedList);

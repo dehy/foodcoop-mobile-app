@@ -9,8 +9,8 @@ import Mailjet, {MailAttachment} from '../../../utils/Mailjet';
 import merge from 'deepmerge';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
-import {getConnection} from 'typeorm';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -127,7 +127,9 @@ ${notFoundInOdooString}`);
                 if (!this.props.inventory.id) {
                     return;
                 }
-                getConnection().getRepository(InventoryList).update(this.props.inventory.id, {_lastSentAt: new Date()});
+                Database.sharedInstance()
+                    .dataSource.getRepository(InventoryList)
+                    .update(this.props.inventory.id, {_lastSentAt: new Date()});
                 Alert.alert('Envoyé', 'Le message est parti sur les Internets Mondialisés');
             })
             .catch((e: Error) => {

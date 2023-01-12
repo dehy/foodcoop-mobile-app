@@ -15,7 +15,7 @@ import {GoodsReceiptEntryExtraData} from './GoodsReceiptEntry';
 @TableInheritance({column: {type: 'varchar', name: 'type'}})
 export default abstract class BaseEntry {
     @PrimaryGeneratedColumn()
-    public id?: number;
+    public id?: number | null = null; // null est un workaround pour un bug typeorm
 
     @Column('varchar')
     public productBarcode?: string;

@@ -6,13 +6,13 @@ import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import Odoo from '../../../utils/Odoo';
 import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductProduct';
-import {getConnection, getRepository} from 'typeorm';
 import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import AppLogger from '../../../utils/AppLogger';
 import {toNumber, displayNumber, isFloat} from '../../../utils/helpers';
 import {Button, Icon, Input, ListItem, ThemeProvider} from 'react-native-elements';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Database from '../../../utils/Database';
 
 interface Props {
     componentId: string;
@@ -112,12 +112,14 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
     }
 
     loadEntryFromProduct(product: ProductProduct): void {
-        getConnection()
-            .getRepository(GoodsReceiptEntry)
+        Database.sharedInstance()
+            .dataSource.getRepository(GoodsReceiptEntry)
             .findOneOrFail({
                 where: {
                     productBarcode: product.barcode,
-                    list: this.props.list,
+                    list: {
+                        id: this.props.list.id!,
+                    },
                 },
                 relations: ['list'],
             })
@@ -152,7 +154,8 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             goodsReceiptEntry.packageQty = this.state.goodsReceiptEntry.expectedPackageQty;
             goodsReceiptEntry.productQtyPackage = this.state.goodsReceiptEntry.expectedProductQtyPackage;
 
-            getRepository(GoodsReceiptEntry)
+            Database.sharedInstance()
+                .dataSource.getRepository(GoodsReceiptEntry)
                 .save(goodsReceiptEntry)
                 .then(() => {
                     if (this.props.preselectedProductId) {
@@ -402,7 +405,8 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
                             if (this.revisedGoodsReceiptEntryIsValid()) {
                                 if (this.state.goodsReceiptEntry) {
                                     const goodsReceiptEntry = this.state.goodsReceiptEntry;
-                                    getRepository(GoodsReceiptEntry)
+                                    Database.sharedInstance()
+                                        .dataSource.getRepository(GoodsReceiptEntry)
                                         .save(goodsReceiptEntry)
                                         .then((): void => {
                                             if (this.props.preselectedProductId) {

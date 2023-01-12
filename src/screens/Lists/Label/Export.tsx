@@ -9,8 +9,8 @@ import Mailjet, {MailAttachment} from '../../../utils/Mailjet';
 import merge from 'deepmerge';
 import LabelList from '../../../entities/Lists/LabelList';
 import LabelEntry from '../../../entities/Lists/LabelEntry';
-import {getConnection} from 'typeorm';
 import {DateTime} from 'luxon';
+import Database from '../../../utils/Database';
 
 export interface Props {
     componentId: string;
@@ -118,7 +118,9 @@ ${entriesCount} étiquettes scannées`;
                 if (!this.props.label.id) {
                     return;
                 }
-                getConnection().getRepository(LabelList).update(this.props.label.id, {_lastSentAt: new Date()});
+                Database.sharedInstance()
+                    .dataSource.getRepository(LabelList)
+                    .update(this.props.label.id, {_lastSentAt: new Date()});
                 Alert.alert('Envoyé', 'La liste a été envoyé !');
             })
             .catch((e: Error) => {
