@@ -2,7 +2,7 @@ import React from 'react';
 import {FlatList, SafeAreaView, StyleSheet, View} from 'react-native';
 import {defaultScreenOptions} from '../../utils/navigation';
 import {Navigation, Options} from 'react-native-navigation';
-import {ListItem} from 'react-native-elements';
+import {ListItem} from '@rneui/themed';
 
 export interface Props {
     componentId: string;

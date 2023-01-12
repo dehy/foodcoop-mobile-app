@@ -4,7 +4,7 @@ import {readableVersion, systemName, deviceId, systemVersion, brand} from '../..
 import {defaultScreenOptions} from '../../utils/navigation';
 import DeviceInfo from 'react-native-device-info';
 import {Options} from 'react-native-navigation';
-import {ListItem} from 'react-native-elements';
+import {ListItem} from '@rneui/themed';
 
 const styles = StyleSheet.create({
     title: {

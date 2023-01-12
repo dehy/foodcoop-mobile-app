@@ -4,7 +4,7 @@ import {defaultScreenOptions} from '../../../utils/navigation';
 import {Navigation, Options, OptionsModalPresentationStyle} from 'react-native-navigation';
 import bootstrapStyle from '../../../styles/bootstrap';
 import ActionSheet from 'react-native-action-sheet';
-import {Button, Icon, ListItem} from 'react-native-elements';
+import {Button, Icon, ListItem} from '@rneui/themed';
 import LabelList from '../../../entities/Lists/LabelList';
 import LabelEntry from '../../../entities/Lists/LabelEntry';
 import {Repository} from 'typeorm';

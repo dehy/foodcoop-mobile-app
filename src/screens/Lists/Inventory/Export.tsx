@@ -1,6 +1,6 @@
 import React from 'react';
 import {ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Button, Icon} from 'react-native-elements';
+import {Button, Icon} from '@rneui/themed';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {Navigation, Options} from 'react-native-navigation';
 import CSVGenerator from '../../../utils/CSVGenerator';

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Avatar, ListItem} from 'react-native-elements';
+import {Avatar, ListItem} from '@rneui/themed';
 import {goToAuth} from '../utils/navigation';
 import {Navigation} from 'react-native-navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';

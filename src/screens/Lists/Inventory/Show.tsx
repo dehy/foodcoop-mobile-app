@@ -5,7 +5,7 @@ import {Navigation, Options, OptionsModalPresentationStyle} from 'react-native-n
 import bootstrapStyle from '../../../styles/bootstrap';
 import ProductProduct from '../../../entities/Odoo/ProductProduct';
 import ActionSheet from 'react-native-action-sheet';
-import {Button, Icon, ListItem} from 'react-native-elements';
+import {Button, Icon, ListItem} from '@rneui/themed';
 import InventoryList from '../../../entities/Lists/InventoryList';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import {Repository} from 'typeorm';

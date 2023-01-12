@@ -1,6 +1,6 @@
 import React from 'react';
 import {ActivityIndicator, Alert, Platform, SafeAreaView, StyleSheet, Text, View, ScrollView} from 'react-native';
-import {Button, ThemeProvider, ListItem, Icon} from 'react-native-elements';
+import {Button, ThemeProvider, ListItem, Icon} from '@rneui/themed';
 import AlertAsync from 'react-native-alert-async';
 import {Navigation, Options} from 'react-native-navigation';
 import moment from 'moment';

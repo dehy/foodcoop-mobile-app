@@ -1,7 +1,7 @@
 import React, {ReactText} from 'react';
 import ActionSheet from 'react-native-action-sheet';
 import {FlatList, Platform, SafeAreaView, Text, View} from 'react-native';
-import {Icon, ListItem, ThemeProvider} from 'react-native-elements';
+import {Icon, ListItem, ThemeProvider} from '@rneui/themed';
 import {Navigation, NavigationComponent, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../utils/navigation';
 import {FindOptionsWhere, IsNull} from 'typeorm';

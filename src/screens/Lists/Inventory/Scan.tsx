@@ -4,7 +4,7 @@ import {Barcode} from 'react-native-camera';
 import CodeScanner from '../../CodeScanner';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
-import {Button, Divider} from 'react-native-elements';
+import {Button, Divider} from '@rneui/themed';
 import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductProduct';
 import {isInt} from '../../../utils/helpers';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';

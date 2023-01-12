@@ -10,7 +10,7 @@ import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsRecei
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';
 import AppLogger from '../../../utils/AppLogger';
 import {toNumber, displayNumber, isFloat} from '../../../utils/helpers';
-import {Button, Icon, Input, ListItem, ThemeProvider} from 'react-native-elements';
+import {Button, Icon, Input, ListItem, ThemeProvider} from '@rneui/themed';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Database from '../../../utils/Database';
 

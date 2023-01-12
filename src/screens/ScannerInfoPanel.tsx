@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import {ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Icon} from 'react-native-elements';
+import {Icon} from '@rneui/themed';
 import Odoo from '../utils/Odoo';
 import ProductProduct, {UnitOfMeasurement} from '../entities/Odoo/ProductProduct';
 

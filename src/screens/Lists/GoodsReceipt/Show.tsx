@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, SafeAreaView, FlatList, Alert, Image} from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
-import {ListItem, ThemeProvider, SearchBar} from 'react-native-elements';
+import {ListItem, ThemeProvider, SearchBar} from '@rneui/themed';
 import {Navigation, Options, EventSubscription} from 'react-native-navigation';
 import ImagePicker, {ImagePickerResponse} from 'react-native-image-picker';
 import GoodsReceiptEntry, {EntryStatus} from '../../../entities/Lists/GoodsReceiptEntry';

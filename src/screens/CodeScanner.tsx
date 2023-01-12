@@ -31,7 +31,7 @@ import Sound from 'react-native-sound';
 import KeepAwake from '@sayem314/react-native-keep-awake';
 import DataWedgeIntents from 'react-native-datawedge-intents';
 import {deviceId} from '../utils/helpers';
-import {Button, Icon} from 'react-native-elements';
+import {Button, Icon} from '@rneui/themed';
 import Odoo from '../utils/Odoo';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import Mailjet from '../utils/Mailjet';

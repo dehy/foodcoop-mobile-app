@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import React, {ReactNode} from 'react';
 import {Alert, SafeAreaView, ScrollView, View} from 'react-native';
-import {Button, ListItem, ThemeProvider} from 'react-native-elements';
+import {Button, ListItem, ThemeProvider} from '@rneui/themed';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import InventoryList from '../../../entities/Lists/InventoryList';

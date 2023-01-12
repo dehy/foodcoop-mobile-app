@@ -1,6 +1,6 @@
 import React, {ReactElement} from 'react';
 import {FlatList, SafeAreaView, View} from 'react-native';
-import {Icon, ListItem, Text, ThemeProvider} from 'react-native-elements';
+import {Icon, ListItem, Text, ThemeProvider} from '@rneui/themed';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../utils/navigation';
 import BaseList from '../../entities/Lists/BaseList';

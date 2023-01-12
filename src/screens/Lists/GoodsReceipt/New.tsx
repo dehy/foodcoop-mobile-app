@@ -3,7 +3,7 @@ import {ActivityIndicator, SafeAreaView, SectionList, Text, View} from 'react-na
 import {DateTime} from 'luxon';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {filterUnique} from '../../../utils/helpers';
-import {Icon, ListItem} from 'react-native-elements';
+import {Icon, ListItem} from '@rneui/themed';
 import {Navigation, Options} from 'react-native-navigation';
 import GoodsReceiptEntry from '../../../entities/Lists/GoodsReceiptEntry';
 import GoodsReceiptList from '../../../entities/Lists/GoodsReceiptList';

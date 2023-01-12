@@ -4,7 +4,7 @@ import {defaultScreenOptions} from '../../../utils/navigation';
 import CookieManager, {Cookie, Cookies} from '@react-native-cookies/cookies';
 import Odoo from '../../../utils/Odoo';
 import {Navigation, Options} from 'react-native-navigation';
-import {ListItem} from 'react-native-elements';
+import {ListItem} from '@rneui/themed';
 
 interface State {
     cookieItemList: CookiesMaintenanceFlatListItem[];
