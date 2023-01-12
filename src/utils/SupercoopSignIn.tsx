@@ -1,6 +1,6 @@
 import {KEYUTIL, KJUR} from 'jsrsasign';
 import JwtDecode from 'jwt-decode';
-import {AuthConfiguration, authorize, AuthorizeResult, refresh, RefreshResult} from 'react-native-app-auth';
+import {AuthConfiguration, authorize, AuthorizeResult, logout, refresh, RefreshResult} from 'react-native-app-auth';
 import * as Sentry from '@sentry/react-native';
 import RNSecureStorage, {ACCESSIBLE} from 'rn-secure-storage';
 import {Button, ButtonProps} from 'react-native';
@@ -103,9 +103,12 @@ export default class SupercoopSignIn {
 
     signInSilently = async (): Promise<void> => {
         const {refreshToken, idToken} = await this.getTokensFromSecureStorage();
+        if (!idToken) {
+            return;
+        }
         let user = await this.getUserFromToken(idToken);
-        if (undefined === user) {
-            const result = await refresh(this.config, {refreshToken: refreshToken});
+        if (undefined === user && refreshToken) {
+            const result = await refresh(this.config, {refreshToken});
             user = await this.getUserFromToken(result.idToken);
             this.saveTokensFromResult(result);
             this.setCurrentUser(user);
@@ -124,8 +127,23 @@ export default class SupercoopSignIn {
     };
 
     signOut = async (): Promise<void> => {
-        this.setCurrentUser();
+        const idToken = (await this.getTokensFromSecureStorage()).idToken;
         await this.removeTokensFromSecureStorage();
+        this.setCurrentUser();
+        const issuer = Config.OPENID_CONNECT_ISSUER;
+        const clientId = Config.OPENID_CONNECT_CLIENT_ID;
+        if (idToken !== null) {
+            await logout(
+                {
+                    issuer,
+                    clientId,
+                },
+                {
+                    idToken,
+                    postLogoutRedirectUrl: Config.OPENID_CONNECT_REDIRECT_URL,
+                },
+            );
+        }
     };
 
     async idTokenIsValid(token: string): Promise<boolean> {
@@ -160,7 +178,7 @@ export default class SupercoopSignIn {
         await RNSecureStorage.set('idToken', result.idToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
     }
 
-    private async getTokensFromSecureStorage(): Promise<any> {
+    private async getTokensFromSecureStorage(): Promise<{refreshToken: string | null; idToken: string | null}> {
         const refreshToken = await RNSecureStorage.get('refreshToken');
         const idToken = await RNSecureStorage.get('idToken');
 

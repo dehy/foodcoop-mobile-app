@@ -76,7 +76,7 @@
         "rn-secure-storage": "^2.0.6",
         "sha.js": "^2.4.11",
         "ts-money": "^0.4.6",
-        "typeorm": "0.3.10",
+        "typeorm": "^0.3.11",
         "url": "^0.11.0"
     },
     "devDependencies": {
@@ -119,8 +119,7 @@
     },
     "resolutions": {
         "@types/react": "^17",
-        "rn-secure-storage@^2.0.6": "patch:rn-secure-storage@npm%3A2.0.7#./.yarn/patches/rn-secure-storage-npm-2.0.7-024ec32378.patch",
-        "typeorm@0.3.10": "patch:typeorm@npm%3A0.3.10#./.yarn/patches/typeorm-npm-0.3.10-4667857f33.patch"
+        "rn-secure-storage@^2.0.6": "patch:rn-secure-storage@npm%3A2.0.7#./.yarn/patches/rn-secure-storage-npm-2.0.7-024ec32378.patch"
     },
     "jest": {
         "preset": "react-native",

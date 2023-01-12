@@ -84,8 +84,12 @@ export default class Plus extends React.Component<Props> {
                     {
                         text: 'Oui',
                         onPress: async (): Promise<void> => {
-                            await SupercoopSignIn.getInstance().signOut();
-                            goToAuth();
+                            try {
+                                await SupercoopSignIn.getInstance().signOut();
+                                goToAuth();
+                            } catch (error) {
+                                console.error(error);
+                            }
                         },
                     },
                 ]);

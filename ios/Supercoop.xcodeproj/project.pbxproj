@@ -38,6 +38,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Supercoop/main.m; sourceTree = "<group>"; };
 		1E7EAAE1C316DBA99D6F5E59 /* Pods-Supercoop.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop.release.xcconfig"; path = "Target Support Files/Pods-Supercoop/Pods-Supercoop.release.xcconfig"; sourceTree = "<group>"; };
 		4CEC10A05ACE31452B9799CA /* Pods-Supercoop-SupercoopTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop-SupercoopTests.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop-SupercoopTests/Pods-Supercoop-SupercoopTests.debug.xcconfig"; sourceTree = "<group>"; };
+		51106035294B6E7200493463 /* Supercoop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Supercoop.entitlements; path = Supercoop/Supercoop.entitlements; sourceTree = "<group>"; };
 		5198EBA5274BE0D2007B6452 /* beep.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = beep.mp3; path = Resources/beep.mp3; sourceTree = "<group>"; };
 		51FDDB0428EB062900AE8513 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Supercoop/AppDelegate.mm; sourceTree = "<group>"; };
 		776A87DDCA7DC1791E3CBAA4 /* Pods-Supercoop.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Supercoop.debug.xcconfig"; path = "Target Support Files/Pods-Supercoop/Pods-Supercoop.debug.xcconfig"; sourceTree = "<group>"; };
@@ -88,6 +89,7 @@
 		13B07FAE1A68108700A75B9A /* Supercoop */ = {
 			isa = PBXGroup;
 			children = (
+				51106035294B6E7200493463 /* Supercoop.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				51FDDB0428EB062900AE8513 /* AppDelegate.mm */,
 				5198EBA5274BE0D2007B6452 /* beep.mp3 */,
@@ -489,10 +491,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 48;
+				CODE_SIGN_ENTITLEMENTS = Supercoop/Supercoop.entitlements;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = QPB8MBWLB4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Supercoop/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -505,8 +509,12 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = fr.supercoop.app;
 				PRODUCT_NAME = Supercoop;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -517,9 +525,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 48;
+				CODE_SIGN_ENTITLEMENTS = Supercoop/Supercoop.entitlements;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = QPB8MBWLB4;
 				INFOPLIST_FILE = Supercoop/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -532,7 +542,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = fr.supercoop.app;
 				PRODUCT_NAME = Supercoop;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
