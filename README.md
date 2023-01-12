@@ -1,5 +1,11 @@
 # README
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_shield)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dehy_foodcoop-mobile-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dehy_foodcoop-mobile-app)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dehy_foodcoop-mobile-app&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=dehy_foodcoop-mobile-app)
+[![ESLint](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/eslint.yml/badge.svg)](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/eslint.yml)
+[![Typescript Compilation Errors](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/tsc.yml/badge.svg)](https://github.com/dehy/foodcoop-mobile-app/actions/workflows/tsc.yml)
+
 ## Développement
 
 L'application Supercoop est développé en React Native. Le projet utilise les langages Typescript (TSX), CSS, Objective-C (projet iOS), et Java (projet Android).
@@ -27,7 +33,6 @@ _iOS_
 _Bonus (facultatif)_
 
 -   [Genymotion](https://www.genymotion.com/download/) - simulateur android tierce-partie
--   [fastlane](https://fastlane.tools/) - automatisation de build et release
 
 #### Commun
 
@@ -112,8 +117,6 @@ Le cycle de mise en prod de l'app doit systématiquement passer par une phase Be
 
 Il est possible de s'en occuper manuellement en suivant les procédures des deux plateformes.
 
-Ou sinon, l'outil [fastlane](https://fastlane.tools/) permet d'automatiser cette tâche.
-
 #### APK pour les devices sans Google Play Store (MC40)
 
 -   Récupérer le fichier AppBundle généré par Android Studio pour le Play Store (généralement `app-release.aab`)
@@ -122,19 +125,6 @@ Ou sinon, l'outil [fastlane](https://fastlane.tools/) permet d'automatiser cette
     java -jar bundletool-all-1.3.0.jar build-apks --bundle=app-release.aab --output=app-release.apks --overwrite --mode=universal --ks=/path/to/project/android/keystores/release.keystore --ks-pass=pass:my-keystore-password --ks-key-alias=sp_release --key-pass=pass:my-key-password
 
 -   Changer l'extension du fichier `app-release.apks` en `.zip`. Dézipper et distribuer le fichier `universal.apk`.
-
-#### fastlane
-
-Fastlane, tout comme Cocoapods (voir plus haut) est écrit en Ruby. Le gestionnaite de gems (nom des modules ruby) s'appelle `bundler`.
-
-```sh
-$ gem install bundler -NV
-$ cd /path/to/sp_mobile_app
-$ bundle install
-$ bundle exec fastlane
-```
-
-[Documentation de fastlane](https://docs.fastlane.tools/)
 
 ### Base de donnée
 
@@ -148,3 +138,15 @@ $ ./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -n 
 ```
 
 Ajouter la classe fraîchement créée ('`<Nom><Timestamp>`') dans Database.ts, dans la méthode `createConnexion()` de la méthode `connect()`.
+
+## Contribution
+
+Les pull request sont les bienvenues. Pour des changements majeurs, merci d'ouvrir une issue d'abord afin de discuter des changements que vous souhaiteriez effectuer.
+
+Merci de mettre à jour les tests appropriés (le cas échéant).
+
+## License
+
+[GNU General Public License v3.0 or later](https://choosealicense.com/licenses/gpl-3.0/)
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdehy%2Ffoodcoop-mobile-app?ref=badge_large)

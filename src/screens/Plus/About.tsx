@@ -1,10 +1,10 @@
 import React from 'react';
-import { SafeAreaView, Text, StyleSheet } from 'react-native';
-import { readableVersion, systemName, deviceId, systemVersion, brand } from '../../utils/helpers';
-import { defaultScreenOptions } from '../../utils/navigation';
+import {SafeAreaView, Text, StyleSheet} from 'react-native';
+import {readableVersion, systemName, deviceId, systemVersion, brand} from '../../utils/helpers';
+import {defaultScreenOptions} from '../../utils/navigation';
 import DeviceInfo from 'react-native-device-info';
-import { Options } from 'react-native-navigation';
-import { ListItem } from 'react-native-elements';
+import {Options} from 'react-native-navigation';
+import {ListItem} from 'react-native-elements';
 
 const styles = StyleSheet.create({
     title: {
@@ -15,7 +15,9 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class ProfileAbout extends React.Component<{}, {}> {
+export default class PlusAbout extends React.Component<{}, {}> {
+    static screenName = 'Plus/About';
+
     constructor(props: {}) {
         super(props);
     }
@@ -27,7 +29,7 @@ export default class ProfileAbout extends React.Component<{}, {}> {
     render(): React.ReactNode {
         return (
             <SafeAreaView>
-                <Text style={[styles.title, { marginTop: 16 }]}>{DeviceInfo.getApplicationName()}</Text>
+                <Text style={[styles.title, {marginTop: 16}]}>{DeviceInfo.getApplicationName()}</Text>
                 <ListItem topDivider>
                     <ListItem.Content>
                         <ListItem.Title>Marque</ListItem.Title>

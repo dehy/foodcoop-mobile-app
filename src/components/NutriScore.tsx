@@ -1,30 +1,37 @@
 import React from 'react';
-import { SvgProps } from 'react-native-svg';
+import {SvgProps} from 'react-native-svg';
 import NutriScoreA from '../../assets/svg/Nutri-score-A.svg';
 import NutriScoreB from '../../assets/svg/Nutri-score-B.svg';
 import NutriScoreC from '../../assets/svg/Nutri-score-C.svg';
 import NutriScoreD from '../../assets/svg/Nutri-score-D.svg';
 import NutriScoreE from '../../assets/svg/Nutri-score-E.svg';
 
-interface NutriScoreProps extends SvgProps {
-    score: 'a' | 'b' | 'c' | 'd' | 'e';
+export enum NutriScoreScore {
+    a = 'a',
+    b = 'b',
+    c = 'c',
+    d = 'd',
+    e = 'e',
 }
 
-export default class NutriScore extends React.Component<NutriScoreProps> {
+interface Props extends SvgProps {
+    score: NutriScoreScore;
+}
+
+export default class NutriScore extends React.Component<Props> {
     render(): React.ReactNode {
-        console.log(this.props.score);
+        console.debug('NutriScore: ' + this.props.score);
         switch (this.props.score) {
-            case 'a':
+            case NutriScoreScore.a:
                 return <NutriScoreA width={this.props.width} height={this.props.height} />;
-            case 'b':
+            case NutriScoreScore.b:
                 return <NutriScoreB width={this.props.width} height={this.props.height} />;
-            case 'c':
+            case NutriScoreScore.c:
                 return <NutriScoreC width={this.props.width} height={this.props.height} />;
-            case 'd':
+            case NutriScoreScore.d:
                 return <NutriScoreD width={this.props.width} height={this.props.height} />;
-            case 'e':
+            case NutriScoreScore.e:
                 return <NutriScoreE width={this.props.width} height={this.props.height} />;
         }
-        return null;
     }
 }

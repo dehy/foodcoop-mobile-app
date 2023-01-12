@@ -1,4 +1,4 @@
-import { Base64 } from 'js-base64';
+import {Base64} from 'js-base64';
 import Config from 'react-native-config';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
@@ -29,7 +29,7 @@ export interface MailAttachment {
 export default class Mailjet {
     private static instance: Mailjet;
     private publicApiKey = Config.MAILJET_PUBLIC_API_KEY;
-    private privateapiKey = Config.MAILJET_PRIVATE_API_KEY;
+    private privateApiKey = Config.MAILJET_PRIVATE_API_KEY;
     private senderEmail = Config.MAIL_FROM;
     private senderName?: string;
 
@@ -42,13 +42,13 @@ export default class Mailjet {
         filename = filename || filepath.split('/').pop();
         const contentType = filetype || mime.lookup(filepath);
         const finalCharset = charset || mime.charset(filepath);
-        const base64Content = await Base64.encode(await RNFS.readFile(filepath, finalCharset ?? 'utf8'));
+        const base64Content = Base64.encode(await RNFS.readFile(filepath, finalCharset ?? 'utf8'));
 
         if (!filename) {
-            throw 'Filename not found. Please specify it explicitly';
+            throw new Error('Filename not found. Please specify it explicitly');
         }
         if (!contentType) {
-            throw 'Content-Type not found. Please specifcy it explicitly';
+            throw new Error('Content-Type not found. Please specify it explicitly');
         }
 
         return {
@@ -59,7 +59,7 @@ export default class Mailjet {
     }
 
     public static getInstance(): Mailjet {
-        if (Mailjet.instance == undefined) {
+        if (Mailjet.instance === undefined) {
             Mailjet.instance = new Mailjet();
         }
         return this.instance;
@@ -70,13 +70,13 @@ export default class Mailjet {
     }
 
     public send = async (messages: Message[]): Promise<any> => {
-        const messagesString = JSON.stringify({ Messages: messages });
+        const messagesString = JSON.stringify({Messages: messages});
         const options: RequestInit = {
             method: 'POST',
             body: messagesString,
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Basic ' + Base64.encode(this.publicApiKey + ':' + this.privateapiKey),
+                Authorization: 'Basic ' + Base64.encode(this.publicApiKey + ':' + this.privateApiKey),
             },
         };
         const response = await fetch('https://api.mailjet.com/v3.1/send', options);
@@ -88,7 +88,7 @@ export default class Mailjet {
         if (json.hasOwnProperty('Messages')) {
             json.Messages.forEach((message: any) => {
                 if (message.hasOwnProperty('Status')) {
-                    if ('error' === message.Status) {
+                    if (message.Status === 'error') {
                         throw json;
                     }
                 }
@@ -105,7 +105,7 @@ export default class Mailjet {
         attachments: MailAttachment[] = [],
     ): Promise<void> {
         if (!this.senderEmail) {
-            throw 'Missing sender email. Set it with `setSender(email, name)`';
+            throw new Error('Missing sender email. Set it with `setSender(email, name)`');
         }
 
         const message: Message = {
@@ -118,7 +118,7 @@ export default class Mailjet {
                     email: __DEV__ ? this.senderEmail : to,
                 },
             ],
-            Subject: subject = __DEV__ ? '[Test] ' + subject : subject,
+            Subject: (__DEV__ ? '[Test] ' : '') + subject,
             TextPart: body,
         };
         if (!__DEV__) {

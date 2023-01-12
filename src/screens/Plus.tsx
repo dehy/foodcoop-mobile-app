@@ -1,11 +1,11 @@
 import React from 'react';
-import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, Icon, ListItem } from 'react-native-elements';
-import { goToAuth } from '../utils/navigation';
-import { Navigation } from 'react-native-navigation';
+import {Alert, FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Avatar, ListItem} from 'react-native-elements';
+import {goToAuth} from '../utils/navigation';
+import {Navigation} from 'react-native-navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 
-export interface PlusProps {
+export interface Props {
     componentId: string;
 }
 
@@ -52,8 +52,10 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class Plus extends React.Component<PlusProps> {
-    constructor(props: PlusProps) {
+export default class Plus extends React.Component<Props> {
+    static screenName = 'Plus';
+
+    constructor(props: Props) {
         super(props);
         Navigation.events().bindComponent(this);
     }
@@ -82,8 +84,12 @@ export default class Plus extends React.Component<PlusProps> {
                     {
                         text: 'Oui',
                         onPress: async (): Promise<void> => {
-                            await SupercoopSignIn.getInstance().signOut();
-                            goToAuth();
+                            try {
+                                await SupercoopSignIn.getInstance().signOut();
+                                goToAuth();
+                            } catch (error) {
+                                console.error(error);
+                            }
                         },
                     },
                 ]);
@@ -92,10 +98,7 @@ export default class Plus extends React.Component<PlusProps> {
     };
 
     renderHeader = (): React.ReactElement => {
-        const initialsMatch =
-            SupercoopSignIn.getInstance()
-                .getName()
-                .match(/\b\w/g) || [];
+        const initialsMatch = SupercoopSignIn.getInstance().getName().match(/\b\w/g) || [];
         const initials: string = ((initialsMatch.shift() || '') + (initialsMatch.pop() || '')).toUpperCase();
 
         return (
@@ -114,20 +117,20 @@ export default class Plus extends React.Component<PlusProps> {
             <SafeAreaView>
                 <FlatList
                     scrollEnabled={false}
-                    ItemSeparatorComponent={({ highlighted }): React.ReactElement => (
-                        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+                    ItemSeparatorComponent={({highlighted}): React.ReactElement => (
+                        <View style={[styles.separator, highlighted && {marginLeft: 0}]} />
                     )}
                     data={[
-                        { title: 'À propos', key: 'about' },
-                        { title: 'Maintenance', key: 'maintenance' },
-                        { title: 'Se déconnecter', key: 'logout', color: 'red', chevron: false },
+                        {title: 'À propos', key: 'about'},
+                        {title: 'Maintenance', key: 'maintenance'},
+                        {title: 'Se déconnecter', key: 'logout', color: 'red', chevron: false},
                     ]}
-                    renderItem={({ item }): React.ReactElement => (
+                    renderItem={({item}): React.ReactElement => (
                         <ListItem onPress={(): void => this._onPress(item.key)} topDivider>
                             <ListItem.Content>
-                                <ListItem.Title style={{ color: item.color ?? 'black' }}>{item.title}</ListItem.Title>
+                                <ListItem.Title style={{color: item.color ?? 'black'}}>{item.title}</ListItem.Title>
                             </ListItem.Content>
-                            {false === item.chevron ? null : (
+                            {item.chevron === false ? null : (
                                 <ListItem.Chevron type="font-awesome-5" name="chevron-right" />
                             )}
                         </ListItem>

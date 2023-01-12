@@ -1,7 +1,7 @@
 'use strict';
 
 import ProductProduct from '../../entities/Odoo/ProductProduct';
-import { round } from '../../utils/helpers';
+import {round} from '../../utils/helpers';
 
 export default class ProductProductFactory {
     public static ProductProductFromResponse(response: OdooApiProductProduct): ProductProduct {

@@ -2,14 +2,14 @@
 
 import Odoo from '../utils/Odoo';
 import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
-import GoodsReceiptSession from '../entities/GoodsReceiptSession';
-import GoodsReceiptEntry from '../../src/entities/GoodsReceiptEntry';
-import Attachment from '../entities/Attachment';
-import { ImagePickerResponse } from 'react-native-image-picker';
+import GoodsReceiptList from '../entities/Lists/GoodsReceiptList';
+import GoodsReceiptEntry from '../../src/entities/Lists/GoodsReceiptEntry';
+import ListAttachment from '../entities/Lists/ListAttachment';
+import {ImagePickerResponse} from 'react-native-image-picker';
 import * as RNFS from 'react-native-fs';
 import * as mime from 'react-native-mime-types';
-import { randomId } from '../../src/utils/helpers';
-import { getRepository } from 'typeorm';
+import {lightRandomId} from '../../src/utils/helpers';
+import Database from '../utils/Database';
 
 export default class GoodsReceiptService {
     private static instance: GoodsReceiptService;
@@ -25,79 +25,94 @@ export default class GoodsReceiptService {
     }
 
     async getPurchaseOrdersPlannedTodays(): Promise<PurchaseOrder[]> {
-        if (this.purchaseOrdersPlannedToday == undefined) {
+        if (this.purchaseOrdersPlannedToday === undefined) {
             this.purchaseOrdersPlannedToday = await Odoo.getInstance().fetchPurchaseOrdersPlannedToday();
         }
 
         return this.purchaseOrdersPlannedToday;
     }
 
-    async attachementFromImagePicker(session: GoodsReceiptSession, response: ImagePickerResponse): Promise<Attachment> {
-        if (!response.uri) {
-            Promise.reject();
-        }
+    async attachementsFromImagePickerResponse(
+        list: GoodsReceiptList,
+        response: ImagePickerResponse,
+    ): Promise<ListAttachment[]> {
+        const attachments: ListAttachment[] = [];
 
-        const extension = response.type ? mime.extension(response.type) : 'jpeg';
-        const attachmentBasename = `${session.poName}-${randomId()}`;
-        const attachmentFilename = `${attachmentBasename}.${extension}`;
-        const attachmentShortFilepath = `${this.dataDirectoryRelativePathForSession(session)}/${attachmentFilename}`;
-        const attachmentFullFilepath = `${this.dataDirectoryAbsolutePathForSession(session)}/${attachmentFilename}`;
+        response.assets?.forEach(async asset => {
+            if (!asset.uri) {
+                Promise.reject();
+                return;
+            }
 
-        await RNFS.mkdir(this.dataDirectoryAbsolutePathForSession(session));
-        await RNFS.moveFile(response.uri, attachmentFullFilepath);
+            const extension = asset.type ? mime.extension(asset.type) : 'jpeg';
+            const attachmentBasename = `${list.purchaseOrderName}-${lightRandomId()}`;
+            const attachmentFilename = `${attachmentBasename}.${extension}`;
+            const attachmentShortFilepath = `${this.dataDirectoryRelativePathForList(list)}/${attachmentFilename}`;
+            const attachmentFullFilepath = `${this.dataDirectoryAbsolutePathForList(list)}/${attachmentFilename}`;
 
-        const attachment = new Attachment();
-        attachment.path = attachmentShortFilepath;
-        attachment.type = response.type;
-        attachment.name = attachmentFilename;
-        attachment.goodsReceiptSession = session;
+            await RNFS.mkdir(this.dataDirectoryAbsolutePathForList(list));
+            await RNFS.moveFile(asset.uri, attachmentFullFilepath);
 
-        return attachment;
+            const listAttachment = new ListAttachment();
+            listAttachment.path = attachmentShortFilepath;
+            listAttachment.type = asset.type;
+            listAttachment.name = attachmentFilename;
+            listAttachment.list = list;
+
+            attachments.push(listAttachment);
+        });
+
+        return attachments;
     }
 
-    async deleteSession(session: GoodsReceiptSession): Promise<void> {
-        const attachmentRepository = getRepository(Attachment);
-        const entryRepository = getRepository(GoodsReceiptEntry);
-        const sessionRepository = getRepository(GoodsReceiptSession);
+    async deleteList(list: GoodsReceiptList): Promise<void> {
+        const attachmentRepository = Database.sharedInstance().dataSource.getRepository(ListAttachment);
+        const entryRepository = Database.sharedInstance().dataSource.getRepository(GoodsReceiptEntry);
+        const listRepository = Database.sharedInstance().dataSource.getRepository(GoodsReceiptList);
 
-        await this.deleteAttachmentsFilesFromSession(session);
+        await this.deleteAttachmentsFilesFromList(list);
 
         const attachments = await attachmentRepository.find({
-            goodsReceiptSession: session,
+            where: {
+                list: {
+                    id: list.id!,
+                },
+            },
         });
         for (const attachement of attachments) {
             await attachmentRepository.remove(attachement);
         }
 
         const entries = await entryRepository.find({
-            goodsReceiptSession: session,
+            where: {
+                list: {
+                    id: list.id!,
+                },
+            },
         });
         for (const entry of entries) {
             await entryRepository.remove(entry);
         }
 
-        await sessionRepository.remove(session);
-
-        return;
+        await listRepository.remove(list);
     }
 
-    async deleteAttachmentsFilesFromSession(session: GoodsReceiptSession): Promise<void> {
-        for (const attachement of session.attachments ?? []) {
+    async deleteAttachmentsFilesFromList(list: GoodsReceiptList): Promise<void> {
+        for (const attachement of list.attachments ?? []) {
             if (attachement.path && (await RNFS.exists(attachement.path))) {
                 await RNFS.unlink(attachement.path);
             }
         }
-        if (await RNFS.exists(this.dataDirectoryAbsolutePathForSession(session))) {
-            await RNFS.unlink(this.dataDirectoryAbsolutePathForSession(session));
+        if (await RNFS.exists(this.dataDirectoryAbsolutePathForList(list))) {
+            await RNFS.unlink(this.dataDirectoryAbsolutePathForList(list));
         }
-        return;
     }
 
-    dataDirectoryAbsolutePathForSession(session: GoodsReceiptSession): string {
-        return `${RNFS.DocumentDirectoryPath}/${this.dataDirectoryRelativePathForSession(session)}`;
+    dataDirectoryAbsolutePathForList(list: GoodsReceiptList): string {
+        return `${RNFS.DocumentDirectoryPath}/${this.dataDirectoryRelativePathForList(list)}`;
     }
 
-    dataDirectoryRelativePathForSession(session: GoodsReceiptSession): string {
-        return `GoodsReceipts/${session.poName}`;
+    dataDirectoryRelativePathForList(list: GoodsReceiptList): string {
+        return `GoodsReceipts/${list.purchaseOrderName}`;
     }
 }

@@ -1,5 +1,6 @@
-import { Navigation, Options } from 'react-native-navigation';
+import {Navigation, Options} from 'react-native-navigation';
 import GoodsReceiptService from '../services/GoodsReceiptService';
+import Odoo from './Odoo';
 
 export function goToAuth(): void {
     Navigation.setRoot({
@@ -24,6 +25,8 @@ function loadBadges(): void {
 }
 
 export function goHome(): void {
+    Odoo.getInstance().fetchBarcodeNomenclature();
+
     Navigation.setDefaultOptions({
         bottomTab: {
             iconColor: 'black',
@@ -75,36 +78,18 @@ export function goHome(): void {
                     },
                     {
                         stack: {
-                            id: 'InventoryListTab',
+                            id: 'ListsListTab',
                             children: [
                                 {
                                     component: {
-                                        name: 'Inventory/List',
+                                        name: 'Lists/List',
                                     },
                                 },
                             ],
                             options: {
                                 bottomTab: {
-                                    text: 'Inventaires',
+                                    text: 'Listes',
                                     icon: require('../../assets/icons/clipboard-list-check-regular.png'),
-                                },
-                            },
-                        },
-                    },
-                    {
-                        stack: {
-                            id: 'GoodsReceiptTab',
-                            children: [
-                                {
-                                    component: {
-                                        name: 'GoodsReceipt/List',
-                                    },
-                                },
-                            ],
-                            options: {
-                                bottomTab: {
-                                    text: 'Réceptions',
-                                    icon: require('../../assets/icons/truck-loading-regular.png'),
                                 },
                             },
                         },
@@ -133,7 +118,6 @@ export function goHome(): void {
 }
 
 export function goToScreen(screen: string): void {
-    // Drawer.close('left');
     Navigation.setStackRoot('App', [
         {
             component: {

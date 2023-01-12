@@ -3,8 +3,8 @@
 import OdooApi from 'react-native-odoo-promise-based';
 import ProductProduct from '../entities/Odoo/ProductProduct';
 import ProductProductFactory from '../factories/Odoo/ProductProductFactory';
-import CookieManager from 'react-native-cookies';
-import { isInt, replaceStringAt, round } from './helpers';
+import CookieManager from '@react-native-cookies/cookies';
+import {isInt, replaceStringAt, round} from './helpers';
 import PurchaseOrder from '../entities/Odoo/PurchaseOrder';
 import PurchaseOrderFactory from '../factories/Odoo/PurchaseOrderFactory';
 import moment from 'moment';
@@ -69,67 +69,21 @@ export default class Odoo {
         });
     }
 
-    // async fetchBarcodeRules() {
-    //     await this.assertConnect();
-    //     var params = {
-
-    //     }
-
-    //     const response = await this.odooApi.search_read('barcode.rule', params);
-    //     if (response.success !== true) {
-    //         console.error(response);
-    //     }
-    //     // console.debug(response);
-    // }
-
-    // async fetchProductFromBarcodeBase(barcodeBase, barcodeRuleId) {
-    //     console.log("fetchProductFromBarcode");
-    //     const isConnected = await this.assertConnect();
-    //     if (isConnected !== true) {
-    //         console.error(odooApi);
-    //         throw new Error("Odoo is not connected");
-    //     }
-
-    //     var params = {
-    //         // ids: [1, 2, 3, 4, 5],
-    //         // domain: [['list_price', '>', '50'], ['list_price', '<', '65']],
-    //         domain: [['barcode_rule_id', '=', barcodeRuleId], ['barcode_base', '=', barcodeBase]],
-    //         fields: ['name', 'barcode', 'qty_available', 'lst_price', 'uom_id', 'weight_net', 'volume'],
-    //         // lst_price = prix de vente, standard_price = achat, uom_id = unité de vente, uom_po_id = unité d'achat
-    //         // order: 'name DESC',
-    //         limit: 1,
-    //         offset: 0,
-    //     }; //params
-
-    //     const response = await this.odooApi.search_read('product.product', params);
-    //     if (response.success !== true) {
-    //         console.error(response);
-    //     }
-    //     // console.debug(response);
-    //     if (response.data && response.data.length > 0) {
-    //         return new ProductProduct(response.data[0]);
-    //     }
-    //     return null;
-    // }
-
     resetApiAuthDetails(): void {
         this.isConnected = false;
         this.odooApi.sid = undefined;
         this.odooApi.cookie = undefined;
-        // eslint-disable-next-line @typescript-eslint/camelcase
         this.odooApi.session_id = undefined;
     }
 
     assertApiResponse(response: OdooApiResponse): void {
-        // console.debug('assertApiResponse()');
-        // console.debug(response);
-        CookieManager.get(Odoo.odooEndpoint).then(() => {
-            // console.debug('CookieManager.get => ', res);
-        });
-        if (response.success == true) {
+        //console.debug('assertApiResponse()');
+        //console.debug(response);
+        CookieManager.get(Odoo.odooEndpoint);
+        if (response.success) {
             return;
         }
-        if (response.error.code == 100) {
+        if (response.error.code === 100) {
             // "Odoo Session Expired"
             this.resetApiAuthDetails();
             console.error(JSON.stringify(response));
@@ -154,7 +108,7 @@ export default class Odoo {
             const rules = response.data as BarcodeRule[];
             for (const rule of rules) {
                 let regexString = rule.pattern;
-                regexString = regexString.replace(/[\{\}]/g, '');
+                regexString = regexString.replace(/[{}]/g, '');
                 regexString = regexString.replace(/[ND]/g, '.');
                 rule.regex = new RegExp(`^${regexString}$`);
             }
@@ -163,31 +117,32 @@ export default class Odoo {
     }
 
     static barcodeRuleForBarcode(barcode: string): BarcodeRule | undefined {
-        console.log(`barcode: ${barcode}`);
+        //console.debug(`barcode: ${barcode}`);
         const barcodeWoChecksum = barcode.slice(0, barcode.length - 1);
-        console.log(`barcode without checksum: ${barcodeWoChecksum}`);
-        let barcodeEncoding = 'ean13';
+        //console.debug(`barcode without checksum: ${barcodeWoChecksum}`);
+        let barcodeEncoding;
         switch (barcode.length) {
             case 8:
                 barcodeEncoding = 'ean8';
                 break;
             case 13:
+            default:
                 barcodeEncoding = 'ean13';
                 break;
         }
-        console.log(`barcode encoding: ${barcodeEncoding}`);
+        //console.debug(`barcode encoding: ${barcodeEncoding}`);
         for (const barcodeRule of Odoo.barcodeRules) {
-            console.log(`Trying barcode rule: ${barcodeRule.pattern}`);
+            //console.debug(`Trying barcode rule: ${barcodeRule.pattern}`);
             if (barcodeEncoding !== barcodeRule.encoding) {
                 // skip if not the same encoding rule
-                console.log(`+ encoding not matching`);
+                // console.log(`+ encoding not matching`);
                 continue;
             }
             if (barcodeRule.regex) {
-                console.log(`barcode regex: ${barcodeRule.regex}`);
-                if (null !== barcodeRule.regex.exec(barcodeWoChecksum)) {
+                //console.debug(`barcode regex: ${barcodeRule.regex}`);
+                if (barcodeRule.regex.exec(barcodeWoChecksum) !== null) {
                     // we have a match!
-                    console.debug(barcodeRule);
+                    //console.debug(barcodeRule);
                     return barcodeRule;
                 }
             }
@@ -198,7 +153,7 @@ export default class Odoo {
     static eanCheckDigit(s: string): string {
         let result = 0;
         for (let counter = s.length - 1; counter >= 0; counter--) {
-            result = result + parseInt(s.charAt(counter)) * (1 + 2 * (counter % 2));
+            result = result + parseInt(s.charAt(counter), 10) * (1 + 2 * (counter % 2));
         }
         return ((10 - (result % 10)) % 10).toString();
     }
@@ -224,12 +179,12 @@ export default class Odoo {
         if (!rule) {
             return parsedBarcode;
         }
-        if ('weight' !== rule.type && 'price' !== rule.type) {
+        if (rule.type !== 'weight' && rule.type !== 'price') {
             return parsedBarcode;
         }
-        const pattern = rule.pattern.replace(/[\{\}]/g, '');
+        const pattern = rule.pattern.replace(/[{}]/g, '');
         const unitsResult = new RegExp(/N+/g).exec(pattern);
-        if (null === unitsResult) {
+        if (unitsResult === null) {
             return parsedBarcode;
         }
         const unitsPositionStart = unitsResult?.index;
@@ -243,18 +198,18 @@ export default class Odoo {
         const decimalsResult = new RegExp(/D+/g).exec(pattern);
         let decimalsSize = 0;
         let decimals = '0';
-        if (null !== decimalsResult) {
+        if (decimalsResult !== null) {
             const decimalsPositionStart = decimalsResult?.index;
             decimalsSize = decimalsResult[0].length;
             decimals = barcode.slice(decimalsPositionStart, decimalsPositionStart + decimalsSize);
             baseBarcode = replaceStringAt(baseBarcode, decimalsPositionStart, '0'.repeat(decimalsSize));
         }
 
-        if ('weight' === rule.type) {
-            parsedBarcode.weight = parseInt(units) + parseInt(decimals) / Math.pow(10, decimalsSize);
+        if (rule.type === 'weight') {
+            parsedBarcode.weight = parseInt(units, 10) + parseInt(decimals, 10) / Math.pow(10, decimalsSize);
         }
-        if ('price' === rule.type) {
-            parsedBarcode.price = parseInt(units) + parseInt(decimals) / Math.pow(10, decimalsSize);
+        if (rule.type === 'price') {
+            parsedBarcode.price = parseInt(units, 10) + parseInt(decimals, 10) / Math.pow(10, decimalsSize);
         }
 
         // Recalculate the checksum digit for the base barcode
@@ -262,7 +217,7 @@ export default class Odoo {
         baseBarcode = replaceStringAt(baseBarcode, baseBarcode.length - 1, newChecksumDigit);
         parsedBarcode.base = baseBarcode;
 
-        console.debug(`parsedBarcode: ${JSON.stringify(parsedBarcode)}`);
+        //console.debug(`parsedBarcode: ${JSON.stringify(parsedBarcode)}`);
 
         return parsedBarcode;
     }
@@ -273,20 +228,8 @@ export default class Odoo {
         const params = {
             domain: [
                 ['state', '=', 'purchase'],
-                [
-                    'date_planned',
-                    '>=',
-                    moment()
-                        .startOf('day')
-                        .format(Dates.ODOO_DATETIME_FORMAT),
-                ],
-                [
-                    'date_planned',
-                    '<',
-                    moment()
-                        .endOf('day')
-                        .format(Dates.ODOO_DATETIME_FORMAT),
-                ],
+                ['date_planned', '>=', moment().startOf('day').format(Dates.ODOO_DATETIME_FORMAT)],
+                ['date_planned', '<', moment().endOf('day').format(Dates.ODOO_DATETIME_FORMAT)],
             ],
             fields: ['id', 'name', 'partner_id', 'date_order', 'date_planned'],
             offset: 0,
@@ -330,7 +273,7 @@ export default class Odoo {
     async fetchProductSupplierInfoFromProductTemplateIds(
         productTemplateIds: number[],
         partnerId: number,
-    ): Promise<{ [id: number]: string } | undefined> {
+    ): Promise<{[id: number]: string} | undefined> {
         await this.assertConnect();
 
         const params = {
@@ -345,7 +288,7 @@ export default class Odoo {
         const response = await this.odooApi.search_read('product.supplierinfo', params);
         this.assertApiResponse(response);
 
-        const mapSupplierCode: { [productId: number]: string } = {};
+        const mapSupplierCode: {[productId: number]: string} = {};
         if (response.data && response.data.length > 0) {
             response.data.forEach((entry: OdooApiProductSupplierInfo) => {
                 if (entry.product_tmpl_id) {
@@ -390,7 +333,7 @@ export default class Odoo {
 
         const response = await this.odooApi.search_read('purchase.order.line', params);
         this.assertApiResponse(response);
-        //console.log('fetchPurchaseOrderLinesForPurchaseOrder');
+        //console.debug('fetchPurchaseOrderLinesForPurchaseOrder');
         if (response.data && response.data.length > 0) {
             const purchaseOrderLines: PurchaseOrderLine[] = [];
             response.data.forEach((element: OdooApiPurchaseOrderLine) => {
@@ -406,7 +349,7 @@ export default class Odoo {
     }
 
     async fetchProductFromIds(ids: number[]): Promise<ProductProduct[] | undefined> {
-        // console.debug('[Odoo] fetchProductFromIds()');
+        //console.debug('[Odoo] fetchProductFromIds()');
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(this.odooApi);
@@ -418,15 +361,13 @@ export default class Odoo {
             fields: Odoo.FETCH_FIELDS_PRODUCT,
         }; //params
 
-        // console.debug('[Odoo] search_read(product.product) with params:');
-        // console.debug(params);
+        //console.debug('[Odoo] search_read(product.product) with params:');
+        //console.debug(params);
         const response = await this.odooApi.get('product.product', params);
         this.assertApiResponse(response);
         const products: ProductProduct[] = [];
         if (response.data && response.data.length > 0) {
             response.data.forEach((element: OdooApiProductProduct) => {
-                // console.log('Product');
-                // console.log(element);
                 products.push(ProductProductFactory.ProductProductFromResponse(element));
             });
             return products;
@@ -435,7 +376,7 @@ export default class Odoo {
     }
 
     async fetchProductFromBarcode(barcode: string): Promise<ProductProduct | null> {
-        // console.debug('[Odoo] fetchProductFromBarcode()');
+        //console.debug('[Odoo] fetchProductFromBarcode()');
         const isConnected = await this.assertConnect();
         if (isConnected !== true) {
             console.error(this.odooApi);
@@ -456,8 +397,8 @@ export default class Odoo {
             offset: 0,
         }; //params
 
-        // console.debug('[Odoo] search_read(product.product) with params:');
-        // console.debug(params);
+        //console.debug('[Odoo] search_read(product.product) with params:');
+        //console.debug(params);
         const response = await this.odooApi.search_read('product.product', params);
         this.assertApiResponse(response);
         if (response.data && response.data.length > 0) {
@@ -478,7 +419,7 @@ export default class Odoo {
     }
 
     async fetchImageForProductProduct(odooProduct: ProductProduct): Promise<string | null> {
-        // console.debug('fetchImageForProductProduct()');
+        //console.debug('fetchImageForProductProduct()');
         if ((await this.assertConnect()) !== true) {
             throw new Error('Odoo is not connected');
         }
@@ -497,32 +438,31 @@ export default class Odoo {
     }
 
     assertConnect = async (): Promise<boolean> => {
-        // console.debug('[Odoo] assertConnect()');
+        //console.debug('[Odoo] assertConnect()');
         return new Promise<boolean>((resolve, reject) => {
             if (!this.isConnected) {
-                // console.debug('[Odoo] not connected, connecting...');
+                //console.debug('[Odoo] not connected, connecting...');
                 this.odooApi
                     .connect()
                     .then(response => {
                         this.assertApiResponse(response);
                         if (response.data && isInt(response.data.uid) && response.data.uid > 0) {
-                            // console.debug('[Odoo] connection ok');
-                            // // console.debug(context.odooApi);
+                            //console.debug('[Odoo] connection ok');
                             this.isConnected = true;
                             resolve(true);
                         } else {
-                            // console.debug('[Odoo] connection ko');
+                            console.error('[Odoo] connection ko');
                             this.isConnected = false;
                             console.error(response);
                             reject(false);
                         }
                     })
                     .catch(reason => {
-                        // console.debug('[Odoo] odoo connect failed');
+                        console.error('[Odoo] odoo connect failed');
                         reject(reason);
                     });
             } else {
-                // console.debug('[Odoo] alreay connected');
+                //console.debug('[Odoo] already connected');
                 resolve(true);
             }
         }).catch(e => {

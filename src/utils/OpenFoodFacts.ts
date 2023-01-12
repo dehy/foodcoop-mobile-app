@@ -1,4 +1,7 @@
 import DeviceInfo from 'react-native-device-info';
+import {EcoScoreScore} from '../components/EcoScore';
+import {NovaGroupGroups} from '../components/NovaGroup';
+import {NutriScoreScore} from '../components/NutriScore';
 import AppLogger from './AppLogger';
 import Odoo from './Odoo';
 
@@ -10,11 +13,9 @@ interface OFFResponse {
 }
 
 export interface OFFProduct {
-    nutrition_grade_fr?: 'a' | 'b' | 'c' | 'd' | 'e';
-    nova_group?: 1 | 2 | 3 | 4;
-    categories_properties?: {
-        'agribalyse_food_code:en'?: string;
-    };
+    nutrition_grade_fr?: NutriScoreScore;
+    ecoscore_grade?: EcoScoreScore;
+    nova_group?: NovaGroupGroups;
 }
 
 export default class OpenFoodFacts {
@@ -23,7 +24,7 @@ export default class OpenFoodFacts {
     userAgent = `Supercoop - ${DeviceInfo.getSystemName()} - Version ${DeviceInfo.getVersion()} - www.supercoop.fr`;
 
     public static getInstance(): OpenFoodFacts {
-        if (OpenFoodFacts.instance == undefined) {
+        if (OpenFoodFacts.instance === undefined) {
             OpenFoodFacts.instance = new OpenFoodFacts();
         }
 
@@ -32,7 +33,7 @@ export default class OpenFoodFacts {
 
     async fetchFromBarcode(barcode: string): Promise<OFFProduct | null> {
         if (!Odoo.barcodeIsValid(barcode)) {
-            throw 'Invalid barcode provided';
+            throw new Error('Invalid barcode provided');
         }
         const options: RequestInit = {
             headers: {
@@ -40,11 +41,10 @@ export default class OpenFoodFacts {
                 'User-Agent': this.userAgent,
             },
         };
-        const parameters: { [key: string]: string | string[] } = {
+        const parameters: {[key: string]: string | string[]} = {
             fields: [
                 'nova_group',
-                'nutriscore_score',
-                'nutrition_grades_tags',
+                'ecoscore_grade',
                 'nutrition_grade_fr',
                 'ingredients_text_with_allergens_fr',
                 'categories_properties',
@@ -69,7 +69,7 @@ export default class OpenFoodFacts {
         const uri = `${this.base}/product/${barcode}.json?${parametersString}`;
         AppLogger.getLogger().debug(uri);
         const result = await fetch(uri, options);
-        const response = ((await result.json()) as unknown) as OFFResponse;
+        const response = (await result.json()) as unknown as OFFResponse;
         AppLogger.getLogger().debug(JSON.stringify(response));
 
         if (!response.product) {

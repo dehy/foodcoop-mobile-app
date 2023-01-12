@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import {MigrationInterface, QueryRunner} from 'typeorm';
 
 export class AddExpectedPackageQty1589031691422 implements MigrationInterface {
     name = 'AddExpectedPackageQty1589031691422';

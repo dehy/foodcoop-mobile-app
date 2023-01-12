@@ -1,13 +1,9 @@
 {
     "type": "sqlite",
     "database": "supercoop.sqlite",
-    "entities": [
-        "src/entities/*.ts"
-    ],
+    "entities": ["src/entities/**/*.ts"],
     "migrationsTableName": "migrations",
-    "migrations": [
-        "src/migrations/*.ts"
-    ],
+    "migrations": ["src/migrations/**/*.ts"],
     "cli": {
         "migrationsDir": "src/migrations"
     }

@@ -5,8 +5,8 @@
     "eslint.validate": [
         "javascript",
         "javascriptreact",
-        { "language": "typescript", "autoFix": true },
-        { "language": "typescriptreact", "autoFix": true }
+        {"language": "typescript", "autoFix": true},
+        {"language": "typescriptreact", "autoFix": true}
     ],
     "editor.formatOnSave": true,
     "[javascript]": {
@@ -23,5 +23,24 @@
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
-    }
+    },
+    "cSpell.words": [
+        "barcodes",
+        "Firstname",
+        "Initializing",
+        "KEYUTIL",
+        "luxon",
+        "Réceptionneur",
+        "RNFS",
+        "Selectionner",
+        "soldout",
+        "Supercoopain",
+        "supplierinfo",
+        "tmpl",
+        "unhighlight",
+        "unparse",
+        "uoms",
+        "UPCA",
+        "varchar"
+    ]
 }
