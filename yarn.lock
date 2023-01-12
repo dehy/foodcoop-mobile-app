@@ -8157,10 +8157,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^2.1.1":
-  version: 2.3.1
-  resolution: "luxon@npm:2.3.1"
-  checksum: ce5eec873a0172a0956618531e28010e8d8319a8b3a836b893d0f92239413a1fc5f77841ca24988e27bd61e8b2748e160e9dfcb13e92d7f031c1e31ad1c8ae91
+"luxon@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "luxon@npm:2.5.2"
+  checksum: d8b671ffd2ff0b438af862ac11082a81b3aedd9f8b6a4ca636f944224f8dd381125cd4d274ca0a8aedcaf2cfca0fc2ca96fe4cc1b16a28b7af701afb95c0bff8
   languageName: node
   linkType: hard
 
@@ -11654,7 +11654,7 @@ __metadata:
     js-base64: ^3.6.0
     jsrsasign: ^10.0.0
     jwt-decode: ^3.0.0
-    luxon: ^2.1.1
+    luxon: ^2.5.2
     metro-react-native-babel-preset: ^0.67.0
     moment: ^2.24.0
     papaparse: ^5.0.0
