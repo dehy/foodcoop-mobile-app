@@ -116,7 +116,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             .dataSource.getRepository(GoodsReceiptEntry)
             .findOneOrFail({
                 where: {
-                    productBarcode: product.barcode,
+                    productId: product.id,
                     list: {
                         id: this.props.list.id!,
                     },
@@ -125,7 +125,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
             })
             .then((entry: GoodsReceiptEntry) => {
                 AppLogger.getLogger().debug(
-                    `GoodsReceipt Entry found for Product '${entry.productBarcode}': ${entry.productName} (${
+                    `GoodsReceipt Entry found for Product #'${entry.productId}': ${entry.productName} (${
                         entry.expectedProductQty
                     } ${ProductProduct.quantityUnitAsString(entry.expectedProductUom)}) for session #${
                         entry.list ? entry.list.id : 'inconnue'
