@@ -428,27 +428,30 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
                             }
                             return '';
                         }}
-                        renderItem={({item}): React.ReactElement => (
-                            <ListItem
-                                containerStyle={{backgroundColor: this.itemBackgroundColor(item)}}
-                                onPress={(): void => {
-                                    this.openGoodsReceiptScan(item.productId);
-                                }}
-                                topDivider>
-                                <ListItem.Content>
-                                    <ListItem.Title numberOfLines={1} ellipsizeMode={'middle'}>
-                                        {item.productName}
-                                    </ListItem.Title>
-                                    <ListItem.Subtitle style={item.productBarcode ? undefined : {fontStyle: 'italic'}}>
-                                        {item.productBarcode ? item.productBarcode.toString() : 'Pas de code barre'}
-                                    </ListItem.Subtitle>
-                                </ListItem.Content>
-                                <ListItem.Content right>
-                                    {this.renderEntryQty(item)}
-                                    {this.renderPackageQty(item)}
-                                </ListItem.Content>
-                            </ListItem>
-                        )}
+                        renderItem={({item}): React.ReactElement => {
+                            const barcode = item.productBarcode === '0.0' ? undefined : item.productBarcode;
+                            return (
+                                <ListItem
+                                    containerStyle={{backgroundColor: this.itemBackgroundColor(item)}}
+                                    onPress={(): void => {
+                                        this.openGoodsReceiptScan(item.productId);
+                                    }}
+                                    topDivider>
+                                    <ListItem.Content>
+                                        <ListItem.Title numberOfLines={1} ellipsizeMode={'middle'}>
+                                            {item.productName}
+                                        </ListItem.Title>
+                                        <ListItem.Subtitle style={barcode ? undefined : {fontStyle: 'italic'}}>
+                                            {barcode ?? 'Pas de code barre'}
+                                        </ListItem.Subtitle>
+                                    </ListItem.Content>
+                                    <ListItem.Content right>
+                                        {this.renderEntryQty(item)}
+                                        {this.renderPackageQty(item)}
+                                    </ListItem.Content>
+                                </ListItem>
+                            );
+                        }}
                         ListHeaderComponent={this.renderHeader}
                         ListFooterComponent={this.renderFooter}
                     />
