@@ -2,11 +2,12 @@ import {KEYUTIL, KJUR} from 'jsrsasign';
 import JwtDecode from 'jwt-decode';
 import {AuthConfiguration, authorize, AuthorizeResult, logout, refresh, RefreshResult} from 'react-native-app-auth';
 import * as Sentry from '@sentry/react-native';
-import RNSecureStorage, {ACCESSIBLE} from 'rn-secure-storage';
+import EncryptedStorage from 'react-native-encrypted-storage';
 import {Button, ButtonProps} from 'react-native';
 import React, {Component, ReactElement} from 'react';
 import Mailjet from './Mailjet';
 import Config from 'react-native-config';
+import Odoo from './Odoo';
 
 interface User {
     email: string;
@@ -90,7 +91,6 @@ export default class SupercoopSignIn {
     }
 
     setCurrentUser(user?: User | undefined): void {
-        console.debug(user);
         this.currentUser = user;
         if (undefined !== user) {
             Sentry.setUser({email: user.email});
@@ -104,6 +104,7 @@ export default class SupercoopSignIn {
     signInSilently = async (): Promise<void> => {
         const {refreshToken, idToken} = await this.getTokensFromSecureStorage();
         if (!idToken) {
+            Odoo.getInstance().setToken(undefined);
             return;
         }
         let user = await this.getUserFromToken(idToken);
@@ -112,22 +113,27 @@ export default class SupercoopSignIn {
             user = await this.getUserFromToken(result.idToken);
             this.saveTokensFromResult(result);
             this.setCurrentUser(user);
+            Odoo.getInstance().setToken(result.idToken);
             return;
         }
         this.setCurrentUser(user);
+        Odoo.getInstance().setToken(idToken);
     };
 
     signIn = async (): Promise<void> => {
         const result = await authorize(this.config);
-        console.debug(result);
+        console.debug('SignIn result: ', result);
         const user = await this.getUserFromToken(result.idToken);
         this.saveTokensFromResult(result);
         this.setCurrentUser(user);
+        Odoo.getInstance().setToken(result.idToken);
+        return;
     };
 
     signOut = async (): Promise<void> => {
         const idToken = (await this.getTokensFromSecureStorage()).idToken;
         await this.removeTokensFromSecureStorage();
+        Odoo.getInstance().setToken(undefined);
         this.setCurrentUser();
         const issuer = Config.OPENID_CONNECT_ISSUER!;
         const clientId = Config.OPENID_CONNECT_CLIENT_ID!;
@@ -146,14 +152,11 @@ export default class SupercoopSignIn {
     };
 
     async idTokenIsValid(token: string): Promise<boolean> {
-        if (undefined === Config.OPENID_CONNECT_ISSUER) {
-            return false;
-        }
         await this.fetchJwks();
         for (const pem of this.PEMs) {
             const isValid = KJUR.jws.JWS.verifyJWT(token, pem, {
                 alg: ['RS256'],
-                iss: [Config.OPENID_CONNECT_ISSUER],
+                iss: [Config.OPENID_CONNECT_ISSUER!],
             });
             if (isValid === true) {
                 return true;
@@ -173,23 +176,23 @@ export default class SupercoopSignIn {
 
     private async saveTokensFromResult(result: AuthorizeResult | RefreshResult): Promise<void> {
         if (result.refreshToken) {
-            await RNSecureStorage.set('refreshToken', result.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+            await EncryptedStorage.setItem('refreshToken', result.refreshToken);
         } else {
-            await RNSecureStorage.remove('refreshToken');
+            await EncryptedStorage.removeItem('refreshToken');
         }
-        await RNSecureStorage.set('idToken', result.idToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+        await EncryptedStorage.setItem('idToken', result.idToken);
     }
 
     private async getTokensFromSecureStorage(): Promise<{refreshToken: string | null; idToken: string | null}> {
-        const refreshToken = await RNSecureStorage.get('refreshToken');
-        const idToken = await RNSecureStorage.get('idToken');
+        const refreshToken = await EncryptedStorage.getItem('refreshToken');
+        const idToken = await EncryptedStorage.getItem('idToken');
 
         return {refreshToken, idToken};
     }
 
     private async removeTokensFromSecureStorage(): Promise<void> {
-        await RNSecureStorage.remove('refreshToken');
-        await RNSecureStorage.remove('idToken');
+        await EncryptedStorage.removeItem('refreshToken');
+        await EncryptedStorage.removeItem('idToken');
     }
 }
 

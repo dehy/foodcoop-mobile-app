@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import CodeScanner from '../../CodeScanner';
+import CodeScanner from '../../CodeScanner/CodeScanner';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {Divider} from '@rneui/base';
@@ -93,7 +93,7 @@ export default class ListsLabelScan extends React.Component<Props, State> {
         return (
             <SafeAreaView style={styles.container}>
                 <CodeScanner
-                    extraInfoPanel={(product): ReactNode => {
+                    infoPanel={(product): ReactNode => {
                         return this.renderAlert(product);
                     }}
                     onProductFound={this.saveEntry}

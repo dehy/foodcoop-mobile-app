@@ -11,21 +11,6 @@ import {
     Alert,
 } from 'react-native';
 import DialogInput from 'react-native-dialog-input';
-import {
-    RNCamera,
-    Face,
-    Barcode,
-    TrackedTextFeature,
-    Point,
-    RecordOptions,
-    FlashMode,
-    WhiteBalance,
-    AutoFocus,
-    CameraType,
-    BarCodeType,
-    Size,
-    BarcodeType,
-} from 'react-native-camera';
 import BarcodeMask from 'react-native-barcode-mask';
 import Sound from 'react-native-sound';
 import KeepAwake from '@sayem314/react-native-keep-awake';

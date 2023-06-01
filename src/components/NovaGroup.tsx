@@ -16,20 +16,20 @@ interface Props extends SvgProps {
     group: NovaGroupGroups;
 }
 
-export default class NovaGroup extends React.Component<Props> {
-    render(): React.ReactNode {
-        console.debug('NovaGroup: ' + this.props.group);
-        switch (this.props.group) {
-            case NovaGroupGroups.one:
-                return <NovaGroup1 width={this.props.width} height={this.props.height} />;
-            case NovaGroupGroups.two:
-                return <NovaGroup2 width={this.props.width} height={this.props.height} />;
-            case NovaGroupGroups.three:
-                return <NovaGroup3 width={this.props.width} height={this.props.height} />;
-            case NovaGroupGroups.four:
-                return <NovaGroup4 width={this.props.width} height={this.props.height} />;
-            default:
-                return null;
+const NovaGroup = ({group, width, height}: Props) => {
+    switch (group) {
+        case NovaGroupGroups.one:
+            return <NovaGroup1 width={width} height={height} />;
+        case NovaGroupGroups.two:
+            return <NovaGroup2 width={width} height={height} />;
+        case NovaGroupGroups.three:
+            return <NovaGroup3 width={width} height={height} />;
+        case NovaGroupGroups.four:
+            return <NovaGroup4 width={width} height={height} />;
+        default:
+            return null;
         }
     }
-}
+};
+
+export default NovaGroup;

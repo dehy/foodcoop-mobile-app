@@ -1,5 +1,6 @@
 'use strict';
 
+import {OdooApiPurchaseOrderLine} from 'react-native-odoo-jwt';
 import PurchaseOrderLine from '../../entities/Odoo/PurchaseOrderLine';
 
 export default class PurchaseOrderLineFactory {

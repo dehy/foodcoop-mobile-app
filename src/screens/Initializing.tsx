@@ -3,6 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import {goHome, goToAuth} from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 import Database from '../utils/Database';
+import Odoo from '../utils/Odoo';
 
 export interface Props {
     componentId: string;

@@ -417,7 +417,7 @@ export default class ListsGoodsReceiptShow extends React.Component<Props, State>
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{height: '100%'}}>
-                <ThemeProvider theme={this.theme}>
+                <ThemeProvider>
                     <FlatList
                         keyboardShouldPersistTaps="always"
                         style={{backgroundColor: 'white', height: '100%'}}

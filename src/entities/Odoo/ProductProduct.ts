@@ -1,6 +1,7 @@
 'use strict';
 
 import {isFloat} from '../../utils/helpers';
+import {OFFProduct} from '../../utils/OpenFoodFacts';
 
 export enum UnitOfMeasurement {
     unit = 1,
@@ -19,6 +20,8 @@ export default class ProductProduct {
     public lstPrice?: number;
     public weightNet?: number;
     public volume?: number;
+
+    public openFoodFacts?: OFFProduct | null;
 
     static imageFromOdooBase64(imageBase64: string): string | undefined {
         // https://stackoverflow.com/a/50111377/2287525

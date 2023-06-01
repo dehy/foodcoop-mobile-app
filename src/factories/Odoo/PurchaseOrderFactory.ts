@@ -1,6 +1,7 @@
 'use strict';
 
 import moment from 'moment';
+import {OdooApiPurchaseOrder} from 'react-native-odoo-jwt';
 import PurchaseOrder from '../../entities/Odoo/PurchaseOrder';
 import Dates from '../../utils/Dates';
 

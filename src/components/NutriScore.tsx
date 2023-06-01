@@ -18,22 +18,22 @@ interface Props extends SvgProps {
     score: NutriScoreScore;
 }
 
-export default class NutriScore extends React.Component<Props> {
-    render(): React.ReactNode {
-        console.debug('NutriScore: ' + this.props.score);
-        switch (this.props.score) {
-            case NutriScoreScore.a:
-                return <NutriScoreA width={this.props.width} height={this.props.height} />;
-            case NutriScoreScore.b:
-                return <NutriScoreB width={this.props.width} height={this.props.height} />;
-            case NutriScoreScore.c:
-                return <NutriScoreC width={this.props.width} height={this.props.height} />;
-            case NutriScoreScore.d:
-                return <NutriScoreD width={this.props.width} height={this.props.height} />;
-            case NutriScoreScore.e:
-                return <NutriScoreE width={this.props.width} height={this.props.height} />;
-            default:
-                return null;
+const NutriScore = ({score, width, height}: Props) => {
+    switch (score) {
+        case NutriScoreScore.a:
+            return <NutriScoreA width={width} height={height} preserveAspectRatio={'XminYmin meet'} />;
+        case NutriScoreScore.b:
+            return <NutriScoreB width={width} height={height} preserveAspectRatio={'XminYmin meet'} />;
+        case NutriScoreScore.c:
+            return <NutriScoreC width={width} height={height} preserveAspectRatio={'XminYmin meet'} />;
+        case NutriScoreScore.d:
+            return <NutriScoreD width={width} height={height} preserveAspectRatio={'XminYmin meet'} />;
+        case NutriScoreScore.e:
+            return <NutriScoreE width={width} height={height} preserveAspectRatio={'XminYmin meet'} />;
+        default:
+            return null;
         }
     }
-}
+};
+
+export default NutriScore;

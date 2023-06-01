@@ -1,5 +1,6 @@
 'use strict';
 
+import {OdooApiProductProduct} from 'react-native-odoo-jwt';
 import ProductProduct from '../../entities/Odoo/ProductProduct';
 import {round} from '../../utils/helpers';
 
@@ -12,7 +13,7 @@ export default class ProductProductFactory {
         }
         product.barcode = response.barcode;
         product.name = response.name;
-        product.image = response.image != null ? response.image : undefined;
+        product.image = response.image ?? null;
         product.qtyAvailable = round(response.qty_available, 3);
         product.uomId = response.uom_id && response.uom_id[0];
         product.lstPrice = response.lst_price;

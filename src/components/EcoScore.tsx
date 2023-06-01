@@ -19,23 +19,22 @@ interface Props extends SvgProps {
     score: EcoScoreScore;
 }
 
-export default class EcoScore extends React.Component<Props> {
-    render(): React.ReactNode {
-        console.debug('EcoScore: ' + this.props.score);
-        switch (this.props.score) {
-            case EcoScoreScore.a:
-                return <EcoScoreA width={this.props.width} height={this.props.height} />;
-            case EcoScoreScore.b:
-                return <EcoScoreB width={this.props.width} height={this.props.height} />;
-            case EcoScoreScore.c:
-                return <EcoScoreC width={this.props.width} height={this.props.height} />;
-            case EcoScoreScore.d:
-                return <EcoScoreD width={this.props.width} height={this.props.height} />;
-            case EcoScoreScore.e:
-                return <EcoScoreE width={this.props.width} height={this.props.height} />;
-            case EcoScoreScore.unknown:
-            default:
-                return null;
-        }
+const EcoScore = ({score, width, height}: Props) => {
+    switch (score) {
+        case EcoScoreScore.a:
+            return <EcoScoreA width={width} height={height} />;
+        case EcoScoreScore.b:
+            return <EcoScoreB width={width} height={height} />;
+        case EcoScoreScore.c:
+            return <EcoScoreC width={width} height={height} />;
+        case EcoScoreScore.d:
+            return <EcoScoreD width={width} height={height} />;
+        case EcoScoreScore.e:
+            return <EcoScoreE width={width} height={height} />;
+        case EcoScoreScore.unknown:
+        default:
+            return null;
     }
-}
+};
+
+export default EcoScore;

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Image, Platform, SafeAreaView, Text, TextInput, View, Alert} from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
-import CodeScanner from '../../CodeScanner';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import Odoo from '../../../utils/Odoo';
@@ -13,6 +12,7 @@ import {toNumber, displayNumber, isFloat} from '../../../utils/helpers';
 import {Button, Icon, Input, ListItem, ThemeProvider} from '@rneui/base';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Database from '../../../utils/Database';
+import CodeScanner from '../../CodeScanner/CodeScanner';
 
 interface Props {
     componentId: string;
@@ -49,7 +49,6 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
         },
     };
 
-    scanner?: CodeScanner;
     receivedQuantityInput?: TextInput;
     receivedPackageQtyInput?: TextInput;
     receivedProductQtyPackageInput?: TextInput;
@@ -497,11 +496,11 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
     renderCamera(): React.ReactNode {
         return (
             <CodeScanner
-                ref={(ref: CodeScanner): void => {
-                    this.scanner = ref !== null ? ref : undefined;
-                }}
-                showInfoPanel={false}
+                displayCamera={true}
                 onProductFound={(product): void => {
+                    if (!product) {
+                        return;
+                    }
                     this.loadEntryFromProduct(product);
                 }}
             />
@@ -511,7 +510,7 @@ export default class ListsGoodsReceiptScan extends React.Component<Props, State>
     render(): React.ReactNode {
         return (
             <SafeAreaView style={{height: '100%'}}>
-                <ThemeProvider theme={this.theme}>
+                <ThemeProvider>
                     {this.state.goodsReceiptEntry || this.props.preselectedProductId
                         ? this.renderEntry()
                         : this.renderCamera()}

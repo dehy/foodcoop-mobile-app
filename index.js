@@ -20,6 +20,7 @@ import {Settings} from 'luxon';
 import * as Sentry from '@sentry/react-native';
 import Config from 'react-native-config';
 import 'reflect-metadata';
+import 'react-native-reanimated';
 
 Sentry.init({
     dsn: Config.SENTRY_DSN,
