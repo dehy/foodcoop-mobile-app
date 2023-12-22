@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: c-hive/gha-yarn-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
       - name: Install JS dependencies
         run: yarn install
       - name: Linting
