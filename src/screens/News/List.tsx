@@ -34,7 +34,7 @@ export default class NewsList extends React.Component<Props, State> {
     }
 
     loadData(): void {
-        fetch(Config.NEWSFEED_URL)
+        fetch(Config.NEWSFEED_URL!)
             .then(response => response.text())
             .then(responseData => rssParser.parse(responseData))
             .then(rss => {

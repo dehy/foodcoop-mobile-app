@@ -18,6 +18,7 @@ interface EntriesCountList {
 
 interface Props {
     componentId: string;
+    componentName: string;
 }
 interface State {
     lists: BaseList[];

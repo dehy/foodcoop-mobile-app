@@ -43,7 +43,7 @@ export default class Odoo {
     ];
 
     private static instance: Odoo;
-    private static odooEndpoint = Config.ODOO_ENDPOINT;
+    private static odooEndpoint = Config.ODOO_ENDPOINT!;
     private static barcodeRules: BarcodeRule[] = [];
     private isConnected: boolean;
     private odooApi: OdooApi;

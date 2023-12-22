@@ -34,9 +34,9 @@ export default class SupercoopSignIn {
     private PEMs: string[] = [];
 
     config: AuthConfiguration = {
-        issuer: Config.OPENID_CONNECT_ISSUER,
-        clientId: Config.OPENID_CONNECT_CLIENT_ID,
-        redirectUrl: Config.OPENID_CONNECT_REDIRECT_URL,
+        issuer: Config.OPENID_CONNECT_ISSUER!,
+        clientId: Config.OPENID_CONNECT_CLIENT_ID!,
+        redirectUrl: Config.OPENID_CONNECT_REDIRECT_URL!,
         scopes: ['openid', 'profile', 'email'],
         usePKCE: true,
         useNonce: true,
@@ -123,15 +123,14 @@ export default class SupercoopSignIn {
         const user = await this.getUserFromToken(result.idToken);
         this.saveTokensFromResult(result);
         this.setCurrentUser(user);
-        return;
     };
 
     signOut = async (): Promise<void> => {
         const idToken = (await this.getTokensFromSecureStorage()).idToken;
         await this.removeTokensFromSecureStorage();
         this.setCurrentUser();
-        const issuer = Config.OPENID_CONNECT_ISSUER;
-        const clientId = Config.OPENID_CONNECT_CLIENT_ID;
+        const issuer = Config.OPENID_CONNECT_ISSUER!;
+        const clientId = Config.OPENID_CONNECT_CLIENT_ID!;
         if (idToken !== null) {
             await logout(
                 {
@@ -140,13 +139,16 @@ export default class SupercoopSignIn {
                 },
                 {
                     idToken,
-                    postLogoutRedirectUrl: Config.OPENID_CONNECT_REDIRECT_URL,
+                    postLogoutRedirectUrl: Config.OPENID_CONNECT_REDIRECT_URL!,
                 },
             );
         }
     };
 
     async idTokenIsValid(token: string): Promise<boolean> {
+        if (undefined === Config.OPENID_CONNECT_ISSUER) {
+            return false;
+        }
         await this.fetchJwks();
         for (const pem of this.PEMs) {
             const isValid = KJUR.jws.JWS.verifyJWT(token, pem, {
