@@ -102,7 +102,7 @@ export default class Scanner extends React.Component<Props, State> {
 
     renderNutriScore(score?: NutriScoreScore): React.ReactNode {
         let nutriScore;
-        if (undefined !== score) {
+        if (score && Object.values(NutriScoreScore).includes(score)) {
             nutriScore = <NutriScore score={score} height={40} />;
         } else {
             nutriScore = (

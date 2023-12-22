@@ -23,8 +23,6 @@ export default class EcoScore extends React.Component<Props> {
     render(): React.ReactNode {
         console.debug('EcoScore: ' + this.props.score);
         switch (this.props.score) {
-            case EcoScoreScore.unknown:
-                return null;
             case EcoScoreScore.a:
                 return <EcoScoreA width={this.props.width} height={this.props.height} />;
             case EcoScoreScore.b:
@@ -35,6 +33,9 @@ export default class EcoScore extends React.Component<Props> {
                 return <EcoScoreD width={this.props.width} height={this.props.height} />;
             case EcoScoreScore.e:
                 return <EcoScoreE width={this.props.width} height={this.props.height} />;
+            case EcoScoreScore.unknown:
+            default:
+                return null;
         }
     }
 }

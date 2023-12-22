@@ -32,6 +32,8 @@ export default class NutriScore extends React.Component<Props> {
                 return <NutriScoreD width={this.props.width} height={this.props.height} />;
             case NutriScoreScore.e:
                 return <NutriScoreE width={this.props.width} height={this.props.height} />;
+            default:
+                return null;
         }
     }
 }
