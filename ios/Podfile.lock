@@ -423,7 +423,7 @@ PODS:
   - Sentry (7.11.0):
     - Sentry/Core (= 7.11.0)
   - Sentry/Core (7.11.0)
-  - SocketRocket (0.6.0)
+  - SocketRocket (0.6.1)
   - SSZipArchive (2.2.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -699,11 +699,11 @@ SPEC CHECKSUMS:
   RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
   RNZipArchive: 9e6af1bebc9c7ddb42893bc4e70804321227c3ec
   Sentry: 0c5cd63d714187b4a39c331c1f0eb04ba7868341
-  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: c4d61225a466f250c35c1ee78d2d0b3d41fe661c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c85fc9b1a8ac58f4f384ad25d9f84bf1db8c0180
+PODFILE CHECKSUM: 932adab4b1d98edac447a10aba24d86c8b5d8ae0
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1
