@@ -1,17 +1,17 @@
 name: ESLint
 
 on:
-    push:
-    pull_request:
+  push:
+  pull_request:
 
 jobs:
-    eslint:
-        name: eslint
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: c-hive/gha-yarn-cache@v2
-            - name: Install JS dependencies
-              run: yarn install
-            - name: Linting
-              run: yarn lint
+  eslint:
+    name: eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: c-hive/gha-yarn-cache@v2
+      - name: Install JS dependencies
+        run: yarn install
+      - name: Linting
+        run: yarn lint
