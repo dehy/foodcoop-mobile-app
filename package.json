@@ -77,7 +77,7 @@
         "rn-secure-storage": "^2.0.6",
         "sha.js": "^2.4.11",
         "ts-money": "^0.4.6",
-        "typeorm": "^0.3.11",
+        "typeorm": "^0.3.18",
         "url": "^0.11.0"
     },
     "devDependencies": {
