@@ -1,7 +1,6 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {Alert, SafeAreaView, StyleSheet, Text, TextInput, View} from 'react-native';
-import {Barcode} from 'react-native-camera';
-import CodeScanner from '../../CodeScanner';
+import CodeScanner from '../../CodeScanner/CodeScanner';
 import {Navigation, Options} from 'react-native-navigation';
 import {defaultScreenOptions} from '../../../utils/navigation';
 import {Button, Divider} from '@rneui/base';
@@ -9,7 +8,6 @@ import ProductProduct, {UnitOfMeasurement} from '../../../entities/Odoo/ProductP
 import {isInt} from '../../../utils/helpers';
 import InventoryEntry from '../../../entities/Lists/InventoryEntry';
 import InventoryList from '../../../entities/Lists/InventoryList';
-import {DateTime} from 'luxon';
 import Database from '../../../utils/Database';
 
 export interface Props {
@@ -23,7 +21,7 @@ enum SaveMode {
 }
 
 interface State {
-    barcode?: Barcode;
+    barcode?: string;
     saveMode: SaveMode;
 }
 
@@ -36,10 +34,11 @@ const styles = StyleSheet.create({
     },
 });
 
+const [product, setProduct] = useState<ProductProduct>();
+
 export default class ListsInventoryScan extends React.Component<Props, State> {
     static screenName = 'Lists/Inventory/Scan';
 
-    codeScanner?: CodeScanner;
     articleQuantityValue?: string;
 
     constructor(props: Props) {
@@ -154,7 +153,7 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
             .dataSource.getRepository(InventoryEntry)
             .save(newEntry)
             .then(() => {
-                this.codeScanner?.reset();
+                //this.codeScanner?.reset();
                 this.setState({
                     saveMode: SaveMode.replace,
                 });
@@ -214,14 +213,17 @@ export default class ListsInventoryScan extends React.Component<Props, State> {
         return (
             <SafeAreaView style={styles.container}>
                 <CodeScanner
-                    ref={(ref: CodeScanner): void => {
-                        this.codeScanner = ref !== null ? ref : undefined;
+                    displayCamera={true}
+                    onProductFound={(product?: ProductProduct): void => {
+                        setProduct(product);
+                        if (product) {
+                            this.checkForDuplicate(product);
+                        }
                     }}
-                    onProductFound={(product: ProductProduct): void => {
-                        this.checkForDuplicate(product);
-                    }}
-                    extraInfoPanel={(product): ReactNode => {
-                        return this.renderInventoryInput(product);
+                    extraInfoPanel={(): ReactNode => {
+                        if (product) {
+                            return this.renderInventoryInput(product);
+                        }
                     }}
                 />
             </SafeAreaView>

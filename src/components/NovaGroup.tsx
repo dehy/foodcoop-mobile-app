@@ -28,7 +28,6 @@ const NovaGroup = ({group, width, height}: Props) => {
             return <NovaGroup4 width={width} height={height} />;
         default:
             return null;
-        }
     }
 };
 

@@ -4,7 +4,7 @@ import {AuthConfiguration, authorize, AuthorizeResult, logout, refresh, RefreshR
 import * as Sentry from '@sentry/react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {Button, ButtonProps} from 'react-native';
-import React, {Component, ReactElement} from 'react';
+import React from 'react';
 import Mailjet from './Mailjet';
 import Config from 'react-native-config';
 import Odoo from './Odoo';
@@ -196,8 +196,6 @@ export default class SupercoopSignIn {
     }
 }
 
-export class SupercoopSignInButton extends Component<ButtonProps, {}> {
-    render(): ReactElement {
-        return <Button title={this.props.title} onPress={this.props.onPress} disabled={this.props.disabled} />;
-    }
+export const SupercoopSignInButton = (props: ButtonProps) => {
+    return <Button title={this.props.title} onPress={this.props.onPress} disabled={this.props.disabled} />;
 }

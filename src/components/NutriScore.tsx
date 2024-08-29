@@ -32,7 +32,6 @@ const NutriScore = ({score, width, height}: Props) => {
             return <NutriScoreE width={width} height={height} preserveAspectRatio={'XminYmin meet'} />;
         default:
             return null;
-        }
     }
 };
 

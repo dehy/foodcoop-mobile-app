@@ -1,14 +1,5 @@
 'use strict';
 
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    TableInheritance,
-    UpdateDateColumn,
-} from 'typeorm';
 import {InventoryListExtraData} from './InventoryList';
 import ListAttachment from './ListAttachment';
 import BaseEntry from './BaseEntry';
@@ -24,8 +15,6 @@ import {GoodsReceiptListExtraData} from './GoodsReceiptList';
 //     [ListType.other, 'ellipsis-h'],
 // ]);
 
-@Entity('lists')
-@TableInheritance({column: {type: 'varchar', name: 'type'}})
 export default abstract class BaseList {
     public static icon = 'clipboard-list';
     public static label = 'Liste';
@@ -40,19 +29,14 @@ export default abstract class BaseList {
         return list.label;
     }
 
-    @PrimaryGeneratedColumn()
     public id?: number | null = null; // null est un workaround pour un bug typeorm
 
-    @Column('text')
+    public type!: string;
+
     public name?: string;
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
     comment?: string;
 
-    @CreateDateColumn({type: 'datetime'})
     public _createdAt?: Date;
 
     get createdAt(): DateTime | undefined {
@@ -63,7 +47,6 @@ export default abstract class BaseList {
         this._createdAt = date ? date.toJSDate() : undefined;
     }
 
-    @UpdateDateColumn({type: 'datetime'})
     public _lastModifiedAt?: Date;
 
     get lastModifiedAt(): DateTime | undefined {
@@ -74,10 +57,6 @@ export default abstract class BaseList {
         this._lastModifiedAt = date ? date.toJSDate() : undefined;
     }
 
-    @Column({
-        type: 'datetime',
-        nullable: true,
-    })
     public _lastSentAt?: Date;
 
     get lastSentAt(): DateTime | undefined {
@@ -88,21 +67,10 @@ export default abstract class BaseList {
         this._lastSentAt = date ? date.toJSDate() : undefined;
     }
 
-    @OneToMany(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type => ListAttachment,
-        attachment => attachment.list,
-    )
     attachments?: ListAttachment[];
 
-    @OneToMany(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type => BaseEntry,
-        entry => entry.list,
-    )
     entries?: BaseEntry[];
 
-    @Column('simple-json')
     extraData: InventoryListExtraData | GoodsReceiptListExtraData | {};
 
     constructor() {

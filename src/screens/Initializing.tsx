@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {goHome, goToAuth} from '../utils/navigation';
 import SupercoopSignIn from '../utils/SupercoopSignIn';
 import Database from '../utils/Database';
-import Odoo from '../utils/Odoo';
 
 export interface Props {
     componentId: string;
@@ -41,23 +40,13 @@ const welcomeMessages = [
     'Dans une galaxie très très lointaine...',
 ];
 
-export default class Initializing extends React.Component<Props> {
-    static screenName = 'Initializing';
-
-    constructor(props: Props) {
-        console.log(props);
-        super(props);
-        this.state = {
-            loggedUser: null,
-        };
-    }
-
-    componentDidMount(): void {
+export const Initializing = () => {
+    useEffect(() => {
         Database.sharedInstance(); // Init database
-        this.signInSilently();
-    }
+        signInSilently();
+      }, []);
 
-    signInSilently(): void {
+    const signInSilently = () => {
         SupercoopSignIn.getInstance()
             .signInSilently()
             .then(
@@ -72,16 +61,14 @@ export default class Initializing extends React.Component<Props> {
             );
     }
 
-    render(): React.ReactNode {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.welcome}>Chargement...</Text>
-                <View style={styles.quoteView}>
-                    <Text style={styles.quoteText}>
-                        {welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]}
-                    </Text>
-                </View>
+    return (
+        <View style={styles.container}>
+            <Text style={styles.welcome}>Chargement...</Text>
+            <View style={styles.quoteView}>
+                <Text style={styles.quoteText}>
+                    {welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]}
+                </Text>
             </View>
-        );
-    }
+        </View>
+    );
 }

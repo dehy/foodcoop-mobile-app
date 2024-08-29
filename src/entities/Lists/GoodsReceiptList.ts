@@ -1,6 +1,5 @@
 'use strict';
 
-import {ChildEntity} from 'typeorm';
 import BaseList from './BaseList';
 
 export type GoodsReceiptListExtraData = {
@@ -10,7 +9,6 @@ export type GoodsReceiptListExtraData = {
     partnerName: string;
 };
 
-@ChildEntity()
 export default class GoodsReceiptList extends BaseList {
     public static icon = 'truck-loading';
     public static label = 'Réception';

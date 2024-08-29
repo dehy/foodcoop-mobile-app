@@ -14,11 +14,6 @@ const styles = StyleSheet.create({
     },
 });
 
-enum ScannerMode {
-    CAMERA,
-    DATAWEDGE,
-}
-
 type Props = {
     displayCamera: boolean;
     onProductFound?: (product?: ProductProduct) => void;
@@ -28,13 +23,8 @@ type Props = {
 const CodeScanner = ({displayCamera, onProductFound, extraInfoPanel}: Props) => {
     useKeepAwake();
 
-    const [scannerMode, setScannerMode] = useState<ScannerMode>(ScannerMode.CAMERA);
     const [barcode, setBarcode] = useState<string>();
     const [product, setProduct] = useState<ProductProduct | null>();
-
-    useState(() => {
-        // TODO: check if datawedge compatible or not to set the scanner mode
-    });
 
     useEffect(() => {
         if (barcode === undefined) {
@@ -60,9 +50,7 @@ const CodeScanner = ({displayCamera, onProductFound, extraInfoPanel}: Props) => 
         <View style={styles.container}>
             <KeepAwake />
             <ManualSearchView />
-            {scannerMode === ScannerMode.CAMERA && (
-                <CodeScannerCamera displayCamera={displayCamera} onBarcodeFound={setBarcode} />
-            )}
+            <CodeScannerCamera displayCamera={displayCamera} onBarcodeFound={setBarcode} />
             {barcode && (
                 <InfoPanel
                     barcode={barcode}

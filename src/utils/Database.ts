@@ -1,14 +1,8 @@
 'use strict';
 
-import BaseList from '../entities/Lists/BaseList';
-import InventoryList from '../entities/Lists/InventoryList';
-import GoodsReceiptList from '../entities/Lists/GoodsReceiptList';
-
-import BaseEntry from '../entities/Lists/BaseEntry';
 import InventoryEntry from '../entities/Lists/InventoryEntry';
 import GoodsReceiptEntry from '../entities/Lists/GoodsReceiptEntry';
 
-import ListAttachment from '../entities/Lists/ListAttachment';
 import {DataSource} from 'typeorm';
 import {Init1580395050084} from '../migrations/1580395050084-Init';
 import {UpdateGoodsReceiptEntry1588342677098} from '../migrations/1588342677098-UpdateGoodsReceiptEntry';
@@ -16,8 +10,13 @@ import {DeleteCascade1588861598725} from '../migrations/1588861598725-DeleteCasc
 import {AddExpectedPackageQty1589031691422} from '../migrations/1589031691422-AddExpectedPackageQty';
 import {AddSessionAttachment1592642586405} from '../migrations/1592642586405-AddSessionAttachment';
 import {MultiList1636572223147} from '../migrations/1636572223147-MultiList';
-import LabelList from '../entities/Lists/LabelList';
 import LabelEntry from '../entities/Lists/LabelEntry';
+import { BaseListEntity } from '../entities/Lists/BaseListEntity';
+import { InventoryListEntity } from '../entities/Lists/InventoryListEntity';
+import { GoodsReceiptListEntity } from '../entities/Lists/GoodsReceiptListEntity';
+import { BaseEntryEntity } from '../entities/Lists/BaseEntryEntity';
+import { LabelListEntity } from '../entities/Lists/LabelListEntity';
+import { ListAttachmentEntity } from '../entities/Lists/ListAttachmentEntity';
 
 interface EntityDefinition {
     name: string;
@@ -45,15 +44,15 @@ export default class Database {
             dropSchema: dropSchema,
             synchronize: synchronize,
             entities: [
-                BaseList,
-                InventoryList,
-                GoodsReceiptList,
-                BaseEntry,
+                BaseListEntity,
+                InventoryListEntity,
+                GoodsReceiptListEntity,
+                BaseEntryEntity,
                 InventoryEntry,
                 GoodsReceiptEntry,
-                LabelList,
+                LabelListEntity,
                 LabelEntry,
-                ListAttachment,
+                ListAttachmentEntity,
             ],
             migrationsRun: migrationsRun,
             migrationsTableName: 'migrations',
