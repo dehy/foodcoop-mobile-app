@@ -45,41 +45,41 @@ const styles = StyleSheet.create({
 export const Welcome = (props: Props) => {
     const [signInInProgress, setSignInInProgress] = useState<boolean>(false);
 
-const authWithSupercoop = async (): Promise<void> => {
-    setSignInInProgress(true);
-    SupercoopSignIn.getInstance()
-        .signIn()
-        .then(
-            () => {
-                setSignInInProgress(false);
-                goHome();
-            },
-            reason => {
-                Alert.alert('Erreur', "Une erreur s'est produite lors de la connexion");
-                console.error(reason);
-                setSignInInProgress(false);
-            },
-        );
-};
+    const authWithSupercoop = async (): Promise<void> => {
+        setSignInInProgress(true);
+        SupercoopSignIn.getInstance()
+            .signIn()
+            .then(
+                () => {
+                    setSignInInProgress(false);
+                    goHome();
+                },
+                reason => {
+                    Alert.alert('Erreur', "Une erreur s'est produite lors de la connexion");
+                    console.error(reason);
+                    setSignInInProgress(false);
+                },
+            );
+    };
 
-return (
-    <SafeAreaView style={styles.container}>
-        <View style={{ flex: 1, width: '100%', marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <LogoSupercoop height="80%" width="80%" />
-        </View>
-        <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
-        <Text style={styles.instructions}>
-            Pour commencer à utiliser l&apos;application, connectes-toi à ton compte Supercoop grâce au bouton
-            ci-dessous. On se retrouve juste après !
-        </Text>
-        <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
-            <SupercoopSignInButton
-                title="Se connecter"
-                onPress={this.authWithSupercoop}
-                disabled={this.state.signInInProgress}
-            />
-        </View>
-        <Text style={styles.version}>{readableVersion()}</Text>
-    </SafeAreaView>
-);
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={{ flex: 1, width: '100%', marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <LogoSupercoop height="80%" width="80%" />
+            </View>
+            <Text style={styles.welcome}>Bienvenue, Supercoopain•e !</Text>
+            <Text style={styles.instructions}>
+                Pour commencer à utiliser l&apos;application, connectes-toi à ton compte Supercoop grâce au bouton
+                ci-dessous. On se retrouve juste après !
+            </Text>
+            <View style={{ height: 96, flex: 0, alignItems: 'center' }}>
+                <SupercoopSignInButton
+                    title="Se connecter"
+                    onPress={authWithSupercoop}
+                    disabled={signInInProgress}
+                />
+            </View>
+            <Text style={styles.version}>{readableVersion()}</Text>
+        </SafeAreaView>
+    );
 }
