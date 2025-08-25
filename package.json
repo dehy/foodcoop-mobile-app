@@ -75,7 +75,7 @@
         "react-native-zip-archive": "^6.0.5",
         "reflect-metadata": "^0.1.13",
         "rn-secure-storage": "^2.0.6",
-        "sha.js": "^2.4.11",
+        "sha.js": "^2.4.12",
         "ts-money": "^0.4.6",
         "typeorm": "^0.3.11",
         "url": "^0.11.0"
